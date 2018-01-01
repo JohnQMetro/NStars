@@ -1,0 +1,223 @@
+object StarExtraDataFrame: TStarExtraDataFrame
+  Left = 0
+  Height = 128
+  Top = 0
+  Width = 342
+  ClientHeight = 128
+  ClientWidth = 342
+  OnClick = FrameClick
+  TabOrder = 0
+  DesignLeft = 1013
+  DesignTop = 416
+  object MassLabel: TLabel
+    Left = 197
+    Height = 15
+    Top = 8
+    Width = 118
+    Caption = 'Mass (in Solar Masses)'
+    ParentColor = False
+  end
+  object MassEdit: TMaskEdit
+    Left = 193
+    Height = 25
+    Top = 30
+    Width = 62
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 6
+    ParentFont = False
+    TabOrder = 0
+    OnExit = MassEditExit
+    EditMask = '90.000'
+    Text = '  .   '
+    SpaceChar = '_'
+  end
+  object MUncEdit: TMaskEdit
+    Left = 273
+    Height = 25
+    Top = 30
+    Width = 62
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 6
+    ParentFont = False
+    TabOrder = 1
+    OnExit = MassEditExit
+    EditMask = '90.000'
+    Text = '  .   '
+    SpaceChar = '_'
+  end
+  object MassPM: TLabel
+    Left = 260
+    Height = 15
+    Top = 34
+    Width = 8
+    Caption = '±'
+    ParentColor = False
+  end
+  object BoloLumLabel: TLabel
+    Left = 8
+    Height = 15
+    Top = 72
+    Width = 188
+    Caption = 'Bolometric Luminosity ( × the Sun )'
+    ParentColor = False
+  end
+  object BoloLumPM: TLabel
+    Left = 95
+    Height = 15
+    Top = 98
+    Width = 8
+    Caption = '±'
+    ParentColor = False
+  end
+  object AgeLabel: TLabel
+    Left = 205
+    Height = 15
+    Top = 72
+    Width = 127
+    Caption = 'Age (in Billions of Years)'
+    ParentColor = False
+  end
+  object AgePM: TLabel
+    Left = 266
+    Height = 15
+    Top = 98
+    Width = 8
+    Caption = '±'
+    ParentColor = False
+  end
+  object DiameterLabel: TLabel
+    Left = 8
+    Height = 15
+    Top = 8
+    Width = 116
+    Caption = 'Diameter ( × the Sun )'
+    ParentColor = False
+  end
+  object DiamPM: TLabel
+    Left = 84
+    Height = 15
+    Top = 34
+    Width = 8
+    Caption = '±'
+    ParentColor = False
+  end
+  object AgeEdit: TMaskEdit
+    Left = 205
+    Height = 25
+    Top = 94
+    Width = 56
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 5
+    ParentFont = False
+    TabOrder = 4
+    OnExit = AgeEditExit
+    EditMask = '90.00'
+    Text = '  .  '
+    SpaceChar = '_'
+  end
+  object AgeUncEdit: TMaskEdit
+    Left = 279
+    Height = 25
+    Top = 94
+    Width = 56
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 5
+    ParentFont = False
+    TabOrder = 5
+    OnExit = AgeUncEditExit
+    EditMask = '90.00'
+    Text = '  .  '
+    SpaceChar = '_'
+  end
+  object DiameterEdit: TMaskEdit
+    Left = 8
+    Height = 25
+    Top = 30
+    Width = 72
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 7
+    ParentFont = False
+    TabOrder = 6
+    OnExit = DiameterEditExit
+    EditMask = '900.000'
+    Text = '   .   '
+    SpaceChar = '_'
+  end
+  object DiamUncEdit: TMaskEdit
+    Left = 98
+    Height = 25
+    Top = 30
+    Width = 72
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 7
+    ParentFont = False
+    TabOrder = 7
+    OnExit = DiamUncEditExit
+    EditMask = '900.000'
+    Text = '   .   '
+    SpaceChar = '_'
+  end
+  object BolLumEdit: TEdit
+    Left = 8
+    Height = 25
+    Top = 94
+    Width = 81
+    Alignment = taRightJustify
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    OnExit = BolLumEditExit
+    OnKeyPress = BolLumEditKeyPress
+    ParentFont = False
+    TabOrder = 2
+    Text = '0.000128'
+  end
+  object BLUncEdit: TEdit
+    Left = 111
+    Height = 25
+    Top = 94
+    Width = 81
+    Alignment = taRightJustify
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    OnKeyPress = BLUncEditKeyPress
+    ParentFont = False
+    TabOrder = 3
+    Text = '999.0'
+  end
+end

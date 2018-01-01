@@ -1,0 +1,284 @@
+object CoreStarDataFrame: TCoreStarDataFrame
+  Left = 0
+  Height = 199
+  Top = 0
+  Width = 388
+  ClientHeight = 199
+  ClientWidth = 388
+  TabOrder = 0
+  DesignLeft = 455
+  DesignTop = 254
+  object ComponentPicker: TComboBox
+    Left = 8
+    Height = 23
+    Top = 16
+    Width = 40
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 0
+  end
+  object TypeLabel: TLabel
+    Left = 288
+    Height = 15
+    Top = 16
+    Width = 68
+    Caption = 'Brown Dwarf'
+    ParentColor = False
+  end
+  object SpectralClassEdit: TLabeledEdit
+    Left = 64
+    Height = 23
+    Top = 16
+    Width = 113
+    EditLabel.AnchorSideLeft.Control = SpectralClassEdit
+    EditLabel.AnchorSideRight.Control = SpectralClassEdit
+    EditLabel.AnchorSideRight.Side = asrBottom
+    EditLabel.AnchorSideBottom.Control = SpectralClassEdit
+    EditLabel.Left = 64
+    EditLabel.Height = 15
+    EditLabel.Top = -2
+    EditLabel.Width = 113
+    EditLabel.Caption = 'Spectral Class'
+    EditLabel.ParentColor = False
+    TabOrder = 1
+    Text = 'G2Ve'
+    OnExit = SpectralClassEditExit
+  end
+  object VStarDesigEdit: TLabeledEdit
+    Left = 192
+    Height = 23
+    Top = 16
+    Width = 47
+    EditLabel.AnchorSideLeft.Control = VStarDesigEdit
+    EditLabel.AnchorSideRight.Control = VStarDesigEdit
+    EditLabel.AnchorSideRight.Side = asrBottom
+    EditLabel.AnchorSideBottom.Control = VStarDesigEdit
+    EditLabel.Left = 192
+    EditLabel.Height = 15
+    EditLabel.Top = -2
+    EditLabel.Width = 47
+    EditLabel.Caption = 'Var Desig.'
+    EditLabel.ParentColor = False
+    TabOrder = 2
+    Text = 'V4367'
+    OnExit = VStarDesigEditExit
+  end
+  object VisualMagEdit: TMaskEdit
+    Left = 8
+    Height = 25
+    Top = 66
+    Width = 72
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 7
+    ParentFont = False
+    TabOrder = 4
+    OnExit = VisualMagEditExit
+    OnKeyPress = VisualMagEditKeyPress
+    EditMask = '#00.000'
+    Text = '   .   '
+    SpaceChar = '_'
+  end
+  object VMagLabel: TLabel
+    Left = 8
+    Height = 15
+    Top = 48
+    Width = 61
+    Caption = 'Visual Mag.'
+    ParentColor = False
+  end
+  object ArityPicker: TComboBox
+    Left = 99
+    Height = 23
+    Top = 66
+    Width = 140
+    ItemHeight = 15
+    OnChange = ArityPickerChange
+    Style = csDropDownList
+    TabOrder = 5
+  end
+  object LuminosityDisplay: TLabel
+    Left = 56
+    Height = 15
+    Top = 96
+    Width = 97
+    Caption = 'LuminosityDisplay'
+    ParentColor = False
+  end
+  object VariableTypeCB: TComboBox
+    Left = 258
+    Height = 23
+    Top = 66
+    Width = 118
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 6
+  end
+  object StarNoteEdit: TMemo
+    Left = 8
+    Height = 42
+    Top = 152
+    Width = 376
+    Lines.Strings = (
+      'StarNoteEdit'
+      '2'
+      '3'
+    )
+    OnExit = StarNoteEditExit
+    TabOrder = 7
+  end
+  object ArityLabel: TLabel
+    Left = 99
+    Height = 15
+    Top = 48
+    Width = 86
+    Caption = 'Number of Stars'
+    ParentColor = False
+  end
+  object BayerBox: TMaskEdit
+    Left = 256
+    Height = 24
+    Top = 15
+    Width = 17
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -13
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 1
+    ParentFont = False
+    TabOrder = 3
+    EditMask = '9'
+    Text = ' '
+    SpaceChar = '_'
+  end
+  object CompLabel: TLabel
+    Left = 8
+    Height = 15
+    Top = 0
+    Width = 36
+    Caption = 'Comp.'
+    ParentColor = False
+  end
+  object VarTypeLabel: TLabel
+    Left = 256
+    Height = 15
+    Top = 48
+    Width = 69
+    Caption = 'Variable Type'
+    ParentColor = False
+  end
+  object RadiusLabel: TLabel
+    Left = 258
+    Height = 15
+    Top = 128
+    Width = 63
+    Caption = 'RadiusLabel'
+    ParentColor = False
+  end
+  object NotesLabel: TLabel
+    Left = 8
+    Height = 15
+    Top = 136
+    Width = 34
+    Caption = 'Notes:'
+    ParentColor = False
+  end
+  object BDMassLabel: TLabel
+    Left = 8
+    Height = 15
+    Top = 46
+    Width = 91
+    Caption = 'Mass (in Jupiters)'
+    ParentColor = False
+  end
+  object BDMassMEdit: TMaskEdit
+    Left = 8
+    Height = 25
+    Top = 66
+    Width = 48
+    Alignment = taRightJustify
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 4
+    ParentFont = False
+    TabOrder = 8
+    EditMask = '00.0'
+    Text = '  . '
+    SpaceChar = '_'
+  end
+  object BdmePM: TLabel
+    Left = 62
+    Height = 15
+    Top = 70
+    Width = 8
+    Caption = '±'
+    ParentColor = False
+  end
+  object BDMuncEdit: TMaskEdit
+    Left = 76
+    Height = 25
+    Top = 66
+    Width = 50
+    Alignment = taRightJustify
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 4
+    ParentFont = False
+    TabOrder = 9
+    EditMask = '00.0'
+    Text = '  . '
+    SpaceChar = '_'
+  end
+  object MassEstLabel: TLabel
+    Left = 258
+    Height = 15
+    Top = 104
+    Width = 70
+    Caption = 'MassEstLabel'
+    ParentColor = False
+  end
+  object BLumLabel: TLabel
+    Left = 56
+    Height = 15
+    Top = 115
+    Width = 59
+    Caption = 'BLumLabel'
+    ParentColor = False
+  end
+  object SecMagEdit: TMaskEdit
+    Left = 8
+    Height = 23
+    Top = 104
+    Width = 32
+    Alignment = taRightJustify
+    CharCase = ecNormal
+    MaxLength = 4
+    TabOrder = 10
+    OnExit = SecMagEditExit
+    EditMask = '00.0'
+    Text = '99.9'
+    SpaceChar = '_'
+  end
+  object TEffLabel: TLabel
+    Left = 56
+    Height = 15
+    Top = 134
+    Width = 49
+    Caption = 'TEffLabel'
+    ParentColor = False
+  end
+end

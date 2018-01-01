@@ -1,0 +1,29 @@
+TODO for NSTARS
+----------------------------
+delete selected system and everything after
+fix the two metallicities (DONE)
+Mearth band magnitude
+MEarth Flux/metallicities
+Enable/Disable menu items depending on selection (Partly done)
+VRI from SN 35 (DONE),36,38
+Import Ultracool database. (DONE)
+Figure out how to handle hot Brown Dwarfs and ultracool L stars
+add import for URAT Parallax Catalog (UPC) (not very accurate) (DONE)
+add import for SN 35. (DONE)
+ass second distance import for SN 35 (DONE)
+Bolometric corrections for L dwarfs. (DONE??)
+Add position and proper motion match search (DONE)
+add system merge/insert (DONE)
+Add calculation of space velocities, and shifts to match certain dates. (DONE)
+Better Mass estimates for hot stars.
+Better mass estimates for ultracool stars. (DONE)
+Get More accurate Bolo/TEff estimates for Hot Stars (PARTLY DONE)
+Get More accurate Bolo/TEff estimates for Mid Range Stars (DONE)
+Get More accurate Bolo/TEff estimates for Late K / M Dwarfs (PARTLY DONE)
+Get Get More accurate Bolo/TEff estimates for L Dwarfs (PARTLY DONE)
+Find a way to estimate Metallicity from Photometry.
+Get better Bolo/Radius estimates for White Dwarfs (DONE)
+Get Better Bolo/TEff estimates for Giant Stars.  (MOSTLY DONE)
+TEffs, colors, and BCv for late K and M subdwarfs.
+Check for oddities (ongoing)
+

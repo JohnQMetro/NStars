@@ -1,0 +1,73 @@
+object FindCatDuplForm: TFindCatDuplForm
+  Left = 770
+  Height = 164
+  Top = 251
+  Width = 400
+  Caption = 'Finding Catalog Duplicates'
+  ClientHeight = 164
+  ClientWidth = 400
+  OnActivate = FormActivate
+  LCLVersion = '1.6.0.4'
+  object SystemCountLabel: TLabel
+    Left = 16
+    Height = 15
+    Top = 8
+    Width = 99
+    Caption = 'SystemCountLabel'
+    ParentColor = False
+  end
+  object CheckInfoLabel: TLabel
+    Left = 16
+    Height = 15
+    Top = 32
+    Width = 301
+    Caption = 'Checking all of these systems could take several minutes.'
+    ParentColor = False
+  end
+  object SystemProgressBar: TProgressBar
+    Left = 16
+    Height = 20
+    Top = 64
+    Width = 368
+    TabOrder = 0
+  end
+  object ProgressLabel: TLabel
+    Left = 16
+    Height = 15
+    Top = 96
+    Width = 176
+    Caption = '0 of 3000 Systems checked (0.0%)'
+    ParentColor = False
+  end
+  object OKButton: TButton
+    Left = 16
+    Height = 25
+    Top = 120
+    Width = 75
+    Caption = 'OK'
+    ModalResult = 1
+    OnClick = OKButtonClick
+    TabOrder = 1
+  end
+  object CancelButton: TButton
+    Left = 104
+    Height = 25
+    Top = 120
+    Width = 75
+    Cancel = True
+    Caption = 'Cancel'
+    Default = True
+    ModalResult = 2
+    OnClick = CancelButtonClick
+    TabOrder = 2
+  end
+  object PauseResumeBtn: TButton
+    Left = 192
+    Height = 25
+    Top = 120
+    Width = 75
+    Caption = 'Pause'
+    OnClick = PauseResumeBtnClick
+    TabOrder = 3
+  end
+end

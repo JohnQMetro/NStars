@@ -1,0 +1,107 @@
+object FileGlobalNotes: TFileGlobalNotes
+  Left = 527
+  Height = 394
+  Top = 149
+  Width = 487
+  Caption = 'Global Notes'
+  ClientHeight = 394
+  ClientWidth = 487
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  OnActivate = FormActivate
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
+  LCLVersion = '1.6.0.4'
+  object Label1: TLabel
+    Left = 8
+    Height = 16
+    Top = 46
+    Width = 81
+    Caption = 'Data Sources:'
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label2: TLabel
+    Left = 8
+    Height = 16
+    Top = 212
+    Width = 129
+    Caption = 'General Starlist Notes:'
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    ParentColor = False
+    ParentFont = False
+  end
+  object SL_NameEdit: TLabeledEdit
+    Left = 48
+    Height = 21
+    Top = 8
+    Width = 177
+    EditLabel.AnchorSideTop.Control = SL_NameEdit
+    EditLabel.AnchorSideTop.Side = asrCenter
+    EditLabel.AnchorSideRight.Control = SL_NameEdit
+    EditLabel.AnchorSideBottom.Control = SL_NameEdit
+    EditLabel.AnchorSideBottom.Side = asrBottom
+    EditLabel.Left = 8
+    EditLabel.Height = 16
+    EditLabel.Top = 10
+    EditLabel.Width = 37
+    EditLabel.Caption = 'Name '
+    EditLabel.ParentColor = False
+    EditLabel.ParentFont = False
+    EditLabel.Font.Color = clWindowText
+    EditLabel.Font.Height = -13
+    EditLabel.Font.Name = 'Tahoma'
+    LabelPosition = lpLeft
+    TabOrder = 0
+  end
+  object SL_AuthorEdit: TLabeledEdit
+    Left = 280
+    Height = 21
+    Top = 8
+    Width = 189
+    EditLabel.AnchorSideTop.Control = SL_AuthorEdit
+    EditLabel.AnchorSideTop.Side = asrCenter
+    EditLabel.AnchorSideRight.Control = SL_AuthorEdit
+    EditLabel.AnchorSideBottom.Control = SL_AuthorEdit
+    EditLabel.AnchorSideBottom.Side = asrBottom
+    EditLabel.Left = 239
+    EditLabel.Height = 16
+    EditLabel.Top = 10
+    EditLabel.Width = 38
+    EditLabel.Caption = 'Author'
+    EditLabel.ParentColor = False
+    EditLabel.ParentFont = False
+    EditLabel.Font.Color = clWindowText
+    EditLabel.Font.Height = -13
+    EditLabel.Font.Name = 'Tahoma'
+    LabelPosition = lpLeft
+    TabOrder = 1
+  end
+  object SL_SourceMemo: TMemo
+    Left = 8
+    Height = 132
+    Top = 68
+    Width = 473
+    Lines.Strings = (
+      'SL_SourceMemo'
+    )
+    TabOrder = 2
+  end
+  object SL_NotesMemo: TMemo
+    Left = 8
+    Height = 153
+    Top = 232
+    Width = 469
+    Lines.Strings = (
+      'SL_NotesMemo'
+    )
+    TabOrder = 3
+  end
+end

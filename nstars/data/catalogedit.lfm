@@ -1,0 +1,75 @@
+object CatalogIDEditFrame: TCatalogIDEditFrame
+  Left = 0
+  Height = 216
+  Top = 0
+  Width = 209
+  ClientHeight = 216
+  ClientWidth = 209
+  TabOrder = 0
+  DesignLeft = 480
+  DesignTop = 273
+  object CatNamesGB: TGroupBox
+    Left = 8
+    Height = 200
+    Top = 8
+    Width = 191
+    Caption = 'Catalog Names'
+    ClientHeight = 180
+    ClientWidth = 187
+    TabOrder = 0
+    object CatIDListBox: TListBox
+      Left = 8
+      Height = 144
+      Top = 26
+      Width = 172
+      ItemHeight = 0
+      OnClick = CatIDListBoxClick
+      PopupMenu = CatalogPopupMenu
+      TabOrder = 0
+    end
+    object CatAddBtn: TButton
+      Left = 12
+      Height = 16
+      Top = 2
+      Width = 48
+      Caption = 'Add'
+      OnClick = CatAddBtnClick
+      TabOrder = 1
+    end
+    object RemCatBtn: TButton
+      Left = 68
+      Height = 16
+      Top = 2
+      Width = 48
+      Caption = 'Rem'
+      OnClick = RemCatBtnClick
+      TabOrder = 2
+    end
+    object UseCatBtn: TButton
+      Left = 124
+      Height = 16
+      Top = 2
+      Width = 48
+      Caption = 'Use'
+      OnClick = UseCatBtnClick
+      TabOrder = 3
+    end
+  end
+  object CatalogPopupMenu: TPopupMenu
+    OnPopup = CatalogPopupMenuPopup
+    left = 27
+    top = 200
+    object CopyIDMI: TMenuItem
+      Caption = 'Copy Catalog ID'
+      OnClick = CopyIDMIClick
+    end
+    object LaunchSearchID: TMenuItem
+      Caption = 'Google Search...'
+      OnClick = LaunchSearchIDClick
+    end
+    object LaunchSimbadID: TMenuItem
+      Caption = 'Simbad Search...'
+      OnClick = LaunchSimbadIDClick
+    end
+  end
+end

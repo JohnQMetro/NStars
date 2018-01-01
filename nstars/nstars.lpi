@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="10"/>
+    <PathDelim Value="\"/>
+    <General>
+      <Flags>
+        <MainUnitHasUsesSectionForAllUnits Value="False"/>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+      </Flags>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <Title Value="nstars"/>
+      <UseAppBundle Value="False"/>
+      <ResourceType Value="res"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <BuildModes Count="1">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="1">
+      <Item1>
+        <PackageName Value="LCL"/>
+      </Item1>
+    </RequiredPackages>
+    <Units Count="50">
+      <Unit0>
+        <Filename Value="nstars.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="nstarsmain.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="NStarsMainForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="collecdata.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="gnotes_form.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FileGlobalNotes"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="cluster.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="clusteredit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="df_strings.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="httpsend.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="import\Arcins.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="import\arcins_star.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ArcinsDataDisplay"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="import\recons.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="import\simbad.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="import\tgas.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="data\namedata.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="data\unitdata.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="data\constellation.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="data\stardata.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="import\isdbutils.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="data\newstar.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="NewStar"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="data\stardatabase.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="StarDataBase"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="data\catalogedit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CatalogIDEditFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="data\starextraedit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="StarExtraDataFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="data\stardataedit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CoreStarDataFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="data\starlocatedit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="StarLocatFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="import\newimports.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="newImports"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="data\starext2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="StarExt2"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="data\starext2edit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="StarExtras2Frame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="import\extraimports.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ExtraImports"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="stringparser.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="StringParser"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="findduplinterf.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FindCatDuplForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FindDuplInterF"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="utilities.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Utilities"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="import\importdataform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ImportForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ImportDataForm"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="data\newlocation.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="data\mainlocatedit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainLocatEditFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="MainLocatEdit"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="data\newimports2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="newImports2"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="ppmmatchform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="PositionProperMotionMatchForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="PPMMatchForm"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="import\importvizier.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ImportVizier"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="utilities2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Utilities2"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="import\aricns_load.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="AricnsLoadForm"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="import\tgas_import.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TGASImportForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="import\export_form.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ExportForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="guessstype.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="stardata\starconstants.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="stardata\estbasics.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="EstBasics"/>
+      </Unit43>
+      <Unit44>
+        <Filename Value="stardata\whitedwarf.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="WhiteDwarf"/>
+      </Unit44>
+      <Unit45>
+        <Filename Value="stardata\teffbcv.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="TEffBCv"/>
+      </Unit45>
+      <Unit46>
+        <Filename Value="stardata\sptfluxest.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="stardata\estutilsextra.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="EstUtilsExtra"/>
+      </Unit47>
+      <Unit48>
+        <Filename Value="stardata\starestimator.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="StarEstimator"/>
+      </Unit48>
+      <Unit49>
+        <Filename Value="stardata\fluxtransform.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit49>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <SearchPaths>
+      <IncludeFiles Value="..\synalist-code-203-trunk;$(ProjOutDir);..\DAMath"/>
+      <OtherUnitFiles Value="import;data;stardata;..\..\DAMath;..\..\synalist-code-207-trunk"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <SyntaxMode Value="Delphi"/>
+        <IncludeAssertionCode Value="True"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <Checks>
+        <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+        <StackChecks Value="True"/>
+      </Checks>
+      <Optimizations>
+        <OptimizationLevel Value="2"/>
+      </Optimizations>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <GenerateDebugInfo Value="False"/>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

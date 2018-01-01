@@ -1,0 +1,302 @@
+object MainLocatEditFrame: TMainLocatEditFrame
+  Left = 0
+  Height = 125
+  Top = 0
+  Width = 492
+  ClientHeight = 125
+  ClientWidth = 492
+  LCLVersion = '1.6.0.4'
+  OnExit = FrameExit
+  TabOrder = 0
+  DesignLeft = 833
+  DesignTop = 218
+  object LocationBox: TGroupBox
+    Left = 4
+    Height = 121
+    Top = 0
+    Width = 486
+    Caption = 'Location'
+    ClientHeight = 101
+    ClientWidth = 482
+    TabOrder = 0
+    OnExit = LocationBoxExit
+    object EpochPicker: TComboBox
+      Left = 62
+      Height = 23
+      Top = 8
+      Width = 64
+      ItemHeight = 15
+      Style = csDropDownList
+      TabOrder = 0
+    end
+    object EpochLabel: TLabel
+      Left = 16
+      Height = 15
+      Top = 11
+      Width = 39
+      Caption = 'Epoch :'
+      ParentColor = False
+    end
+    object RALabel: TLabel
+      Left = 146
+      Height = 15
+      Top = -8
+      Width = 85
+      Caption = 'Right Ascension'
+      ParentColor = False
+    end
+    object DecLabel: TLabel
+      Left = 258
+      Height = 15
+      Top = -8
+      Width = 60
+      Caption = 'Declination'
+      ParentColor = False
+    end
+    object RAEdit: TMaskEdit
+      Left = 144
+      Height = 24
+      Top = 8
+      Width = 106
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Quality = fqDraft
+      Font.Style = [fsBold]
+      MaxLength = 12
+      ParentFont = False
+      TabOrder = 1
+      OnExit = RAEditExit
+      OnKeyPress = RAEditKeyPress
+      EditMask = '00 00 00.000'
+      Text = '01 23 59.347'
+      SpaceChar = '_'
+    end
+    object DecEdit: TMaskEdit
+      Left = 256
+      Height = 24
+      Top = 8
+      Width = 106
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Quality = fqDraft
+      Font.Style = [fsBold]
+      MaxLength = 12
+      ParentFont = False
+      TabOrder = 2
+      OnExit = DecEditExit
+      OnKeyPress = DecEditKeyPress
+      EditMask = '#00 00 00.00'
+      Text = '+23 46 01.27'
+      SpaceChar = '_'
+    end
+    object PllxEdit: TMaskEdit
+      Left = 62
+      Height = 23
+      Top = 40
+      Width = 56
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -12
+      Font.Name = 'Arial'
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      MaxLength = 7
+      ParentFont = False
+      TabOrder = 3
+      OnExit = PllxEditExit
+      EditMask = '900.000'
+      Text = '   .   '
+      SpaceChar = '_'
+    end
+    object PllxErrEdit: TMaskEdit
+      Left = 133
+      Height = 23
+      Top = 40
+      Width = 56
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -12
+      Font.Name = 'Arial'
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      MaxLength = 7
+      ParentFont = False
+      TabOrder = 4
+      OnExit = PllxErrEditExit
+      EditMask = '900.000'
+      Text = '   .   '
+      SpaceChar = '_'
+    end
+    object PML: TLabel
+      Left = 121
+      Height = 15
+      Top = 44
+      Width = 8
+      Caption = '±'
+      ParentColor = False
+    end
+    object ParallaxLabel: TLabel
+      Left = 8
+      Height = 15
+      Top = 44
+      Width = 46
+      Caption = 'Parallax :'
+      ParentColor = False
+    end
+    object AngleEdit: TMaskEdit
+      Left = 200
+      Height = 23
+      Top = 72
+      Width = 51
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -12
+      Font.Name = 'Arial'
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      MaxLength = 6
+      ParentFont = False
+      TabOrder = 6
+      OnExit = AngleEditExit
+      OnKeyPress = AngleEditKeyPress
+      EditMask = '000.00'
+      Text = '   .  '
+      SpaceChar = '_'
+    end
+    object PMMagEdit: TEdit
+      Left = 76
+      Height = 24
+      Top = 71
+      Width = 64
+      Alignment = taRightJustify
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      OnExit = PMMagEditExit
+      OnKeyPress = PMMagEditKeyPress
+      ParentFont = False
+      TabOrder = 5
+      Text = '10312.00'
+    end
+    object PMLabel: TLabel
+      Left = 8
+      Height = 15
+      Top = 76
+      Width = 63
+      Caption = 'Proper Mot:'
+      ParentColor = False
+    end
+    object UncertainLocationCB: TCheckBox
+      Left = 230
+      Height = 19
+      Top = 42
+      Width = 71
+      Caption = 'Uncertain'
+      TabOrder = 8
+    end
+    object ParallaxSourceEdit: TEdit
+      Left = 368
+      Height = 23
+      Top = 40
+      Width = 104
+      OnExit = ParallaxSourceEditExit
+      TabOrder = 9
+      Text = 'ParallaxSourceEdit'
+    end
+    object ParSrcLabel: TLabel
+      Left = 304
+      Height = 15
+      Top = 44
+      Width = 60
+      Caption = 'Pllx. Source'
+      ParentColor = False
+    end
+    object BitL1: TLabel
+      Left = 254
+      Height = 15
+      Top = 76
+      Width = 5
+      Caption = '°'
+      ParentColor = False
+    end
+    object RadialVLabel: TLabel
+      Left = 376
+      Height = 15
+      Top = -8
+      Width = 76
+      Caption = 'Radial Velocity'
+      ParentColor = False
+    end
+    object RadialVEdit: TEdit
+      Left = 376
+      Height = 23
+      Top = 8
+      Width = 62
+      Alignment = taRightJustify
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -12
+      Font.Name = 'Arial'
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      OnExit = RadialVEditExit
+      OnKeyPress = RadialVEditKeyPress
+      ParentFont = False
+      TabOrder = 7
+      Text = '-9999.99'
+    end
+    object BL2: TLabel
+      Left = 445
+      Height = 15
+      Top = 11
+      Width = 27
+      Caption = 'km/s'
+      ParentColor = False
+    end
+    object BL3: TLabel
+      Left = 194
+      Height = 15
+      Top = 44
+      Width = 22
+      Caption = 'mas'
+      ParentColor = False
+    end
+    object BL4: TLabel
+      Left = 146
+      Height = 15
+      Top = 76
+      Width = 50
+      Caption = 'mas/yr at'
+      ParentColor = False
+    end
+    object OldPllxLabel: TLabel
+      Left = 284
+      Height = 15
+      Top = 76
+      Width = 43
+      Caption = 'Old Pllx:'
+      ParentColor = False
+    end
+    object OldPllxEdit: TEdit
+      Left = 334
+      Height = 23
+      Top = 71
+      Width = 138
+      OnExit = OldPllxEditExit
+      TabOrder = 10
+      Text = 'OldPllxEdit'
+    end
+  end
+end

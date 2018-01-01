@@ -1,0 +1,101 @@
+object ClusterEditForm: TClusterEditForm
+  Left = 0
+  Top = 0
+  Width = 634
+  Height = 595
+  Caption = 'Cluster Editing'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OnActivate = FormActivate
+  PixelsPerInch = 96
+  object ClusterEditGroupBox: TGroupBox
+    Left = 8
+    Top = 8
+    Width = 585
+    Height = 297
+    Caption = 'Cluster Editing'
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 431
+      Top = 239
+      Width = 89
+      Height = 13
+      Caption = 'Max Link Distance:'
+    end
+    object ClusterListBox: TListBox
+      Left = 14
+      Top = 10
+      Width = 553
+      Height = 209
+      Columns = 2
+      ItemHeight = 13
+      TabOrder = 0
+      OnClick = ClusterListBoxClick
+    end
+    object NewClusterBtn: TButton
+      Left = 14
+      Top = 234
+      Width = 89
+      Height = 25
+      Caption = 'New Cluster...'
+      TabOrder = 1
+      OnClick = NewClusterBtnClick
+    end
+    object DeleteClusterBtn: TButton
+      Left = 109
+      Top = 234
+      Width = 89
+      Height = 25
+      Caption = 'Delete Cluster'
+      TabOrder = 2
+      OnClick = DeleteClusterBtnClick
+    end
+    object MakeCHViewBtn: TButton
+      Left = 295
+      Top = 234
+      Width = 113
+      Height = 25
+      Caption = 'Make CHView lst ...'
+      TabOrder = 4
+      OnClick = MakeCHViewBtnClick
+    end
+    object MaxLinkDistEdit: TMaskEdit
+      Left = 526
+      Top = 236
+      Width = 37
+      Height = 21
+      EditMask = '90.00;1;0'
+      MaxLength = 5
+      TabOrder = 5
+      Text = '  .  '
+      OnExit = MaxLinkDistEditExit
+    end
+    object SetLinksBtn: TButton
+      Left = 214
+      Top = 234
+      Width = 75
+      Height = 25
+      Caption = 'Set Links...'
+      TabOrder = 3
+      OnClick = SetLinksBtnClick
+    end
+  end
+  object ClusterReportMemo: TMemo
+    Left = 8
+    Top = 328
+    Width = 585
+    Height = 217
+    Lines.Strings = (
+      'ClusterReportMemo')
+    TabOrder = 1
+  end
+  object ClusterSaveDialog: TSaveDialog
+    Filter = 'CHview Star List (*.lst)|*.lst'
+    Left = 560
+    Top = 312
+  end
+end

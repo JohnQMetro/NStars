@@ -1,0 +1,228 @@
+object PositionProperMotionMatchForm: TPositionProperMotionMatchForm
+  Left = 367
+  Height = 285
+  Top = 230
+  Width = 462
+  Caption = 'Finding Position and Proper Motion Matches'
+  ClientHeight = 285
+  ClientWidth = 462
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  LCLVersion = '1.6.0.4'
+  object MaxDiffGroupBox: TGroupBox
+    Left = 8
+    Height = 103
+    Top = 64
+    Width = 440
+    Caption = 'Maximum Differences'
+    ClientHeight = 83
+    ClientWidth = 436
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 256
+      Height = 15
+      Top = 6
+      Width = 62
+      Caption = 'Separation :'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 392
+      Height = 15
+      Top = 6
+      Width = 33
+      Caption = 'arcsec'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 8
+      Height = 15
+      Top = 6
+      Width = 163
+      Caption = 'Proper Motion Position Angle :'
+      ParentColor = False
+    end
+    object Label4: TLabel
+      Left = 232
+      Height = 25
+      Top = 0
+      Width = 7
+      Caption = '°'
+      Font.Height = -19
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label5: TLabel
+      Left = 8
+      Height = 15
+      Top = 46
+      Width = 141
+      Caption = 'Proper Motion Magnitude:'
+      ParentColor = False
+    end
+    object Label6: TLabel
+      Left = 210
+      Height = 25
+      Top = 40
+      Width = 16
+      Caption = '%'
+      Font.Height = -19
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label7: TLabel
+      Left = 246
+      Height = 15
+      Top = 46
+      Width = 11
+      Caption = 'or'
+      ParentColor = False
+    end
+    object Label8: TLabel
+      Left = 320
+      Height = 15
+      Top = 46
+      Width = 37
+      Caption = 'mas/yr'
+      ParentColor = False
+    end
+    object MaxSeparationEdit: TMaskEdit
+      Left = 328
+      Height = 25
+      Top = 0
+      Width = 56
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -15
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Quality = fqDraft
+      MaxLength = 5
+      ParentFont = False
+      TabOrder = 1
+      EditMask = '900.0'
+      Text = '120.0'
+      SpaceChar = '_'
+    end
+    object MPMAngDiffEdit: TMaskEdit
+      Left = 176
+      Height = 25
+      Top = 2
+      Width = 49
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -15
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Quality = fqDraft
+      MaxLength = 4
+      ParentFont = False
+      TabOrder = 0
+      EditMask = '00.0'
+      Text = '10.0'
+      SpaceChar = '_'
+    end
+    object MMagPcEdit: TMaskEdit
+      Left = 160
+      Height = 25
+      Top = 42
+      Width = 45
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -15
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Quality = fqDraft
+      MaxLength = 4
+      ParentFont = False
+      TabOrder = 2
+      EditMask = '00.0'
+      Text = '10.0'
+      SpaceChar = '_'
+    end
+    object MMagAmEdit: TMaskEdit
+      Left = 264
+      Height = 25
+      Top = 42
+      Width = 45
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -15
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Quality = fqDraft
+      MaxLength = 4
+      ParentFont = False
+      TabOrder = 3
+      EditMask = '00.0'
+      Text = '02.0'
+      SpaceChar = '_'
+    end
+  end
+  object MatchProgressBar: TProgressBar
+    Left = 8
+    Height = 23
+    Top = 208
+    Width = 440
+    TabOrder = 1
+  end
+  object SystemCountLabel: TLabel
+    Left = 16
+    Height = 15
+    Top = 8
+    Width = 99
+    Caption = 'SystemCountLabel'
+    ParentColor = False
+  end
+  object CheckInfoLabel: TLabel
+    Left = 16
+    Height = 15
+    Top = 32
+    Width = 301
+    Caption = 'Checking all of these systems could take several minutes.'
+    ParentColor = False
+  end
+  object ProgressLabel: TLabel
+    Left = 8
+    Height = 15
+    Top = 184
+    Width = 176
+    Caption = '0 of 3000 Systems checked (0.0%)'
+    ParentColor = False
+  end
+  object OKButton: TButton
+    Left = 8
+    Height = 25
+    Top = 248
+    Width = 75
+    Caption = 'OK'
+    ModalResult = 1
+    OnClick = OKButtonClick
+    TabOrder = 2
+  end
+  object CancelButton: TButton
+    Left = 104
+    Height = 25
+    Top = 248
+    Width = 75
+    Cancel = True
+    Caption = 'Cancel'
+    Default = True
+    ModalResult = 2
+    OnClick = CancelButtonClick
+    TabOrder = 3
+  end
+  object PauseResumeBtn: TButton
+    Left = 200
+    Height = 25
+    Top = 248
+    Width = 75
+    Caption = 'Pause'
+    OnClick = PauseResumeBtnClick
+    TabOrder = 4
+  end
+end
