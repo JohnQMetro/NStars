@@ -26,4 +26,5 @@ Get better Bolo/Radius estimates for White Dwarfs (DONE)
 Get Better Bolo/TEff estimates for Giant Stars.  (MOSTLY DONE)
 TEffs, colors, and BCv for late K and M subdwarfs.
 Check for oddities (ongoing)
+Add extra photometry?
 

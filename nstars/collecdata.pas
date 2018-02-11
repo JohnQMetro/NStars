@@ -642,7 +642,7 @@ begin
   // basic
   Result := False;
   vmdiffok := False;
-  assert(cstar<>nil);
+  if cstar = nil then Exit;
   // initialization of the guesser
   Screen.Cursor := crHourGlass;
   styper := SpecTypeGuesser.Create;

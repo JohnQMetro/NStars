@@ -305,8 +305,8 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="..\synalist-code-203-trunk;$(ProjOutDir);..\DAMath"/>
-      <OtherUnitFiles Value="import;data;stardata;..\..\DAMath;..\..\synalist-code-207-trunk"/>
+      <IncludeFiles Value="$(ProjOutDir);..\..\..\DAMath;..\..\..\synalist-code-207-trunk"/>
+      <OtherUnitFiles Value="import;data;stardata;..\..\..\DAMath;..\..\..\synalist-code-207-trunk"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
