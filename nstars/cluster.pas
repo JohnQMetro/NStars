@@ -26,6 +26,7 @@ ClusterData = class
     function StarMaxCount:Integer;
     function ComponentCount:Integer;
     function SpectrumCount(inspec:string):Integer;
+    function SpectrumCountChar(inspec:Char):Integer;
     // adding and removing systems
     function AddSystem(insys:StarSystem):Boolean;
     function LoadAdd(insys:StarSystem):Boolean;
@@ -142,6 +143,17 @@ begin
   end;
   Result := sc;
 end;
+function ClusterData.SpectrumCountChar(inspec:Char):Integer;
+var I,sc:Integer;
+    dstr:String;
+begin
+  sc := 0;
+  for I := 0 to GetCount - 1 do begin
+    if cluster_systems[I].SearchSpectra(inspec) then Inc(sc);
+  end;
+  Result := sc;
+end;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // adding and removing systems
 //--------------------------------------------------------------------
@@ -313,7 +325,7 @@ begin
   Result := Result + Trim(buf)+ ' Systems, ';
   tval := StarMinCount;
   Str(tval,buf);
-  Result := Result + Trim(buf) + ' Stars.' + #13#10;
+  Result := Result + Trim(buf) + ' Stars/Brown Dwarfs.' + #13#10;
   // count of star types
   before := False;
   tval := SpectrumCount('A');
@@ -456,7 +468,8 @@ var tlist:TStringList;
     oindex:Integer;
 begin
   tlist := MakeClusterNamesList;
-  Result := tlist.Find(inname,oindex);
+  oindex := tlist.IndexOf(inname);
+  Result := (oindex >= 0);
   tlist.Free;
 end;
 //***************************************************************************

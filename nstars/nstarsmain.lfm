@@ -624,11 +624,11 @@ object NStarsMainForm: TNStarsMainForm
                   end
                   inherited RLabel: TLabel
                     Height = 13
-                    Width = 41
+                    Width = 46
                   end
                   inherited ILabel: TLabel
                     Height = 13
-                    Width = 38
+                    Width = 43
                   end
                   inherited JLabel: TLabel
                     Height = 13
@@ -640,7 +640,7 @@ object NStarsMainForm: TNStarsMainForm
                   end
                   inherited KLabel: TLabel
                     Height = 13
-                    Width = 40
+                    Width = 45
                   end
                   inherited BPMLabel1: TLabel
                     Height = 13

@@ -331,7 +331,7 @@ type
 
 var
   NStarsMainForm: TNStarsMainForm;
-  backfocus:Boolean;
+  firststartup,loadlist:Boolean;
   checkbak:array of Boolean;
 
 const
@@ -887,10 +887,12 @@ begin
   // ne stuff
   // StarCoreDataFrame.SaveData;
   StarDataCoreFrame.SaveData;
-  StarExtraDataFrame1.SaveValues(False);
-  if current.cstar <> nil then current.cstar.premain := PreMainSeqCB.Checked;
-  StarLocatFrame1.SaveData(False);
-  StarFluxTEffFrame.SaveExternal;
+  if current.sys.GetId <> 1 then begin
+     StarExtraDataFrame1.SaveValues(False);
+     if current.cstar <> nil then current.cstar.premain := PreMainSeqCB.Checked;
+     StarLocatFrame1.SaveData(False);
+     StarFluxTEffFrame.SaveExternal;
+  end;
 end;
 //---------------------------------------------------
 procedure TNStarsMainForm.SystemModCheck(Sender: TObject);
@@ -969,7 +971,7 @@ end;
 
 procedure TNStarsMainForm.GetARICNSStarDataClick(Sender: TObject);
 begin
-  backfocus := True;
+  loadlist := False;
   ARICNS_CheckSystem := current.sys;
   ARICNS_CheckStar := current.starindex;
   ArcinsDataDisplay := TArcinsDataDisplay.Create(Self);
@@ -1789,7 +1791,7 @@ end;
 procedure TNStarsMainForm.EditClusters1Click(Sender: TObject);
 var ceform:TClusterEditForm;
 begin
-  backfocus := True;
+  loadlist := False;
   ceform := TClusterEditForm.Create(Self);
   ceform.Show;
 end;
@@ -1894,26 +1896,33 @@ end;
 procedure TNStarsMainForm.FormActivate(Sender: TObject);
 begin
   // widget setup
-  supstab := False;
-  CatalogIDEditSystem.SetSystem(True,UseNameBtnClick);
-  CatalogIDEditSystem.ChangeObject(nil);
-  MainLocatEditFrame1.SetupStart(MainParallaxChange);
-  StarCatIDFrame.SetSystem(False,nil);
-  StarCatIDFrame.ChangeObject(nil);
-  StarDataCoreFrame.SetupComboBoxes;
-  StarDataCoreFrame.ChangeStar(nil,nil,0);
-  StarExtraDataFrame1.Setup();
-  StarLocatFrame1.Setup(StarParallaxChanged);
-  StarLocatFrame1.Enabled := False;
-  StarFluxTEffFrame.SetToNothing;
-  StarFluxTEffFrame.SetFluxTempChangeHandler(FluxTEffChange);
+  if firststartup then begin
+     supstab := False;
+     CatalogIDEditSystem.SetSystem(True,UseNameBtnClick);
+     CatalogIDEditSystem.ChangeObject(nil);
+     MainLocatEditFrame1.SetupStart(MainParallaxChange);
+     StarCatIDFrame.SetSystem(False,nil);
+     StarCatIDFrame.ChangeObject(nil);
+     StarDataCoreFrame.SetupComboBoxes;
+     StarDataCoreFrame.ChangeStar(nil,nil,0);
+     StarExtraDataFrame1.Setup();
+     StarLocatFrame1.Setup(StarParallaxChanged);
+     StarLocatFrame1.Enabled := False;
+     StarFluxTEffFrame.SetToNothing;
+     StarFluxTEffFrame.SetFluxTempChangeHandler(FluxTEffChange);
+     firststartup := False;
+  end;
   // loading initial data
-  if backfocus then begin
+  if loadlist then begin
     primaryl.LoadListBox;
+    primaryl.ChangeSystem(0);
     ChangeSystem;
-    backfocus := false;
+    loadlist := false;
   end
-  else SystemEditPageSet.Enabled := False;
+  else begin
+      // SystemEditPageSet.Enabled := False;
+      ChangeSystem;
+  end;
 
 end;
 
@@ -1923,7 +1932,8 @@ begin
   current := primaryl.GetProxy;
   // updating the interface
   tgas_main := TGASCollection.Create;
-  backfocus := True;
+  firststartup := True;
+  loadlist := True;
 end;
 
 procedure TNStarsMainForm.LoadTGASCSVClick(Sender: TObject);

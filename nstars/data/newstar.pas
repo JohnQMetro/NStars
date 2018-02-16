@@ -753,9 +753,10 @@ begin
   if isstar then begin
     bool1 := stw.ReadRestFromTextFile(infile,cline);
     if not bool1 then begin
+      buffer := 'Star reader error for ' + stw.spectraltype + ' + ' + cline;
       stw.Free;
       Result := nil;
-      raise Exception.Create('Star read error: ' + cline);
+      raise Exception.Create(buffer);
     end;
   end
   else begin

@@ -4,7 +4,7 @@ unit collecdata;
 
 interface
 
-uses SysUtils, StdCtrls, Classes, StrUtils, Dialogs, Controls, Forms,
+uses SysUtils, StdCtrls, Classes, StrUtils, Dialogs, Controls, Forms, FileUtil,
   stardata, newlocation, namedata, recons, constellation, sptfluxest, df_strings,
   Arcins, cluster, tgas, simbad, NewStar, newImports, StarDataBase, ExtraImports,
   StarExt2,fluxtransform,ImportVizier,Utilities2,StarEstimator, guessstype;
@@ -1419,7 +1419,13 @@ var outfile:Text;
     I:Integer;
     buf:string;
     qres:TStringList;
+    fninold:TFileName;
 begin
+  // making a backup file
+  if FileExists(fnin) then begin
+     fninold := fnin + '.old';
+     FileUtil.CopyFile(fnin,fninold,True);
+  end;
   // preparing the new file
   AssignFile(outfile,fnin);
   Rewrite(outfile);

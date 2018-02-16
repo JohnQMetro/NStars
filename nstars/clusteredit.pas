@@ -46,6 +46,7 @@ procedure TClusterEditForm.ClusterListBoxClick(Sender: TObject);
 var ii:Integer;
 begin
   ii := ClusterListBox.ItemIndex;
+  if ii < 0 then Exit;
   ClusterReportMemo.Text := cluster_list[ii].BuildReport;
   ButtonsEnable(true);
 

@@ -2159,7 +2159,8 @@ end;
 procedure StarSystem.RemoveCluster(remclus:string);
 var rpos:Integer;
 begin
-  if clusters.Find(remclus,rpos) then begin
+  rpos := clusters.IndexOf(remclus);
+  if rpos >= 0 then begin
     clusters.Delete(rpos);
   end;   
 end;
