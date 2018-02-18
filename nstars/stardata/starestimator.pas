@@ -193,6 +193,7 @@ type
       procedure RestoreMS(reestimate:Boolean);
       procedure DivideSplit(const divisor:Real; reestimate:Boolean);
       function SecondarySplit(secmag,pllx:Real; reestimate:Boolean):Boolean;
+      function ChopJ():Boolean;
   end;
 
   (* --- Functions --- *)
@@ -1870,7 +1871,7 @@ begin
   // reducing the magnitudes
   DivideMagnitude(divisor,reestimate);
   // removing the 'J' (we assume it is there)
-  if (divisor >= 40) or (divisor < 1.3) then stype := AnsiReplaceStr(stype,'J','')
+  if (divisor >= 40) or (divisor < 1.3) then ChopJ()
   else stype := AnsiReplaceStr(stype,'J','?');
 end;
 //--------------------------------------------
@@ -1891,7 +1892,7 @@ begin
   luminosity := AbsVMagToVLum(absVisMag);
   // removing the 'J' (we assume it is there)
   magdiff := secamag - newmag;
-  if (magdiff>4) or (magdiff<0.3) then stype := AnsiReplaceStr(stype,'J','')
+  if (magdiff>4) or (magdiff<0.3) then ChopJ()
   else stype := AnsiReplaceStr(stype,'J','?');
   // altering K and B
   magdiff := newmag - bak_avmag;
@@ -1902,6 +1903,23 @@ begin
   if reestimate then MakeEstimates;
   Result := True;
 end;
+//----------------------------------------------------------------
+// when splitting stars for output, the trailing J (if there) should be dropped
+function EstimationParser.ChopJ():Boolean;
+begin
+  Result := False;
+  if stype.Length < 2 then Exit;
+  if AnsiEndsStr('J?',stype) then begin
+    stype := LeftStr(stype,stype.Length-2) + '?';
+  end
+  else begin
+      if AnsiLastChar(stype) <> 'J' then Exit;
+      // trimming the last
+      stype := LeftStr(stype,stype.Length-1);
+  end;
+  Result := True;
+end;
+
 //================================================================
 
 //----------------------------------------------------------

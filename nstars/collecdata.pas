@@ -50,6 +50,8 @@ StarProxy = class
     function SimbadDownloadLogg(simbadurl:string):Boolean;
     function SimbadCatalogs(simbadurl:string):Boolean;
     function CurrentToBrownDwarf:Boolean;
+    // location via separation and position angle
+    function PosAngLocationSet:Boolean;
     // even more methods
     function GuessSpectra(out usespec:Boolean):Boolean;
     function APASS_Helper(indata:string):Boolean;
@@ -629,6 +631,46 @@ begin
   cstarl := ccomponent.GetLocation;
   cstarn := ccomponent.GetNames;
   Result := True;
+end;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++
+// location via separation and position angle
+function StarProxy.PosAngLocationSet:Boolean;
+var rok:Boolean;
+    data,errmsg,resdata:string;
+    crho,ctheta:Real;
+    newlocat:Location;
+    rval:Word;
+const msg1 = 'Enter the separation ρ (in arcseconds) and' + sLineBreak + 'the position angle θ (in degrees) below :';
+begin
+  Result := False;
+  // this should be un-necessary, but I will check anyways
+  if sys = nil then Exit;
+  if starindex < 2 then Exit;
+  if ccomponent = nil then Exit;
+  if sysl = nil then Exit;
+  // showing the message...
+  data := Trim(InputBox('Set Secondary Location',msg1,''));
+  if Length(data)<>0 then begin
+    rok := SeparationCheck(sysl,data,errmsg,crho,ctheta);
+    if not rok then begin
+       ShowMessage('Could not calculate location : ' + errmsg);
+       Exit;
+    end;
+    // entry is okay, we go head and create the new location...
+    newlocat := Location.Create(sysl,crho,ctheta);
+    resdata := 'The computeted position is : ' + sLineBreak + 'RA: ';
+    resdata += newlocat.RightAscensionHMS + '  Dec: ' + newlocat.DeclinationDMS;
+    resdata += sLineBreak + 'Do you want to use this location?';
+    // asking if we use this location
+    rval := mrNo;
+    rval := MessageDlg(resdata, mtConfirmation,[mbYes, mbNo],0);
+    // if we do, go ahead and replace
+    if rval = mrYes then begin
+      cstarl := newlocat;
+      ccomponent.InsertLocation(newlocat);
+      Result := True;
+    end;
+  end;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++
 // even more methods

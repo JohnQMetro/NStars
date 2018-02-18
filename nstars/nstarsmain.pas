@@ -22,6 +22,8 @@ type
   TNStarsMainForm = class(TForm)
     AddBDMI: TMenuItem;
     AricnsDataCB: TCheckBox;
+    MenuItem1: TMenuItem;
+    PosSepSetMI: TMenuItem;
     PreMainSeqCB: TCheckBox;
     FluxesTEffTab: TTabSheet;
     HasPlanetsCB: TCheckBox;
@@ -208,6 +210,7 @@ type
     procedure New1Click(Sender: TObject);
     procedure ParallaxEntryMIClick(Sender: TObject);
     procedure PllxImportMIClick(Sender: TObject);
+    procedure PosSepSetMIClick(Sender: TObject);
     procedure PPMMatchMIClick(Sender: TObject);
     procedure PreMainSeqCBChange(Sender: TObject);
     procedure SaveAs2MIClick(Sender: TObject);
@@ -504,6 +507,7 @@ begin
   ztabcount := ComponentTabControl.Tabs.Count;
   current.SetStar(ComponentTabControl.TabIndex+1);
   LoadAllStarData;
+  PosSepSetMI.Enabled := (ComponentTabControl.TabIndex > 0);
 end;
 
 
@@ -1633,6 +1637,7 @@ begin
   // do we only have one star? the certian items are not needed
   if current.sys.GetCompC=1 then begin
     RemoveStar1.Enabled := False;
+    PosSepSetMI.Enabled := False;
   end
   else begin
     RemoveStar1.Enabled := True;
@@ -2040,6 +2045,15 @@ begin
   FreeAndNil(ImportForm);
   ImportForm := TImportForm.Create(Self);
   ImportForm.Show;
+end;
+
+procedure TNStarsMainForm.PosSepSetMIClick(Sender: TObject);
+var cxResult:Boolean;
+begin
+    if current <> nil then begin
+       cxResult := current.PosAngLocationSet();
+       if cxResult then NewLocChangeCheck();
+    end;
 end;
 
 procedure TNStarsMainForm.PPMMatchMIClick(Sender: TObject);

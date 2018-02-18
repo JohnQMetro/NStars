@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, DAMath, EstBasics, StarEstimator, Utilities, df_strings,
-  starconstants;
+  starconstants, NewStar, unitdata;
 
 const
   scolors = 'OBAFGK';
@@ -145,6 +145,7 @@ function PMS_VminILookup(inval:Currency; out spectra:string):Boolean;
 
 // helper functions for StarSplit
 function MakeGenericDwarf(ultradim:Boolean):EstimationParser;
+function MakeGenericWD():EstimationParser;
 function OkStar(var instar:EstimationParser; out newstar:EstimationParser):Boolean;
 // treats the input as a binary, using expected luminosity, attempts to split the star
 function StarSplit(var instar:EstimationParser; out newstar:EstimationParser):Boolean;
@@ -152,6 +153,7 @@ function StarSplit(var instar:EstimationParser; out newstar:EstimationParser):Bo
 function StarSplitX(var primary:EstimationParser; secmag,secpllx:Real;
     out newstar:EstimationParser):Boolean;
 
+function StarSplitGeneral(var instar:StarInfo; pllx_mas:Double; out newstar:EstimationParser):Boolean;
 // producing test output for the Alonso method of generating BC
 procedure AlonsoTest;
 
@@ -934,6 +936,12 @@ begin
   else Result.SetBasic(MMagnitudes[10],dspec1,False);
 end;
 //----------------------------------------
+function MakeGenericWD():EstimationParser;
+begin
+  Result := EstimationParser.Create();
+  Result.SetBasic(13.44,'DA7??',False);
+end;
+//----------------------------------------
 function OkStar(var instar:EstimationParser; out newstar:EstimationParser):Boolean;
 begin
   Assert(instar<>nil);
@@ -1030,6 +1038,33 @@ begin
   // final touches
   Result := True;
 end;
+//-------------------------------------------------------
+// wraps the various star split functions into a more general method
+function StarSplitGeneral(var instar:StarInfo; pllx_mas:Double; out newstar:EstimationParser):Boolean;
+var sdata1:EstimationParser;
+begin
+  Result := False;
+  newstar := nil;
+  // inapplicable cases
+  if instar = nil then Exit;
+  if instar.MinPartCount < 2 then Exit;
+  // starting
+  sdata1 := instar.estimator;
+  // case 1 : generic white dwarf binary
+  if instar.Arity = WHITE_DWARF_BINARY then begin
+    Result := True;
+    newstar := MakeGenericWD();
+    Exit;
+  end;
+  // case 2 : we have a secondary magnitude
+  if instar.ValidSecondaryMagnitude then begin
+     Result := StarSplitX(sdata1,instar.SecondaryMagnitude,pllx_mas,newstar);
+  end
+  // case 3: we do not have a secondary magnitude
+  else Result := StarSplit(sdata1,newstar);
+  sdata1.ChopJ();
+end;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // producing test output for the Alonso method of generating BC
 procedure AlonsoTest;

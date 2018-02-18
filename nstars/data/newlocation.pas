@@ -86,6 +86,7 @@ Location = class
     // startup methods
     constructor Create; overload;
     constructor Create(xsource:Location; copy:Boolean); overload;
+    constructor Create(xsource:Location; arcsec_sep,pos_angle:Double); overload;
     procedure MakeNotCopy;
 
     // setting the position
@@ -167,6 +168,11 @@ function CalculateVisMagnitude(absmag,parallax:Real):Real;
 
 // used for cutting and pasting parallax entry
 function ParsePastedParallax(pentry:string; out osource:string; out xpllx,xpllxe:Real):Boolean;
+
+(* Used for checking and converting input for making a new location from an
+old location, and a string input that is supposed to contain sepration and
+position angle. *)
+function SeparationCheck(source_loc:Location; in_string:string; out xerr:string; out rho:Real; out theta:Real):Boolean;
 
 //---------------------------------------------------------------
 // constants
@@ -600,6 +606,49 @@ begin
   radialv := xsource.radialv;
 end;
 //------------------------------------------
+// rough new location from old with separation and position angle
+// for small separations only, cannot handle declinations too extreme
+constructor Location.Create(xsource:Location; arcsec_sep,pos_angle:Double);
+var dec_ra,dec_dec,modangle:Real;
+    sepdeg,temp1:Real;
+    twres:Boolean;
+begin
+    Assert(xsource<>nil);
+    inherited Create;
+    // copy position
+    xepoch := xsource.xepoch;
+
+    // the position is modified by the inputted separation info
+    dec_ra := xsource.RA_toDegrees();
+    dec_dec := xsource.Dec_toDegrees;
+    // intermediate values
+    pos_angle := 450.0 - pos_angle;
+    modangle := pos_angle - Floor(pos_angle/360.0)*360;
+    sepdeg := (arcsec_sep / 3600.0);
+    temp1 := 1 / cosd(dec_dec);
+    // calculating new right ascencion
+    dec_ra := dec_ra + cosd(modangle)*sepdeg*temp1;
+    if dec_ra < 0 then dec_ra += 360.0
+    else if dec_ra >= 360 then dec_ra := dec_ra - 360.0;
+    // calculating new declination
+    dec_dec := dec_dec + sind(modangle)*sepdeg;
+
+    twres := SetPositionDDeg(xepoch,dec_ra,dec_dec);
+    Assert(twres);
+
+    // copying parallax and proper motion
+    parallax := xsource.parallax;
+    parallax_err := xsource.parallax_err;
+    source := xsource.source;
+    uncertain := xsource.uncertain;
+    oldparallax := xsource.oldparallax;
+    pm_magnitude := xsource.pm_magnitude;
+    pm_posang := xsource.pm_posang;
+    binarycopy := True;
+    // copying radial velocity
+    radialv := xsource.radialv;
+end;
+//------------------------------------------
 procedure Location.MakeNotCopy;
 begin    binarycopy := False;    end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -679,7 +728,7 @@ begin
   southern := (in_dec < 0);
   in_dec := Abs(in_dec);
   dec_degrees := Trunc(in_dec);
-  in_dec := 60*Frac(dec_degrees);
+  in_dec := 60*Frac(in_dec);
   dec_arcmins := Trunc(in_dec);
   dec_arcsecs := 60*Frac(in_dec);
   // finalizing
@@ -1570,6 +1619,61 @@ begin
     for bindex := 1 to bmax do osource += ' ' + enlist[bindex];
   end;
   FreeAndNil(enlist);
+  Result := True;
+end;
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(* Used for checking and converting input for making a new location from an
+old location, and a string input that is supposed to contain sepration and
+position angle. *)
+function SeparationCheck(source_loc:Location; in_string:string; out xerr:string; out rho:Real; out theta:Real):Boolean;
+var ddeg : Real;
+    splitlist:TStringList;
+    crho,ctheta:Real;
+begin
+  // setting initial faliure values...
+  rho := 0.0;
+  theta := 0.0;
+  Result := False;
+  // basic location checks
+  if source_loc = nil then begin
+    xerr := 'Source location is not given! (nil value)';
+    Exit;
+  end;
+  ddeg := source_loc.GetDecimalDeclination();
+  if (ddeg < -89.5) or (ddeg > 89.5) then begin
+    xerr := 'Declination is too extreme!';
+    Exit;
+  end;
+  // we now try to convert the string input...
+  splitlist := SplitWithSpaces(in_string,2);
+  if splitlist = nil then begin
+     xerr := 'Input must have 2 values!';
+     Exit;
+  end
+  else if splitlist.Count <> 2 then begin
+     xerr := 'Input must have 2 values!';
+     FreeAndNil(splitlist);
+     Exit;
+  end;
+  if not StrToRealBoth(splitlist[0],splitlist[1],crho,ctheta) then begin
+    xerr := 'Could not convert input to numbers!';
+    FreeAndNil(splitlist);
+    Exit;
+  end;
+  FreeAndNil(splitlist);
+  // checking the numeric input
+  if crho < 0 then begin
+    xerr := 'Separation must be positive!';
+    Exit;
+  end;
+  if crho >= 120 then begin
+    xerr := 'Separation must be less than 120 arcsec.';
+    Exit;
+  end;
+  // finishing okay
+  xerr := '';
+  rho := crho;
+  theta := ctheta;
   Result := True;
 end;
 //==========================================================================

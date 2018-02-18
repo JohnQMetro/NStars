@@ -2,8 +2,8 @@
 @@@John Q Metro
 @@@(Originally) RECONS Nearest 100 Systems, and NStars for the locations and much data.$#@!#SolStation and the Internet Stellar Database for data and catalog names on most.$#@!#ARCINS for data and names on lesser and furthur stars.$#@!#(2016+) Simbad for most data and catalog ids. https://arxiv.org/abs/1401.4989 gives White Dwarf spectral types. Parallaxes from the Tycho-GAIA Astrometric Solution, The Solar Neighborhood Series,  'Carnegie' (https://arxiv.org/abs/1604.05611), the MEarth project, Hipparcos (the New Reduction), the (poor) URAT Parallax catalog, and various lesser sources.
 @@@Ic Mags and also Rc are often not found in Simbad. B Mags for red stars are often bad. Alternate sources included APASS, OSACA, TASS, Just+ 2008, Mallama, and so on.
-@@@"Sol Cluster";"Sirius-Procyon Cluster";"Delta Pavonis Group";"Tau Ceti Group";"Wolf 359 Link";"61 Cygni Cluster";"Draconis Group";"Southern Dim Link";"Gliese 570 Cluster";"82 Eridani Link";"LionBear Cloud";"Altair Finger";"Xi Boötis Cloud";"Stein 2051 Line";"Lynx-Aurigae Cloud";"Vega Group"
-@@@ 7.71;False;70;400;-1
+@@@"Sol Cluster";"Sirius-Procyon Cluster";"Delta Pavonis Group";"Tau Ceti Group";"Wolf 359 Link";"61 Cygni Cluster";"Draconis Group";"Southern Dim Link";"Gliese 570 Cluster";"82 Eridani Link";"LionBear Cloud";"Altair Finger";"Xi Boötis Cloud";"Stein 2051 Line";"Lynx-Aurigae Cloud";"Vega Group";"41 Arae Link";"Cassiopeiae Triangle";"Cetus Cloud"
+@@@ 7.71;False;90;400;-1
 ###1;1;Sol;1;1;0;0;;T;False;False;False;
 No Nameset for the Solar System
 All positions are relative to the Solar System
@@ -89,17 +89,17 @@ Also listed as a Flare Star.
 
  0.460; 0.000;0.021;0; 7.50; 2.50; 00.390; 00.010
 +10.030;+08.960;0.007;+06.650;+05.379;+04.200;+03.640;+03.340;3613;3677±151 (3613) [8];-0.56;0.37;-0.56 ± 0.37 (-0.40) [7];0.050;-9.99
-###8;2;Sirius;1;14;1;9;The Dog Star;F;True;True;True;
+###8;2;Sirius;1;14;1;9;The Dog Star;F;False;True;True;
 Sirius;;0;ADS 5423,BD -16 1591,Gl 244,HD 48915,WDS J06451-1643
 J2000;06 45 08.917;-16 42 58.02;379.210;1.580;False;;1339.00;204.10;NStars;False;-7.60
 The brightest system in the Earth sky. Components A and B are separated by about 19.8 AU on average (e=0.592).
 "Sirius-Procyon Cluster"
 ;;;
 ***;Star;A;True;False;A1 V;True
--01.460;Single;False; ;False
+-01.470;Single;False; ;False
 
 ;;0;FK5 257,Hip 32349,HR 2491,LFT 486,LHS 219,LPM 243,LTT 2638,NLTT 16953,PPM 217626,SAO 151881,Tyc 5949-2777-1,YPC 1577,Zkh 91
--01.510;-01.460;0.000;-01.430;-01.451;-01.360;-01.330;-01.350;0;9580;+9.99;0.00;;0.000;-9.99
+-01.510;-01.431;0.000;-01.430;-01.451;-01.391;-01.391;-01.389;0;9580;+9.99;0.00;;0.214;-9.99
 ***;Star;B;True;True;DA2;True
 +08.440;Single;False; ;True
 A nice, ultra degenrate White Dwarf. JHK from [https://arxiv.org/pdf/0809.4871.pdf].
@@ -107,24 +107,25 @@ A nice, ultra degenrate White Dwarf. JHK from [https://arxiv.org/pdf/0809.4871.p
 J2000;06 45 08.900;-16 42 58.00;381.600;2.200;False;;1339.00;204.10;;False;-7.60
  0.978; 0.000;0.056;0; 0.00; 0.00; 00.008; 00.010
 +99.999;+99.999;0.000;+99.999;+99.999;+09.140;+09.170;+09.010;25193;;+9.99;0.00;;0.180;+8.56
-###9;2;Luyten 726-8;0;21;0;0;;F;True;False;True;
+###9;2;Luyten 726-8;0;21;0;0;;F;False;False;True;
 ;;0;G 272-61,Gl 65,L 726-8,LDS 838,WDS J01388-1758
 J2000;01 39 01.450;-17 57 02.00;373.700;2.700;False;375.00±4.00 (Ultracool DB);3368.00;80.40;NStars;False;29.00
-The two stars may be separated "on average" by only about 5.5 times the Earth-Sun distance (AUs of a semi-major axis) in a highly elliptical orbit (e= 0.62), at an inclination of 127.3° degrees.$#@!#https://arxiv.org/pdf/1607.04351v3.pdf gives extra info.
+The two stars may be separated "on average" by only about 5.5 times the Earth-Sun distance (AUs of a semi-major axis) in a highly elliptical orbit (e= 0.62), at an inclination of 127.3° degrees.$#@!#https://arxiv.org/pdf/1607.04351v3.pdf gives extra info. The stars seem to be 'inflated' by magnetism.
 "Tau Ceti Group"
 ;;;Qinyuan
 ***;Star;A;True;False;M5.5Ve;True
-+12.060;Single;False;UV Ceti type;False
++12.520;Single;False;UV Ceti type;True
 
 ;BL;0;LFT 144,LHS 9,LP 768-27,LTT 892,NLTT 5505,Zkh 27
-+99.999;+99.999;0.000;+10.400;+08.350;+07.100;+06.520;+06.200;0;;+9.99;0.00;;0.050;-9.99
-***;Star;B;True;True;M6Ve;True
-+13.100;Single;False;UV Ceti type;True
+ 0.123; 0.005;;; 0.00; 0.00; 00.165; 00.006
++99.999;+14.420;0.000;+11.130;+09.090;+07.100;+06.520;+06.200;0;;+9.99;0.00;;0.050;-9.99
+***;Star;B;True;True;M5.5Ve;True
++12.560;Single;False;UV Ceti type;True
 The prototype of an entire type of Flare Stars. In 1952, UV Ceti was observed flaring to 75 times its normal brightness in only 20 seconds.
 ;UV;0;LFT 145,LHS 10,LP 768-26,LTT 893,NLTT 5504,Zkh 28
 J2000;01 39 01.540;-17 57 00.40;373.700;2.700;True;;3368.00;80.40;NStars;False;29.00
  0.120; 0.005;;; 0.00; 0.00; 00.159; 00.006
-+99.999;+99.999;0.000;+99.999;+99.999;+07.260;+06.670;+06.360;0;3167;-0.42;0.00;-0.42;0.050;-9.99
++99.999;+14.370;0.000;+11.170;+09.120;+07.260;+06.670;+06.360;0;3167;-0.42;0.00;-0.42;0.050;-9.99
 ###10;1;Ross 154;0;72;0;0;;F;False;False;True;
 ;V1216;0;2MASS J18494929-2350101,AC -24 2833-183,CD -23 14742,Gl 729,Hip 92403,LFT 1437,LHS 3414,LPM 688,LTT 7462,NLTT 47045,PPM 734465,Ross 154,Tyc 6859-1332-1,YPC 4338,Zkh 282
 J2000;18 49 49.362;-23 50 10.43;336.900;1.780;False;337.22±1.97 (SN 35: 1404), 336.72±2.03 (New Hipparcos), 336.70±2.00 (LG CBMD), 230.41±52.87 (UCAC4 NSS), 336.70±2.00 (CONCH-SHELL);666.00;106.80;NStars;False;-10.50
@@ -188,14 +189,14 @@ J2015;11 47 45.005;+00 47 58.05;296.054;0.536;False;298.04±2.30 (New Hipparcos)
 
  0.150; 0.000;0.0035;0; 0.00; 0.00; 00.210; 00.000
 +14.223;+12.905;0.002;+09.859;+08.184;+06.505;+05.945;+05.654;3129;3129±64 (3129) [3];-0.01;0.01;-0.01 ± 0.01 [2];0.024;-9.99
-###16;2;EZ Aquarii;4;4;0;0;;F;True;False;False;
+###16;2;EZ Aquarii;4;4;0;0;;F;False;False;False;
 ;EZ;0;2MASS J22383372-1517573,G 156-31,Gl 866,L 789-6,WDS J22385-1519
 J2000;22 38 33.728;-15 17 57.33;293.600;0.900;False;289.50±4.40 (NStars), 285.71±8.40 (SN 35-2), 294.12±2.97 (GALEX M);3254.00;46.60;Minor;False;-59.90
 A tight triple system. Stars A and C form a spectroscopic binary (period 3.8), separated from star B with an average distance of 1.22 AU (e= 0.437). I've decided not to list separate locations for the components. Parallax from [https://arxiv.org/pdf/astro-ph/0010585.pdf].
 "Tau Ceti Group"
 ;;;
 ***;Star;AC;True;False;M5.5VJ;True
-+12.940;Spectroscopic Binary;False; ;True
++12.940;Spectroscopic Binary;False; ;True;15.0
 Spectral Types for A : M4.5 or M5. B is M6 or M6.5
 ;;0;LFT 1729,LHS 68,LP 820-64,LPM 837,LTT 9122
  0.122; 0.004;;; 0.00; 0.00; 00.220; 00.140
@@ -366,7 +367,7 @@ J2000;02 53 00.849;+16 52 53.28;261.120;0.820;False;260.25±0.93 (Ultracool DB),
 
  0.080; 0.000;0.00073;0.0000221; 0.00; 0.00; 00.127;00.004
 +99.999;+17.210;0.000;+13.030;+10.650;+08.394;+07.883;+07.585;2719;2719±82;-0.43;0.12;-0.43 ± 0.12 (-0.43) [3];0.046;-9.99
-###28;2;SCR 1845-6357;0;61;0;0;;F;True;False;True;
+###28;2;SCR 1845-6357;0;61;0;0;;F;False;False;True;
 ;;0;2MASS J18450541-6357475,DENIS J184504.9-635747,SCR 1845-6357
 J2000;18 45 05.418;-63 57 47.55;259.500;1.100;False;246.59±1.39 (Carnegie);2664.00;76.60;SN 35;True;-18.20
 Separation between A and B averages 4.5 AU.
@@ -376,10 +377,11 @@ Separation between A and B averages 4.5 AU.
 +17.400;Single;False; ;False
 
 +99.999;+19.050;0.000;+14.990;+12.460;+09.544;+08.967;+08.508;0;;+9.99;0.00;;0.020;-9.99
-***;Brown Dwarf;B;False;True;T6;False
+***;Brown Dwarf;B;False;True;T6;True
 47.0;06.0
 
 J2000;18 45 05.300;-63 57 48.00;259.450;1.110;False;;2664.00;76.60;;False;0.00
++99.999;+99.999;0.000;+99.999;+99.999;+13.260;+13.189;+13.687;0;;+9.99;0.00;;0.000;-9.99
 ###29;1;Kapteyn's Star;1;65;0;0;;T;False;False;True;
 Kapteyn's Star;VZ;0;CD-45 1841,CPD -44 612,GC 6369,Gl 191,HD 33793,Hip 24186,LFT 395,LHS 29,LTT 2200,SAO 217223,U 628
 J2000;05 11 40.581;-45 01 06.29;255.270;0.860;False;255.67±0.91 (SN 35: 1404), 255.66±0.91 (New Hipparcos), 255.70±0.90 (LG CBMD), 255.70±0.90 (CONCH-SHELL);8670.00;131.40;NStars;False;245.50
@@ -402,7 +404,7 @@ J2015;21 17 11.083;-38 52 19.70;251.388;0.569;False;253.44±0.80 (SN 35: 1404), 
 
  0.600; 0.000;0.072;0; 0.40; 0.00; 00.510; 00.030
 +09.210;+08.090;0.000;+05.770;+04.910;+04.046;+03.256;+03.100;3796;3796;-0.62;0.00;-0.62;0.230;-9.99
-###31;2;Krüger 60;0;20;0;0;;F;True;False;True;
+###31;2;Krüger 60;0;20;0;0;;F;False;False;True;
 ;;0;ADS 15972,AG +57 1569,BD +56 2783,Gl 860,HD 239960,Hip 110893,Kr 60,LSPM J2227+5741,Vys 207,WDS J22280+5742
 J2000;22 28 00.377;+57 41 49.09;248.060;1.390;False;249.94±1.87 (New Hipparcos), 249.90±1.90 (CONCH-SHELL);990.00;241.60;NStars;False;-33.50
 a=9.7 AUs, e=0.42. Component B is brighter.
@@ -465,18 +467,23 @@ Vaguely located Sub Brown Dwarf.
 ***;Brown Dwarf;;False;False;Y1;False
 06.0;03.0
 
-###36;1;Wolf 424;0;86;0;0;;F;True;True;True;
+###36;2;Wolf 424;0;86;0;0;;F;False;True;True;
 ;FL;0;2MASS J12331738+0901157,Gl 473,LFT 923,LHS 333,LTT 13546,WDS J12335+0901AB,Wolf 424,YPC 2890,Zkh 179
 J2000;12 33 17.383;+09 01 15.77;235.500;2.900;False;227.90±4.60 (NStars), 227.90±45.60 (LG CBMD), 332.23±66.18 (UCAC4 NSS), 227.90±4.60 (CONCH-SHELL);1811.00;277.40;SN 37;False;1.00
 Average separation of A and B is 3.1 AU (e= 0.28).
 "Wolf 359 Link"
 ;;;
-***;Star;AB;True;False;M5.5VJ;True
-+12.467;Other Binary;False;UV Ceti type;True;13.3
+***;Star;A;True;False;M5.5V;True
++13.050;Single;False;UV Ceti type;True
 
 ;;0;
  0.140; 0.000;;; 0.00; 0.00; 00.170; 00.000
-+15.398;+14.313;0.003;+10.937;+08.988;+06.995;+06.397;+06.042;2915;2915±65;+9.99;0.00;;0.020;-9.99
++15.398;+14.313;0.003;+10.937;+08.988;+07.690;+07.060;+06.590;2915;2915±65;+9.99;0.00;;0.020;-9.99
+***;Star;B;False;True;M5.5V;True
++13.430;Single;False; ;False
+
+J2000;12 33 17.338;+09 01 16.74;235.500;2.900;True;227.90±4.60 (NStars), 227.90±45.60 (LG CBMD), 332.23±66.18 (UCAC4 NSS), 227.90±4.60 (CONCH-SHELL);1811.00;277.40;SN 37;False;1.00
++99.999;+99.999;0.000;+99.999;+99.999;+07.820;+07.260;+07.030;0;;+9.99;0.00;;0.000;-9.99
 ###37;1;Wolf 1061;0;59;0;0;;T;False;False;True;
 ;;0;2MASS J16301808-1239434,BD -12 4523,G 153-58,Gl 628,Hip 80824,LFT 1283,LHS 419,LPM 606,LTT 6580,NLTT 42927,Tyc 5635-1241-1,VVO 222,Vys 164,Wolf 1061,YPC 3746,Zkh 227
 J2015;16 30 17.962;-12 40 03.08;232.536;0.488;False;234.38±1.50 (SN 35: 1404), 232.98±1.60 (New Hipparcos), 233.00±1.60 (LG CBMD), 245.70±62.94 (UCAC4 NSS), 233.00±1.60 (CONCH-SHELL);1187.42;184.55;TGAS;False;-21.22
@@ -510,14 +517,14 @@ J2000;00 05 24.428;-37 21 26.50;230.420;0.900;False;230.32±0.90 (SN 35: 1404), 
 
  0.465; 0.015;;; 0.00; 0.00; 00.470; 00.000
 +11.074;+10.022;0.000;+07.589;+06.432;+05.328;+04.732;+04.535;0;;-0.42;0.03;;0.000;-9.99
-###40;1;2MASS J15404341-5101357;0;57;0;0;;F;True;False;False;
+###40;1;2MASS J15404341-5101357;0;57;0;0;;F;False;False;False;
 ;;0;2MASS J15404341-5101357,WISEA J154045.67-510139.3
 J2000;15 40 43.419;-51 01 35.72;227.000;23.000;False;;1981.67;99.59;NStars;True;0.00
 A recent addition with a poorly defined parallax. See [http://www.aanda.org/articles/aa/pdf/2014/07/aa23615-14.pdf] for the discovery paper, where I got the JHK and the SDSS r i z used to estimate Rc and Ic.
 "Delta Pavonis Group"
 ;;;
-***;Star;;False;False;M6.5VJ;True
-+15.260;Double or Multiple;False; ;True
+***;Star;;False;False;M6.5V?;True
++15.260;Single;False; ;True
 
  0.090; 0.010;0.000603;0.000146; 0.00; 0.00; 00.000; 00.000
 +99.999;+99.999;0.000;+13.067;+10.773;+08.961;+08.299;+07.943;0;;+9.99;0.00;;0.040;-9.99
@@ -552,7 +559,7 @@ Has a known planet, est 11.1 Earth-masses. Orbiting with an average distance of 
 
  0.350; 0.010;;; 0.55; 0.05; 00.420; 00.010
 +12.177;+10.973;0.000;+08.280;+06.970;+05.711;+05.154;+04.855;0;3257;-0.25;0.00;-0.25;0.000;-9.99
-###44;2;G 208-044;4;31;0;0;;F;True;True;True;
+###44;2;G 208-044;4;31;0;0;;F;False;True;True;
 ;V1581;0;GJ 1245,WDS J19539+4425
 J2000;19 53 54.469;+44 24 53.08;219.900;0.500;False;224.60±5.40 (MEarth), 220.20±1.00 (NStars), 220.20±1.50 (LG CBMD), 227.90±3.90 (CONCH-SHELL);731.00;143.10;SN 37;False;3.00
 A and B are close binaries with a separation of 33 AUs. 
@@ -615,20 +622,20 @@ J2000;00 06 43.255;-07 32 14.71;207.420;1.230;False;213.00±3.60 (SN 35: 1404), 
 ###49;2;Gliese 412;0;83;0;0;;F;True;False;True;
 ;;0;BD+44 2051,Gl 412,LSPM J1105+4331,VB 18,Vys 35,WDS J11055+4332
 J2000;11 05 28.578;+43 31 36.39;206.270;1.080;False;;4511.00;282.10;NStars;False;68.75
-
+Fe/H values for this system are very contradictory.
 "LionBear Cloud"
 ;;;Augereau
-***;Star;A;True;False;M1.0V;True
+***;Star;A;True;False;M1V?;True
 +08.780;Single;False; ;False
 
 ;;0;2MASS J11052903+4331357,FK5 4979,G 176-11,Hip 54211,LFT 757,LHS 38,LTT 12976,NLTT 26245,PPM 52239,SAO 43609,Tyc 3012-2528-1,WISE J110524.38+433146.2,YPC 2582,Zkh 150
-+11.440;+10.270;0.007;+07.900;+07.100;+05.538;+05.002;+04.769;3635;3616±72 (3635) [7];-0.91;0.54;-0.91 ± 0.54 (-0.62) [7];0.000;-9.99
-***;Star;B;True;True;M6.0V;True
++11.440;+10.270;0.007;+07.900;+06.770;+05.538;+05.002;+04.769;3635;3616±72 (3635) [7];-0.91;0.54;-0.91 ± 0.54 (-0.62) [7];0.020;-9.99
+***;Star;B;True;True;M5.5V;True
 +14.450;Single;False;UV Ceti type;False
 
 ;WX;0;2MASS J11053133+4331170,G 176-12,LFT 758,LHS 39,LTT 12977,NLTT 26247,PM I11055+4331,WISE J110526.74+433128.0,Zkh 151
 J2000;11 05 30.400;+43 31 18.00;206.020;1.080;False;;4511.00;282.10;;False;64.00
-+99.999;+16.450;0.000;+13.400;+99.999;+08.742;+08.177;+07.839;2926;2932±69 (2926) [3];-0.35;0.04;-0.35 ± 0.04 [2];0.000;-9.99
++99.999;+16.450;0.000;+12.790;+10.680;+08.742;+08.177;+07.839;2926;2932±69 (2926) [3];-0.35;0.04;-0.35 ± 0.04 [2];0.000;-9.99
 ###50;1;LHS 288;0;17;0;0;;F;False;False;True;
 ;;0;2MASS J10442131-6112384,GJ 3618,L 143-23,LHS 288,LTT 3946,RHG 95 1673,YPC 2511.01
 J2000;10 44 21.320;-61 12 38.44;206.040;0.810;False;;1631.20;347.89;Carnegie Astrom. 2016;False;0.00
@@ -706,7 +713,7 @@ Keid;;2;ADS 3093,Gl 166,Struve 518,WDS J04153-0739
 J2000;04 15 16.320;-07 39 10.34;200.620;0.230;False;;4088.00;213.20;NStars;False;-42.32
 Star A and the binary pair BC have a wide separation of about 418 AU. B and C pair of stars have an "average" separation of about 35 AUs (of a semi-major axis) in a highly elliptical orbit (e= 0.410).
 "Sirius-Procyon Cluster"
-;;The;
+;;The homeworld of the Vulcans (Star Trek) circles 'A'.;
 ***;Star;A;True;False;K0.5V;True
 +04.430;Single;False;UV Ceti type;True
 
@@ -738,24 +745,24 @@ J2000;17 37 03.662;-44 19 09.17;198.090;2.060;False;199.65±2.30 (NStars), 196.9
 Spectra is usually given as M3.5V or M4.5V.
  0.210; 0.000;;; 0.00; 0.00; 00.270; 00.000
 +13.791;+12.593;0.000;+09.750;+08.150;+06.544;+05.917;+05.606;0;;+9.99;0.00;;0.000;-9.99
-###59;2;70 Ophiuchi;3;59;0;70;;F;True;False;True;
+###59;2;70 Ophiuchi;3;59;0;70;;F;False;False;True;
 ;;0;ADS 11046,BD +02 3482,Gl 702,HD 165341,LSPM J1805+0229,Struve 2272,WDS J18055+0230
 J2000;18 05 27.371;+02 29 59.32;196.720;0.830;False;195.96±0.87 (NStars);970.79;172.65;New Hipparcos;False;-7.10
-70 Ophiuchi A and B may be separated on average by a semi-major axis of 23.2 AUs (4.554") in a highly elliptical orbit (e= 0.499) that takes 83.38 years to complete.
+70 Ophiuchi A and B may be separated on average by a semi-major axis of 23.2 AUs (4.554") in a highly elliptical orbit (e= 0.499) that takes 83.38 years to complete. [http://iopscience.iop.org/article/10.1086/503255/pdf] gives ΔKs.
 "Altair Finger"
 ;;;
-***;Star;A;True;False;K0.5V;True
-+04.123;Single;False; ;True
-
+***;Star;A;True;False;K0V;True
++04.207;Single;False; ;True
+BV converted from Tycho-2.
 ;V2391;0;HD 165341,Hip 88601,HR 6752,LFT 1390,LHS 458,LTT 15337,NLTT 45899,SAO 123107,Tyc 434-5213-1,Zkh 271
  0.900; 0.040;0.59;0.02; 1.90; 0.00; 00.910; 00.030
-+99.999;+04.970;0.014;+03.600;+03.200;+99.999;+99.999;+99.999;0;;+9.99;0.00;;0.000;-9.99
-***;Star;B;True;True;K5V;True
-+07.160;Single;False; ;False
-
++99.999;+05.037;0.000;+03.600;+03.250;+99.999;+99.999;+02.216;0;;-0.05;0.24;;0.000;-9.99
+***;Star;B;True;True;K6V;True
++06.066;Single;False; ;False
+BV converted from Tycho-2.
 ;;0;LFT 1391,LHS 459,LTT 15338,NLTT 45900,Tyc 434-5212-1,Zkh 272
-J2000;18 05 27.300;+02 30 00.00;196.720;0.830;True;;971.00;172.60;New Hipparcos;False;-7.10
-+99.999;+06.520;0.000;+05.600;+07.110;+99.999;+99.999;+99.999;0;;+9.99;0.00;;0.000;-9.99
+J2000;18 05 27.527;+02 29 55.92;196.720;0.830;True;195.96±0.87 (NStars);970.79;172.65;New Hipparcos;False;-7.10
++99.999;+07.264;0.000;+05.600;+07.110;+99.999;+99.999;+03.016;0;;+9.99;0.00;;0.000;-9.99
 ###60;1;EV Lacertae;4;45;0;0;;F;False;False;True;
 ;EV;0;BD+43 4305,G 216-16,Gl 873,Hip 112460,LFT 1737,LHS 3853,LTT 16695,Vys 852
 J2000;22 46 49.732;+44 20 02.36;195.220;1.870;False;195.20±1.90 (LG CBMD), 195.20±1.90 (CONCH-SHELL);841.00;236.90;NStars;False;-0.50
@@ -800,20 +807,23 @@ J2000;06 00 03.495;+02 42 23.67;191.400;1.210;False;186.20±5.20 (MEarth), 190.9
 
  0.190; 0.000;;; 0.00; 0.00; 00.000; 00.000
 +99.999;+13.010;0.000;+10.040;+08.430;+06.905;+06.308;+06.042;3164;3157±57 (3164) [3];+0.10;0.03;+0.10 ± 0.03 (0.09) [3];0.023;-9.99
-###64;2;GJ 1116;0;12;0;0;;F;True;True;True;
+###64;2;GJ 1116;0;12;0;0;;F;False;True;True;
 ;;0;G 9-38,GJ 1116,LDS 3836,LSPM J0858+1945,WDS J08582+1945
-J2000;08 58 15.125;+19 45 47.02;191.200;2.500;False;176.6±2.8 (MEarth), 191.20±38.20 (LG CBMD);874.00;267.70;NStars;True;14.00
-
+J2000;08 58 15.190;+19 45 47.10;191.200;2.500;False;176.6±2.8 (MEarth), 191.20±38.20 (LG CBMD);874.00;267.70;NStars;True;14.00
+ΔIc estimated from Janson 2014+, ΔH and ΔKs from 'TSN2012'
 "LionBear Cloud"
 ;;;
-***;Star;A;True;False;M8Ve;False
-+13.930;Single;False; ;False
+***;Star;A;True;False;M5.5Ve;True
++14.060;Single;False; ;False
 
 ;EI;0;LHS 2076,NLTT 20638,Zkh 123
-***;Star;B;True;False;M7V;False
-+13.750;Single;False; ;False
++99.999;+99.999;0.000;+99.999;+10.380;+99.999;+07.820;+07.500;0;;+9.99;0.00;;0.040;-9.99
+***;Star;B;True;True;M6V;True
++14.920;Single;False; ;False
 
 ;;0;LHS 2077,LP 426-40,NLTT 20637,Zkh 124
+J2000;08 58 15.286;+19 45 47.42;191.200;2.500;True;176.6±2.8 (MEarth), 191.20±38.20 (LG CBMD);874.00;267.70;NStars;True;14.00
++99.999;+99.999;0.000;+99.999;+10.810;+99.999;+08.210;+07.810;0;;+9.99;0.00;;0.040;-9.99
 ###65;1;WISEA J154045.67-510139.3;0;57;0;0;;F;False;False;False;
 ;;0;2MASS J15404545-5101383,WISEA J154045.67-510139.3
 J2000;15 40 45.456;-51 01 38.36;190.000;7.000;False;165±41;1987.61;99.73;Minor;True;0.00
@@ -907,11 +917,11 @@ J2000;11 14 51.337;-26 18 23.56;179.200;1.400;False;;3043.20;262.75;Ultracool DB
 ###73;1;Wolf 1453;0;60;0;0;;F;True;True;True;
 ;;0;2MASS J05312734-0340356,BD -03 1123,CSV 6182,G 99-15,Gl 205,HD 36395,Hip 25878,LFT 416,LHS 30,LPM 216,LTT 2293,NLTT 15215,NSV 2075,PPM 188143,SAO 132211,Tyc 4770-574-1,VVO 242,Vys 9,WDS J05314-0336A,Wolf 1453,YPC 1255,Zkh 71
 J2015;05 31 28.159;-03 41 09.41;177.333;0.985;False;175.99±1.04 (SN 35: 1404), 176.77±1.18 (New Hipparcos), 176.80±1.20 (CONCH-SHELL);2226.70;160.00;TGAS;False;8.67
-
+Likely a young star.
 "Sirius-Procyon Cluster"
 ;;;
 ***;Star;;False;False;M1.5V;True
-+07.968;Possibly Double;False; ;True
++07.980;Possibly Double;False; ;True
 
  0.000; 0.000;;; 0.00; 0.00; 00.574; 00.000
 +10.626;+09.443;0.000;+06.996;+05.913;+04.830;+04.050;+03.900;3765;3819±193 (3765) [6];-0.45;1.05;-0.45 ± 1.05 (0.03) [6];0.000;-9.99
@@ -982,7 +992,7 @@ Separation between A and B is currenty 39 AU's. Planet b ( >32 Me) orbits at 0.9
 52.4;00.0
 A cool methane brown dwarf.
 J2015;06 10 34.654;-21 52 10.73;172.911;0.291;True;173.81±0.99 (New Hipparcos), 173.80±1.00 (LG CBMD), 173.80±1.00 (CONCH-SHELL);727.78;190.81;TGAS;False;5.20
-###80;1;Smethells 3;0;61;0;0;;F;True;False;True;
+###80;1;Smethells 3;0;61;0;0;;F;False;False;True;
 ;;0;2MASS J17463427-5719081,DENIS J174634.7-571903,Gl 693,Hip 86990,L 205-128,LFT 1372,LHS 454,LPM 655,LTT 7067,NLTT 45375,NSV 9629,Sm 3,Tyc 8737-2175-1,YPC 4040,Zkh 262
 J2000;17 46 34.230;-57 19 08.55;171.690;2.140;False;171.10±2.22 (SN 35: 1404), 171.48±2.31 (New Hipparcos), 172.41±3.02 (SN 35-2), 171.50±2.30 (LG CBMD), 143.06±42.12 (UCAC4 NSS), 171.50±2.30 (CONCH-SHELL);1756.00;219.60;NStars;False;-115.00
 
@@ -991,7 +1001,7 @@ J2000;17 46 34.230;-57 19 08.55;171.690;2.140;False;171.10±2.22 (SN 35: 1404), 
 ***;Star;;False;False;M3.0V;True
 +10.783;Single;False; ;False
 
-+13.613;+12.420;0.000;+09.648;+08.243;+06.855;+06.297;+06.016;0;;+9.99;0.00;;0.000;-9.99
++13.613;+12.420;0.000;+09.648;+08.243;+06.855;+06.297;+06.016;0;;-0.28;0.00;;0.000;-9.99
 ###81;1;Ross 47;0;60;0;0;;F;False;True;True;
 ;V1352;0;2MASS J05420897+1229252,AC +12°1800-213,G 102-22,Gl 213,Hip 26857,LFT 425,LHS 31,LSPM J0542+1229,LTT 11704,NLTT 15489,Ross 47,Tyc 722-455-1,YPC 1305,Zkh 73
 J2000;05 42 09.268;+12 29 21.62;171.560;0.850;False;164±3.3 (MEarth), 171.55±3.99 (New Hipparcos), 171.60±4.00 (LG CBMD), 171.60±3.30 (CONCH-SHELL);2517.30;127.96;Carnegie Astrom. 2016;False;105.83
@@ -1002,7 +1012,7 @@ J2000;05 42 09.268;+12 29 21.62;171.560;0.850;False;164±3.3 (MEarth), 171.55±3
 +11.509;Single;False;BY Draconis type;False
 
 +14.264;+13.130;0.002;+10.298;+08.709;+07.124;+06.627;+06.389;3172;3175±75 (3172) [3];-0.23;0.02;-0.23 ± 0.02 [2];0.000;-9.99
-###82;4;Gliese 570;0;49;0;0;;F;True;False;True;
+###82;3;Gliese 570;0;49;0;0;;F;True;False;True;
 ;;0;ADS 9446,Gl 570,HR 5568,Vys 726,WDS J14575-2125
 J2000;14 57 28.001;-21 24 55.71;171.220;0.940;False;;2012.00;149.10;NStars;False;26.79
 Star A and the close binary pair BC have a  average separation of about 190 AUs (e= 0.20), inclination 72.53°. The B and C pair of stars have an average separation around 0.79 AUs (e= 0.765), inclination about 110°. Brown Dwarf D orbits the other three at 1500 AU.
@@ -1014,17 +1024,13 @@ Star A and the close binary pair BC have a  average separation of about 190 AUs 
 ;KX;0;2MASS J14572788-2124526,BD-20 4125,FK5 1391,HD 131977,Hip 73184,LFT 1161,LHS 387,LPM 551,LTT 5949,NLTT 38872,PPM 263609,SAO 183040,Tyc 6180-855-1,Zkh 214
  0.802; 0.040;0.22;0; 0.00; 0.00; 00.739; 00.020
 +07.890;+06.830;0.000;+05.035;+04.514;+03.830;+03.230;+03.100;0;;+0.02;0.08;;0.000;-9.99
-***;Star;B;True;True;M1.0 V;False
-+08.262;Single;False; ;True
-
+***;Star;BC;True;True;M1.5 VJ;True
++08.065;Spectroscopic Binary;False; ;True;10.0
+Separation under 0.2″
 ;;0;BD-20 4123,HD 131976,Hip 73182,LFT 1160,LHS 386,LPM 550,LTT 5948,SAO 183039
 J2000;14 57 26.533;-21 24 41.58;168.770;21.540;False;;2012.00;149.10;;True;27.90
  0.550; 0.000;;; 0.00; 0.00; 00.650; 00.000
-***;Star;C;True;True;M3V;False
-+10.032;Single;False; ;False
-
-;;0;BD-20 4123 B,HD 131976 B,LHS 386 B,SAO 183039 B
-J2000;14 57 26.533;-21 24 41.58;168.770;21.540;False;;2012.00;149.10;;True;27.90
++10.759;+09.559;0.000;+07.075;+05.943;+04.550;+03.910;+03.800;3663;3663;-0.43;0.54;-0.43 ± 0.54 [2];0.230;-2.63
 ***;Brown Dwarf;D;False;True;T8.0 V;False
 52.4;00.0
 A very cool methane Brown dwarf.
@@ -1069,7 +1075,7 @@ J2015;23 49 13.519;+02 23 49.87;169.342;0.383;False;167.29±1.23 (New Hipparcos)
 +08.993;Single;False;BY Draconis type;False
 
 +11.532;+10.427;0.001;+08.029;+06.946;+05.827;+05.282;+05.043;3740;3788±208 (3740) [3];-0.52;0.07;-0.52 ± 0.07 [2];0.000;-9.99
-###86;1;Gliese 588;0;50;0;0;;F;True;False;True;
+###86;1;Gliese 588;0;50;0;0;;F;False;False;True;
 ;;0;2MASS J15321302-4116314,CD -40 9712,CPD -40 7021,Gl 588,Hip 76074,LFT 1208,LHS 397,LTT 6210,NLTT 40449,NSV 7119,Tyc 7844-1976-1,YPC 3501,Zkh 218
 J2015;15 32 11.367;-41 16 47.60;169.009;0.562;False;168.52±1.27 (SN 35: 1404), 168.66±1.30 (New Hipparcos), 168.70±1.30 (LG CBMD), 168.70±1.30 (CONCH-SHELL);1564.35;228.77;TGAS;False;15.50
 
@@ -1080,37 +1086,37 @@ J2015;15 32 11.367;-41 16 47.60;169.009;0.562;False;168.52±1.27 (SN 35: 1404), 
 
  0.460; 0.000;;; 0.00; 0.00; 00.290; 00.000
 +11.918;+10.815;0.000;+08.265;+06.947;+05.647;+05.025;+04.759;0;;+9.99;0.00;;0.000;-9.99
-###87;3;36 Ophiuchi;3;59;0;36;;F;True;False;True;
+###87;3;36 Ophiuchi;3;59;0;36;;F;False;False;True;
 ;;0;ADS 10417,SHJ 243,WDS J17153-2636
 J2000;17 15 20.851;-26 36 09.04;168.540;0.540;False;167.51±0.75 (NStars);1221.75;203.14;New Hipparcos;False;-0.60
 Stars A and B are separated "on average" by about 88 AUs (of a semi-major axis) in a highly eccentric orbit (e= 0.922). C orbits the AB pair from around 4,370 to 5,390 AUs away.
-
+"41 Arae Link"
 ;;;
-***;Star;A;True;False;K2V;True
+***;Star;A;True;False;K1V;True
 +05.023;Single;False; ;True
 BV converted from Tycho-2.
 ;;0;CD -26 12026 A,CPD -26 5858 A,HD 155886,Hip 84405,HR 6402,LFT 1330,LHS 437,LPM 632,LTT 6871,NLTT 44415,PPM 266613,SAO 185198,Tyc 6820-326-1,YPC 3908,Zkh 244
  0.850; 0.000;;; 0.00; 0.00; 00.810; 00.000
-+99.999;+05.883;0.000;+99.999;+99.999;+99.999;+99.999;+99.999;0;;+9.99;0.00;;0.000;-9.99
++99.999;+05.883;0.000;+04.540;+04.100;+99.999;+99.999;+99.999;0;;-0.24;0.07;;0.000;-9.99
 ***;Star;B;True;True;K1V;True
 +05.025;Single;False; ;True
 BV converted from Tycho-2.
 ;;0;CD -26 12026 B,CPD -26 5858 B,Gl 663 B,HD 155885,HR 6401,LFT 1331,LHS 438,LTT 6872,NLTT 44416,SAO 185199,Zkh 245
 J2000;17 15 20.978;-26 36 10.18;168.540;0.540;True;;1238.00;202.50;New Hipparcos;False;-0.60
  0.850; 0.000;0.36;0; 1.20; 0.60; 00.818; 00.020
-+99.999;+05.880;0.000;+99.999;+99.999;+99.999;+99.999;+99.999;0;;+9.99;0.00;;0.000;-9.99
++99.999;+05.880;0.000;+04.540;+99.999;+99.999;+99.999;+99.999;0;;-0.24;0.07;;0.000;-9.99
 ***;Star;C;True;True;K5V;True
 +06.340;Single;False;RS Can.Ven. type;True
 
 ;V2215;0;2MASS J17161340-2632444,CD-26 12036,CPD -26 5863,Gl 664,HD 156026,Hip 84478,LFT 1332,LHS 439,LPM 634,LTT 6874,NLTT 44446,PPM 266626,SAO 185213,Tyc 6820-293-1,YPC 3913,Zkh 246
 J2000;17 16 13.362;-26 32 46.13;167.490;0.600;False;;1238.00;202.50;New Hipparcos;True;-0.60
  0.710; 0.000;0.20;0; 0.00; 0.00; 00.720; 00.000
-+99.999;+07.500;0.000;+99.999;+04.800;+04.155;+99.999;+03.466;4491;4490±110 (4491) [4];-0.32;0.05;-0.32 ± 0.05 (-0.33) [3];0.000;-9.99
-###88;2;eta Cassiopei A;2;18;7;24;;F;True;False;True;
++99.999;+07.500;0.000;+99.999;+05.060;+04.155;+99.999;+03.466;4491;4490±110 (4491) [4];-0.32;0.05;-0.32 ± 0.05 (-0.33) [3];0.000;-9.99
+###88;2;eta Cassiopei A;2;18;7;24;;F;False;False;True;
 Achird;;0;ADS 671,BD+57 150,Gl 34,HD 4614,Struve 60,WDS J00491+5749
 J2000;00 49 05.145;+57 48 59.40;167.980;0.480;False;168.38±0.59 (NStars);1222.15;117.24;NStars;False;8.20
 Star A and B are separated by an "average" distance of 71 times the Earth-Sun distance (AU) (of a semi-major axis) in an eccentric orbit (e= 0.497).
-
+"Cassiopeiae Triangle"
 ;;;
 ***;Star;A;True;False;G0V;True
 +03.452;Single;False; ;True
@@ -1118,7 +1124,7 @@ BV converted from Tycho-2.
 ;;0;2MASS J00490622+5748545,Hip 3821,HR 219,LFT 74,LHS 123,LTT 10287,SAO 21732,Tyc 3663-2669-1,Wolf 24,Zkh 15
  0.972; 0.012;;; 5.40; 0.10; 01.039; 00.000
 +04.040;+04.032;0.010;+03.105;+02.790;+02.370;+02.020;+01.990;5910;5883±82 (5910) [11];-0.24;0.17;;0.000;-9.99
-***;Star;B;True;True;K7.0 V;True
+***;Star;B;True;True;K9V;True
 +07.509;Single;False; ;True
 
 ;;0;2MASS J00490516+5749037,LFT 75,LHS 122,LTT 10288,Zkh 16
@@ -1138,31 +1144,33 @@ J2000;07 44 40.174;+03 33 08.83;167.540;2.280;False;167.88±2.31 (New Hipparcos)
 ###90;2;Heintz 299;0;21;0;0;;F;True;False;False;
 ;;0;2MASS J00152799-1608008,G 158-50,GJ 1005,Heintz 299,Hip 1242,L 722-22,LFT 22,LHS 1047,LP 764-87,LTT 114,NLTT 763,Tyc 5839-1083-1,UCAC4 370-000307,WDS J00155-1608,YPC 40.01,Zkh 4
 J2000;00 15 28.111;-16 08 01.63;166.600;0.300;False;200.53±9.41 (New Hipparcos), 168.06±0.82 (NStars), 200.50±9.40 (LG CBMD), 200.50±9.40 (CONCH-SHELL), 168.42±0.89 (SN 35);955.00;130.30;SN 37;False;-29.00
-Observed Separation: 0.73 A.U$#@!#
+Observed Separation: 0.73 A.U. Might be metal-weak (CONCH-SHELL goves Fe/H -0.47).$#@!#
 "Tau Ceti Group"
 ;;;
 ***;Star;A;True;False;M3.5V;True
-+11.480;Single;False; ;True
++11.610;Single;False; ;True
 
 ;;0;
  0.180; 0.000;;; 0.00; 0.00; 00.000; 00.000
-+99.999;+99.999;0.000;+10.270;+08.700;+99.999;+99.999;+99.999;0;;+9.99;0.00;;0.000;-9.99
-***;Star;B;False;True;M6V;False
-+14.553;Single;False; ;True
++99.999;+99.999;0.000;+10.270;+08.900;+99.999;+99.999;+06.720;0;;+9.99;0.00;;0.000;-9.99
+***;Star;B;False;True;M5.5V;True
++14.000;Single;False; ;True
 
 J2000;00 15 28.100;-16 08 02.00;166.600;0.300;True;;955.00;130.30;SN 37;False;-29.00
  0.110; 0.000;;; 0.00; 0.00; 00.000; 00.000
++99.999;+99.999;0.000;+99.999;+10.700;+99.999;+99.999;+08.000;0;;+9.99;0.00;;0.000;-9.99
 ###91;2;J. Herschel 5173;0;72;0;0;;F;True;False;False;
 ;;0;CD-36 13940,Gl 783,HD 191408,HJ 5173,WDS J20112-3606
 J2000;20 11 11.938;-36 06 04.36;166.250;0.270;False;165.33±0.90 (NStars);1639.61;163.82;New Hipparcos;False;-129.80
-
+The B component has no photometry available, despite a fairly wide separation.
 "Delta Pavonis Group"
 ;;;
-***;Star;A;True;False;K3 V;False
-+05.320;Single;False; ;True
-
+***;Star;A;True;False;K3 V;True
++05.317;Single;False; ;True
+BV converted from Tycho-2.
 ;;0;CPD -36 9037,Hip 99461,HR 7703,LFT 1529,LHS 486,LTT 7988,SAO 211885
  0.650; 0.100;0.26;0;07.70; 2.30; 00.660; 00.050
++99.999;+06.177;0.000;+04.800;+04.380;+99.999;+99.999;+99.999;0;;-0.44;0.16;;0.000;-9.99
 ***;Star;B;True;True;M4.0 V;False
 +11.498;Single;False; ;False
 
@@ -1243,33 +1251,33 @@ J2015;20 13 54.500;-45 09 52.87;162.485;0.507;False;161.35±0.99 (SN 35: 1404), 
 +07.966;Single;False; ;False
 
 +10.627;+09.419;0.000;+07.053;+06.124;+05.122;+04.525;+04.281;0;;+9.99;0.00;;0.024;-9.99
-###99;1;SIMP J013656.5+093347;0;66;0;0;;F;True;False;True;
+###99;1;SIMP J013656.5+093347;0;66;0;0;;F;False;False;True;
 ;;0;2MASS J01365662+0933473,SIMP J013656.5+093347,WISEP J013657.45+093347.0
 J2000;01 35 56.620;+09 33 47.30;162.130;0.570;False;162.88±0.98 (Carnegie 2016);1237.90;91.10;NOFS-17;False;11.50
-
-
+Paper: [https://arxiv.org/abs/1705.01625]
+"Cetus Cloud"
 ;;;
 ***;Brown Dwarf;;False;False;T2.5;True
-00.0;00.0
+12.7;01.0
 
 +99.999;+99.999;0.000;+99.999;+99.999;+13.460;+12.770;+12.562;0;;+9.99;0.00;;0.024;-9.99
 ###100;2;EQ Pegasi;0;62;0;0;;F;True;False;True;
 ;EQ;0;BD +19°5116,G 68-24,Gl 896,Hip 116132,LSPM J2331+1956,Vys 80,WDS J23317+1956,WIR 1
 J2000;23 31 52.172;+19 56 14.26;161.760;1.660;False;157.72±2.43 (NStars), 161.80±1.70 (LG CBMD), 161.80±1.70 (CONCH-SHELL);557.92;96.22;New Hipparcos;True;1.10
-Semimajor Axis: 24.6 AU (e=0.18).
+Semimajor Axis: 24.6 AU (e=0.18). Might be young and overluminous, photometry somewhat lacking
 
 ;;;
 ***;Star;A;True;False;M3.5 V;True
 +10.173;Single;False;UV Ceti type;False
 
 ;EQ;0;2MASS J23315208+1956142,LHS 3965
-+99.999;+12.270;0.130;+09.946;+99.999;+06.162;+05.575;+05.326;3222;3167±187 (3222) [3];+0.09;0.06;+0.09 ± 0.06 [2];0.000;-9.99
++99.999;+11.807;0.130;+09.946;+08.660;+06.162;+05.575;+05.326;3222;3167±187 (3222) [3];+0.09;0.06;+0.09 ± 0.06 [2];0.018;-9.99
 ***;Star;B;True;True;M4.5Ve;True
 +12.400;Single;False;UV Ceti type;False
 
 ;;0;2MASS J23315244+1956138,LFT 1800,LHS 3966,LTT 16920,NLTT 57136,Tyc 1723-23-2,Zkh 350
 J2000;23 31 52.636;+19 56 13.89;161.760;1.660;True;;558.00;96.40;New Hipparcos;True;1.10
-+99.999;+14.800;0.000;+12.165;+99.999;+07.101;+06.555;+06.262;3005;3181±109 (3187) [3];+0.06;0.03;+0.06 ± 0.03 [2];0.000;-9.99
++99.999;+14.400;0.000;+12.165;+99.999;+07.101;+06.555;+06.262;3005;3181±109 (3187) [3];+0.06;0.03;+0.06 ± 0.03 [2];0.042;-9.99
 ###101;1;WISEP J041022.71+150248.5;0;78;0;0;;F;True;False;True;
 ;;0;WISE J041022.71+150248.4,WISEP J041022.71+150248.5
 J2000;04 10 22.713;+15 02 48.46;160.000;9.000;False;;2419.23;156.47;Ultracool DB;True;0.00
@@ -1277,9 +1285,9 @@ J2000;04 10 22.713;+15 02 48.46;160.000;9.000;False;;2419.23;156.47;Ultracool DB
 
 ;;;
 ***;Brown Dwarf;;False;False;Y0;True
-00.0;00.0
+14.0;06.0
 
-+99.999;+99.999;0.000;+99.999;+99.999;+19.440;+19.050;+99.999;0;;+9.99;0.00;;0.000;-9.99
++99.999;+99.999;0.000;+99.999;+99.999;+19.440;+20.020;+19.910;0;;+9.99;0.00;;0.070;+4.50
 ###102;1;HN Librae;4;49;0;0;;F;True;False;True;
 ;HN;0;2MASS J14341683-1231106,BD -11 3759,Gl 555,Hip 71253,LFT 1120,LHS 2945,LPM 532,LTT 5759,NLTT 37751,NSV 6707,Wolf 1481,YPC 3296,Zkh 208
 J2015;14 34 16.448;-12 31 01.52;159.382;0.935;False;160.78±1.98 (SN 35: 1404), 164.99±3.29 (New Hipparcos), 161.29±2.64 (SN 35-2), 165.00±3.30 (LG CBMD), 204.50±48.03 (UCAC4 NSS), 165.00±3.30 (CONCH-SHELL);691.27;329.10;TGAS;False;-1.45
@@ -1287,13 +1295,13 @@ J2015;14 34 16.448;-12 31 01.52;159.382;0.935;False;160.78±1.98 (SN 35: 1404), 
 "Gliese 570 Cluster"
 ;;;
 ***;Star;;False;False;M4V;True
-+11.317;Single;False;BY Draconis type;False
++11.317;Possibly Double;False;BY Draconis type;False
 
-+14.041;+12.915;0.000;+10.093;+08.473;+06.838;+06.262;+05.939;3250;3250±39;+0.20;0.03;+0.20 ± 0.03 [2];0.000;-9.99
-###103;2;Struve 1321;0;83;0;0;;F;True;False;True;
++14.041;+12.915;0.000;+10.093;+08.473;+06.838;+06.262;+05.939;3250;3250±39;+0.20;0.03;+0.20 ± 0.03 [2];0.034;-9.99
+###103;2;Struve 1321;0;83;0;0;;F;False;False;True;
 ;;0;ADS 7251,Gl 338,LSPM J0914+5241,Struve 1321,Vys 541,WDS J09144+5241
 J2015;09 14 22.088;+52 41 01.01;159.207;0.393;False;172.08±6.31 (New Hipparcos), 172.10±6.30 (CONCH-SHELL);1703.99;247.18;TGAS;False;11.14
-Semimajor Axis 103 AU (e=0.28). The ISDB says both parts are actually close binaries.
+Semimajor Axis 103 AU (e=0.28). The ISDB says both parts are actually close binaries. 2MASS JKs for A is low quality.
 "LionBear Cloud"
 ;;;
 ***;Star;A;True;False;K8V;True
@@ -1301,14 +1309,14 @@ Semimajor Axis 103 AU (e=0.28). The ISDB says both parts are actually close bina
 
 ;;0;2MASS J09142298+5241125,BD +53 1320,G 195-17,HD 79210,Hip 45343,LFT 634,LHS 260,LTT 12425,NLTT 21249,PPM 32059,SAO 27178,Tyc 3806-1814-1,YPC 2198,Zkh 125
  0.600; 0.000;0.054;0; 0.00; 0.00; 00.630; 00.000
-+99.999;+09.388;0.000;+06.800;+06.000;+04.890;+03.990;+03.990;3940;3950±82 (3940) [3];-0.19;0.19;-0.19 ± 0.19 (-0.19) [3];0.000;-9.99
-***;Star;B;True;True;K8V;True
++99.999;+08.995;0.000;+06.790;+05.930;+04.890;+03.990;+04.090;3940;3950±82 (3940) [3];-0.19;0.19;-0.19 ± 0.19 (-0.19) [3];0.000;-9.99
+***;Star;B;True;True;K9V;True
 +07.720;Single;False;UV Ceti type;True
-
+BV converted from Tycho-2.
 ;;0;2MASS J09142485+5241118,BD +53 1321,G 195-18,HD 79211,Hip 120005,LFT 635,LHS 261,LTT 12426,NLTT 21251,PPM 32060,SAO 27179,Tyc 3806-1819-1,Zkh 126
 J2015;09 14 23.992;+52 41 00.38;159.207;0.393;True;172.08±6.31 (New Hipparcos), 172.10±6.30 (CONCH-SHELL);1703.99;247.18;TGAS;False;11.14
  0.600; 0.000;;; 0.00; 0.00; 00.650; 00.000
-+99.999;+07.966;0.000;+06.800;+06.000;+04.780;+04.040;+04.140;3829;3819±50 (3829) [3];-0.39;0.25;-0.39 ± 0.25 (-0.40) [3];0.000;-9.99
++99.999;+09.117;0.000;+06.800;+06.000;+04.780;+04.040;+04.140;3829;3819±50 (3829) [3];-0.39;0.25;-0.39 ± 0.25 (-0.40) [3];0.000;-9.99
 ###104;1;Wolf 562;0;49;0;0;;F;False;True;True;
 ;HO;0;2MASS J15192689-0743200,BD -07 4003,DENIS J151926.8-074319,G 151-46,Gl 581,Hip 74995,LFT 1195,LHS 394,LPM 564,LTT 6112,NLTT 39886,NSV 7023,Tyc 5594-1093-1,Vys 159,Wolf 562,YPC 3458,Zkh 217
 J2015;15 19 25.594;-07 43 21.65;158.893;0.355;False;160.12±1.33 (SN 35: 1404), 160.91±2.62 (New Hipparcos), 158.73±2.56 (SN 35-2), 160.90±2.60 (LG CBMD), 160.90±2.60 (CONCH-SHELL);1225.15;265.45;TGAS;False;-9.21
@@ -1345,14 +1353,17 @@ J2000;17 12 07.912;+45 39 57.22;156.320;1.280;False;167.29±5.02 (New Hipparcos)
 a=4.49 AUs, e=0.73
 
 ;;;
-***;Star;A;True;False;M3V;False
-+09.930;Single;False; ;False
+***;Star;A;True;False;M3V;True
++10.080;Single;False; ;False
 
 ;;0;LHS 433
-***;Star;B;True;False;M3.5 V;False
-+10.350;Single;False; ;False
++99.999;+99.999;0.000;+99.999;+99.999;+99.999;+99.999;+05.450;0;;+9.99;0.00;;0.000;-9.99
+***;Star;B;True;True;M3V;True
++10.310;Single;False; ;False
 
 ;;0;LHS 434
+J2000;17 12 07.873;+45 39 56.44;156.320;1.280;True;167.29±5.02 (New Hipparcos), 167.30±5.00 (LG CBMD), 215.52±178.18 (UCAC4 NSS), 167.30±5.00 (CONCH-SHELL);1625.00;168.40;NStars;False;-30.00
++99.999;+99.999;0.000;+99.999;+99.999;+99.999;+99.999;+05.740;0;;+9.99;0.00;;0.000;-9.99
 ###108;1;EG 45;0;60;0;0;;F;False;True;True;
 ;;0;2MASS J05550948-0410042,EG 45,G 99-44,Gl 223.2,LHS 32,LP 658-2,NLTT 15811,WD 0552-041,Wo 9193,YPC 1363.02,Zkh 80
 J2000;05 55 09.489;-04 10 04.30;156.220;0.660;False;155.90±2.30 (Spec.WD), 156.13±0.84 (NStars), 155.97±0.78 (SN 21);2374.50;167.30;SN 39;False;51.00
@@ -1384,16 +1395,16 @@ Is according to SolStation, a brown dwarf. Known to Flare.
 Brown Dwarf?
  0.000; 0.000;0.000264;0.0000064; 0.00; 0.00; 00.101; 00.007
 +99.999;+20.170;0.000;+16.390;+14.010;+10.725;+10.017;+09.548;2312;;+9.99;0.00;;0.000;-9.99
-###111;1;Gliese 625;0;34;0;0;;F;True;True;True;
+###111;1;Gliese 625;0;34;0;0;;F;False;True;True;
 ;;0;2MASS J16252459+5418148,AC +54 1646,G 202-48,Gl 625,Hip 80459,NLTT 42804,Tyc 3878-1193-1,VVO 180,Vys 767,YPC 3740.03,Zkh 226
 J2015;16 25 25.364;+54 18 12.19;154.333;0.597;False;153.46±0.99 (New Hipparcos), 153.50±1.00 (LG CBMD), 116.96±36.42 (UCAC4 NSS), 153.50±1.00 (CONCH-SHELL);464.91;111.64;TGAS;False;-13.03
 
 
 ;;;
 ***;Star;;False;False;M2V;True
-+10.170;Single;False; ;False
++10.066;Single;False; ;False
 
-+99.999;+11.800;0.160;+09.664;+07.727;+06.608;+06.063;+05.833;3466;3468±8 (3466) [3];-0.29;0.06;-0.29 ± 0.06 [2];0.000;-9.99
++99.999;+11.784;0.060;+09.664;+07.727;+06.608;+06.063;+05.833;3466;3468±8 (3466) [3];-0.29;0.06;-0.29 ± 0.06 [2];0.024;-9.99
 ###112;3;Gliese 644/643;0;59;0;0;;F;False;True;True;
 ;;0;BD-08 4352,Gl 644,Vys 782,WDS J16555-0820,Wolf 630
 J2015;16 55 24.396;-08 29 34.78;153.945;0.350;False;;1215.10;222.31;TGAS;False;14.50
@@ -1425,7 +1436,7 @@ J2000;03 13 25.944;+78 07 44.35;153.000;15.000;False;;107.63;48.01;Ultracool DB;
 
 ;;;
 ***;Brown Dwarf;;False;False;T8.5;True
-00.0;00.0
+26.2;01.7
 
 +99.999;+99.999;0.000;+99.999;+99.999;+17.650;+17.630;+99.999;0;;+9.99;0.00;;0.000;-9.99
 ###114;1;GJ 1128;0;17;0;0;;F;False;True;True;
@@ -1442,7 +1453,7 @@ J2000;09 42 46.356;-68 53 06.04;152.860;0.520;False;153.05±2.41 (SN 35: 1404), 
 ;;0;BD +56°2966,FK5 875,Gl 892,HD 219134,Hip 114622,HR 8832,LHS 71,NSV 14458,SAO 35236
 J2000;23 13 16.976;+57 10 06.08;152.760;0.290;False;153.41±0.54 (NStars);2096.00;81.90;New Hipparcos;False;-18.50
 
-
+"Cassiopeiae Triangle"
 ;;;
 ***;Star;;False;False;K3 V;True
 +05.570;Single;False;UV Ceti type;False
@@ -1499,17 +1510,17 @@ Star A and B are separated by an "average distance" of about 33.6 AUs (semi-majo
 ;;;
 ***;Star;A;True;False;G8Ve;True
 +04.675;Single;False;BY Draconis type;True
-BV converted from Tycho-2.
+BV converted from Tycho-2. K from
 ;;0;SAO 101250,Tyc 1481-722-1,Zkh 212
  0.900; 0.040;0;0; 0.20; 0.10; 00.830; 00.000
-+99.999;+05.405;0.000;+99.999;+99.999;+99.999;+99.999;+99.999;0;;-0.14;0.10;;0.000;-9.99
-***;Star;B;True;True;K4Ve;True
++99.999;+05.405;0.000;+99.999;+03.870;+99.999;+99.999;+02.960;0;;-0.14;0.10;;0.000;-9.99
+***;Star;B;True;True;K5Ve;True
 +06.816;Single;False; ;True
 BV converted from Tycho-2.
 ;;0;Tyc 1481-722-2,Zkh 213
 J2000;14 51 23.052;+19 06 06.77;148.980;0.480;True;;169.00;115.00;New Hipparcos;False;22.00
  0.660; 0.070;0;0; 0.00; 0.00; 00.610; 00.000
-+99.999;+07.981;0.000;+99.999;+99.999;+99.999;+99.999;+99.999;0;;-0.14;0.10;;0.000;-9.99
++99.999;+07.981;0.000;+99.999;+05.570;+99.999;+99.999;+99.999;0;;-0.14;0.10;;0.000;-9.99
 ###121;1;WISE J205628.91+145953.2;0;32;0;0;;F;True;False;True;
 ;;0;WISE J205628.91+145953.2,WISEP J205628.90+145953.3
 J2000;20 56 28.920;+14 59 53.22;148.900;8.200;False;140.00±9.00 (Ultracool DB);971.85;56.67;Minor;True;0.00
@@ -1517,9 +1528,9 @@ J2000;20 56 28.920;+14 59 53.22;148.900;8.200;False;140.00±9.00 (Ultracool DB);
 
 ;;;
 ***;Brown Dwarf;;False;False;Y0;True
-00.0;00.0
+14.0;06.0
 
-+99.999;+99.999;0.000;+99.999;+99.999;+19.210;+19.560;+99.999;0;;+9.99;0.00;;0.000;-9.99
++99.999;+99.999;0.000;+99.999;+99.999;+19.430;+19.960;+20.010;0;;+9.99;0.00;;0.060;-9.99
 ###122;2;BD -17 588;0;36;0;0;;F;True;True;True;
 ;;0;BD -17 588,GJ 3192,Hip 14101,L 730-18,WDS J03019-1633
 J2015;03 01 51.008;-16 35 40.05;148.760;0.942;False;92.97±38.04 (NStars), 143.81±2.49 (SN 35: 1404), 106.16±16.51 (New Hipparcos), 106.20±16.50 (LG CBMD), 102.99±43.86 (UCAC4 NSS), 106.20±16.50 (CONCH-SHELL);456.19;232.61;TGAS;False;28.60
@@ -1683,7 +1694,7 @@ V mag: +23.711
 ;;0;CD -34 11626,Gl 667,HD 156384,HJ 4935,MLO 4,WDS J17190-3459
 J2000;17 18 56.980;-34 59 23.64;138.220;0.700;False;;1153.00;94.50;NStars;False;2.00
 Stars A and B have an average separation of 12.6 AUs  (e= 0.58). In turn, Stars A and B have been separated from Star C by 56 to 213 AUs. Star C is known to have at least 2 plantes : b (5.66±0.44 Me) at 0.05 AU (e 0.122±0.078), and c (3.71±0.68 Me) at 0.125±0.004 AU (e 0.133±0.098).
-
+"41 Arae Link"
 ;;;
 ***;Star;A;True;False;K4V;False
 +06.287;Single;False; ;True
@@ -1735,7 +1746,7 @@ Visual magnitude: 22.136
 ;;0;BD+06 398,Gl 105,HD 16160,HR 753,NS 0236+0653,WDS J02361+0653
 J2000;02 36 04.895;+06 53 12.75;136.270;0.450;False;139.27±0.45 (New Hipparcos);2312.00;51.40;NStars;False;25.85
 Star A and C orbit each other with average distance 15 AU and e=0.75. B is separated from AC by about 1200 AU.
-
+"Cetus Cloud"
 ;;;
 ***;Star;A;True;False;K3V;True
 +05.830;Single;False; ;True
@@ -1789,24 +1800,24 @@ J2000;22 02 29.295;-37 04 51.09;134.300;1.300;False;133.33±1.80 (SN 35-2), 134.
 ;;0;2MASS J00482303+0516497,BD +04 123,FK5 1019,Gl 33,HD 4628,Hei 202,Hip 3765,HR 222,LFT 73,LHS 121,LTT 10285,NS 0048+0516,PPM 143910,SAO 109471,WDS J00484+0517A,Wolf 25,YPC 156,Zkh 14
 J2000;00 48 23.040;+05 16 49.75;134.140;0.510;False;134.36±0.79 (NStars);1369.62;146.44;New Hipparcos;False;-10.14
 Using some data from Simbad.
-
+"Cetus Cloud"
 ;;;
 ***;Star;;False;False;K2.5V;True
 +05.740;Single;False; ;True
 
  0.753; 0.100;;; 5.40; 0.00; 00.695; 00.000
 +07.220;+06.640;0.000;+04.990;+04.520;+04.370;+03.720;+03.610;4990;4980±75 (4990) [15];-0.28;0.08;-0.28 ± 0.08 (-0.28) [13];0.000;-9.99
-###146;1;Gl 19;2;43;2;0;;F;True;False;True;
+###146;1;Gl 19;2;43;2;0;;F;False;False;True;
 Lucida;;0;2MASS J00254416-7715157,CD -77 15,CPD -77 16,FK5 11,Gl 19,HD 2151,Hip 2021,HR 98,LFT 43,LHS 6,LPM 22,LTT 226,NS 0025-7715,NSV 161,PPM 366918,SAO 255670,YPC 69,Zkh 9
 J2000;00 25 44.160;-77 15 15.74;134.070;0.110;False;133.86±0.51 (NStars);2243.08;81.69;New Hipparcos;False;23.10
 
 
 ;;;
-***;Star;;False;False;G1IV;True
+***;Star;;False;False;G1 IV;True
 +02.790;Single;False; ;True
 
  1.108; 0.030;;; 6.40; 0.10; 01.809; 00.200
-+03.520;+03.410;0.000;+02.280;+01.940;+01.720;+01.400;+01.340;5832;5826±54 (5832) [6];-0.10;0.03;-0.10 ± 0.03 (-0.10) [5];0.000;-9.99
++03.520;+03.410;0.000;+02.448;+02.114;+01.720;+01.400;+01.340;5817;5826±55 (5817) [8];-0.12;0.05;-0.12 ± 0.05 (-0.11) [7];0.000;+3.93
 ###147;1;Luyten 1813-21;0;11;0;0;;F;False;True;True;
 ;;0;2MASS J06011106+5935508,G 192-13,GJ 3378,L 1813-21,LHS 1805,LP 86-137,LSPM J0601+5935,LTT 11755,NLTT 15885,YPC 1373.01
 J2000;06 01 11.070;+59 35 50.82;133.500;2.500;False;126.00±3.30 (LG CBMD);928.00;185.79;MEarth;False;3.00
@@ -1818,33 +1829,34 @@ Using some data from Simbad.
 
  0.250; 0.000;;; 0.00; 0.00; 00.263; 00.013
 +99.999;+13.310;0.000;+10.700;+09.000;+07.465;+06.949;+06.639;3320;3320±20;+0.02;0.11;+0.02 ± 0.11 [2];0.000;-9.99
-###148;1;Gl 68;3;66;0;107;;F;True;False;True;
+###148;1;Gl 68;3;66;0;107;;F;False;False;True;
 ;;0;2MASS J01422977+2016073,BD +19 279,Gl 68,HD 10476,Hip 7981,HR 493,LFT 153,LHS 1287,LSPM J0142+2016,LTT 10596,NLTT 5685,NSV 600,PPM 91014,SAO 74883,Tyc 1211-1733-1,YPC 356,Zkh 31
 J2000;01 42 29.780;+20 16 07.36;132.760;0.500;False;133.73±0.85 (NStars);743.19;204.01;New Hipparcos;False;-33.84
 
-
+"Cetus Cloud"
 ;;;
 ***;Star;;False;False;K1V;True
 +05.240;Single;False;Variable;True
 
  0.890; 0.000;;; 0.00; 0.00; 00.830; 00.030
-+06.570;+06.080;0.000;+04.550;+04.120;+03.830;+03.390;+03.250;5217;5200±62 (5217) [14];-0.04;0.13;-0.04 ± 0.13 (-0.02) [12];0.000;-9.99
++06.570;+06.080;0.000;+04.766;+04.354;+03.830;+03.390;+03.250;5204;5192±73 (5204) [18];-0.04;0.13;-0.04 ± 0.13 (-0.02) [15];0.000;+4.48
 ###149;2;Gl 53;2;18;12;30;;F;True;False;True;
 Marfak;;0;BD +54 223,Gl 53,HD 6582,Hip 5336,NS 0108+5455,WDS J01083+5455
 J2000;01 08 15.980;+54 55 14.84;132.570;0.570;False;132.38±0.82 (New Hipparcos);3777.00;115.10;NStars;False;-98.10
-Average separation between A and B is 1.42 AUs (e= 0.62). Fluxes are for entire system.
-
+Average separation between A and B is 1.42 AUs (e= 0.62). Information about B is rather uncertain, and it is usually classified as M5.
+"Cassiopeiae Triangle"
 ;;;
 ***;Star;A;True;False;sdG5p;True
 +05.168;Single;False; ;True
 
 ;;0;FK5 1030,HR 321,LFT 107,LHS 8,LTT 10460,SAO 22024
  0.800; 0.000;;; 7.90; 0.10; 00.000; 00.000
-+05.930;+05.860;0.000;+04.550;+04.130;+04.030;+03.600;+03.510;5332;5383±143 (5332) [17];-0.86;0.12;-0.86 ± 0.12 (-0.86) [15];0.000;-9.99
-***;Star;B;False;False;sdM5;False
-+10.998;Single;False; ;True
++05.930;+05.860;0.000;+04.747;+04.356;+04.030;+03.600;+03.510;5327;5383±143 (5327) [22];-0.86;0.12;-0.86 ± 0.12 (-0.85) [19];0.000;+4.45
+***;Star;B;False;False;sdK8?;True
++11.100;Single;False; ;True
 
  0.160; 0.010;0.0062;0; 7.99; 0.10; 00.000; 00.000
++99.999;+99.999;0.000;+99.999;+09.390;+99.999;+99.999;+07.610;0;;-0.86;0.00;;0.000;-9.99
 ###150;1;Gl 109;4;7;0;0;;F;False;True;True;
 ;VX;0;2MASS J02441537+2531249,AC +25 7918,G 36-31,Gl 109,Hip 12781,LFT 224,LHS 1439,LTT 10897,NS 0244+2531,Ross 556,Vys 400,YPC 555.00,Zkh 46
 J2000;02 44 15.380;+25 31 24.99;131.579;1.329;False;133.16±2.26 (New Hipparcos), 133.20±2.30 (LG CBMD), 131.10±2.14 (NStars), 133.20±2.30 (CONCH-SHELL);937.52;112.86;GALEX M;False;30.57
@@ -1864,7 +1876,7 @@ Close to Fomalhaut, sometimes called Fomalhaut B.
 ***;Star;;False;False;K4Vp;True
 +06.480;Single;False;BY Draconis type;False
 
-+99.999;+07.580;0.000;+99.999;+99.999;+04.533;+03.804;+03.805;4710;4710;-0.10;0.19;;0.000;-9.99
++99.999;+07.580;0.000;+99.999;+05.280;+04.533;+03.804;+03.805;4710;4710;-0.10;0.19;;0.000;-9.99
 ###152;1;Gliese 514;0;86;0;0;;F;False;False;True;
 ;;0;2MASS J13295979+1022376,BD +11 2576,G 63-34,Gl 514,Hip 65859,LFT 1012,LHS 352,LTT 13925,PPM 129864,Ross 490,Vys 143,YPC 3079.00,Zkh 200
 J2000;13 29 59.790;+10 22 37.63;130.600;1.000;False;132.57±1.18 (NStars), 130.62±1.05 (New Hipparcos), 131.58±1.33 (GALEX M);1557.52;133.60;LG CBMD;False;14.39
@@ -2081,21 +2093,17 @@ Using some data from Simbad.
 +12.239;Single;False; ;False
 
 +15.365;+13.969;0.000;+11.075;+09.619;+08.217;+07.703;+07.413;0;;+9.99;0.00;;0.000;-9.99
-###171;2;Gl 713;2;34;22;44;Batentaban Borealis;F;True;False;False;
-;;0;BD+72 839,FK5 695,Gl 713,HD 170153,Hip 89937,HR 6927,LFT 1413,LHS 3379,LTT 15438,SAO 9087
+###171;1;Gl 713;2;34;22;44;Batentaban Borealis;F;False;False;True;
+;;0;BD+72 839,FK5 695,Gl 713,HD 170153,Hip 89937,HR 6927,LFT 1413,LHS 3379,LTT 15438,NSV 10749,SAO 9087
 J2000;18 21 03.430;+72 43 58.26;124.510;0.510;False;40.20±3.40 (SN 35: 1404), 124.11±0.87 (New Hipparcos);637.00;123.50;NStars;False;32.00
 Stars A and B have an "average" separation (semi-major axis) of 0.991 AU, that varies between 0.6 and 1.4 AUs in an eccentric orbit (e= 0.414).
 "Draconis Group"
 ;;;
-***;Star;A;True;False;F7 IV-V;False
-+03.680;Single;False; ;True
+***;Star;;False;False;F7 IV-VJ;True
++03.680;Other Binary;False; ;True;5.7
 
-;;0;NSV 10749
  1.029; 0.026;0;0; 5.30; 0.10; 01.200; 00.090
-***;Star;B;False;False;K0 V;False
-+05.670;Single;False; ;True
-
- 0.750; 0.000;;; 0.00; 0.00; 00.000; 00.000
++04.010;+04.070;0.007;+03.289;+02.982;+02.500;+02.220;+02.180;6058;6017±156 (6058) [5];-0.61;0.04;-0.61 ± 0.04 (-0.61) [4];0.000;+4.22
 ###172;1;Gliese 793;0;20;0;0;;F;True;True;True;
 ;;0;2MASS J20303207+6526586,AC +65 6995-0,G 262-15,Gl 793,Hip 101180,LFT 1552,LHS 3558,LTT 15991,Vys 820,YPC 4889,Zkh 308
 J2015;20 30 33.112;+65 27 02.66;124.376;0.387;False;125.07±1.08 (New Hipparcos), 125.10±1.10 (LG CBMD), 125.10±1.10 (CONCH-SHELL);526.17;57.41;TGAS;False;10.60
@@ -2146,7 +2154,7 @@ J2000;05 56 25.470;+05 21 48.61;124.000;3.000;False;125.00±3.60 (NStars);1022.1
 +14.105;Single;False; ;False
 
 +14.570;+14.710;0.011;+13.780;+13.410;+12.930;+12.720;+12.653;5785;5790;+9.99;0.00;;0.024;+8.22
-###177;1;Gl 178;2;60;16;1;;F;True;False;True;
+###177;1;Gl 178;2;60;16;1;;F;False;False;True;
 Tabit;;3;2MASS J04495040+0657409,BD +06 762,FK5 1134,Gl 178,HD 30652,Hip 22449,HR 1543,LSPM J0449+0657,LTT 11517,NLTT 14011,PPM 148020,SAO 112106,Tyc 96-1462-1,YPC 1077,Zkh 65
 J2000;04 49 50.411;+06 57 40.59;123.940;0.170;False;124.13±0.87 (NStars), 128.62±33.36 (RAVE DR5);464.20;88.62;New Hipparcos;False;24.90
 
@@ -2156,7 +2164,7 @@ J2000;04 49 50.411;+06 57 40.59;123.940;0.170;False;124.13±0.87 (NStars), 128.6
 +03.190;Single;False; ;True
 
  1.300; 0.000;;; 2.20; 0.10; 01.300; 00.000
-+03.620;+03.630;0.007;+02.770;+02.510;+02.360;+02.150;+02.050;6440;6411±98 (6440) [5];+0.00;0.01;+0.00 ± 0.01 (0.00) [3];0.000;-9.99
++03.620;+03.630;0.007;+02.913;+02.646;+02.360;+02.150;+02.050;6437;6411±98 (6437) [6];-0.01;0.01;-0.01 ± 0.01 (-0.01) [4];0.060;+2.23
 ###178;2;Gl 66;2;36;40;0;;F;True;False;False;
 ;;0;CD-56 328,CPD -56 329,Dunlop 5,Gl 66,NS 0139-5611
 J2015;01 39 48.121;-56 11 47.05;123.745;0.543;False;127.84±2.19 (New Hipparcos);308.19;88.89;TGAS;False;-10.00
@@ -2375,34 +2383,31 @@ J2000;13 00 33.510;+05 41 08.11;119.790;2.460;False;122.70±2.90 (MEarth), 123.1
 +13.434;Single;False;UV Ceti type;False
 
 +15.200;+15.120;0.000;+13.041;+10.000;+08.553;+07.966;+07.660;2950;2950;+0.22;0.00;+0.22;0.000;-9.99
-###197;4;Gl 423;1;83;14;53;;F;True;False;False;
+###197;3;Gl 423;1;83;14;53;;F;True;False;False;
 Alula Australis;;0;ADS 8119,Gl 423,Struve 1523
 J2000;11 18 10.902;+31 31 44.98;119.510;0.790;False;;733.00;216.10;NStars;False;-15.90
 Aa and Ab are separated by around 1.69 AUs (e=0.53). Aab and Bab are separated by an "average" distance of about 21.2 AUs (of a semi-major axis of 2.533" at 27.3 ly) in an elliptical orbit (e= 0.412). Pair Ba and Bb have an average separation of 0.06 AU in a highly circular orbit (e=0.00).
 
 ;;;
-***;Star;A;True;False;F8.5VJ;True
-+04.264;Other Binary;False;Variable;True;10.9
+***;Star;A;True;False;F9VJ;True
++04.264;Spectroscopic Binary;False;Variable;True;10.9
 BV converted from Tycho-2.
 ;;0;BDS 5734,HD 98231,HR 4375,LFT 790,LHS 2390,LTT 13045,NSV 5165,SAO 62484,Tyc 2520-2634-1
  1.050; 0.000;;; 2.00; 0.10; 00.970; 00.000
 +99.999;+04.807;0.000;+99.999;+03.670;+99.999;+99.999;+99.999;0;;-0.30;0.05;;0.000;-9.99
-***;Star;Ba;True;True;G2V;True
-+04.729;Single;False; ;True
+***;Star;B;True;True;G2VJ;True
++04.729;Spectroscopic Binary;False; ;True
 BV converted from Tycho-2.
 ;;0;HD 98230,HR 4374,LHS 2391,Tyc 2520-2634-2
 J2000;11 18 10.950;+31 31 45.75;119.510;0.790;True;;733.00;216.10;NStars;False;-15.90
  0.900; 0.000;;; 0.00; 0.00; 00.910; 00.000
 +99.999;+05.384;0.000;+99.999;+04.010;+99.999;+99.999;+99.999;0;;-0.30;0.05;;0.000;-9.99
-***;Brown Dwarf;Bb;False;True;T;False
-00.0;00.0
-brown dwarf, or maybe a K type dwarf further out?
-J2000;11 18 10.950;+31 31 45.74;119.510;0.790;True;;733.00;216.10;NStars;False;-15.90
-***;Brown Dwarf;C;True;True;T8.5;False
-00.0;00.0
-
-;;0;2MASS J11183876+3125441
-J2000;11 18 38.768;+31 25 44.16;119.510;0.790;True;;733.00;216.10;NStars;False;-15.90
+***;Brown Dwarf;C;True;True;T8.5;True
+26.0;12.0
+Paper : http://iopscience.iop.org/article/10.1088/0004-6256/145/3/84/pdf
+;;0;WISE J111838.70+312537.9
+J2000;11 18 38.701;+31 25 37.92;119.510;0.790;True;;733.00;216.10;NStars;False;-15.90
++99.999;+99.999;0.000;+99.999;+99.999;+18.290;+18.130;+18.746;0;;+9.99;0.00;;0.150;-9.99
 ###198;1;Ross 64;0;38;0;0;;F;False;True;True;
 ;;0;2MASS J06244132+2325585,G 104-37,Gl 232,LFT 467,LHS 1846,LSPM J0624+2325,LTT 11838,NLTT 16474,Ross 64,YPC 1484,Zkh 87
 J2000;06 24 41.320;+23 25 58.56;119.400;2.300;False;115.50±3.50 (MEarth), 119.40±23.90 (LG CBMD), 79.74±20.06 (UCAC4 NSS), 115.50±3.50 (CONCH-SHELL);763.00;132.40;NStars;False;-12.00
@@ -2417,7 +2422,7 @@ J2000;06 24 41.320;+23 25 58.56;119.400;2.300;False;115.50±3.50 (MEarth), 119.4
 ;;0;CD -37°10765,Gl 618,Hip 80018,LDS 6312,NSV 7625,WDS J16202-3734
 J2000;16 20 03.509;-37 31 44.80;118.690;2.220;False;119.85±2.52 (New Hipparcos);1231.00;323.70;NStars;False;43.00
 
-
+"41 Arae Link"
 ;;;
 ***;Star;A;True;False;M3V;True
 +10.586;Single;False; ;True
@@ -2431,17 +2436,17 @@ J2000;16 20 03.509;-37 31 44.80;118.690;2.220;False;119.85±2.52 (New Hipparcos)
 ;;0;2MASS J16200321-3731485,L 482-31,LFT 1267,LHS 416,LTT 6509,NLTT 42494,Zkh 222
 J2000;16 20 03.212;-37 31 48.59;118.690;0.000;False;;1231.00;323.70;;False;43.00
 +99.999;+16.000;0.000;+15.120;+99.999;+08.340;+08.040;+07.760;0;;+9.99;0.00;;0.000;-9.99
-###200;1;Gl 475;2;13;2;8;;F;True;True;True;
+###200;1;Gl 475;2;13;2;8;;F;False;True;True;
 Chara;;0;2MASS J12334454+4121270,BD +42 2321,Bu 1433A,FK5 470,Gl 475,HD 109358,Hip 61317,HR 4785,LFT 924,LHS 2579,LTT 13552,PPM 53064,SAO 44230,WDS J12337+4121Aa,YPC 2895
 J2000;12 33 44.540;+41 21 27.01;118.490;0.200;False;119.19±0.78 (NStars);763.13;292.56;New Hipparcos;False;6.52
 
 
 ;;;
 ***;Star;;False;False;G0V;True
-+04.250;Spectroscopic Binary;False; ;True
++04.250;Single;False; ;True
 
  1.025; 0.050;;; 6.20; 0.10; 01.123; 00.000
-+04.910;+04.860;0.000;+03.730;+03.420;+03.200;+02.880;+02.720;5876;5828±85 (5876) [12];-0.16;0.08;-0.16 ± 0.08 (-0.19) [10];0.000;-9.99
++04.910;+04.860;0.000;+03.900;+03.589;+03.200;+02.880;+02.720;5860;5828±85 (5860) [15];-0.20;0.11;-0.20 ± 0.11 (-0.21) [13];0.070;+4.33
 ###201;1;EG 62;0;69;0;0;;F;True;True;True;
 ;;0;2MASS J08413249-3256340,CD -32 5613,EG 62,Gl 318,L 532-81,LFT 600,LHS 253,LPM 297,LTT 3218,WD 0839-327,YPC 2080.1,Zkh 121
 J2000;08 41 32.500;-32 56 34.05;118.020;1.050;False;112.3±7.2 (Spec.WD), 113.59±1.93 (SN 21);1705.80;322.30;SN 39;True;29.30
@@ -2494,7 +2499,7 @@ J2000;08 53 36.196;-03 29 32.11;117.250;0.640;False;117.98±0.76 (NStars), 109.9
 Brown Dwarf?
  0.000; 0.000;0.000305;0.000007; 0.00; 0.00; 00.107; 00.003
 +99.999;+20.800;0.000;+16.740;+14.460;+11.212;+10.469;+09.942;2564;2564;+0.16;0.00;+0.16;0.000;-9.99
-###206;1;Gl 506;3;86;0;61;;T;True;True;True;
+###206;1;Gl 506;3;86;0;61;;T;False;True;True;
 ;;0;2MASS J13182443-1818387,BD -17 3813,FK5 1345,Gl 506,HD 115617,Hip 64924,HR 5019,LFT 990,LHS 349,LPM 467,LTT 5111,NLTT 33614,NS 1318-1818,PPM 227091,SAO 157844,Tyc 6116-1517-1,WDS J13184-1819A,YPC 3039,Zkh 194
 J2000;13 18 24.314;-18 18 40.30;116.890;0.220;False;117.35±0.69 (NStars), 133.13±23.15 (RAVE DR5);1509.01;225.18;New Hipparcos;False;-8.13
 2 planets confirmed, b ~5.3 earth masses, 0.05 AU, and c ~18.8 earth masses, 0.218 AU.
@@ -2547,7 +2552,7 @@ J2000;00 20 04.470;-64 52 28.30;116.460;0.160;False;116.47±0.64 (NStars);2066.6
 +04.230;Single;False; ;True
 
  0.980; 0.000;;; 0.00; 0.00; 01.100; 00.000
-+04.820;+04.800;0.000;+03.730;+03.400;+03.190;+02.880;+02.830;5932;5900±91 (5932) [11];-0.23;0.06;-0.23 ± 0.06 (-0.20) [10];0.000;-9.99
++04.820;+04.800;0.000;+03.895;+03.569;+03.190;+02.880;+02.830;5926;5900±91 (5926) [13];-0.23;0.06;-0.23 ± 0.06 (-0.20) [11];0.000;+4.38
 ###211;1;GJ 1057;4;21;0;0;;F;True;True;True;
 ;CD;0;2MASS J03132299+0446293,GJ 1057,LHS 168,LSPM J0313+0446,NLTT 10256,YPC 665.0,Zkh 48
 J2000;03 13 22.995;+04 46 29.37;115.940;0.810;False;105.80±5.10 (MEarth), 117.10±23.40 (LG CBMD), 105.80±5.10 (CONCH-SHELL);1721.60;86.52;Carnegie Astrom. 2016;False;26.00
@@ -2596,7 +2601,7 @@ J2000;06 47 23.237;-62 32 35.52;115.000;12.000;False;;387.00;1.00;Ultracool DB;T
 ;;0;2MASS J18430697-5436481,L 273-106,LHS 5341,UCAC4 177-210565
 J2000;18 43 06.998;-54 36 47.68;114.943;22.044;False;;629.98;189.69;SN 35-2;True;0.00
 
-
+"41 Arae Link"
 ;;;
 ***;Star;;False;False;M4.5V;True
 +12.970;Single;False; ;False
@@ -2739,7 +2744,7 @@ BVRI converted/used from APASS.
 ;;0;BSO 13,CD -46 11370,CPD -46 8513,Gl 666,HD 156274,Hip 84720,WDS J17191-4638
 J2000;17 19 03.850;-46 38 10.15;113.610;0.690;False;114.17±1.34 (NStars);1043.27;84.00;New Hipparcos;False;23.00
 semi-major axis of 91.5 AUs (10.415", same parallax), an eccentricity of 0.779
-
+"41 Arae Link"
 ;;;
 ***;Star;A;True;False;G9V;True
 +05.520;Single;False; ;True
@@ -2917,11 +2922,11 @@ J2000;03 43 14.900;-09 45 49.06;110.610;0.220;False;110.83±0.82 (NStars), 43.87
 One of the nearest subgiant stars.
 
 ;;;
-***;Star;;False;False;K0IVe;True
-+03.540;Possibly Double;False;RS Can.Ven. type;True
-
+***;Star;;False;False;K1 IVe;True
++03.518;Possibly Double;False;RS Can.Ven. type;True
+BV converted from Tycho-2.
  1.200; 0.000;;; 0.00; 0.00; 02.500; 00.200
-+05.130;+04.460;0.000;+02.820;+02.320;+01.980;+01.520;+01.430;5040;5004±146 (5040) [15];+0.05;0.16;+0.05 ± 0.16 (0.10) [13];0.000;-9.99
++05.130;+04.453;0.000;+03.044;+02.576;+01.980;+01.520;+01.430;5042;5004±146 (5042) [18];+0.05;0.16;+0.05 ± 0.16 (0.10) [15];0.000;+3.05
 ###242;1;2MASS J17502484-0016151;0;59;0;0;;F;False;False;True;
 ;;0;2MASS J17502484-0016151
 J2000;17 50 24.841;-00 16 15.11;110.590;0.520;False;108.50±2.60 (Ultracool DB), 108.78±0.83 (Carnegie Astrom. 2016);443.70;297.30;NOFS-17;False;0.00
@@ -3454,8 +3459,8 @@ V-Rc and Rc-Ic from Just+ 2008.
 ;;0;2MASS J11342953-3249533,Hip 56452,HR 4458,LFT 823,LHS 308,LPM 389,LTT 4280,NLTT 27854,PPM 289079,Ruiz 439-246,SAO 202583,Tyc 7220-866-1,YPC 2678,Zkh 161
  0.840; 0.000;0.368;0; 5.70; 1.10; 00.840; 00.000
 +99.999;+06.790;0.000;+05.509;+05.085;+04.780;+04.140;+04.022;5167;5180±62 (5167) [8];-0.38;0.02;-0.38 ± 0.02 (-0.38) [6];0.036;-9.99
-***;Star;B;True;True;DC8;True
-+16.700;Single;False; ;False
+***;Star;B;True;True;DC10?;True
++15.000;Single;False; ;False
 SpecT and V from https://arxiv.org/ftp/arxiv/papers/1307/1307.8047.pdf.
 ;;0;LHS 309,NLTT 27855,VB 4,WD 1132-325,Zkh 162
 J2015;11 34 28.899;-32 49 43.72;104.839;0.405;True;104.61±0.37 (New Hipparcos);1061.66;320.82;TGAS;False;-22.21
@@ -3751,7 +3756,7 @@ J2000;11 41 21.530;-36 24 34.70;101.010;19.472;False;;589.96;64.39;SN 35-2;True;
 ;;0;2MASS J17351362-4840510,CD -48 11837,CPD -48 9312,Gl 680,Hip 86057,LTT 6988,NLTT 45045,NS 1735-4840,PPM 762852,Tyc 8346-1926-1,YPC 3981
 J2015;17 35 13.729;-48 40 44.07;101.008;0.813;False;102.15±2.70 (SN 35: 1404), 102.83±2.75 (New Hipparcos), 102.04±3.22 (SN 35-2), 102.80±2.70 (LG CBMD), 113.25±24.11 (UCAC4 NSS), 102.80±2.70 (CONCH-SHELL);471.36;9.51;TGAS;False;-40.60
 
-
+"41 Arae Link"
 ;;;
 ***;Star;;False;False;M2V;True
 +10.127;Single;False; ;False
@@ -3870,7 +3875,7 @@ J2000;22 17 18.710;-08 48 18.70;99.600;0.000;False;;537.00;239.00;;False;53.70
 ;;0;2MASS J15420677-1928167,Gl 595,Hip 76901,L 768-119,LFT 1218,LHS 54,LP 803-60,LPM 577,LTT 6273,NLTT 40918,YPC 3547,Zkh 219
 J2000;15 42 06.780;-19 28 16.71;99.420;3.460;False;101.80±4.38 (NStars), 95.90±5.59 (New Hipparcos), 99.01±4.08 (SN 35-2), 95.90±5.60 (LG CBMD), 95.90±5.60 (CONCH-SHELL);2283.00;242.90;SN 35: 1404;False;84.92
 
-
+"41 Arae Link"
 ;;;
 ***;Star;;False;False;M3VJ;True
 +11.840;Spectroscopic Binary;False; ;False
@@ -3973,7 +3978,7 @@ Gl 678.1 B s not part of this system (and is more than 100 LY away).
 ;;0;2MASS J15363450-3754223,DENIS J153634.5-375422,Gl 590,L 480-69,LFT 1212,LHS 3092,LTT 6228,NLTT 40644,YPC 3517.1
 J2000;15 36 34.500;-37 54 22.32;98.570;0.530;False;86.21±17.96 (SN 35-2), 81.60±16.30 (LG CBMD), 81.60±13.70 (CONCH-SHELL);859.60;202.41;Carnegie Astrom. 2016;False;-71.00
 
-
+"41 Arae Link"
 ;;;
 ***;Star;;False;False;M4V;True
 +12.720;Single;False; ;False
@@ -4535,7 +4540,7 @@ Some source suggest the luminosity class is better as IV-V
 ;;0;2MASS J16015650-3357070,CD -33 10873,GSC 07337-00467,LP 553-44,NLTT 41748,UCAC4 281-085391
 J2000;16 01 56.590;-33 57 06.73;94.787;19.761;False;;420.09;227.09;UCAC4 NSS;True;0.00
 
-
+"41 Arae Link"
 ;;;
 ***;Star;;False;False;M3.5V;True
 +11.795;Single;False; ;False
@@ -4575,7 +4580,7 @@ J2000;08 21 26.707;-67 03 20.12;94.710;0.540;False;93.89±1.04 (Spec.WD);760.90;
 ;;0;2MASS J15524460-2623134,DENIS J155244.6-262313,LHS 5303,LP 860-41
 J2000;15 52 44.600;-26 23 13.40;94.640;0.650;False;94.63±0.70 (SN 35: 1404), 94.63±0.70 (Ultracool DB), 94.34±0.90 (SN 35-2);493.30;154.11;Carnegie Astrom. 2016;False;12.00
 RI Fluxes and other data: See http://www.astro.gsu.edu/RECONS/published32.pdf
-
+"41 Arae Link"
 ;;;
 ***;Star;;False;False;M6.0V;True
 +16.530;Single;False; ;True
@@ -5036,7 +5041,7 @@ J2015;03 32 55.419;-44 42 04.99;91.267;0.287;False;92.93±1.92 (SN 35: 1404), 93
 ;;0;2MASS J15345704-1418486
 J2000;15 34 57.040;-14 18 48.70;91.230;0.630;False;91.74±18.15 (SN 35-2), 91.51±0.82 (SN 40);962.30;250.12;Carnegie Astrom. 2016;False;-75.50
 
-
+"41 Arae Link"
 ;;;
 ***;Star;;False;False;M8V;True
 +19.150;Single;False; ;False
@@ -5651,7 +5656,7 @@ According to the ISDB, a close orbiting binary pair.
 ;;0;2MASS J15462718-3325111,WISEP J154627.30-332508.0
 J2000;15 46 27.190;-33 25 11.20;88.000;1.900;False;;225.40;32.50;Ultracool DB;False;0.00
 
-
+"41 Arae Link"
 ;;;
 ***;Brown Dwarf;;False;False;T5.5;True
 00.0;00.0
@@ -16795,21 +16800,18 @@ J2000;03 29 21.524;-38 44 02.84;60.168;12.400;False;;79.49;337.05;UCAC4 NSS;True
 +12.548;Single;False; ;False
 
 +99.999;+14.098;0.000;+11.561;+09.989;+08.654;+08.069;+07.806;0;;+9.99;0.00;;0.018;-9.99
-###1495;3;Gl 781;4;31;0;0;;F;True;True;True;
+###1495;2;Wolf 1130;0;31;0;0;;F;True;True;True;
 ;V1531;0;AC+55 50103,G 230-26,Gl 781,Hip 98906,LFT 1521,LHS 482,LSPM J2005+5426,LTT 15889,NLTT 48723,Ross 1069b,Wolf 1130,YPC 4775.0
 J2015;20 05 00.201;+54 25 49.68;60.161;0.555;False;63.17±3.82 (New Hipparcos), 61.90±3.60 (URAT), 63.20±3.80 (LG CBMD), 63.20±3.80 (CONCH-SHELL);1469.97;232.05;TGAS;False;-107.60
 
 
 ;;;
-***;Star;A;True;False;sdM1.5;True
-+11.970;Single;False;UV Ceti type;True
+***;Star;AB;True;False;sdM1.5J;True
++11.970;White Dwarf Companion;False;UV Ceti type;True
 
 ;;0;2MASS J20050227+5426037
  0.000; 0.000;;; 0.00; 0.00; 00.302; 00.009
 +99.999;+11.970;0.000;+00.100;+99.999;+08.830;+08.346;+08.113;3563;3595±112 (3563) [3];-0.71;0.30;-0.71 ± 0.07 [2];0.000;+4.87
-***;Star;B;False;False;??;False
-N;Single;False; ;False
-
 ***;Brown Dwarf;C;True;True;sdT8;False
 00.0;00.0
 Paper: [http://iopscience.iop.org/article/10.1088/0004-637X/777/1/36/pdf].
@@ -23674,7 +23676,7 @@ See [http://iopscience.iop.org/article/10.1086/591638/pdf] for info that A is bi
 
 ;;;
 ***;Star;A;True;False;M0.5VJ;True
-+10.291;Single;False;UV Ceti type;False
++10.291;Other Binary;False;UV Ceti type;False
 
 ;;0;2MASS J03075577-2813108,Hip 14555,LTT 1479,NLTT 9987,Tyc 6444-610-1
 +12.755;+11.716;0.000;+09.365;+08.372;+07.236;+06.578;+06.367;0;;+9.99;0.00;;0.021;-9.99
@@ -27300,7 +27302,7 @@ V-Rc from Just+ 2008, V-I from OSACA. For some reason this star is usually class
 
 ;;;
 ***;Star;;False;False;G9VJ;True
-+06.888;Single;False; ;False
++06.888;Other Binary;False; ;False
 BV converted from Tycho-2.
 +08.010;+07.653;0.000;+06.464;+06.078;+05.425;+05.011;+04.917;0;;+9.99;0.00;;0.018;-9.99
 ###2454;1;Ross 488;0;86;0;0;;F;False;False;True;
@@ -27543,7 +27545,7 @@ V-Rc and Rc-Ic from Just+ 2008. Identified as a Blue Straggler (see http://mnras
 
 ;;;
 ***;Star;;False;False;F6 IV-V J;True
-+04.742;Spectroscopic Binary;False; ;False
++04.742;White Dwarf Companion;False; ;False
 BV converted from Tycho-2.
 +99.999;+05.162;0.000;+04.474;+04.212;+03.910;+03.621;+03.675;6474;6474;-0.27;0.10;-0.17;0.000;-9.99
 ###2477;1;Gliese 221;0;60;0;0;;T;False;True;True;
@@ -46348,7 +46350,7 @@ Regulus Aa is a very fast rotator and the only B star within 25 parsecs, it is a
 
 ;;;
 ***;Star;A;True;False;B7VnJ;True
-+01.356;Other Binary;False; ;False
++01.356;White Dwarf Companion;False; ;False
 
 ;;0;2MASS J10082229+1158018,BD +12 2149,FK5 380,HD 87901,Hip 49669,HR 3982,LTT 12716,NLTT 23490,PPM 127140,SAO 98967,Tyc 833-1381-1,YPC 2384
 +00.880;+01.246;0.024;+01.408;+01.441;+01.540;+01.570;+01.620;11962;11962;+9.99;0.00;;0.060;-9.99
@@ -53033,8 +53035,8 @@ J2000;03 04 02.060;+00 45 51.20;38.400;4.100;False;;235.00;81.36;MEarth;True;-30
 Might be an eclipsing binary with a white dwarf...
 
 ;;;
-***;Star;;False;False;M5.5V;True
-+17.290;Possibly Double;False; ;True
+***;Star;;False;False;M5.5VJ?;True
++17.290;White Dwarf Companion;False; ;True
 M6+WD
  0.121; 0.000;;; 0.00; 0.00; 00.168; 00.008
 +99.999;+18.669;0.000;+16.500;+13.770;+11.806;+11.216;+10.884;0;;+9.99;0.00;;0.024;-9.99
@@ -73317,7 +73319,7 @@ J2015;12 05 46.356;+53 55 48.85;30.136;0.341;False;;128.78;235.78;TGAS;False;0.0
 ###6741;1;Gliese 632.2;0;84;0;0;;F;True;False;True;
 ;;0;2MASS J16341295+7558556,BD +76 614,Gl 632.2 A,GSC 04567-00777,Hip 81139,LSPM J1634+7558,Steph 1379,Tyc 4567-777-1,UCAC4 830-015945,WDS J16342+7559 A,Wo 9570 A,YPC 3797
 J2015;16 34 13.427;+75 58 57.84;30.131;0.217;False;;178.81;36.79;TGAS;False;0.00
-The companion B is, according to some sources, not a real companion, and has very little information, no modern photometry (except GAIA G), it does not even have a 2MASS designation depsite a 5″ separation. Likley not a white dwarf (since it has no WD catalog id, and Simbad does not list it in any WD papers).
+The companion B is, according to some sources, not a real companion, and has very little information, no modern photometry (except GAIA G), it does not even have a 2MASS designation depsite a 5″ separation. Likely not a white dwarf (since it has no WD catalog id, and Simbad does not list it in any WD papers).
 
 ;;;
 ***;Star;;False;False;K5V;True

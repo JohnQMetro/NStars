@@ -29,8 +29,8 @@ object NStarsMainForm: TNStarsMainForm
       Height = 514
       Top = 2
       Width = 624
-      ActivePage = SystemNames
-      TabIndex = 0
+      ActivePage = ComponentTab
+      TabIndex = 1
       TabOrder = 0
       OnChange = SystemEditPageSetChange
       object SystemNames: TTabSheet
@@ -545,7 +545,7 @@ object NStarsMainForm: TNStarsMainForm
             end
             inherited ArityLabel: TLabel
               Height = 13
-              Width = 78
+              Width = 71
             end
             inherited CompLabel: TLabel
               Height = 13
@@ -1119,6 +1119,13 @@ object NStarsMainForm: TNStarsMainForm
       object ParallaxEntryMI: TMenuItem
         Caption = 'Enter Parallax...'
         OnClick = ParallaxEntryMIClick
+      end
+      object PosSepSetMI: TMenuItem
+        Caption = 'Set Position from Separation...'
+        OnClick = PosSepSetMIClick
+      end
+      object MenuItem1: TMenuItem
+        Caption = '-'
       end
       object APASSfluxMI: TMenuItem
         Caption = 'Enter APASS Magnitudes...'

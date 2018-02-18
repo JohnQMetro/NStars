@@ -76,9 +76,9 @@ const
         'BD','CD','L','WD','LP','LTT','NLTT','CPD','VB','EG','Gr','Tyc','2MASS',
         'UCAC4','Wo','G','Vys','DENIS','WISE','Gmb','Luhman','SCR','Sao','YPC','Sm');
 
-  ArityLabels:array[0..5] of string = ('Single','Possibly Double',
+  ArityLabels:array[0..6] of string = ('Single','Possibly Double',
       'Spectroscopic Binary', 'Other Binary', 'Double or Multiple',
-      'Eclipsing Binary');
+      'Eclipsing Binary','White Dwarf Companion');
 
 type
 
@@ -87,7 +87,7 @@ FType = (NONE,ZEROS,SPACES);
 (* Because for so many multiples, we do not have data on individual parts,
 I will instead let one object stand for many, with a tracking type... *)
 ArityType =(SINGLE, POSSIBLY_DOUBLE, SPECTROCOPIC_BINARY, OTHER_BINARY,
-                    DOUBLE_OR_MULTIPE, ECLIPSING_BINARY);
+                    DOUBLE_OR_MULTIPE, ECLIPSING_BINARY, WHITE_DWARF_BINARY);
 
 TVtypeIndex = 0..(length(vtype)-1);
 

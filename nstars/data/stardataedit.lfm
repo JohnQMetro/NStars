@@ -135,8 +135,8 @@ object CoreStarDataFrame: TCoreStarDataFrame
     Left = 99
     Height = 15
     Top = 48
-    Width = 86
-    Caption = 'Number of Stars'
+    Width = 74
+    Caption = 'Binary Status :'
     ParentColor = False
   end
   object BayerBox: TMaskEdit
