@@ -79,6 +79,7 @@ BrownDwarfInfo = class(NewStarBase)
     function GetMU:string;
     function MMIsZ:Boolean;
     function GetSunMassStr:string;
+    function GetSunMassStrCH:string;
     function MinCC:Integer; override;
     function MaxCC:Integer; override;
     // non-property method
@@ -89,6 +90,7 @@ BrownDwarfInfo = class(NewStarBase)
     property MassUncertainty:string read GetMU;
     property MassNotSet:Boolean read MMIsZ;
     property MassInSuns:string read GetSunMassStr;
+    property CHViewSafeMassInSuns:string read GetSunMassStrCH;
     // mass methods
     function SetMassString(mass_str,munc_str:string):Boolean;
     // implemented text I/O methods
@@ -294,6 +296,19 @@ begin
   Assert(sc=0);
   xm := xm /1047.56;
   Result := FloatToStrF(xm,ffGeneral,2,0);
+end;
+//--------------------------------
+(* Like the above function, but returns a 'safe' minimum of 0.011 to get around
+a bug/limitation of CHView where it refuses to display links for very low mass systems *)
+function BrownDwarfInfo.GetSunMassStrCH:string;
+var sc:Integer;
+    xm:Real;
+begin
+  Val(mass,xm,sc);
+  Assert(sc=0);
+  xm := xm /1047.56;
+  if xm < 0.011 then Result := '0.011'
+  else Result := FloatToStrF(xm,ffGeneral,2,0);
 end;
 //---------------------------------
 function BrownDwarfInfo.MinCC:Integer;

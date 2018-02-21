@@ -335,7 +335,7 @@ begin
     Inc(runlen);
     // mass
     if bdwarfx.MassNotSet then xestname := '0.04'
-    else xestname := bdwarfx.MassInSuns;
+    else xestname := bdwarfx.CHViewSafeMassInSuns;
     runlen += Length(xestname);
     Result += xestname;
     // names (the line length in CHView must be 255 or less bytes!)
