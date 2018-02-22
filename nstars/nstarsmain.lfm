@@ -14,7 +14,7 @@ object NStarsMainForm: TNStarsMainForm
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.0.6'
   object SystemEditorBox: TGroupBox
     Left = 200
     Height = 540
@@ -499,11 +499,11 @@ object NStarsMainForm: TNStarsMainForm
           Top = 8
           Width = 600
           OnChange = ComponentTabControlChange
-          TabWidth = 4
           TabIndex = 0
           Tabs.Strings = (
-            'Star 1'
+            'Brown Dwarf 1'
           )
+          TabWidth = 80
           TabOrder = 0
           inline StarDataCoreFrame: TCoreStarDataFrame
             Left = 4
@@ -542,6 +542,13 @@ object NStarsMainForm: TNStarsMainForm
             inherited VariableTypeCB: TComboBox
               Height = 21
               ItemHeight = 13
+            end
+            inherited StarNoteEdit: TMemo
+              Lines.Strings = (
+                'StarNoteEdit'
+                '2'
+                '3'
+              )
             end
             inherited ArityLabel: TLabel
               Height = 13

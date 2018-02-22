@@ -9,3 +9,5 @@ The first is the Synapse TCP/IP library, I use the trunk version found here: htt
 The second is W. Ehrhardt's DAMath, math functions that are convenient and more accurate than what is included with Free Pascal. You can find it here: http://www.wolfgang-ehrhardt.de/misc_en.html#damath
 
 In addition to the program sources, I've also included mainlist.nsl2, which is my current Nearby Star List, in the format used by the NStars program.
+
+Also, you might have to edit themes.pas in LCL to avoid ugly black rims on some tabs (see https://bugs.freepascal.org/view.php?id=25468).
