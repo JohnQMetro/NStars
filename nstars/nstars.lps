@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="57">
+    <Units Count="58">
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -21,18 +21,18 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
         <TopLine Value="650"/>
-        <CursorPos X="39" Y="657"/>
+        <CursorPos X="33" Y="655"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="collecdata.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="631"/>
-        <CursorPos X="27" Y="645"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="1528"/>
+        <CursorPos X="7" Y="1543"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -51,10 +51,11 @@
       <Unit4>
         <Filename Value="cluster.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="247"/>
-        <CursorPos X="51" Y="266"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="268"/>
+        <CursorPos X="25" Y="289"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
@@ -132,10 +133,10 @@
       <Unit13>
         <Filename Value="data\namedata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="51"/>
+        <EditorIndex Value="8"/>
         <CursorPos Y="65"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
@@ -159,10 +160,12 @@
       <Unit16>
         <Filename Value="data\stardata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="848"/>
-        <CursorPos X="25" Y="862"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="2190"/>
+        <CursorPos X="39" Y="2194"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -179,9 +182,11 @@
         <Filename Value="data\newstar.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="NewStar"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="9"/>
+        <TopLine Value="40"/>
         <CursorPos X="17" Y="659"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit18>
       <Unit19>
@@ -308,7 +313,7 @@
         <Filename Value="utilities.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Utilities"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="327"/>
         <CursorPos X="11" Y="59"/>
         <UsageCount Value="201"/>
@@ -500,8 +505,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarEstimator"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="805"/>
-        <CursorPos Y="825"/>
+        <CursorPos X="6"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
           <Item0 X="23" Y="1507"/>
@@ -520,6 +524,13 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit49>
       <Unit50>
+        <Filename Value="data\starexport.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="15"/>
+        <UsageCount Value="22"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit50>
+      <Unit51>
         <Filename Value="data\newestutils.pas"/>
         <UnitName Value="NewEstUtils"/>
         <EditorIndex Value="-1"/>
@@ -527,23 +538,23 @@
         <CursorPos X="4" Y="224"/>
         <UsageCount Value="174"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit50>
-      <Unit51>
+      </Unit51>
+      <Unit52>
         <Filename Value="data\estutilsextra.pas"/>
         <UnitName Value="EstUtilsExtra"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="31" Y="12"/>
         <UsageCount Value="174"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit51>
-      <Unit52>
+      </Unit52>
+      <Unit53>
         <Filename Value="stardata\estutils.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="26" Y="3"/>
         <UsageCount Value="173"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit52>
-      <Unit53>
+      </Unit53>
+      <Unit54>
         <Filename Value="data\estutilscore.pas"/>
         <UnitName Value="EstUtilsCore"/>
         <EditorIndex Value="-1"/>
@@ -554,8 +565,8 @@
           <Item0 Y="45"/>
         </Bookmarks>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit53>
-      <Unit54>
+      </Unit54>
+      <Unit55>
         <Filename Value="import\arcins_load.pas"/>
         <HasResources Value="True"/>
         <EditorIndex Value="-1"/>
@@ -563,16 +574,16 @@
         <CursorPos X="5" Y="127"/>
         <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit54>
-      <Unit55>
+      </Unit55>
+      <Unit56>
         <Filename Value="data\locationdata.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="918"/>
         <CursorPos X="37" Y="929"/>
         <UsageCount Value="65"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit55>
-      <Unit56>
+      </Unit56>
+      <Unit57>
         <Filename Value="..\DAMath\damath.pas"/>
         <UnitName Value="DAMath"/>
         <EditorIndex Value="-1"/>
@@ -580,117 +591,143 @@
         <CursorPos Y="1423"/>
         <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit56>
+      </Unit57>
     </Units>
-    <JumpHistory Count="19" HistoryIndex="18">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
-        <Filename Value="stardata\sptfluxest.pas"/>
-        <Caret Line="843" Column="46" TopLine="829"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="1892" Column="48" TopLine="1872"/>
       </Position1>
       <Position2>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="91" Column="25" TopLine="73"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="1938" Column="17" TopLine="1924"/>
       </Position2>
       <Position3>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="825" TopLine="805"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="1993" Column="34" TopLine="1967"/>
       </Position3>
       <Position4>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="62" Column="42" TopLine="50"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="1999" Column="46" TopLine="1981"/>
       </Position4>
       <Position5>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="365" Column="19" TopLine="355"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2054" Column="32" TopLine="2025"/>
       </Position5>
       <Position6>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="371" Column="14" TopLine="361"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="28" Column="31" TopLine="13"/>
       </Position6>
       <Position7>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="372" Column="14" TopLine="361"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2094" Column="36" TopLine="2075"/>
       </Position7>
       <Position8>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="376" Column="46" TopLine="361"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2101" Column="36" TopLine="2082"/>
       </Position8>
       <Position9>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="377" Column="32" TopLine="361"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2000" Column="27" TopLine="1985"/>
       </Position9>
       <Position10>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="379" Column="45" TopLine="361"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2159" Column="19" TopLine="2144"/>
       </Position10>
       <Position11>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="390" Column="10" TopLine="377"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2162" Column="69" TopLine="2147"/>
       </Position11>
       <Position12>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="391" Column="19" TopLine="377"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2175" Column="18" TopLine="2148"/>
       </Position12>
       <Position13>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="394" Column="19" TopLine="377"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2188" Column="7" TopLine="2164"/>
       </Position13>
       <Position14>
-        <Filename Value="collecdata.pas"/>
-        <Caret Line="53" Column="58" TopLine="42"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2178" Column="74" TopLine="2163"/>
       </Position14>
       <Position15>
-        <Filename Value="collecdata.pas"/>
-        <Caret Line="54" Column="26" TopLine="42"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2198" Column="30" TopLine="2176"/>
       </Position15>
       <Position16>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="382" Column="20" TopLine="378"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2212" Column="14" TopLine="2191"/>
       </Position16>
       <Position17>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="440" Column="39" TopLine="432"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2211" Column="37" TopLine="2191"/>
       </Position17>
       <Position18>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="450" Column="27" TopLine="431"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2194" Column="28" TopLine="2179"/>
       </Position18>
       <Position19>
-        <Filename Value="collecdata.pas"/>
-        <Caret Line="645" Column="36" TopLine="634"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2232" Column="42" TopLine="2207"/>
       </Position19>
+      <Position20>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2242" Column="36" TopLine="2221"/>
+      </Position20>
+      <Position21>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2246" Column="42" TopLine="2221"/>
+      </Position21>
+      <Position22>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2265" Column="34" TopLine="2239"/>
+      </Position22>
+      <Position23>
+        <Filename Value="cluster.pas"/>
+        <Caret Line="7" Column="43"/>
+      </Position23>
+      <Position24>
+        <Filename Value="cluster.pas"/>
+        <Caret Line="273" Column="14" TopLine="255"/>
+      </Position24>
+      <Position25>
+        <Filename Value="cluster.pas"/>
+        <Caret Line="274" Column="36" TopLine="258"/>
+      </Position25>
+      <Position26>
+        <Filename Value="cluster.pas"/>
+        <Caret Line="283" Column="38" TopLine="268"/>
+      </Position26>
+      <Position27>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="1519" Column="38" TopLine="1497"/>
+      </Position27>
+      <Position28>
+        <Filename Value="cluster.pas"/>
+        <Caret Line="289" Column="25" TopLine="268"/>
+      </Position28>
+      <Position29>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2194" Column="21" TopLine="2178"/>
+      </Position29>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="4">
+    <BreakPoints Count="2">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="data\stardata.pas"/>
-        <Line Value="1539"/>
+        <Line Value="1083"/>
       </Item1>
       <Item2>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="data\stardata.pas"/>
-        <Line Value="1620"/>
+        <Line Value="1164"/>
       </Item2>
-      <Item3>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="collecdata.pas"/>
-        <Line Value="1363"/>
-      </Item3>
-      <Item4>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="collecdata.pas"/>
-        <Line Value="1348"/>
-      </Item4>
     </BreakPoints>
     <Watches Count="2">
       <Item1>

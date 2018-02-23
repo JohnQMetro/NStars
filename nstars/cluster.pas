@@ -260,14 +260,18 @@ procedure ClusterData.SaveToCHview(fnin:TFileName; oparams:SysOutParams);
 var outfile:Text;
     chdata:string;
     I,csc,lsc:Integer;
+    outputter:SystemOutputter;
 begin
   // preparing the new file
   AssignFile(outfile,fnin);
   Rewrite(outfile);
   csc := Length(cluster_systems);
+  outputter := SystemOutputter.Create;
+  outputter.params := oparams;
   // writing main systems
   for I := 0 to csc - 1 do begin
-    chdata := cluster_systems[I].MakeChView(oparams);
+    outputter.system := cluster_systems[I];
+    chdata := outputter.MakeChView();
     chdata := Trim(chdata);
     Writeln(outfile,chdata);
     Flush(outfile);
@@ -275,12 +279,14 @@ begin
   // writing linked systems
   lsc := Length(linked_systems)-1;
   for I := 0 to lsc do begin
-    chdata := linked_systems[I].MakeChView(oparams);
+    outputter.system := linked_systems[I];
+    chdata := outputter.MakeChView();
     chdata := Trim(chdata);
     Writeln(outfile,chdata);
     Flush(outfile);
   end;
   CloseFile(outfile);
+  FreeAndNil(outputter);
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // misc methods

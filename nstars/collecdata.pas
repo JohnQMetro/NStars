@@ -1506,38 +1506,48 @@ procedure StarList.SaveToCHview(fnin:TFileName; oparams:SysOutParams);
 var outfile:Text;
     chdata:string;
     I:Integer;
+    outputter:SystemOutputter;
 begin
   // preparing the new file
   AssignFile(outfile,fnin);
   Rewrite(outfile);
+  outputter := SystemOutputter.Create;
+  outputter.params := oparams;
   // writing
   for I := 0 to maincount - 1 do begin
-    chdata := System_List[I].MakeChView(oparams);
+    outputter.system := System_List[I];
+    chdata := outputter.MakeChView();
     DeUnicode(chdata);
     chdata := Trim(chdata);
     Writeln(outfile,StringToLatin1(chdata));
     Flush(outfile);
   end;
   CloseFile(outfile);
+  FreeAndNil(outputter);
 end;
 //-----------------------------------------------------------
 procedure StarList.SaveToAstrosynthesis(fnin:TFileName; oparams:SysOutParams);
 var outfile:TextFile;
     asdata:string;
     I:Integer;
+    outputter:SystemOutputter;
 begin
   // preparing the new file
   AssignFile(outfile,fnin);
   Rewrite(outfile);
+  outputter := SystemOutputter.Create;
+  outputter.params := oparams;
   // writing
   for I := 0 to maincount - 1 do begin
-    asdata := System_List[I].MakeAstroSynthesis(oparams);
+    outputter.system := System_List[I];
+    asdata := outputter.MakeAstroSynthesis();
     DeUnicode(asdata);
     asdata := Trim(asdata);
     Writeln(outfile,StringToLatin1(asdata));
     Flush(outfile);
   end;
   CloseFile(outfile);
+  FreeAndNil(outputter);
 end;
 //-----------------------------------------------------------
 procedure StarList.Save;

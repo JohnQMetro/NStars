@@ -14,19 +14,7 @@ type
 TConstCount = 1..88;
 TPrefName = 0..4;
 TBayerRange = 0..67;
-//----------------------------------------------------------
-// output parameters
-SysOutParams = class
-  public
-    idOffset,TargetYear:Integer;
-    allcaplum:Integer;
-    is2300ad,splitsys:Boolean;
-    addpquest:Boolean;
-    constructor Create;
-    function SetTargYear(src:string):Boolean;
-    function SetIDOffset(src:string):Boolean;
-    function SetAllCapsLum(src:string):Boolean;
-end;
+
 //----------------------------------------------------------
 StarSystem = class (StarBase)
   protected
@@ -42,18 +30,8 @@ StarSystem = class (StarBase)
     function MaxCInd:Integer;
     function MultiParts:Boolean;
     // I/O related methods (Private helper)
-    function GetCHVNames(sindex,maxlen:Integer):string;
-    function CHViewSpecHelp(inspec:string; var rxlen:Integer):String;
-    function ToCHViewStar(sindex,targyear:Integer; plen:Integer):string;
-    function GetOutputLabel(oparams:SysOutParams; isCHView:Boolean):string;
     function GetComponentBaseLabel(is2300ad:Boolean):string;
     function GetIDString:string;
-    function MakeUncStr(opt:Boolean):string;
-    // astrosynthesis output methods (private)
-    function AstroCatIDs(stardex:Integer):string;
-    function AsOffsetLocat(indexw:Integer):string;
-    function MakeMultiStarAstroLine(oparams:SysOutParams; stardex:Integer):string;
-    function MakeAstrosynLine(oparams:SysOutParams; compdata:string; stardex:Integer):string;
     // more private methods
     function SimbNamChk(simbad_in:SimbadData; whatc:string):Boolean;
     function StarSimbad(var thestar:StarInfo; simbad_in:SimbadData):Boolean;
@@ -95,6 +73,7 @@ StarSystem = class (StarBase)
     function MakeVariableName:string;
     function MakeBayerStarName(index:Integer):string;
     function MakeVariableStarName(index:Integer):string;
+    function GetNameSet(index:Integer):StarName;
     (* text i/o *)
     function MakeLine1:string;
     function FromLine1(inval:string):Integer;
@@ -103,8 +82,6 @@ StarSystem = class (StarBase)
     // Text File I/O
     function WriteToTextFile(var outfile:TextFile):Boolean;
     procedure ReadFromTextFile(var infile:TextFile);
-    function MakeChView(oparams:SysOutParams):string;
-    function MakeAstroSynthesis(oparams:SysOutParams):string;
 
     (* Simple info methods *)
     function GetId:Integer;
@@ -161,6 +138,43 @@ StarSystem = class (StarBase)
     destructor Destroy; override;
 end;
 
+// output parameters
+SysOutParams = class
+  public
+    idOffset,TargetYear:Integer;
+    allcaplum:Integer;
+    is2300ad,splitsys:Boolean;
+    addpquest:Boolean;
+    constructor Create;
+    function SetTargYear(src:string):Boolean;
+    function SetIDOffset(src:string):Boolean;
+    function SetAllCapsLum(src:string):Boolean;
+end;
+//+++++++++++++++++++++++++++++++++++++++++++++
+SystemOutputter = class
+  protected
+    // chview output
+    function GetCHVNames(sindex,maxlen:Integer):string;
+    function CHViewSpecHelp(inspec:string; var rxlen:Integer):String;
+    function ToCHViewStar(sindex,targyear:Integer; plen:Integer):string;
+    // output labels
+    function GetOutputLabel(isCHView:Boolean):string;
+    function MakeUncStr(opt:Boolean):string;
+    // astrosynthesis output methods (private)
+    function AstroCatIDs(stardex:Integer):string;
+    function AsOffsetLocat(indexw:Integer):string;
+    function MakeMultiStarAstroLine(stardex:Integer):string;
+    function MakeAstrosynLine(compdata:string; stardex:Integer):string;
+  public
+    params:SysOutParams;
+    system:StarSystem;
+
+    function MakeChView():string;
+    function MakeAstroSynthesis():string;
+
+
+end;
+
 function BrownDwarfSpectra(specstr:string):Boolean;
 
 // a function that is meant to get a simbad object for a tgas entry
@@ -169,45 +183,6 @@ function TGASToSimbad(inpllx:TGASData):SimbadData;
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 implementation
-//=============================================================
-constructor SysOutParams.Create;
-begin
-  idOffset := 10000;
-  TargetYear := -1;
-  is2300ad := False;
-  splitsys := True;
-  addpquest := True;
-  allcaplum := 10;
-end;
-//----------------------------------------------
-function SysOutParams.SetTargYear(src:string):Boolean;
-var sc:Integer;
-begin
-  Result := False;
-  if Length(src)=0 then Exit;
-  Val(src,TargetYear,sc);
-  Result := (sc=0);
-end;
-//----------------------------------------------
-function SysOutParams.SetIDOffset(src:string):Boolean;
-var sc:Integer;
-begin
-  Result := False;
-  src := Trim(src);
-  if Length(src)=0 then Exit;
-  Val(src,idOffset,sc);
-  Result := (sc=0);
-end;
-//----------------------------------------------
-function SysOutParams.SetAllCapsLum(src:string):Boolean;
-var sc:Integer;
-begin
-  Result := False;
-  src := Trim(src);
-  if Length(src)=0 then Exit;
-  Val(src,allcaplum,sc);
-  Result := (sc=0);
-end;
 //=============================================================
 (* the purpose of this odd helper method is to count how
 many stars in the system have a particular Bayer superscript.
@@ -270,378 +245,20 @@ begin
   Result := Length(new_components)>1;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-function StarSystem.GetCHVNames(sindex,maxlen:Integer):string;
-var xname:StarName;
-begin
-  if (not new_components[sindex].HasNames) then xname := nameset
-  else xname := new_components[sindex].GetNames;
-  Result := xname.LimitedListofCats(maxlen);
-  Result := AnsiReplaceStr(Result,'/','|');
-end;
-//----------------------------------------
-function StarSystem.CHViewSpecHelp(inspec:string; var rxlen:Integer):String;
-begin
-  Result := AnsiReplaceStr(inspec,'/','-');
-  rxlen += Result.Length;
-end;
-//-----------------------------------------
-function StarSystem.ToCHViewStar(sindex,targyear:Integer; plen:Integer):string;
-var locatio:Location;
-    starx:StarInfo;     bdwarfx:BrownDwarfInfo;
-    sdata1,sdata2:EstimationParser;
-    dist_val,distspec,buf1:string;
-    constl_str,namez,coordstr:string;
-    secondstar,splitres:Boolean;
-    mass_str,xestname:string;
-    runlen:Integer;
-begin
-  Assert(sindex>=0);
-  Assert(sindex<=MaxCInd);
-  // startup
-  secondstar := False;
-  Result := '/';
-  runlen := plen -1;
-  // preparing location
-  if id > 1 then begin
-    if not new_components[sindex].HasLocation then locatio := the_location
-    else locatio := new_components[sindex].GetLocation;
-    dist_val := locatio.GetDistanceStr(4,targyear,False);
-  end else begin
-    dist_val := '0';
-  end;
-  // constellation
-  constl_str := constellations[(constellation-1)*3];
-  // co-ordinates
-  if id > 1 then begin
-    if targyear < 0 then coordstr := locatio.GetXYZ_CSV(4)
-    else coordstr := locatio.GetXYZatYear_CSV(targyear,4);
-  end
-  else coordstr := '0,0,0';
-  // making the combo strings
-  distspec := '/' + dist_val + '/';
-  runlen += Length(distspec);
-  runlen += 3 + Length(constl_str) + Length(coordstr);
-  // combo2 := '/' + constl_str + '/' + namez + '/' + coordstr;
-
-  // brown dwarf...
-  if new_components[sindex].isBrownDwarf then begin
-    bdwarfx := BrownDwarfInfo(new_components[sindex]);
-    xestname := Trim(AnsiReplaceStr(GetPreferredName,'/',' '));
-    xestname := xestname + ' ' + Trim(bdwarfx.Component);
-    runlen += Length(xestname);
-    Result += xestname;
-    Result += distspec + CHViewSpecHelp(new_components[sindex].SpectralClass,runlen);
-    Result += '/';
-    Inc(runlen);
-    // mass
-    if bdwarfx.MassNotSet then xestname := '0.04'
-    else xestname := bdwarfx.CHViewSafeMassInSuns;
-    runlen += Length(xestname);
-    Result += xestname;
-    // names (the line length in CHView must be 255 or less bytes!)
-    namez := GetCHVNames(sindex,253-runlen);
-    // finishing
-    Result += '/' + constl_str + '/' + namez + '/' + coordstr + sLineBreak;
-  end
-  // the sun...
-  else if GetId = 1 then begin
-    Result += 'Sol/0/G2V/1///0,0,0';
-  end
-  // normal stars
-  else begin
-    starx := StarInfo(new_components[sindex]);
-    sdata1 := starx.estimator;
-    sdata1.BackupMS();
-    secondstar := (starx.MinPartCount >1);
-    // second star splitting
-    if secondstar then begin
-       splitres := StarSplitGeneral(starx,locatio.ParallaxMAS,sdata2);
-    end
-    else begin
-        sdata2 := nil;
-        splitres := False;
-    end;
-    // writing what might be the only star...
-    // component id, name, and dist/spec
-    if (not secondstar) then buf1 := ' ' + starx.Component
-    else buf1 := SplitComponent(starx.Component,True);
-    xestname  := Trim(AnsiReplaceStr(GetPreferredName,'/','|'));
-    xestname += ' ' + Trim(buf1);
-    runlen += Length(xestname);
-    Result += xestname;
-    Result += distspec + CHViewSpecHelp(sdata1.StoredSpectra,runlen);
-    if sdata1.LuminosityClass  = lGiant then begin
-      Result += '*';
-      Inc(runlen);
-    end;
-    Result += '/';
-    Inc(runlen);
-    // mass
-    mass_str := starx.GetMassString;
-    runlen += Length(mass_str);
-    Result += mass_str;
-    // names
-    namez := GetCHVNames(sindex,255-runlen);
-    Result += '/' + constl_str + '/' + namez + '/' + coordstr + sLineBreak;
-
-    // writing the second star (if need be)
-    if secondstar then begin
-      // component id, name, and dist/spec
-      buf1 := SplitComponent(starx.Component,False);
-      xestname  := Trim(AnsiReplaceStr(GetPreferredName,'/','|'));
-      xestname += ' ' + Trim(buf1);
-      Result += '/' + xestname;
-      Result += '/' + dist_val + '/';
-      buf1 := sdata2.StoredSpectra;
-      if buf1 = 'DA7??' then buf1 := 'DA??';
-      Result += CHViewSpecHelp(buf1,runlen);
-      // mass
-      mass_str := sdata2.MassEstimateExport;
-      Result += '/' + mass_str;
-      Result += '/' + constl_str + '//' + coordstr + sLineBreak;
-
-      // cleaning up afterwards...
-      sdata2.Free;
-      sdata1.RestoreMS(True);
-    end;
-    // end of star output
-  end;
-  // done
-end;
-//-----------------------------------------------------------
-(* a helper function to generate ChView and Astrosynthesis
-system labels *)
-function StarSystem.GetOutputLabel(oparams:SysOutParams; isCHView:Boolean):string;
-var minc,maxc:Integer;   buf1:string;
-    curstar:StarInfo;    highl:Boolean;
-begin
-  Assert(oparams<>nil);
-  // we prepare the system name
-  minc := GetMinCount;
-  maxc := GetMaxCount;
-  if maxc >1 then begin
-    Str(maxc,buf1);
-    buf1 := ' (' + Trim(buf1);
-    if maxc <> minc then buf1 += '?';
-    buf1 += ')';
-  end;
-  // uppercase luminosity
-  highl := False;
-  if oparams.allcaplum >= 0 then begin
-    if new_components[0].isBrownDwarf then highl := False
-    else if GetId = 1 then highl:= False
-    else begin
-      curstar := StarInfo(new_components[0]);
-      highl := (curstar.estimator.VisualLuminosity) >= (oparams.allcaplum);
-    end;
-  end;
-  // getting the name
-  if oparams.is2300ad then begin
-    if highl then Result := AnsiUpperCase(Get2300adName)
-    else Result := Get2300adName;
-  end
-  else begin
-    if highl then Result := AnsiUpperCase(GetPreferredName)
-    else Result := GetPreferredName;
-  end;
-  if isCHView then Result := AnsiReplaceStr(Result,'/','|');
-  // adding the arity
-  if (maxc>1) then Result := Result + buf1;
-  // question marks for the location
-  if oparams.addpquest then Result := Result + ' ' + MakeUncStr(false);
-end;
-//-------------------------------------------------------------
 function StarSystem.GetComponentBaseLabel(is2300ad:Boolean):string;
 begin
   // getting the name
   if is2300ad then Result := Get2300adName
   else Result := GetPreferredName;
 end;
-//-----------------------------------------------------------
+//------------------------------------------------------
 function StarSystem.GetIDString:string;
 begin
   Str(id,Result);
   Result := Trim(Result);
 end;
-//-----------------------------------------------------------
-(* we use thus string to encapsulate question marks concerning the
-uncertainty in parallax *)
-function StarSystem.MakeUncStr(opt:Boolean):string;
-var lyrange:Real;
-begin
-  Result := '';
-  if id = 1 then Exit;
-  // version 1
-  if opt then begin
-    if the_location.GetLYRange(False) > 1 then Result := '?';
-    if the_location.uncertain then Result := Result + '??';
-  end
-  // version 2
-  else begin
-    // parallax uncertainty
-    lyrange := the_location.GetLYRange(True);
-    if the_location.uncertain then Result += '?';
-    if lyrange>0.3 then begin
-      Result := '?';
-      if lyrange>1 then Result := Result+'?';
-      if lyrange>2 then Result := Result+'?';
-      if lyrange>4 then Result := Result+'?';
-      if lyrange>10 then Result := Result+'?';
-    end;
-  end;
-end;
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-function StarSystem.AstroCatIDs(stardex:Integer):string;
-var qcurr_names:StarName;
-    catlist:string;
-begin
-  // checks
-  Assert(stardex>=0);
-  Assert(stardex<GetCompC);
-  catlist := '';
-  // starting the result
-  if GetCompC = 1 then begin
-    if nameset <> nil then catlist := nameset.ListOfCats;
-  end
-  else begin
-    if (not new_components[stardex].HasNames) then qcurr_names := nil
-    else qcurr_names := new_components[stardex].GetNames;
-    if qcurr_names <> nil then catlist := qcurr_names.ListOfCats;
-  end;
-  // finishing...
-  if catlist = '' then Result := ''
-  else Result := ' Catalog IDs : ' + catlist;
-end;
-//-------------------------------------------------
-function StarSystem.AsOffsetLocat(indexw:Integer):string;
-begin
-  Assert(indexw>=0);
-  if indexw = 0 then Result := '0,0,0'
-  else if indexw = 1 then Result := '5,0,0'
-  else if indexw = 2 then Result := '10,0,0'
-  else Result := '15,0,0';
-end;
-//---------------------------------------------------------
-function StarSystem.MakeMultiStarAstroLine(oparams:SysOutParams; stardex:Integer):string;
-var star_obj:StarInfo;
-    xid,xname,starname1,starname2,buf2:string;
-    sdata1,sdata2:EstimationParser;
-    locat1,locat2:string;
-    hloc,splitres:Boolean;
-    theparallax:Double;
-begin
-  Assert(oparams<>nil);
-  Assert(stardex>=0);
-  Assert(stardex<GetCompC);
-  Assert(not new_components[stardex].isBrownDwarf);
-  Assert(new_components[stardex].MinPartCount>1);
-  // starting off
-  star_obj := StarInfo(new_components[stardex]);
-  Str(id+oparams.idoffset,xid);
-  sdata1 := star_obj.estimator;
-  sdata1.BackupMS();
-  // second star splitting
-  if star_obj.HasLocation then theparallax := star_obj.GetLocation().ParallaxMAS
-  else theparallax := the_location.ParallaxMAS;
-  splitres := StarSplitGeneral(star_obj,theparallax,sdata2);
-  // the names
-  if (not star_obj.GetProperName(xname,constellation)) then begin
-    xname := GetComponentBaseLabel(oparams.is2300ad);
-  end;
-  starname1 := xname + ' ' + SplitComponent(star_obj.Component,True);
-  starname2 := xname + ' ' + SplitComponent(star_obj.Component,False);
-    // id and name
-  Result += xid + ',';
-  if (not new_components[stardex].GetProperName(xname,constellation)) then begin
-    xname := GetComponentBaseLabel(oparams.is2300ad);
-    if GetCompC > 1 then xname += ' ' + new_components[stardex].Component;
-  end;
-  Result += xname + ',';
-  // the xyz location, which can be a bit tricky
-  hloc := star_obj.HasLocation;
-  // locations are in relative AU
-  if (not hloc) then begin
-    // here, the locations are just to separate the components
-    locat1 := AsOffsetLocat(stardex);
-    if stardex = 0 then locat2 := '2,0,0'
-    else if stardex = 1 then locat2 := '7,0,0'
-    else if stardex = 2 then locat2 := '12,0,0'
-    else locat2 := '17,0,0';
-  end
-  else begin
-    // here, we have an actual separate location
-    locat1 := star_obj.GetLocation.MakeAstrosynXYZ_AUOffsetString(the_location,locat2);
-  end;
 
-  // producing Star 1
-  if sdata1.LuminosityClass = lWhiteDwarf then Result := 'White Dwarf,'
-  else Result := 'Star,';
-  Result += xid + ',' + starname1 + ',' + locat1 + ',';
-  // star 1 mass,radus,luminosity
-  Result += star_obj.GetMassRadiusLuminosity + ',';
-  // star1 spectral classification and color
-  Result += sdata1.StoredSpectra + ',,';
-  // field 12 (Notes)
-  // finally, notes. I'll add distance and catalog ids for now
-  Result += DistToSol(stardex);
-  Result += AstroCatIDs(stardex);
-  Result += sLineBreak;
 
-  // Star 2 (the estimated star)
-  Result += 'Star,' + xid + ',' + starname2 + ',' + locat2 + ',';
-  // star 2 mass,radius,luminosity
-  Result += sdata2.GetMassRadiusBLuminosity + ',';
-  // star 2 spectral classification and color
-  buf2 := sdata2.StoredSpectra;
-  if buf2 = 'DA7??' then Result += 'DA??,,'
-  else Result += buf2 + ',,';
-  // field 12 (notes)
-  Result += 'Binary with no data for components: many guesses here.';
-  Result += sLineBreak;
-
-  // cleaning up the split
-  sdata1.RestoreMS(True);
-  sdata2.Free;
-end;
-//-----------------------------------------------------------
-function StarSystem.MakeAstrosynLine(oparams:SysOutParams; compdata:string; stardex:Integer):string;
-var xid,notusedl:string;
-    xname:string;
-    cloc:Location;
-begin
-  if new_components[stardex].ClassifySpectralType = WHITE_DWARF then Result := 'White Dwarf,'
-  else Result := 'Star,';     // annoyingly, there is no special brown dwarf csv option
-  Str(id+oparams.idoffset,xid);
-  // id and name
-  Result += xid + ',';
-  if (not new_components[stardex].GetProperName(xname,constellation)) then begin
-    xname := GetComponentBaseLabel(oparams.is2300ad);
-    if GetCompC > 1 then xname += ' ' + new_components[stardex].Component;
-  end;
-  Result += xname + ',';
-  // location
-  if GetCompC > 1 then begin
-    if (not new_components[stardex].HasLocation) then Result += AsOffsetLocat(stardex)
-    else begin
-      cloc := new_components[stardex].GetLocation;
-      Result += cloc.MakeAstrosynXYZ_AUOffsetString(the_location,notusedl);
-    end;
-  end
-  else if id = 1 then Result += '0,0,0'
-  else begin
-    if oparams.targetyear < 0 then Result += the_location.MakeAstrosynXYZString(4)
-    else Result += the_location.GetAstrosynthesisXYZatYear_String(oparams.targetyear,4);
-  end;
-  // compdata (mass, diameter, luminosity)
-  Result += ',' + compdata + ',';
-  // spectra and color
-  if id = 1 then Result += 'G2V,,'
-  else Result += new_components[stardex].SpectralClass + ',,';
-  // finally, notes. I'll add distance and catalog ids for now
-  Result += DistToSol(stardex);
-  Result += AstroCatIDs(stardex);
-  Result += sLineBreak;
-end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function StarSystem.SimbNamChk(simbad_in:SimbadData; whatc:string):Boolean;
 var simbc:string;
@@ -984,6 +601,13 @@ begin
   end
   else Result := '';
 end;
+//---------------------------------------------------
+function StarSystem.GetNameSet(index:Integer):StarName;
+begin
+  if (not new_components[index].HasNames) then Result := nameset
+  else Result := new_components[index].GetNames;
+end;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* text i/o *)
 function StarSystem.MakeLine1:string;
@@ -1207,86 +831,6 @@ begin
   end;
   // done
 
-end;
-//-----------------------------------------------------------
-function StarSystem.MakeChView(oparams:SysOutParams):string;
-var I,plen:Integer;
-begin
-  Result := GetOutputLabel(oparams,True);
-  plen := Length(Result);
-  // we loop over the stars
-  for I := 0 to MaxCInd do begin
-    Result += ToCHViewStar(I,oparams.TargetYear,plen);
-  end;
-end;
-//-----------------------------------------------------
-function StarSystem.MakeAstroSynthesis(oparams:SysOutParams):string;
-var systemname:string;
-    outidstr:string;  locationstr:string;
-    aritydex:Integer; cstar:StarInfo;
-    cbdwarf:BrownDwarfInfo;
-    properties:string;
-begin
-  Result := '';
-  // we prepare the system name and id string
-  systemname := Trim(GetOutputLabel(oparams,False));
-  Str(id+oparams.idoffset,outidstr);
-
-  (* The output is very different depending on the number of stars, but each
-  line always has 12 fields, separated by commas *)
-  // if the system is a multiple one
-  if GetMinCount>1 then begin
-    // system location string
-    if oparams.TargetYear < 0 then locationstr := the_location.MakeAstrosynXYZString(4)
-    else locationstr := the_location.GetAstrosynthesisXYZatYear_String(oparams.TargetYear,4);
-    // the first line is a 'system' one
-    Result := 'Multiple,' + outidstr + ',' + systemname + ',' + locationstr;
-    // no mass, radius, luminosity, spectral type, or colour
-    Result := Result + ',,,,,,';
-    // notes...
-    Result += DistToSol(0) + 'Catalog IDs : ' + nameset.ListOfCats + sLineBreak;
-
-    // now, output lines for each component
-    for aritydex := 0 to MaxCInd do begin
-      // brown dwarf
-      if new_components[aritydex].isBrownDwarf then begin
-        cbdwarf := BrownDwarfInfo(new_components[aritydex]);
-        if cbdwarf.MassNotSet then properties := '0.04'
-        else properties := cbdwarf.MassInSuns;
-        properties += ',' + '0.1' + ',' + '0.0000001';
-        Result += MakeAstrosynLine(oparams,properties,aritydex);
-      end
-      // single star
-      else if new_components[aritydex].MinPartCount = 1 then begin
-        cstar := StarInfo(new_components[aritydex]);
-        properties := cstar.GetMassRadiusLuminosity;
-        Result += MakeAstrosynLine(oparams,properties,aritydex);
-      end
-      // multiple star
-      else begin
-        Result += MakeMultiStarAstroLine(oparams,aritydex);
-      end;
-    end;
-    // done with adding the various stars
-  end
-  // the single component version
-  else begin
-    // brown dwarf
-    if new_components[0].isBrownDwarf then begin
-      cbdwarf := BrownDwarfInfo(new_components[0]);
-      if cbdwarf.MassNotSet then properties := '0.04'
-      else properties := cbdwarf.MassInSuns;
-      properties += ',' + '0.1' + ',' + '0.0000001';
-      Result += MakeAstrosynLine(oparams,properties,0);
-    end
-    // single star
-    else begin
-      cstar := StarInfo(new_components[0]);
-      properties := cstar.GetMassRadiusLuminosity;
-      Result += MakeAstrosynLine(oparams,properties,0);
-    end
-  end;
-  // done
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* Simple info methods *)
@@ -2246,6 +1790,484 @@ begin
   else downurl := MakeSimbadIdLookupURL('Tyc ' + tycid);
   Result := GetSimbadDataURL(downurl,discardfail);
 end;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+constructor SysOutParams.Create;
+begin
+  idOffset := 10000;
+  TargetYear := -1;
+  is2300ad := False;
+  splitsys := True;
+  addpquest := True;
+  allcaplum := 10;
+end;
+//----------------------------------------------
+function SysOutParams.SetTargYear(src:string):Boolean;
+var sc:Integer;
+begin
+  Result := False;
+  if Length(src)=0 then Exit;
+  Val(src,TargetYear,sc);
+  Result := (sc=0);
+end;
+//----------------------------------------------
+function SysOutParams.SetIDOffset(src:string):Boolean;
+var sc:Integer;
+begin
+  Result := False;
+  src := Trim(src);
+  if Length(src)=0 then Exit;
+  Val(src,idOffset,sc);
+  Result := (sc=0);
+end;
+//----------------------------------------------
+function SysOutParams.SetAllCapsLum(src:string):Boolean;
+var sc:Integer;
+begin
+  Result := False;
+  src := Trim(src);
+  if Length(src)=0 then Exit;
+  Val(src,allcaplum,sc);
+  Result := (sc=0);
+end;
+//============================================================================
+function SystemOutputter.GetCHVNames(sindex,maxlen:Integer):string;
+var xname:StarName;
+begin
+  xname := system.GetNameSet(sindex);
+  Result := xname.LimitedListofCats(maxlen);
+  Result := AnsiReplaceStr(Result,'/','|');
+end;
+//----------------------------------------
+function SystemOutputter.CHViewSpecHelp(inspec:string; var rxlen:Integer):String;
+begin
+  Result := AnsiReplaceStr(inspec,'/','-');
+  rxlen += Result.Length;
+end;
+//-----------------------------------------
+function SystemOutputter.ToCHViewStar(sindex,targyear:Integer; plen:Integer):string;
+var locatio:Location;
+    starx:StarInfo;     bdwarfx:BrownDwarfInfo;
+    sdata1,sdata2:EstimationParser;
+    dist_val,distspec,buf1:string;
+    constl_str,namez,coordstr:string;
+    secondstar,splitres:Boolean;
+    mass_str,xestname:string;
+    runlen:Integer;
+begin
+  Assert(sindex>=0);
+  Assert(sindex<=system.MaxCInd);
+  // startup
+  secondstar := False;
+  Result := '/';
+  runlen := plen -1;
+  // preparing location
+  if system.id > 1 then begin
+    if not system.new_components[sindex].HasLocation then locatio := system.the_location
+    else locatio := system.new_components[sindex].GetLocation;
+    dist_val := locatio.GetDistanceStr(4,targyear,False);
+  end else begin
+    dist_val := '0';
+  end;
+  // constellation
+  constl_str := constellations[(system.constellation-1)*3];
+  // co-ordinates
+  if system.id > 1 then begin
+    if targyear < 0 then coordstr := locatio.GetXYZ_CSV(4)
+    else coordstr := locatio.GetXYZatYear_CSV(targyear,4);
+  end
+  else coordstr := '0,0,0';
+  // making the combo strings
+  distspec := '/' + dist_val + '/';
+  runlen += Length(distspec);
+  runlen += 3 + Length(constl_str) + Length(coordstr);
+  // combo2 := '/' + constl_str + '/' + namez + '/' + coordstr;
+
+  // brown dwarf...
+  if system.new_components[sindex].isBrownDwarf then begin
+    bdwarfx := BrownDwarfInfo(system.new_components[sindex]);
+    xestname := Trim(AnsiReplaceStr(system.GetPreferredName,'/',' '));
+    xestname := xestname + ' ' + Trim(bdwarfx.Component);
+    runlen += Length(xestname);
+    Result += xestname;
+    Result += distspec + CHViewSpecHelp(system.new_components[sindex].SpectralClass,runlen);
+    Result += '/';
+    Inc(runlen);
+    // mass
+    if bdwarfx.MassNotSet then xestname := '0.04'
+    else xestname := bdwarfx.CHViewSafeMassInSuns;
+    runlen += Length(xestname);
+    Result += xestname;
+    // names (the line length in CHView must be 255 or less bytes!)
+    namez := GetCHVNames(sindex,253-runlen);
+    // finishing
+    Result += '/' + constl_str + '/' + namez + '/' + coordstr + sLineBreak;
+  end
+  // the sun...
+  else if system.GetId = 1 then begin
+    Result += 'Sol/0/G2V/1///0,0,0';
+  end
+  // normal stars
+  else begin
+    starx := StarInfo(system.new_components[sindex]);
+    sdata1 := starx.estimator;
+    sdata1.BackupMS();
+    secondstar := (starx.MinPartCount >1);
+    // second star splitting
+    if secondstar then begin
+       splitres := StarSplitGeneral(starx,locatio.ParallaxMAS,sdata2);
+    end
+    else begin
+        sdata2 := nil;
+        splitres := False;
+    end;
+    // writing what might be the only star...
+    // component id, name, and dist/spec
+    if (not secondstar) then buf1 := ' ' + starx.Component
+    else buf1 := SplitComponent(starx.Component,True);
+    xestname  := Trim(AnsiReplaceStr(system.GetPreferredName,'/','|'));
+    xestname += ' ' + Trim(buf1);
+    runlen += Length(xestname);
+    Result += xestname;
+    Result += distspec + CHViewSpecHelp(sdata1.StoredSpectra,runlen);
+    if sdata1.LuminosityClass  = lGiant then begin
+      Result += '*';
+      Inc(runlen);
+    end;
+    Result += '/';
+    Inc(runlen);
+    // mass
+    mass_str := starx.GetMassString;
+    runlen += Length(mass_str);
+    Result += mass_str;
+    // names
+    namez := GetCHVNames(sindex,255-runlen);
+    Result += '/' + constl_str + '/' + namez + '/' + coordstr + sLineBreak;
+
+    // writing the second star (if need be)
+    if secondstar then begin
+      // component id, name, and dist/spec
+      buf1 := SplitComponent(starx.Component,False);
+      xestname  := Trim(AnsiReplaceStr(system.GetPreferredName,'/','|'));
+      xestname += ' ' + Trim(buf1);
+      Result += '/' + xestname;
+      Result += '/' + dist_val + '/';
+      buf1 := sdata2.StoredSpectra;
+      if buf1 = 'DA7??' then buf1 := 'DA??';
+      Result += CHViewSpecHelp(buf1,runlen);
+      // mass
+      mass_str := sdata2.MassEstimateExport;
+      Result += '/' + mass_str;
+      Result += '/' + constl_str + '//' + coordstr + sLineBreak;
+
+      // cleaning up afterwards...
+      sdata2.Free;
+      sdata1.RestoreMS(True);
+    end;
+    // end of star output
+  end;
+  // done
+end;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(* a helper function to generate ChView and Astrosynthesis
+system labels *)
+function SystemOutputter.GetOutputLabel(isCHView:Boolean):string;
+var minc,maxc:Integer;   buf1:string;
+    curstar:StarInfo;    highl:Boolean;
+begin
+  Assert(params<>nil);
+  // we prepare the system name
+  minc := system.GetMinCount;
+  maxc := system.GetMaxCount;
+  if maxc >1 then begin
+    Str(maxc,buf1);
+    buf1 := ' (' + Trim(buf1);
+    if maxc <> minc then buf1 += '?';
+    buf1 += ')';
+  end;
+  // uppercase luminosity
+  highl := False;
+  if params.allcaplum >= 0 then begin
+    if system.new_components[0].isBrownDwarf then highl := False
+    else if system.GetId = 1 then highl:= False
+    else begin
+      curstar := StarInfo(system.new_components[0]);
+      highl := (curstar.estimator.VisualLuminosity) >= (params.allcaplum);
+    end;
+  end;
+  // getting the name
+  if params.is2300ad then begin
+    if highl then Result := AnsiUpperCase(system.Get2300adName)
+    else Result := system.Get2300adName;
+  end
+  else begin
+    if highl then Result := AnsiUpperCase(system.GetPreferredName)
+    else Result := system.GetPreferredName;
+  end;
+  if isCHView then Result := AnsiReplaceStr(Result,'/','|');
+  // adding the arity
+  if (maxc>1) then Result := Result + buf1;
+  // question marks for the location
+  if params.addpquest then Result := Result + ' ' + MakeUncStr(false);
+end;
+//-----------------------------------------------------------
+(* we use thus string to encapsulate question marks concerning the
+uncertainty in parallax *)
+function SystemOutputter.MakeUncStr(opt:Boolean):string;
+var lyrange:Real;
+begin
+  Result := '';
+  if system.id = 1 then Exit;
+  // version 1
+  if opt then begin
+    if system.the_location.GetLYRange(False) > 1 then Result := '?';
+    if system.the_location.uncertain then Result := Result + '??';
+  end
+  // version 2
+  else begin
+    // parallax uncertainty
+    lyrange := system.the_location.GetLYRange(True);
+    if system.the_location.uncertain then Result += '?';
+    if lyrange>0.3 then begin
+      Result := '?';
+      if lyrange>1 then Result := Result+'?';
+      if lyrange>2 then Result := Result+'?';
+      if lyrange>4 then Result := Result+'?';
+      if lyrange>10 then Result := Result+'?';
+    end;
+  end;
+end;
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function SystemOutputter.AstroCatIDs(stardex:Integer):string;
+var qcurr_names:StarName;
+    catlist:string;
+begin
+  // checks
+  Assert(stardex>=0);
+  Assert(stardex<system.GetCompC);
+  catlist := '';
+  // starting the result
+  if system.GetCompC = 1 then begin
+    if system.nameset <> nil then catlist := system.nameset.ListOfCats;
+  end
+  else begin
+    if (not system.new_components[stardex].HasNames) then qcurr_names := nil
+    else qcurr_names := system.new_components[stardex].GetNames;
+    if qcurr_names <> nil then catlist := qcurr_names.ListOfCats;
+  end;
+  // finishing...
+  if catlist = '' then Result := ''
+  else Result := ' Catalog IDs : ' + catlist;
+end;
+//-------------------------------------------------
+function SystemOutputter.AsOffsetLocat(indexw:Integer):string;
+begin
+  Assert(indexw>=0);
+  if indexw = 0 then Result := '0,0,0'
+  else if indexw = 1 then Result := '5,0,0'
+  else if indexw = 2 then Result := '10,0,0'
+  else Result := '15,0,0';
+end;
+//---------------------------------------------------------
+function SystemOutputter.MakeMultiStarAstroLine(stardex:Integer):string;
+var star_obj:StarInfo;
+    xid,xname,starname1,starname2,buf2:string;
+    sdata1,sdata2:EstimationParser;
+    locat1,locat2:string;
+    hloc,splitres:Boolean;
+    theparallax:Double;
+begin
+  Assert(params<>nil);
+  Assert(stardex>=0);
+  Assert(stardex<system.GetCompC);
+  Assert(not system.new_components[stardex].isBrownDwarf);
+  Assert(system.new_components[stardex].MinPartCount>1);
+  // starting off
+  star_obj := StarInfo(system.new_components[stardex]);
+  Str(system.id + params.idoffset,xid);
+  sdata1 := star_obj.estimator;
+  sdata1.BackupMS();
+  // second star splitting
+  theparallax := system.GetComponentParallax(stardex);
+  splitres := StarSplitGeneral(star_obj,theparallax,sdata2);
+  // the names
+  if (not star_obj.GetProperName(xname,system.constellation)) then begin
+    xname := system.GetComponentBaseLabel(params.is2300ad);
+  end;
+  starname1 := xname + ' ' + SplitComponent(star_obj.Component,True);
+  starname2 := xname + ' ' + SplitComponent(star_obj.Component,False);
+    // id and name
+  Result += xid + ',';
+  if (not system.new_components[stardex].GetProperName(xname,system.constellation)) then begin
+    xname := system.GetComponentBaseLabel(params.is2300ad);
+    if system.GetCompC > 1 then xname += ' ' + system.new_components[stardex].Component;
+  end;
+  Result += xname + ',';
+  // the xyz location, which can be a bit tricky
+  hloc := star_obj.HasLocation;
+  // locations are in relative AU
+  if (not hloc) then begin
+    // here, the locations are just to separate the components
+    locat1 := AsOffsetLocat(stardex);
+    if stardex = 0 then locat2 := '2,0,0'
+    else if stardex = 1 then locat2 := '7,0,0'
+    else if stardex = 2 then locat2 := '12,0,0'
+    else locat2 := '17,0,0';
+  end
+  else begin
+    // here, we have an actual separate location
+    locat1 := star_obj.GetLocation.MakeAstrosynXYZ_AUOffsetString(system.the_location,locat2);
+  end;
+
+  // producing Star 1
+  if sdata1.LuminosityClass = lWhiteDwarf then Result := 'White Dwarf,'
+  else Result := 'Star,';
+  Result += xid + ',' + starname1 + ',' + locat1 + ',';
+  // star 1 mass,radus,luminosity
+  Result += star_obj.GetMassRadiusLuminosity + ',';
+  // star1 spectral classification and color
+  Result += sdata1.StoredSpectra + ',,';
+  // field 12 (Notes)
+  // finally, notes. I'll add distance and catalog ids for now
+  Result += system.DistToSol(stardex);
+  Result += AstroCatIDs(stardex);
+  Result += sLineBreak;
+
+  // Star 2 (the estimated star)
+  Result += 'Star,' + xid + ',' + starname2 + ',' + locat2 + ',';
+  // star 2 mass,radius,luminosity
+  Result += sdata2.GetMassRadiusBLuminosity + ',';
+  // star 2 spectral classification and color
+  buf2 := sdata2.StoredSpectra;
+  if buf2 = 'DA7??' then Result += 'DA??,,'
+  else Result += buf2 + ',,';
+  // field 12 (notes)
+  Result += 'Binary with no data for components: many guesses here.';
+  Result += sLineBreak;
+
+  // cleaning up the split
+  sdata1.RestoreMS(True);
+  sdata2.Free;
+end;
+//-----------------------------------------------------------
+function SystemOutputter.MakeAstrosynLine(compdata:string; stardex:Integer):string;
+var xid,notusedl:string;
+    xname:string;
+    cloc:Location;
+begin
+  if system.new_components[stardex].ClassifySpectralType = WHITE_DWARF then Result := 'White Dwarf,'
+  else Result := 'Star,';     // annoyingly, there is no special brown dwarf csv option
+  Str(system.id + params.idoffset,xid);
+  // id and name
+  Result += xid + ',';
+  if (not system.new_components[stardex].GetProperName(xname,system.constellation)) then begin
+    xname := system.GetComponentBaseLabel(params.is2300ad);
+    if system.GetCompC > 1 then xname += ' ' + system.new_components[stardex].Component;
+  end;
+  Result += xname + ',';
+  // location
+  if system.GetCompC > 1 then begin
+    if (not system.new_components[stardex].HasLocation) then Result += AsOffsetLocat(stardex)
+    else begin
+      cloc := system.new_components[stardex].GetLocation;
+      Result += cloc.MakeAstrosynXYZ_AUOffsetString(system.the_location,notusedl);
+    end;
+  end
+  else if system.id = 1 then Result += '0,0,0'
+  else begin
+    if params.targetyear < 0 then Result += system.the_location.MakeAstrosynXYZString(4)
+    else Result += system.the_location.GetAstrosynthesisXYZatYear_String(params.targetyear,4);
+  end;
+  // compdata (mass, diameter, luminosity)
+  Result += ',' + compdata + ',';
+  // spectra and color
+  if system.id = 1 then Result += 'G2V,,'
+  else Result += system.new_components[stardex].SpectralClass + ',,';
+  // finally, notes. I'll add distance and catalog ids for now
+  Result += system.DistToSol(stardex);
+  Result += AstroCatIDs(stardex);
+  Result += sLineBreak;
+end;
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function SystemOutputter.MakeChView():string;
+var I,plen:Integer;
+begin
+  Result := Trim(GetOutputLabel(True));
+  plen := Length(Result);
+  // we loop over the stars
+  for I := 0 to system.MaxCInd do begin
+    Result += ToCHViewStar(I,params.TargetYear,plen);
+  end;
+end;
+//-----------------------------------------------------
+function SystemOutputter.MakeAstroSynthesis():string;
+var systemname:string;
+    outidstr:string;  locationstr:string;
+    aritydex:Integer; cstar:StarInfo;
+    cbdwarf:BrownDwarfInfo;
+    properties:string;
+begin
+  Result := '';
+  // we prepare the system name and id string
+  systemname := Trim(GetOutputLabel(False));
+  Str(system.id + params.idoffset,outidstr);
+
+  (* The output is very different depending on the number of stars, but each
+  line always has 12 fields, separated by commas *)
+  // if the system is a multiple one
+  if system.GetMinCount>1 then begin
+    // system location string
+    if params.TargetYear < 0 then locationstr := system.the_location.MakeAstrosynXYZString(4)
+    else locationstr := system.the_location.GetAstrosynthesisXYZatYear_String(params.TargetYear,4);
+    // the first line is a 'system' one
+    Result := 'Multiple,' + outidstr + ',' + systemname + ',' + locationstr;
+    // no mass, radius, luminosity, spectral type, or colour
+    Result := Result + ',,,,,,';
+    // notes...
+    Result += system.DistToSol(0) + 'Catalog IDs : ' + system.nameset.ListOfCats + sLineBreak;
+
+    // now, output lines for each component
+    for aritydex := 0 to system.MaxCInd do begin
+      // brown dwarf
+      if system.new_components[aritydex].isBrownDwarf then begin
+        cbdwarf := BrownDwarfInfo(system.new_components[aritydex]);
+        if cbdwarf.MassNotSet then properties := '0.04'
+        else properties := cbdwarf.MassInSuns;
+        properties += ',' + '0.1' + ',' + '0.0000001';
+        Result += MakeAstrosynLine(properties,aritydex);
+      end
+      // single star
+      else if system.new_components[aritydex].MinPartCount = 1 then begin
+        cstar := StarInfo(system.new_components[aritydex]);
+        properties := cstar.GetMassRadiusLuminosity;
+        Result += MakeAstrosynLine(properties,aritydex);
+      end
+      // multiple star
+      else begin
+        Result += MakeMultiStarAstroLine(aritydex);
+      end;
+    end;
+    // done with adding the various stars
+  end
+  // the single component version
+  else begin
+    // brown dwarf
+    if system.new_components[0].isBrownDwarf then begin
+      cbdwarf := BrownDwarfInfo(system.new_components[0]);
+      if cbdwarf.MassNotSet then properties := '0.04'
+      else properties := cbdwarf.MassInSuns;
+      properties += ',' + '0.1' + ',' + '0.0000001';
+      Result += MakeAstrosynLine(properties,0);
+    end
+    // single star
+    else begin
+      cstar := StarInfo(system.new_components[0]);
+      properties := cstar.GetMassRadiusLuminosity;
+      Result += MakeAstrosynLine(properties,0);
+    end
+  end;
+  // done
+end;
+//==============================================================================
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
