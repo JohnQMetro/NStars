@@ -957,7 +957,7 @@ begin
     InitCurrArrayA(precval,StarVmRc[coldex],VminRBright[coldex]);
   end;
   // M (red dwarf) array setup
-  InitCurrArrayA(StarVmIc[6][9],RedDwarfVmRc,VminRc_RD);
+  InitCurrArrayA(StarVmRc[6][9],RedDwarfVmRc,VminRc_RD);
 end;
 //----------------------------
 function VminRLookup(inval:Currency; out spectra:string):Boolean;

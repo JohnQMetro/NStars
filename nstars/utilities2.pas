@@ -449,6 +449,7 @@ begin
   else if sepoch = eJ2000 then Result := J2000toGalactic
   else if sepoch = zJ2014 then Result := J2000toGalactic
   else if sepoch = zJ2015 then Result := J2000toGalactic
+  else if sepoch = zJ2015h then Result := J2000toGalactic
   else if sepoch = zJ2017 then Result := J2000toGalactic
   else Assert(False);
 end;
