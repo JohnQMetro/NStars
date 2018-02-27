@@ -35,8 +35,10 @@ type
     FeHLabel: TLabel;
     EffectiveTempLabel: TLabel;
     KErrEdit: TMaskEdit;
+    GaiaLabel: TLabel;
     LoggLabel: TLabel;
     LogGEdit: TMaskEdit;
+    GaiaEdit: TMaskEdit;
     SimbadFeHDisplay: TLabel;
     REdit: TMaskEdit;
     RLabel: TLabel;
@@ -52,6 +54,8 @@ type
     procedure FeHMEditKeyPress(Sender: TObject; var Key: char);
     procedure FluxGroupClick(Sender: TObject);
     procedure FrameClick(Sender: TObject);
+    procedure GaiaEditExit(Sender: TObject);
+    procedure GaiaEditKeyPress(Sender: TObject; var Key: char);
     procedure HEditExit(Sender: TObject);
     procedure HEditKeyPress(Sender: TObject; var Key: char);
     procedure IEditExit(Sender: TObject);
@@ -81,11 +85,11 @@ type
     ChangeHandler:TNotifyEvent;
     // private helper flux methods
     procedure MakBl(fe:TMaskEdit);
-    procedure EnableUB(doen:Boolean);
+    procedure EnableUBG(doen:Boolean);
     procedure EnableRIJHK(doen:Boolean);
-    function LoadUB:Boolean;
+    function LoadUBG:Boolean;
     function LoadRIJHK:Boolean;
-    procedure LoadUBBlank;
+    procedure LoadUBGBlank;
     procedure LoadRIJHKBlank;
     // other loading methods
     function MakeColorIndexes:string;
@@ -101,12 +105,13 @@ type
     function SaveMag(var from:TMaskEdit; withx:StoreMagMethod; band:Char):Boolean;
     function SaveUMag(showmsg:Boolean):Boolean;
     function SaveBMag(showmsg:Boolean):Boolean;
+    function SaveGaiaMag(showmsg:Boolean):Boolean;
     function SaveRMag(showmsg:Boolean):Boolean;
     function SaveIMag(showmsg:Boolean):Boolean;
     function SaveJMag(showmsg:Boolean):Boolean;
     function SaveHMag(showmsg:Boolean):Boolean;
     function SaveKMag(showmsg:Boolean):Boolean;
-    function SaveUB(showmsg:Boolean):Boolean;
+    function SaveUBG(showmsg:Boolean):Boolean;
     function SaveRIJHK(showmsg:Boolean):Boolean;
     // more saving methods
     function SaveTemp(showmsg:Boolean):Boolean;
@@ -144,6 +149,18 @@ end;
 procedure TStarExtras2Frame.FrameClick(Sender: TObject);
 begin
   SaveData(True);
+end;
+
+procedure TStarExtras2Frame.GaiaEditExit(Sender: TObject);
+begin
+  SaveGaiaMag(True);
+end;
+
+procedure TStarExtras2Frame.GaiaEditKeyPress(Sender: TObject; var Key: char);
+var pressdex:Integer;
+begin
+  pressdex := GaiaEdit.SelStart;
+  if (pressdex = 0) and (not (Key in [#8, '+','-'])) then Key := #0;
 end;
 
 procedure TStarExtras2Frame.HEditExit(Sender: TObject);
@@ -308,11 +325,12 @@ begin
   fe.Text := '+99.999';
 end;
 //---------------------------------
-procedure TStarExtras2Frame.EnableUB(doen:Boolean);
+procedure TStarExtras2Frame.EnableUBG(doen:Boolean);
 begin
   UEdit.Enabled := doen;
   BEdit.Enabled := doen;
   BErrEdit.Enabled := doen;
+  GaiaEdit.Enabled := doen;
 end;
 //---------------------------------
 procedure TStarExtras2Frame.EnableRIJHK(doen:Boolean);
@@ -325,7 +343,7 @@ begin
   KErrEdit.Enabled := doen;
 end;
 //---------------------------------
-function TStarExtras2Frame.LoadUB:Boolean;
+function TStarExtras2Frame.LoadUBG:Boolean;
 begin
   Result := False;
   if data_pointer = nil then Exit;
@@ -344,6 +362,10 @@ begin
   end;
   BEdit.Modified := False;
   BErrEdit.Modified := False;
+  // gaia
+  if (not data_pointer.Valid_GaiaMagnitude) then MakBl(GaiaEdit)
+  else GaiaEdit.Text := data_pointer.GaiaMagnitudeStr;
+  GaiaEdit.Modified := False;
   // done
   Result := True;
 end;
@@ -383,9 +405,9 @@ begin
   Result := True;
 end;
 //---------------------------------
-procedure TStarExtras2Frame.LoadUBBlank;
+procedure TStarExtras2Frame.LoadUBGBlank;
 begin
-  MakBl(UEdit);  MakBl(BEdit);
+  MakBl(UEdit);  MakBl(BEdit); MakBl(GaiaEdit);
   BErrEdit.Text := '0.000';
 end;
 //---------------------------------
@@ -562,6 +584,14 @@ begin
   end;
 end;
 //------------------------------------
+function TStarExtras2Frame.SaveGaiaMag(showmsg:Boolean):Boolean;
+var pchar:Char;
+begin
+  pchar := IfThen(showmsg,'G','X')[1];
+  Result := SaveMag(GaiaEdit,data_pointer.SetGaiaMag,pchar);
+  if (showmsg and Result and Assigned(ChangeHandler)) then ChangeHandler(Self);
+end;
+//------------------------------------
 function TStarExtras2Frame.SaveRMag(showmsg:Boolean):Boolean;
 var pchar:Char;
 begin
@@ -617,13 +647,15 @@ begin
   end;
 end;
 //------------------------------------
-function TStarExtras2Frame.SaveUB(showmsg:Boolean):Boolean;
+function TStarExtras2Frame.SaveUBG(showmsg:Boolean):Boolean;
 begin
   Result := False;
   if data_pointer = nil then Exit;
   Result := SaveUMag(showmsg);
   if (not Result) then Exit;
   Result := SaveBMag(showmsg);
+  if (not Result) then Exit;
+  Result := SaveGaiaMag(showmsg);
 end;
 //------------------------------------
 function TStarExtras2Frame.SaveRIJHK(showmsg:Boolean):Boolean;
@@ -705,7 +737,7 @@ end;
 //-------------------------------
 procedure TStarExtras2Frame.EnableAll(doit:Boolean);
 begin
-  EnableUB(doit);
+  EnableUBG(doit);
   EnableRIJHK(doit);
   TempEdit.Enabled := doit;
   EnableFeH(doit);
@@ -714,7 +746,7 @@ end;
 //-------------------------------
 procedure TStarExtras2Frame.LoadNothing;
 begin
-  LoadUBBlank;
+  LoadUBGBlank;
   LoadRIJHKBlank;
   LoadTempBlank;
   LoadFeHBlank;
@@ -739,13 +771,13 @@ begin
     else LoadFeH;
     // for Brown Dwarfs, U B, and temperature, is not supported
     if comp_pointer.isBrownDwarf then begin
-      LoadUBBlank;
-      EnableUB(false);
+      LoadUBGBlank;
+      EnableUBG(false);
       LoadTempBlank;
       TempEdit.Enabled := False;
     end
     else begin
-      LoadUB;
+      LoadUBG;
       LoadTemp;
     end;
     LoadColorIndexes;
@@ -768,7 +800,7 @@ begin
     if (not comp_pointer.isBrownDwarf) then begin
       Result := SaveTemp(showmsg);
       if (not Result) then Exit;
-      Result := SaveUB(showmsg);
+      Result := SaveUBG(showmsg);
       if ((not showmsg) and Assigned(ChangeHandler)) then ChangeHandler(Self);
     end;
     LoadColorIndexes;
@@ -804,6 +836,7 @@ begin
   UEdit.Text := '-25.899';
   BEdit.Text := '-26.057';
   BErrEdit.Text := '0.000';
+  GaiaEdit.Text := '-26.922';
   REdit.Text := '-27.066';
   IEdit.Text := '-27.411';
   JEdit.Text := '-27.908';

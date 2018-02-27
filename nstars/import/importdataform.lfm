@@ -8,7 +8,7 @@ object ImportForm: TImportForm
   ClientWidth = 466
   OnActivate = FormActivate
   OnCreate = FormCreate
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.0.6'
   object StartButton: TButton
     Left = 168
     Height = 25
@@ -76,6 +76,7 @@ object ImportForm: TImportForm
       'CONCH-SHELL (Gaidos+ 2014)'
       'RAVE DR5 (VizieR extract)'
       'Naval Obs. Flagstaff Station (Dahn+ 2017)'
+      'URAT South (Finch+ 2018)'
     )
     OnSelect = ImportSourcePickerSelect
     Style = csDropDownList

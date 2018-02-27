@@ -696,6 +696,7 @@ var blen,sc:Integer;
     spos, epos:Integer;
     startp, endp:Integer;
     buffer:string;
+    xbackup:Extended;
 begin
   Result := False;
   // looking for the start of the finder
@@ -710,8 +711,12 @@ begin
   buffer := Trim(buffer);
   if Length(buffer) = 0 then Exit;
   // converting to a number
+  xbackup := xresult;
   Val(buffer,xresult,sc);
-  if (sc<>0) then Exit;
+  if (sc<>0) then begin
+    xresult := xbackup;
+    Exit;
+  end;
   // finding the end of the end delimiter
   endp := epos + Length(ends);
   // chopping off everything before endp
@@ -736,11 +741,8 @@ begin
   if epos = 0 then Exit;
   // extracting the middle
   buffer := Copy(basestr,startp,epos-startp);
-  buffer := Trim(buffer);
-  if Length(buffer) = 0 then Exit;
   // converting to a number
-  Val(buffer,xresult,sc);
-  if (sc<>0) then Exit;
+  if not Str2Curr(buffer,xresult) then Exit;
   // finding the end of the end delimiter
   endp := epos + Length(ends);
   // chopping off everything before endp
@@ -750,7 +752,7 @@ begin
 end;
 //-----------------------------------------------------------
 function ExtractFieldInteger(var basestr:string; const starts, ends:string; out xresult:Integer):Boolean;
-var blen,sc:Integer;
+var blen,sc,ibackup:Integer;
     spos, epos:Integer;
     startp, endp:Integer;
     buffer:string;
@@ -768,8 +770,12 @@ begin
   buffer := Trim(buffer);
   if Length(buffer) = 0 then Exit;
   // converting to a number
+  ibackup := xresult;
   Val(buffer,xresult,sc);
-  if (sc<>0) then Exit;
+  if (sc<>0) then begin
+    xresult := ibackup;
+    Exit;
+  end;
   // finding the end of the end delimiter
   endp := epos + Length(ends);
   // chopping off everything before endp
@@ -1353,6 +1359,7 @@ end;
 function SubstrCurr(const sourcestr:string; index,len:Integer; out res:Currency):Boolean;
 var sstl,sc:Integer;
     substr:string;
+    resbak:Currency;
 begin
   // bad input
   Result := False;
@@ -1363,8 +1370,12 @@ begin
   // extracting and converting
   substr := Trim(Copy(sourcestr,index,len));
   if Length(substr)=0 then Exit;
+  resbak := res;
   Val(substr,res,sc);
-  if sc<>0 then Exit;
+  if sc<>0 then begin
+    res := resbak;
+    Exit;
+  end;
   // okay
   Result := True;
 end;
@@ -1382,48 +1393,72 @@ end;
 //-----------------------------------------------
 function StrToReal(insrc:string; out xresult:Real):Boolean;
 var sc:Integer;
+    resbak:Real;
 begin
   Result := False;
   insrc := Trim(insrc);
   if insrc ='NaN' then Exit;
   if Length(insrc) = 0 then Exit;
+  resbak := xresult;
   Val(insrc,xresult,sc);
-  if sc<>0 then Exit;
+  if sc<>0 then begin
+    xresult := resbak;
+    Exit;
+  end;
   Result := True;
 end;
 //-----------------------------------------------
 function StrToRealBoth(insrc1,insrc2:string; out result1,result2:Real):Boolean;
+var backup1:Real;
 begin
   Result := False;
+  backup1 := result1;
   if (not StrToReal(insrc1,result1)) then Exit;
   Result := StrToReal(insrc2,result2);
+  if (not Result) then result1 := backup1;
 end;
 //----------------------------------------------
 function StrToRealBothNN(insrc1,insrc2:string; out result1,result2:Real):Boolean;
+var backup1,backup2:Real;
 begin
+  backup1 := result1;
+  backup2 := result2;
   Result := StrToRealBoth(insrc1,insrc2,result1,result2);
-  if Result then Result := (result1>=0) and (result2>=0);
+  if Result then begin
+    Result := (result1>=0) and (result2>=0);
+    if (not Result) then begin
+      result1 := backup1;
+      result2 := backup2;
+    end;
+  end;
 end;
 //-----------------------------------------------
 function Str2Curr(insrc:string; out xresult:Currency):Boolean;
 var sc:Integer;
+    backp:Currency;
 begin
   Result := False;
   insrc := Trim(insrc);
   if insrc ='NaN' then Exit;
   if Length(insrc) = 0 then Exit;
+  backp := xresult;
   Val(insrc,xresult,sc);
-  if sc<>0 then Exit;
+  if sc<>0 then begin
+    xresult := backp;
+    Exit;
+  end;
   Result := True;
 end;
 //-----------------------------------------------
 function StrToCurrBoth(insrc1,insrc2:string; out xresult1,xresult2:Currency):Boolean;
+var backup1:Currency;
 begin
      Result := False;
+     backup1 := xresult1;
      if (not Str2Curr(insrc1,xresult1)) then Exit;
      Result := Str2Curr(insrc2,xresult2);
+     if (not Result) then xresult1 := backup1;
 end;
-
 //-------------------------------------------------------
 (* this should not be the pain that it is! *)
 function StringToLatin1(inval:string):RawByteString;

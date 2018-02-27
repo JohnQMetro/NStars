@@ -2332,6 +2332,7 @@ begin
   // epoch
   if const_params.xparams.epochdata = 2014 then depoch := zJ2014
   else if const_params.xparams.epochdata = 2015 then depoch := zJ2015
+  else if const_params.xparams.epochdata = 2015.5 then depoch := zJ2015h
   else  depoch := eJ2000;
   // getting the simbad data
   simbx := ImportedDataToSimbad(inpllx);
@@ -2382,6 +2383,7 @@ begin
   // epoch
   if const_params.xparams.epochdata = 2014 then depoch := zJ2014
   else if const_params.xparams.epochdata = 2015 then depoch := zJ2015
+  else if const_params.xparams.epochdata = 2015.5 then depoch := zJ2015h
   else  depoch := eJ2000;
   // looking to see if the system is already in the list
   idloc := primaryl.FindFromCatList(inpllx.nameids,sstar_where);

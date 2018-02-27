@@ -15,13 +15,14 @@ SpecTypeGuesser = class
     vmag,avmag,ksmag:Real;
     akmag_min,akmag_max:Currency;
     bmv,bmv_min,bmv_max:Currency;
+    vmr:Currency;
     vmi,vmk,vmk_min,vmk_max:Currency;
     vmj:Real;
     // typedata
     is_pms:Boolean;
     // results
-    r_magv,r_magk,r_bmv,r_vmi,r_vmj,r_vmk:string;
-    ok_magv,ok_magk,ok_bmv,ok_vmi,ok_vmj,ok_vmk:Boolean;
+    r_magv,r_magk,r_bmv,r_vmr,r_vmi,r_vmj,r_vmk:string;
+    ok_magv,ok_magk,ok_bmv,ok_vmr,ok_vmi,ok_vmj,ok_vmk:Boolean;
     has_rec,has_dist,has_dist2:Boolean;
     rec_stype,vmk_dist,vmk_dist2,jmk_note:string;
     // helper methods
@@ -90,6 +91,11 @@ begin
     r_bmv := BminVDual(bmv_min,bmv_max);
     ok_bmv := (Length(r_bmv)>0);
     if ok_bmv then Inc(Result);
+  end;
+  // V-R
+  if vmr < 90 then begin
+    ok_vmr := VminRLookup(vmr,r_vmr);
+    if ok_vmr then Inc(result);
   end;
   // V-I
   if vmi < 90 then begin
@@ -208,10 +214,11 @@ end;
 function SpecTypeGuesser.MakeColourResult:string;
 begin
   Result := '';
-  if (ok_vmk) then Result += 'V−K : ' + r_vmk + sLineBreak;
-  if (ok_bmv) then Result += 'B−V : ' + r_bmv + sLineBreak;
-  if (ok_vmi) then Result += 'V−I : ' + r_vmi + sLineBreak;
-  if (ok_vmj) then Result += 'V−J : ' + r_vmj + sLineBreak;
+  if (ok_vmk) then Result += 'V−K  : ' + r_vmk + sLineBreak;
+  if (ok_bmv) then Result += 'B−V  : ' + r_bmv + sLineBreak;
+  if (ok_vmr) then Result += 'V-Rc : ' + r_vmr + sLineBreak;
+  if (ok_vmi) then Result += 'V−Ic : ' + r_vmi + sLineBreak;
+  if (ok_vmj) then Result += 'V−J  : ' + r_vmj + sLineBreak;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // property methods
@@ -230,7 +237,7 @@ begin
   ksmag := 99;
   akmag_min := 99;  akmag_max := 99;
   bmv := 99;    bmv_min := 99;  bmv_max := 99;
-  vmi := 99;    vmj := 99;
+  vmr := 99;    vmi := 99;      vmj := 99;
   vmk := 99;    vmk_min := 99;  vmk_max := 99;
   ok_magv := False;     ok_magk := False;
   ok_bmv  := False;     ok_vmi  := False;
@@ -264,6 +271,7 @@ begin
       bmv := fluxes.blue_mag - RealToCurr(invmag);
       fluxes.BminusVval(invmag,bmv_min,bmv_max);
     end;
+    fluxes.VminusRval(invmag,vmr);
     fluxes.VminusIval(invmag,vmi);
     if fluxes.Valid_JMagnitude then vmj := invmag - CurrToReal(fluxes.J_mag);
     if fluxes.Valid_KMagnitude then begin

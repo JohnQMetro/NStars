@@ -32,6 +32,10 @@ StarFluxPlus = class
     procedure BESet(value:string);
     function BMGCombo:string;
 
+    function GAMGet:string;
+    procedure GAMSet(value:string);
+    function GAValid:Boolean;
+
     function RMGet:string;
     procedure RMSet(value:string);
     function RMValid:Boolean;
@@ -77,6 +81,7 @@ StarFluxPlus = class
     ultraviolet_mag:Currency;
     blue_mag,blue_err:Currency;
     red_mag:Currency;
+    gaia_mag:Currency;
     // infrared magnitudes
     I_mag,J_mag,H_mag,K_mag,K_err:Currency;
     // log g
@@ -88,6 +93,8 @@ StarFluxPlus = class
     property Valid_BlueMagnitude:Boolean read BMValid;
     property BlueMag_ErrorStr:string read BEGet write BESet;
     property BlueMag_DisplayStr:string read BMGCombo;
+    property GaiaMagnitudeStr:string read GAMGet write GAMSet;
+    property Valid_GaiaMagnitude:Boolean read GAValid;
     property RedMagnitudeStr:string read RMGet write RMSet;
     property Valid_RedMagnitude:Boolean read RMValid;
 
@@ -122,6 +129,7 @@ StarFluxPlus = class
   // setting magnitudes with boolean ok or not results
   function SetUMag(source:string):Boolean;
   function SetBMag(source,errsource:string):Boolean;
+  function SetGaiaMag(source:string):Boolean;
   function SetRMag(source:string):Boolean;
   function SetIMag(source:string):Boolean;
   function SetJMag(source:string):Boolean;
@@ -143,6 +151,7 @@ StarFluxPlus = class
   function BminusV(vismag:Real):string;
   function BminusVval(const vismag:Real; out mind,maxd:Currency):Boolean;
   function VminusR(vismag:Real):string;
+  function VminusRval(vismag:Real; out vmrval:Currency):Boolean;
   function VminusI(vismag:Real):string;
   function VminusIval(vismag:Real; out vmibal:Currency):Boolean;
   function VminusK(vismag:Real):string;
@@ -215,6 +224,15 @@ begin
   Result := CurrToStrF(blue_mag,ffFixed,3) + ' ± ';
   Result += CurrToStrF(blue_err,ffFixed,3);
 end;
+//-----------------------------------------------------------
+function StarFluxPlus.GAMGet:string;
+begin  Result := XMagToString(gaia_mag);   end;
+//-----------------------------------------------------------
+procedure StarFluxPlus.GAMSet(value:string);
+begin  gaia_mag := InStrToMag(value);  end;
+//-----------------------------------------------------------
+function StarFluxPlus.GAValid:Boolean;
+begin  Result := (gaia_mag <= 99);  end;
 //-----------------------------------------------------------
 function StarFluxPlus.RMGet:string;
 begin  Result := XMagToString(red_mag);   end;
@@ -363,6 +381,7 @@ begin
   blue_mag := temp99;
   blue_err := 0;
   red_mag := temp99;
+  gaia_mag := temp99;
   i_mag := temp99;
   j_mag := temp99;
   h_mag := temp99;
@@ -390,6 +409,8 @@ begin
     end
     else blue_err := 0;
   end;
+  // gaia magnitude
+  movcount += SetMagH(insim.GaiaGMagnitude,gaia_mag);
   // copying red
   movcount += SetMagH(insim.RedMagnitude,red_mag);
   // copying near infrared
@@ -462,6 +483,9 @@ begin
   blue_mag := xbmag;
   blue_err := xerr;
 end;
+//--------------------------------
+function StarFluxPlus.SetGaiaMag(source:string):Boolean;
+begin  Result := StringToMag(source,gaia_mag);  end;
 //--------------------------------
 function StarFluxPlus.SetRMag(source:string):Boolean;
 begin  Result := StringToMag(source,red_mag);  end;
@@ -648,7 +672,7 @@ begin
   Result += ';' + IMGet + ';' + JMGet + ';' + HMGet + ';' + KMGet;
   Result += ';' + EffectiveTempStr + ';' + SimbadTempInfo + ';';
   Result += GFeHStr + ';' + GFehErrStr + ';' + GSimbadFeH;
-  Result += ';' + KEGet + ';' + GLogGStr;
+  Result += ';' + KEGet + ';' + GLogGStr + ';' + GAMGet;
 end;
 //--------------------------------------------------
 function StarFluxPlus.FromIOString(inval:string):Boolean;
@@ -659,8 +683,15 @@ begin
   Result := False;
   splitlist := SplitWithDelim(inval,';',13);
   if splitlist = nil then Exit;
+  // GAIA Magnitude
+  if splitlist.Count >= 16 then begin
+    if (not SetGaiaMag(splitlist[15])) then begin
+      FreeAndNil(splitlist);
+      Exit;
+    end;
+  end;
   // logg
-  if splitlist.Count = 15 then loggval := splitlist[14]
+  if splitlist.Count >= 15 then loggval := splitlist[14]
   else loggval := '-9.99';
   // k_error value
   if splitlist.Count >= 14 then kerr_val := splitlist[13]
@@ -783,6 +814,18 @@ begin
   difval := RealToCurr(vismag) - red_mag;
   diffstr := CurrToStrF(difval,ffFixed,3);
   Result += diffstr;
+end;
+//-------------------------
+function StarFluxPlus.VminusRval(vismag:Real; out vmrval:Currency):Boolean;
+var viscurr:Currency;
+begin
+  Result := False;
+  if (not Valid_RedMagnitude) then Exit;
+  if vismag > 99 then Exit;
+  // we start
+  viscurr := RealToCurr(vismag);
+  Result := True;
+  vmrval := viscurr - red_mag;
 end;
 //-------------------------
 function StarFluxPlus.VminusI(vismag:Real):string;

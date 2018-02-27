@@ -7,8 +7,8 @@ object StarExtras2Frame: TStarExtras2Frame
   ClientWidth = 584
   OnClick = FrameClick
   TabOrder = 0
-  DesignLeft = 473
-  DesignTop = 286
+  DesignLeft = 283
+  DesignTop = 120
   object FluxGroup: TGroupBox
     Left = 4
     Height = 132
@@ -20,15 +20,15 @@ object StarExtras2Frame: TStarExtras2Frame
     TabOrder = 0
     OnClick = FluxGroupClick
     object ULabel: TLabel
-      Left = 16
+      Left = 6
       Height = 15
       Top = 12
-      Width = 44
-      Caption = 'U Band :'
+      Width = 38
+      Caption = 'U Mag:'
       ParentColor = False
     end
     object UEdit: TMaskEdit
-      Left = 72
+      Left = 52
       Height = 24
       Top = 8
       Width = 66
@@ -48,15 +48,15 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object BLabel: TLabel
-      Left = 168
+      Left = 132
       Height = 15
       Top = 12
-      Width = 43
-      Caption = 'B Band :'
+      Width = 37
+      Caption = 'B Mag:'
       ParentColor = False
     end
     object BEdit: TMaskEdit
-      Left = 216
+      Left = 176
       Height = 24
       Top = 8
       Width = 66
@@ -76,7 +76,7 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object BPMLabel: TLabel
-      Left = 288
+      Left = 246
       Height = 15
       Top = 12
       Width = 8
@@ -84,7 +84,7 @@ object StarExtras2Frame: TStarExtras2Frame
       ParentColor = False
     end
     object BErrEdit: TMaskEdit
-      Left = 304
+      Left = 258
       Height = 24
       Top = 8
       Width = 48
@@ -103,15 +103,15 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object RLabel: TLabel
-      Left = 380
+      Left = 446
       Height = 15
       Top = 12
-      Width = 49
-      Caption = 'Rc Band :'
+      Width = 43
+      Caption = 'Rc Mag:'
       ParentColor = False
     end
     object REdit: TMaskEdit
-      Left = 432
+      Left = 494
       Height = 24
       Top = 8
       Width = 66
@@ -134,8 +134,8 @@ object StarExtras2Frame: TStarExtras2Frame
       Left = 6
       Height = 15
       Top = 52
-      Width = 45
-      Caption = 'Ic Band :'
+      Width = 39
+      Caption = 'Ic Mag:'
       ParentColor = False
     end
     object IEdit: TMaskEdit
@@ -159,11 +159,11 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object JLabel: TLabel
-      Left = 132
+      Left = 135
       Height = 15
       Top = 52
-      Width = 40
-      Caption = 'J Band :'
+      Width = 34
+      Caption = 'J Mag:'
       ParentColor = False
     end
     object JEdit: TMaskEdit
@@ -190,8 +190,8 @@ object StarExtras2Frame: TStarExtras2Frame
       Left = 258
       Height = 15
       Top = 52
-      Width = 45
-      Caption = 'H Band :'
+      Width = 39
+      Caption = 'H Mag:'
       ParentColor = False
     end
     object HEdit: TMaskEdit
@@ -218,8 +218,8 @@ object StarExtras2Frame: TStarExtras2Frame
       Left = 382
       Height = 15
       Top = 52
-      Width = 48
-      Caption = 'Ks Band :'
+      Width = 42
+      Caption = 'Ks Mag:'
       ParentColor = False
     end
     object KEdit: TMaskEdit
@@ -280,6 +280,31 @@ object StarExtras2Frame: TStarExtras2Frame
       Caption = '±'
       ParentColor = False
     end
+    object GaiaEdit: TMaskEdit
+      Left = 364
+      Height = 24
+      Top = 8
+      Width = 66
+      CharCase = ecNormal
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      MaxLength = 7
+      ParentFont = False
+      TabOrder = 9
+      OnExit = GaiaEditExit
+      OnKeyPress = GaiaEditKeyPress
+      EditMask = '#00.000'
+      Text = '+13.102'
+      SpaceChar = '_'
+    end
+    object GaiaLabel: TLabel
+      Left = 318
+      Height = 15
+      Top = 12
+      Width = 38
+      Caption = 'G Mag:'
+      ParentColor = False
+    end
   end
   object UseExtra2CB: TCheckBox
     Left = 16
@@ -314,7 +339,7 @@ object StarExtras2Frame: TStarExtras2Frame
     Left = 168
     Height = 15
     Top = 40
-    Width = 108
+    Width = 109
     Caption = 'SimbadTempDisplay'
     ParentColor = False
   end

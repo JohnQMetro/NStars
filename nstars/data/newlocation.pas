@@ -178,7 +178,7 @@ function SeparationCheck(source_loc:Location; in_string:string; out xerr:string;
 // constants
 const
 
-EpochNames:array[0..5] of string = ('B1950','B1975','J2000','J2014','J2015','J2017');
+EpochNames:array[0..6] of string = ('B1950','B1975','J2000','J2014','J2015','J2017','J2015.5');
 
 (* Pre-stored constants and variables for co-ordinate conversion. RA and Dec from
 "Allen's Astrophysical Quantities" by  Arthur N. Cox (p 575), the more accurate
@@ -544,6 +544,7 @@ begin
   // epoch start year
   if xepoch = eJ2000 then startyear := 2000
   else if xepoch = zJ2015 then startyear := 2015
+  else if xepoch = zJ2015h then startyear := 2015.5
   else if xepoch = zJ2014 then startyear := 2014
   else if xepoch = zJ2017 then startyear := 2017
   else if xepoch = eB1950 then startyear := 1950

@@ -38,6 +38,7 @@ SimbadData = class
 
     // extra fluxes (currency is to avoid conversion errors)
     umag,bmag,berr,rmag:Currency;   // visible fluxes , B gets an error
+    gamag:Currency; // GAIA G-mag
     imag,jmag,hmag,kmag,kerr:Currency;   // infared fluxes
 
     // property functions
@@ -62,6 +63,7 @@ SimbadData = class
     function UMagG:Currency;
     function BMagG:Currency;
     function BMagErrG:Currency;
+    function GAMagG:Currency;
     function RMagG:Currency;
     function IMagG:Currency;
     function JMagG:Currency;
@@ -111,6 +113,7 @@ SimbadData = class
     property UltravioletMagnitude:Currency read UMagG;
     property BlueMagnitude:Currency read BMagG;
     property BlueMagnitudeError:Currency read BMagErrG;
+    property GaiaGMagnitude:Currency read GAMagG;
     property RedMagnitude:Currency read RMagG;
     property InfraredMagnitude:Currency read IMagG;
     property JMagnitude:Currency read JMagG;
@@ -134,13 +137,13 @@ function MakeSimbadCoordLookupURL(const rastring,decstring:string; arcminp:Integ
 function MakeSimbadIdLookupURL(ident:string):string;
 function GetSimbadDataURL(inurl:string; out fetchfail:Boolean):SimbadData;
 
-const ok_catalogs:array[0..64] of string = ('BD','CD','CPD','Wolf','Ross','FK5',
+const ok_catalogs:array[0..65] of string = ('BD','CD','CPD','Wolf','Ross','FK5',
       'HD','HR','SAO','LHS','LFT','LTT','Vys','2MASS','DENIS','Luhman','Lal',
       'ADS','LDS','AC','Lac','LP','Gmb','L','SO','SCR','LPM','Kr','WISE',
       'PPM','Zkh','Sm','WDS','G','Sa','NLTT','VVO','Ruiz','Wor','Heintz',
       'Struve','Bu','Tou','SIPS','WISEP','SDSS','VB','WD','LEHPM','WT','SIP',
       'BPM','LSPM','San','2MUCD','APMPM','BRI','AG','UCAC4','GSC','GD',
-      'KIC','Ton','ULAS','PM');
+      'KIC','Ton','ULAS','PM','Gaia');
 
       extended_cats:array[0..4] of string = ('UCAC4','PM','RX','RAVE','USNO');
 
@@ -318,6 +321,7 @@ begin
     berr := error;
   end
   else if fchar = 'V' then vmag := CurrToReal(value)
+  else if fchar = 'G' then gamag := value
   else if fchar = 'R' then rmag := value
   else if fchar = 'I' then imag := value
   else if fchar = 'J' then jmag := value
@@ -499,6 +503,7 @@ begin
     if berr <> 0 then Result += '±' + CurrToStrF(berr,ffFixed,3);
     Result += '  '
   end;
+  if gamag < 99 then Result += 'G: ' + CurrToStrF(gamag,ffFixed,3) + '  ';
   if rmag < 99 then Result += 'Rc: ' + CurrToStrF(rmag,ffFixed,3) + sLineBreak;
   if imag < 99 then Result += 'Ic: ' + CurrToStrF(imag,ffFixed,3) + '  ';
   if jmag < 99 then Result += 'J: ' + CurrToStrF(jmag,ffFixed,3) + '  ';
@@ -600,6 +605,9 @@ begin    Result := bmag;    end;
 //----------------------------------------
 function SimbadData.BMagErrG:Currency;
 begin    Result := berr;    end;
+//----------------------------------------
+function SimbadData.GAMagG:Currency;
+begin    Result := gamag;   end;
 //----------------------------------------
 function SimbadData.RMagG:Currency;
 begin    Result := rmag;    end;
@@ -861,6 +869,7 @@ begin
   vmag := 9999;  rmag := 9999;
   imag := 9999;  jmag := 9999;
   hmag := 9999;  kmag := 9999;
+  gamag := 9999;
   //flux extraction loop
   if (not xparser.MovePast('<TABLE>')) then begin
     xparser.Free;    Exit;

@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ComCtrls, MaskEdit, StrUtils,newImports,collecdata, df_strings, newImports2;
+  ComCtrls, MaskEdit, StrUtils,newImports,collecdata, df_strings, newImports2,
+  newImports3;
 
 type
 
@@ -74,7 +75,8 @@ var
 const
   CSVFILTER = 'Comma Separated Values (*.csv)|*.csv';
   DATFILTER = 'CDS Table Data (*.dat)|*.dat';
-  TXTFILTER = 'Text File (*.txt)|*txt';
+  TXTFILTER = 'Text File (*.txt)|*.txt';
+  TEXFILTER = 'TeX File (*.tex)|*.tex';
 
 implementation
 
@@ -249,6 +251,13 @@ begin
     nosimb_match := False;
     NoSimbadMatching.Checked := False;
   end
+  // URAT South Parallax Results (Finch+ 2018)
+  else if typeindex = 17 then begin
+    dialog_filter := TEXFILTER;
+    const_params.xparams := urats_params;
+    nosimb_match := False;
+    NoSimbadMatching.Checked := False;
+  end
   else Assert(False);
   StartButton.Enabled := False;
   CutoffDistEdit.Enabled := True;
@@ -285,12 +294,11 @@ end;
 
 procedure TImportForm.StartButtonClick(Sender: TObject);
 begin
-      (*
+  (*
   LoadDataButton.Enabled := False;
   WriteTest();
   LoadDataButton.Enabled := True;
-          *)
-
+  *)
   // starting
   StartButton.Enabled := False;
   LoadDataButton.Enabled := False;

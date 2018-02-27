@@ -79,6 +79,18 @@ const
   );
   VmIcO95V:Currency = -0.361;
 
+  (* V-Rc from Mamajek. B is incomplete (so I drop it). Late M has a dip, so
+  the array goes down to M6 only. *)
+  StarVmRc:array[3..6] of array[0..9] of Currency = (
+    (* A *) (0.001,0.019,0.042,0.05 ,0.078,0.089,0.094,0.117,0.14 ,0.143),
+    (* F *) (0.166,0.19 ,0.213,0.222,0.236,0.252,0.276,0.29 ,0.3  ,0.312),
+    (* G *) (0.336,0.34 ,0.363,0.368,0.374,0.377,0.388,0.393,0.404,0.423),
+    (* K *) (0.443,0.457,0.487,0.544,0.64 ,0.685,0.759,0.82 ,0.843,0.866)
+  );
+  RedDwarfVmRc:array[0..12] of Currency = (0.889,0.924,0.959,0.978,1.001,1.041,
+                          1.079,1.178,1.241,1.345,1.446,1.656,1.95);
+  VmRcB95V:Currency = -0.017;
+
 (* B-V for Pre-Main-Sequence Stars, from Peault and Mamajek 2013. *)
 PMSStarBmV:array[4..6] of array[0..9] of Currency = (
     (* F *) ( 0.28, 0.34, 0.38, 0.41, 0.43, 0.47, 0.50, 0.53, 0.55, 0.56),
@@ -137,11 +149,14 @@ procedure MKsSetup;
 function MKsLookup(inval:Currency; KtKs:Boolean; out resspec:string):Boolean;
 function MksLookupDual(inval_min,inval_max:Currency; KtKs:Boolean; out resspec:string):Boolean;
 function MagFromKs(scolor:Char; subrange:Real; out expMk:Currency):Boolean;
-// V minus I
+// V minus Ic
 procedure VminISetup;
 function VminILookup(inval:Currency; out spectra:string):Boolean;
 procedure PMS_VminISetup;
 function PMS_VminILookup(inval:Currency; out spectra:string):Boolean;
+// V minus Rc
+procedure VminRSetup;
+function VminRLookup(inval:Currency; out spectra:string):Boolean;
 
 // helper functions for StarSplit
 function MakeGenericDwarf(ultradim:Boolean):EstimationParser;
@@ -186,6 +201,10 @@ var
   VminI_L:array[0..5] of Currency;
   PMS_VmIcBright:array[4..6] of array[0..9] of Currency;
   PMS_VmIcRedDwarf:array[0..5] of Currency;
+
+  // V-Rc arrays
+  VminRBright:array[3..6] of array[0..9] of Currency;
+  VminRc_RD:array[0..12] of Currency;
 
   // temperature arrays
   TempBoundBright:array[2..6] of array[0..9] of Real;
@@ -926,6 +945,52 @@ begin
     if Result then spectra:= scolors[oindex] + IntToStr(mindex);
   end;
 end;
+//-----------------------
+procedure VminRSetup;
+var coldex:Integer;
+    precval:Currency;
+begin
+  // setting up the Bright star settings (A to K)
+  for coldex := 3 to 6 do begin
+    if coldex = 3 then precval := VmRcB95V
+    else precval := StarVmRc[coldex-1][9];
+    InitCurrArrayA(precval,StarVmRc[coldex],VminRBright[coldex]);
+  end;
+  // M (red dwarf) array setup
+  InitCurrArrayA(StarVmIc[6][9],RedDwarfVmRc,VminRc_RD);
+end;
+//----------------------------
+function VminRLookup(inval:Currency; out spectra:string):Boolean;
+var colordex,lookdex,mainx:Integer;
+    isodd:Boolean;
+begin
+  // quick rejection tests
+  Result := False;
+  if inval < VminRBright[3][0] then Exit;
+  if inval >= VminRc_RD[High(VminRc_RD)] then Exit;
+  Result := True;
+  // then M dwarfs
+  if inval >= VminRc_RD[0] then begin
+    lookdex := CurrArrLookupLT(inval,VminRc_RD);
+    Assert(lookdex>=0);
+    // setting the M spectra
+    isodd := Odd(lookdex);
+    mainx := Trunc(lookdex/2);
+    spectra := 'M' + IntToStr(mainx);
+    if isodd then spectra += '.5';
+  end
+  // then bright (B to K) stars
+  else begin
+    for colordex := 6 downto 3 do begin
+      if inval < VminRBright[colordex][0] then Continue;
+      lookdex := CurrArrLookupLT(inval,VminRBright[colordex]);
+      Break;
+    end;
+    spectra := scolors[colordex] + IntToStr(lookdex);
+  end;
+  // finishing off
+  spectra += 'V';
+end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function MakeGenericDwarf(ultradim:Boolean):EstimationParser;
 const dspec1 = 'M5V??';
@@ -1103,6 +1168,7 @@ begin
   BminVSetup;
   MKsSetup;
   VminISetup;
+  VminRSetup;
   PMS_BminVSetup;
   PMS_VmKsSetup;
   PMS_VminISetup;

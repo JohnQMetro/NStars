@@ -11,7 +11,7 @@ type
   RMatrix = array of array of Real;
 
   // custom enum for epoch
-  EpochType = (eB1950,eB1975,eJ2000,zJ2014,zJ2015,zJ2017);
+  EpochType = (eB1950,eB1975,eJ2000,zJ2014,zJ2015,zJ2017,zJ2015h);
 
 (* Checks if the sizes of A and B allow them to be multiplied *)
 function CheckMatrixDimensions(const A,B:RMatrix):Boolean;

@@ -40,7 +40,7 @@ ImportParameters = class
     lineskip:Integer;
     useSimbadLocation:Boolean;
     useSimbadProperMotion:Boolean;
-    epochdata:Integer;
+    epochdata:Real;
     // source info
     pllx_sourceid:string;
     fullname:string;
