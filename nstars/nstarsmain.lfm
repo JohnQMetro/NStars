@@ -620,37 +620,41 @@ object NStarsMainForm: TNStarsMainForm
                   ClientHeight = 114
                   inherited ULabel: TLabel
                     Height = 13
-                    Width = 41
+                    Width = 34
                   end
                   inherited BLabel: TLabel
                     Height = 13
-                    Width = 40
+                    Width = 33
                   end
                   inherited BPMLabel: TLabel
                     Height = 13
                   end
                   inherited RLabel: TLabel
                     Height = 13
-                    Width = 46
+                    Width = 39
                   end
                   inherited ILabel: TLabel
                     Height = 13
-                    Width = 43
+                    Width = 36
                   end
                   inherited JLabel: TLabel
                     Height = 13
-                    Width = 39
+                    Width = 32
                   end
                   inherited HLabel: TLabel
                     Height = 13
-                    Width = 41
+                    Width = 34
                   end
                   inherited KLabel: TLabel
                     Height = 13
-                    Width = 45
+                    Width = 38
                   end
                   inherited BPMLabel1: TLabel
                     Height = 13
+                  end
+                  inherited GaiaLabel: TLabel
+                    Height = 13
+                    Width = 34
                   end
                 end
                 inherited UseExtra2CB: TCheckBox
@@ -935,6 +939,10 @@ object NStarsMainForm: TNStarsMainForm
       object ShowGalCoordMI: TMenuItem
         Caption = 'Show Galactic Coordinates...'
         OnClick = ShowGalCoordMIClick
+      end
+      object ShowPosDegMI: TMenuItem
+        Caption = 'Show Position in Degrees...'
+        OnClick = ShowPosDegMIClick
       end
       object MenuItem5: TMenuItem
         Caption = '-'

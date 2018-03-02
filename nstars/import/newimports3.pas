@@ -71,7 +71,7 @@ begin
   end;
   // proper motion
   buffer1 := Trim(Copy(linein,123+soff,9));
-  buffer1 := Trim(Copy(linein,143+soff,9));
+  buffer2 := Trim(Copy(linein,143+soff,9));
   if (not impres.SetProperMotionPartsM(buffer1,buffer2)) then begin
       impres.Free;   Exit;
   end;
@@ -109,7 +109,6 @@ begin
     Result.useB_Flux := True;
     Result.useVRI_Flux := True;
     Result.epochdata := 2015.5;
-    Result.useSimbadProperMotion := True;   // NOFS 2017 has 'relative' proper motion
 
     // source info
     Result.pllx_sourceid := 'URATS';

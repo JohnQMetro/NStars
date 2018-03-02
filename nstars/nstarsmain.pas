@@ -23,6 +23,7 @@ type
     AddBDMI: TMenuItem;
     AricnsDataCB: TCheckBox;
     MenuItem1: TMenuItem;
+    ShowPosDegMI: TMenuItem;
     PosSepSetMI: TMenuItem;
     PreMainSeqCB: TCheckBox;
     FluxesTEffTab: TTabSheet;
@@ -221,6 +222,7 @@ type
     procedure SetBM_2MIClick(Sender: TObject);
     procedure SetMergeSrcMIClick(Sender: TObject);
     procedure ShowGalCoordMIClick(Sender: TObject);
+    procedure ShowPosDegMIClick(Sender: TObject);
     procedure ShowUVWMIClick(Sender: TObject);
     procedure SimbadDataFetchClick(Sender: TObject);
     procedure SimbadIDFluxMIClick(Sender: TObject);
@@ -2187,6 +2189,29 @@ begin
   overall += latlongstr;
   Screen.Cursor := crDefault;
   ShowMessage(overall);
+end;
+
+procedure TNStarsMainForm.ShowPosDegMIClick(Sender: TObject);
+var radeg,decdeg:Real;
+    rastr,decstr:string;
+    overall:string;
+begin
+  if (current = nil) then Exit;
+  if (current.sysl = nil) then Exit;
+  if current.sys.GetId = 1 then ShowMessage('Not applicable for the Sun.')
+  else begin
+     // applicable here!
+    Screen.Cursor := crHourGlass;
+    radeg := current.sysl.GetDecimalRightAscension;
+    decdeg := current.sysl.GetDecimalDeclination;
+    rastr := ' RA : ' + Trim(FloatToStrF(radeg,ffFixed,9,5)) + '°';
+    decstr := 'Dec : ' + Trim(FloatToStrF(decdeg,ffFixed,9,5)) + '°';
+    overall := 'The position in decimal degrees is ' + sLineBreak;
+    overall += rastr + sLineBreak + decstr;
+    // showing the message
+    Screen.Cursor := crDefault;
+    ShowMessage(overall);
+  end;
 end;
 
 procedure TNStarsMainForm.ShowUVWMIClick(Sender: TObject);

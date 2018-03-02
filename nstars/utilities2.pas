@@ -521,6 +521,7 @@ begin
   int1 := arctand(pmdec_mas/pmra_mas);
   if pmra_mas < 0 then pmang := 270 - int1
   else pmang := 90 - int1;
+
 end;
 //******************************************************************************
 begin
