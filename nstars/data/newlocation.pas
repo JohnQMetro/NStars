@@ -102,6 +102,7 @@ Location = class
     function UpdateParallax(in_median,in_errorx:string):Boolean; overload;
     function CheckEqParallax(in_median,in_errorx:string):Boolean;
     function SetParallaxPasted(indata:string; out xsrc:string):Boolean;
+    function SwapParallax(last:Boolean):Boolean;
 
     // setting proper motion
     function SetProperMotion(in_magnitude,in_angle:Real):Boolean; overload;
@@ -821,6 +822,63 @@ begin
   Result := UpdateParallax(xpllx,xpllxe);
   if Result then source := outxsrc;
   xsrc := outxsrc + ' ';
+end;
+//----------------------------------------------------------
+// used to provide a non-manual way of switching back to an old parallax...
+function Location.SwapParallax(last:Boolean):Boolean;
+var olist:TStringList;
+    bufx,buf1,buf2,osrc:string;
+    opllx,opllxe:Real;
+    spos,epos,pmlen:Integer;
+begin
+  Result := False;
+  bufx := Trim(oldparallax);
+  if Length(bufx) = 0 then Exit;
+  // getting the old parallax in string form pllx±err (source)
+  olist := SplitWithDelim(bufx,',',1);
+  if (olist.Count = 1) or (not last) then bufx := olist[0]
+  else bufx := olist[olist.Count-1];
+  // parsing the old string parallax (finding the split locations)
+  spos := AnsiPos('±',bufx);
+  if spos < 1 then begin
+    FreeAndNil(olist);
+    Exit;
+  end;
+  epos := PosEx('(', bufx,spos);
+  if epos < 1 then begin
+    FreeAndNil(olist);
+    Exit;
+  end;
+  // splitting...
+  buf1 := Trim(Copy(bufx,1,spos-1));
+  pmlen := Length('±');
+  buf2 := Trim(Copy(bufx,spos+pmlen,epos-spos-pmlen));
+  if not StrToRealBoth(buf1,buf2,opllx,opllxe) then begin
+    FreeAndNil(olist);
+    Exit;
+  end;
+  // getting the old parallax source
+  spos := PosEx(')', bufx,epos+1);
+  if spos < 1 then begin
+    FreeAndNil(olist);
+    Exit;
+  end;
+  osrc := Trim(Copy(bufx,epos+1,spos-epos-1));
+  if Length(osrc) = 0 then begin
+    FreeAndNil(olist);
+    Exit;
+  end;
+  // done with parsing, remove the old parallax...
+  if (olist.Count = 1) then oldparallax := ''
+  else begin
+    if last then olist.Delete(olist.Count-1)
+    else olist.Delete(0);
+    oldparallax := olist.DelimitedText;
+  end;
+  FreeAndNil(olist);
+  // replacing the current parallax with the extracted old one...
+  Result := UpdateParallax(opllx,opllxe);
+  source := osrc;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // setting proper motion

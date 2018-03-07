@@ -557,7 +557,9 @@ begin
       lookdex := CurrArrLookupLT(inval,PMS_VmKsStar[colordex]);
       Break;
   end;
-  spectra := scolors[colordex] + IntToStr(lookdex);
+  if colordex = 7 then spectra := 'M'
+  else spectra := scolors[colordex];
+  spectra += IntToStr(lookdex);
   Result := True;
 end;
 //--------------------------------------------

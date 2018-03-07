@@ -23,6 +23,7 @@ type
     AddBDMI: TMenuItem;
     AricnsDataCB: TCheckBox;
     MenuItem1: TMenuItem;
+    MISwapParallax: TMenuItem;
     ShowPosDegMI: TMenuItem;
     PosSepSetMI: TMenuItem;
     PreMainSeqCB: TCheckBox;
@@ -208,6 +209,7 @@ type
     procedure LuminosityProbMIClick(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MergeIntoMIClick(Sender: TObject);
+    procedure MISwapParallaxClick(Sender: TObject);
     procedure New1Click(Sender: TObject);
     procedure ParallaxEntryMIClick(Sender: TObject);
     procedure PllxImportMIClick(Sender: TObject);
@@ -1407,6 +1409,8 @@ begin
   AddBDMI.Enabled := currok;
   InsertStarMI.Enabled:= currok;
   AddISDBCatalogNames1.Enabled := currok;
+  if not currok then MISwapParallax.Enabled := False
+  else MISwapParallax.Enabled := (current.OldParallaxCount() > 0);
 
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1998,6 +2002,16 @@ begin
     ChangeSystem;
   end;
   Screen.Cursor := crDefault;
+end;
+
+procedure TNStarsMainForm.MISwapParallaxClick(Sender: TObject);
+var xres:Boolean;
+begin
+  if current = nil then Exit;
+  xres := current.OldParallaxSwap();
+  if xres then begin
+    MainLocatEditFrame1.Reload;
+  end;
 end;
 
 procedure TNStarsMainForm.New1Click(Sender: TObject);

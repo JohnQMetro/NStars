@@ -52,6 +52,9 @@ StarProxy = class
     function CurrentToBrownDwarf:Boolean;
     // location via separation and position angle
     function PosAngLocationSet:Boolean;
+    // more location stuff
+    function OldParallaxCount():Integer;
+    function OldParallaxSwap():Boolean;
     // even more methods
     function GuessSpectra(out usespec:Boolean):Boolean;
     function APASS_Helper(indata:string):Boolean;
@@ -672,6 +675,45 @@ begin
     end;
   end;
 end;
+//----------------------------------------------------
+// more location stuff
+//-----------------------
+// returns 2 if the parallax count is 2 or more
+function StarProxy.OldParallaxCount():Integer;
+begin
+  if sysl = nil then Result := 0
+  else if Length(sysl.oldparallax) = 0 then Result := 0
+  else if AnsiContainsStr(sysl.oldparallax,',') then Result := 2
+  else Result := 1;
+end;
+//-----------------------
+// swapping parallax gui helper
+function StarProxy.OldParallaxSwap():Boolean;
+var ocount:Integer;
+    rval:Word;
+begin
+  Result := False;
+  ocount := OldParallaxCount();
+  if ocount = 0 then Exit;
+  // two different pop-ups depending on count
+  if ocount = 1 then begin
+    rval := mrYes;
+    rval := MessageDlg('Do you want to swap the current parallax with the old one?', mtConfirmation,[mbYes, mbNo],0);
+    if rval = mrYes then begin
+      Result := sysl.SwapParallax(False);
+      if (not Result) then ShowMessage('Error while trying to swap Parallax!');
+    end;
+  end
+  else begin
+    rval := mrCancel;
+    rval := QuestionDlg('Pick the parallax','Which old parallax do you want to swap with the old one?',
+                      mtCustom,[100,'First',200,'Last',mrCancel],'');
+    if rval = mrCancel then Exit;
+    Result := sysl.SwapParallax(rval = 200);
+    if (not Result) then ShowMessage('Error while trying to swap Parallax!');
+  end;
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++
 // even more methods
 function StarProxy.GuessSpectra(out usespec:Boolean):Boolean;

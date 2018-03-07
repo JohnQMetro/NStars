@@ -1135,6 +1135,10 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Enter Parallax...'
         OnClick = ParallaxEntryMIClick
       end
+      object MISwapParallax: TMenuItem
+        Caption = 'Swap Parallax...'
+        OnClick = MISwapParallaxClick
+      end
       object PosSepSetMI: TMenuItem
         Caption = 'Set Position from Separation...'
         OnClick = PosSepSetMIClick
