@@ -30,6 +30,7 @@ procedure FirstMagFromSumSecond(const sum_mag,mag_two:Real; out mag_one:Real);
 function MakeEPD(const val1,val2:Real):Real;
 (* Other methods *)
 function JohnsonQIndex(Uj,Bj,Vj:Real):Real;
+function UCAC_2MASS_ToBV(ucac4:Double; Ks:Currency; out Vest:Real; out Best:Currency):Boolean;
 //******************************************************************************
 implementation
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -394,6 +395,31 @@ function JohnsonQIndex(Uj,Bj,Vj:Real):Real;
 begin
   Result := (Uj-Bj) - 0.72*(Bj-Vj);
 end;
+//--------------------------------------------------------
+(* Estimates B and V from UCAC4 Model Fit Magnitude and 2 MASS Ks. For KM dwarfs
+only, polynomials derived by myself. Kinda crude. *)
+function UCAC_2MASS_ToBV(ucac4:Double; Ks:Currency; out Vest:Real; out Best:Currency):Boolean;
+var umks:Double;
+const bcoff1:array[0..3] of Real  = ( 5.02, -6.1338, 2.8479, -0.38889 );
+      bcoff2:array[0..3] of Real  = ( -3.9581, 4.1783, -0.98665, 0.076675 );
+      vcoff1:array[0..3] of Real = ( 3.5781, -4.6244, 2.0114, -0.27394 );
+      vcoff2:array[0..2] of Real = ( -0.71231, 0.63993, -0.091608 );
+begin
+  Result := False;
+  if (ucac4 > 90) or (Ks > 90) then Exit;
+  umks := ucac4 - CurrToReal(Ks);
+  if (umks < 1.56) or (umks > 5.882) then Exit;
+  // using the polynomials
+  if umks < 3.15 then begin
+     Best := ucac4 + PolEval(umks,bcoff1,4);
+     Vest := ucac4 + PolEval(umks,vcoff1,4);
+  end else begin
+    Best := ucac4 + PolEval(umks,bcoff2,4);
+    Vest := ucac4 + PolEval(umks,vcoff2,3);
+  end;
+  Result := True;
+end;
+
 //******************************************************************************
 end.
 

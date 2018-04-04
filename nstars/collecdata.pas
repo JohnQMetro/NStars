@@ -61,6 +61,7 @@ StarProxy = class
     function SDSS_Helper(indata:string):Boolean;
     function Tycho2_Helper(indata:string):Boolean;
     function VizierAPASSGet(simbadalso:Boolean):Boolean;
+    function UCAC4_ToBV_Helper(indata:string):Boolean;
 end;
 
 (* I've decided to wrap up the star lists *)
@@ -1016,6 +1017,52 @@ begin
     end;
   end;
   if not fok then ShowMessage('Unable to get lookup catalog id!');
+end;
+//----------------------------------------------------------
+function StarProxy.UCAC4_ToBV_Helper(indata:string):Boolean;
+var sc:Integer;   ucac4val:Double;
+    Vest:Real;   Best:Currency;
+    msgdata:string;
+    rval:Word;
+const amsg = 'BV estimated from UCAC4';
+begin
+  Result := False;
+  Assert(cstar<>nil);
+  Val(Trim(indata),ucac4val,sc);
+  if sc<>0 then begin
+    ShowMessage('Unable to parse the input!');
+    Exit;
+  end;
+  if not UCAC_2MASS_ToBV(ucac4val,cstar.fluxtemp.K_mag,Vest,Best) then begin
+    ShowMessage('Cannot estimate, Color out of range!');
+    Exit;
+  end;
+  // building the message to show
+  msgdata := 'The estimates are :' + sLineBreak;
+  // V and B
+  msgdata += 'V estimate : ' + FloatToStrF(Vest,ffFixed,2,3);
+  msgdata += sLineBreak;
+  msgdata += 'B estimate : ' + CurrToStrF(Best,ffFixed,3);
+  msgdata += sLineBreak;
+  // final touches
+  msgdata += 'Do you want to use these magnitudes?';
+  // asking
+  // asking if we want to use the UCAC4 Model-Fit-Magnitude derived values
+  rval := mrNo;
+  rval := MessageDlg(msgdata, mtConfirmation,[mbYes, mbNo],0);
+  if (rval = mrYes) then begin
+    // setting B
+    cstar.fluxtemp.blue_mag := Best;
+    cstar.fluxtemp.blue_err := 0.16;
+    // setting V
+    cstar.SetVisualMagnitude(Vest);
+    // adding some notes
+    if not cstar.NotesConatins(amsg) then begin
+      cstar.AppndNote(' ' + amsg,False);
+    end;
+    sys.UpdateEstimates;
+    Result := True;
+  end;
 end;
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

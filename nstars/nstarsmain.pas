@@ -23,6 +23,7 @@ type
     AddBDMI: TMenuItem;
     AricnsDataCB: TCheckBox;
     MenuItem1: TMenuItem;
+    UCAC4MagEstMI: TMenuItem;
     MISwapParallax: TMenuItem;
     ShowPosDegMI: TMenuItem;
     PosSepSetMI: TMenuItem;
@@ -249,6 +250,7 @@ type
     procedure BayerPickListChange(Sender: TObject);
     procedure TGASNameMatchMIClick(Sender: TObject);
     procedure Tycho2MagMIClick(Sender: TObject);
+    procedure UCAC4MagEstMIClick(Sender: TObject);
     procedure UnresBinaryMIClick(Sender: TObject);
     procedure UseSepLocatCBChange(Sender: TObject);
     procedure VariableStarNameEditExit(Sender: TObject);
@@ -1581,6 +1583,23 @@ begin
     data := Trim(InputBox('Tycho-2 to Johnson (Mamajek+ 2002)',entmsg,''));
     if Length(data)<>0 then begin
        rok := current.Tycho2_Helper(data);
+    end;
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.UCAC4MagEstMIClick(Sender: TObject);
+var data:string;   rok:Boolean;
+const entmsg = 'Enter the UCAC4 Model Fit Magnitude to estimate B and V' +
+                      sLineBreak + '(also uses Ks, for KM dwarfs)';
+begin
+  if current.cstar <> nil then begin
+    data := Trim(InputBox('UCAC4 to BV',entmsg,''));
+    if Length(data)<>0 then begin
+       rok := current.UCAC4_ToBV_Helper(data);
     end;
     if rok then begin
       // reloading after data has been set

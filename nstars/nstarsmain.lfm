@@ -14,7 +14,7 @@ object NStarsMainForm: TNStarsMainForm
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '1.8.0.6'
+  LCLVersion = '1.8.2.0'
   object SystemEditorBox: TGroupBox
     Left = 200
     Height = 540
@@ -1157,6 +1157,10 @@ object NStarsMainForm: TNStarsMainForm
       object Tycho2MagMI: TMenuItem
         Caption = 'Enter Tycho-2 Magnitudes...'
         OnClick = Tycho2MagMIClick
+      end
+      object UCAC4MagEstMI: TMenuItem
+        Caption = 'Estimate from UCAC4 Mag...'
+        OnClick = UCAC4MagEstMIClick
       end
       object MenuItem4: TMenuItem
         Caption = '-'

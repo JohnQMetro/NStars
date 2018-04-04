@@ -495,7 +495,7 @@ end;
 //---------------------------------------------------------
 function Sn35Photometry.TestReplace(const current:Currency; const infr:Boolean):Boolean;
 var xdiff:Currency;
-const maxdiff:Currency = 0.15;
+const maxdiff:Currency = 0.1;
 begin
   Result := False;
   // we have no value
