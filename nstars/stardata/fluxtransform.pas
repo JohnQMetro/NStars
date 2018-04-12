@@ -36,11 +36,15 @@ function JohnsonQIndex(Uj,Bj,Vj:Real):Real;
 procedure LoadMulti(color1,color2:Real; fcubic:Boolean; var target:RealArray);
 function USNO_B2_Adjust(B2in,J,H,Ks:Currency; out Best:Currency):Boolean;
 function USNO_I_Adjust(Iin,J,H,Ks:Currency; out Icest:Currency):Boolean;
-function UCAC_To_RcS(UCACin,J:Currency; out RcEst:Currency):Boolean;
+function UCAC_To_RcS(UCACin,J,H,Ks:Currency; out RcEst:Currency):Boolean;
 (* BV estimation methods *)
 function URATG_ToBV(URATin:Real; Gin,J,H,Ks:Currency; out Best:Currency; out Vest:Real):Boolean;
 function UCAC_2MASS_ToBV(ucac4:Double; Ks:Currency; out Vest:Real; out Best:Currency):Boolean;
 function UC2MG_To_BV(UCACin:Real; Gin,J,H,Ks:Currency; out Best:Currency; out Vest:Real):Boolean;
+function CMC15_ToBV(CMCr:Real; Gin,J,Ks:Currency; out Best:Currency; out Vest:Real):Boolean;
+(* More Estimation *)
+function URATJ_To_Ic(URATin,Jin:Currency; out Icest:Currency):Boolean;
+function UC2MG_To_Ic(UCACin,Gin,J:Currency; out Icest:Currency):Boolean;
 //******************************************************************************
 implementation
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -468,10 +472,10 @@ begin
   // computing source colors
   bimj := CurrToReal(Iin) - CurrToReal(Ks);
   hmks := CurrToReal(H) - CurrToReal(Ks);
-  if (bimks < -2.875) or (bimks > 6.297) then Exit;
+  if (bimj < -2.875) or (bimj > 6.297) then Exit;
   if (hmks < -0.024) or (hmks > 0.418) then Exit;
   // computing the result
-  LoadMulti(bimks,hmks,True,colorray);
+  LoadMulti(bimj,hmks,True,colorray);
   resval := dot2(coffs,colorray,7);
   // checking to see if the result is within expected bounds
   if (resval < 0.3) or (resval > 2.098) then Exit;
@@ -503,14 +507,14 @@ begin
     resval := PolEval(ucmj,coff1,4);
   end else begin
     // uses too dim Rc calculated from APASS g r i for 64467 stars (UCAC4)
-    if (umcmj < 2.284) reval := PolEval(ucmj,coff2,3);
+    if (ucmj < 2.284) then resval := PolEval(ucmj,coff2,3)
     else begin
       // for the red end, scatter is very bad (RV 0.52)
       if (H > 90) or (ks > 90) then Exit;
       hmks := CurrToReal(H) - CurrToReal(Ks);
-      if (hmks < 0.290) or (hmks >0.934) Exit;
+      if (hmks < 0.290) or (hmks >0.934) then Exit;
       LoadMulti(ucmj,hmks,False,loadsx);
-      reval := dot2(coff3,loadsx,6);
+      resval := dot2(coff3,loadsx,6);
     end;
   end;
   // finishing off
@@ -775,7 +779,112 @@ begin
     Best := RoundCurrency(best_x,False);
     Vest := vest_x;
   end;
-
+end;
+//------------------------------------------------------------------------------
+(* converts the r' found in the Carlsberg Meridian Catalogue 15 (which may be the
+same as SDSS or Sloan Standard r') to BV, also using J. For better accuracy, you
+can also use GAIA G and Ks as well. *)
+function CMC15_ToBV(CMCr:Real; Gin,J,Ks:Currency; out Best:Currency; out Vest:Real):Boolean;
+var rmj,rmks,gmks,gmj:Real; // colors
+    interm:Real; // tempval
+    useGV,useGB:Boolean;
+    colorhash:RealArray;
+const coffV:array[0..2] of Real = ( -0.23459, 0.48687, -0.069716 );
+      coffVG:array[0..6] of Real = ( -1.1852, 2.0771, -0.73998, 0.054223, 0.31114, -0.36091, -0.093404 );
+      coffB:array[0..2] of Real = ( -0.5763, 1.6096, -0.23162 );
+      coffBG:array[0..6] of Real = ( -2.5055, 2.713, -0.78864, 0.046977, 0.3849, 0.20047, -0.20487 );
+begin
+  Result := False;
+  // required mangitudes
+  if (CMCr > 90) or (J > 90) then Exit;
+  // initial check to see if we have G and Ks
+  useGV := (Gin < 90);
+  useGB := useGV and (Ks < 90);
+  // calculating initial color
+  rmj := CMCr - CurrToReal(J);
+  // oob rejects
+  if (rmj < 0.915) or (rmj > 6.374) then Exit;
+  // testing if we use G-J for V as well
+  if useGV then begin
+    gmj := CurrToReal(Gin) - CurrToReal(J);
+    useGV := (gmj >= 1.092) and (gmj<=8.279);
+    useGV := useGV and (rmj >=1.088) and (rmj<=4.412);
+  end;
+  // testing if we use G-Ks for B instead
+  if useGB then begin
+    rmks := CMCr - CurrToReal(Ks);
+    gmks := CurrToReal(Gin) - CurrToReal(Ks);
+    useGB := (gmks >= 1.451) and (gmks<=9.109);
+    useGV := useGV and (rmks >=1.479) and (rmks<=5.741);
+  end;
+  // finally, computing...
+  // B
+  if useGB then begin
+    LoadMulti(gmks,rmks,True,colorhash);
+    interm := dot2(colorhash,coffBG,7);
+  end else begin
+    interm := PolEval(rmj,coffB,3);
+  end;
+  Best := CMCr + interm;
+  Best := RoundCurrency(Best,False);
+  // V
+  if useGV then begin
+    LoadMulti(gmj,rmj,True,colorhash);
+    interm := dot2(colorhash,coffVG,7);
+  end else begin
+    interm := PolEval(rmj,coffV,3);
+  end;
+  Vest := CMCr + interm;
+  // done
+  Result := True;
+end;
+//------------------------------------------------------------------------------
+(* 'Ic' in this case is the IC obtained by running APASS g' r' i' thru transforms.
+It seems to be okay enough. *)
+function URATJ_To_Ic(URATin,Jin:Currency; out Icest:Currency):Boolean;
+var umj,interm:Real;
+const coff:array[0..2] of Real = ( -0.24767, 0.83674, -0.06675 );
+begin
+  Result := False;
+  if (URATin > 90) or (Jin > 90) then Exit;
+  umj := CurrToReal(URATin) - CurrToReal(Jin);
+  if (umj < 0.798) or (umj > 3.743) then Exit;
+  // we compute
+  interm := PolEval(umj,coff,3);
+  Icest := (CurrToReal(Jin) + interm);
+  Icest := RoundCurrency(Icest,False);
+  Result := True;
+end;
+//----------------------------------------------------------------
+// the UCAC4 version of the above, one can also add G for and improced fit
+function UC2MG_To_Ic(UCACin,Gin,J:Currency; out Icest:Currency):Boolean;
+var ucmj,gmj:Real;
+    useG:Boolean;
+    interm:Real;
+    colorx:RealArray;
+const coff:array[0..3] of Real = ( -0.19163, 0.71893, -0.12204, 0.011715 );
+      coffG:array[0..6] of Real = ( -0.34804, 1.1868, -0.32971, 0.021888, 0.11493, -0.18091, 0.002949 );
+begin
+  Result := False;
+  if (UCACin > 90) or (J > 90) then Exit;
+  ucmj := CurrToReal(UCACin) - CurrToReal(J);
+  if (ucmj < 0.232) or (ucmj >7.857) then Exit;
+  // we now check whether we will be using the G fit
+  if (Gin < 90) then begin
+    gmj := CurrToReal(Gin) - CurrToReal(J);
+    useG := (gmj >= 1.080) and (gmj <= 8.279);
+  end else useG := False;
+  // calculating
+  if useG then begin
+    LoadMulti(gmj,ucmj,True,colorx);
+    interm := dot2(coffG,colorx,7)
+  end else begin
+    interm := PolEval(ucmj,coff,4);
+  end;
+  // finishing
+  Icest := J + interm;
+  Icest := RoundCurrency(Icest,False);
+  Result := True;
 end;
 
 //******************************************************************************

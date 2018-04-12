@@ -1168,6 +1168,18 @@ object NStarsMainForm: TNStarsMainForm
           Caption = 'Estimate BV using UCAC...'
           OnClick = EstBVUCACMIClick
         end
+        object EstBVCMCMI: TMenuItem
+          Caption = 'Estimate BV using CMC r’...'
+          OnClick = EstBVCMCMIClick
+        end
+        object EstIURATMI: TMenuItem
+          Caption = 'Estimate Ic using URAT...'
+          OnClick = EstIURATMIClick
+        end
+        object EstIUCACMI: TMenuItem
+          Caption = 'Estimate Ic using UCAC...'
+          OnClick = EstIUCACMIClick
+        end
       end
       object MenuItem4: TMenuItem
         Caption = '-'

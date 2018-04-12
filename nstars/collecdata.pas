@@ -21,6 +21,7 @@ StarProxy = class
     function GetCurrentParallax:Real;
     procedure ApplyTGASChange(newdata:TGASData);
     function ShowBVEst(Vest:Real; Best:Currency; amsg:string):Boolean;
+    function ShowIEst(Icest:Currency; amsg:string):Boolean;
   public
     // system level information
     sys:StarSystem;
@@ -64,6 +65,9 @@ StarProxy = class
     function VizierAPASSGet(simbadalso:Boolean):Boolean;
     function URAT_ToBV(indata:string):Boolean;
     function UCAC4_ToBV_Helper(indata:string):Boolean;
+    function CMC_ToBV(indata:string):Boolean;
+    function URAT_To_Ic(indata:string):Boolean;
+    function UCAC4_To_Ic(indata:string):Boolean;
 end;
 
 (* I've decided to wrap up the star lists *)
@@ -330,7 +334,29 @@ begin
     Result := True;
   end;
 end;
-
+function StarProxy.ShowIEst(Icest:Currency; amsg:string):Boolean;
+var msgdata:string;
+    rval:Word;
+begin
+  Result := False;
+  // building the message to show
+  msgdata := 'The Ic estimate is  :' + CurrToStrF(Icest,ffFixed,2);
+  msgdata += sLineBreak;
+  msgdata += 'Do you want to use this magnitude?';
+  // asking if we want to use the estimated magnitudes
+  rval := mrNo;
+  rval := MessageDlg(msgdata, mtConfirmation,[mbYes, mbNo],0);
+  if (rval = mrYes) then begin
+    // setting Ic
+    cstar.fluxtemp.I_mag := Icest;
+    // adding some notes
+    if not cstar.NotesConatins(amsg) then begin
+      cstar.AppndNote(' ' + amsg,False);
+    end;
+    sys.UpdateEstimates;
+    Result := True;
+  end;
+end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // public methods
 constructor StarProxy.Create;
@@ -1094,7 +1120,59 @@ begin
   end
   else ShowMessage('Unable to parse the input');
 end;
-
+//--------------------------------------------
+function StarProxy.CMC_ToBV(indata:string):Boolean;
+var params:RealArray;
+    gval,Best:Currency;
+    Vest:Real;
+const amsg = 'BV estimated from CMC r’/G';
+begin
+  Result := False;
+  if SplitWithSpacesToReal(indata,1,params) then begin
+    // setting gval
+    if Length(params) >= 2 then gval := params[1]
+    else gval := cstar.fluxtemp.gaia_mag;
+    // calling the transform function
+    if not CMC15_ToBV(params[0],gval,cstar.fluxtemp.J_mag,
+       cstar.fluxtemp.K_mag,Best,Vest) then begin
+         ShowMessage('Cannot estimate, Color out of range!');
+       end else Result := ShowBVEst(Vest,Best,amsg);
+  end
+  else ShowMessage('Unable to parse the input');
+end;
+//-------------------------------------------
+function StarProxy.URAT_To_Ic(indata:string):Boolean;
+var params:RealArray;
+    Icest:Currency;
+const amsg = 'Ic estimated from URAT+J.';
+begin
+  Result := False;
+  if SplitWithSpacesToReal(indata,1,params) then begin
+    // calling the transform function
+    if not URATJ_To_Ic(params[0],cstar.fluxtemp.J_mag,Icest) then begin
+         ShowMessage('Cannot estimate, Color out of range!');
+    end else Result := ShowIEst(Icest,amsg);
+  end
+  else ShowMessage('Unable to parse the input');
+end;
+//--------------------------------------------
+function StarProxy.UCAC4_To_Ic(indata:string):Boolean;
+var params:RealArray;
+    gval,Icest:Currency;
+const amsg = 'Ic estimated from UCAC/G+J.';
+begin
+  Result := False;
+  if SplitWithSpacesToReal(indata,1,params) then begin
+    // setting gval
+    if Length(params) >= 2 then gval := params[1]
+    else gval := cstar.fluxtemp.gaia_mag;
+    // calling the transform function
+    if not UC2MG_To_Ic(params[0],gval,cstar.fluxtemp.J_mag,Icest) then begin
+         ShowMessage('Cannot estimate, Color out of range!');
+    end else Result := ShowIEst(Icest,amsg);
+  end
+  else ShowMessage('Unable to parse the input');
+end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 procedure StarList.SetAfterFilter;
 begin

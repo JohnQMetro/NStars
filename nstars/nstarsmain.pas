@@ -26,6 +26,9 @@ type
     FluxEstSubMenu: TMenuItem;
     EstBVUATMI: TMenuItem;
     EstBVUCACMI: TMenuItem;
+    EstIUCACMI: TMenuItem;
+    EstIURATMI: TMenuItem;
+    EstBVCMCMI: TMenuItem;
     MISwapParallax: TMenuItem;
     ShowPosDegMI: TMenuItem;
     PosSepSetMI: TMenuItem;
@@ -190,7 +193,9 @@ type
     procedure ChangeStarToBDMIClick(Sender: TObject);
     procedure ComponentTabControlChange(Sender: TObject);
     procedure EnterPMPartsMIClick(Sender: TObject);
+    procedure EstBVCMCMIClick(Sender: TObject);
     procedure EstBVUCACMIClick(Sender: TObject);
+    procedure EstIUCACMIClick(Sender: TObject);
     procedure ExportListMIClick(Sender: TObject);
     procedure FindIDMIClick(Sender: TObject);
     procedure FindRemTGASMIClick(Sender: TObject);
@@ -212,6 +217,7 @@ type
     procedure LoadTGASCSVClick(Sender: TObject);
     procedure LuminosityProbMIClick(Sender: TObject);
     procedure EstBVUATMIClick(Sender: TObject);
+    procedure EstIURATMIClick(Sender: TObject);
     procedure MergeIntoMIClick(Sender: TObject);
     procedure MISwapParallaxClick(Sender: TObject);
     procedure New1Click(Sender: TObject);
@@ -546,15 +552,50 @@ begin
   end;
 end;
 
+procedure TNStarsMainForm.EstBVCMCMIClick(Sender: TObject);
+var data:string;   rok:Boolean;
+const entmsg = 'Enter the r’ magnitude from the Carlsberg Meridian Catalogue' + sLineBreak +
+               '15 (and optionally G for better results) to estimate B and' + sLineBreak +
+               'V magnitudes (also uses 2MASS JHK).';
+begin
+  if current.cstar <> nil then begin
+    data := Trim(InputBox('Estimate BV from CMC15',entmsg,''));
+    if Length(data)<>0 then begin
+       rok := current.CMC_ToBV(data);
+    end;
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
 procedure TNStarsMainForm.EstBVUCACMIClick(Sender: TObject);
 var data:string;   rok:Boolean;
-const entmsg = 'Enter UCAC magnitude (and optionally G for better results)' + sLineBreak +
+const entmsg = 'Enter UCAC4 magnitude (and optionally G for better results)' + sLineBreak +
                'to estimate B and V magnitudes (also uses 2MASS JHK).';
 begin
   if current.cstar <> nil then begin
     data := Trim(InputBox('Estimate BV from UCAC',entmsg,''));
     if Length(data)<>0 then begin
        rok := current.UCAC4_ToBV_Helper(data);
+    end;
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.EstIUCACMIClick(Sender: TObject);
+var data:string;   rok:Boolean;
+const entmsg = 'Enter UCAC4 magnitude (and optionally G for better results)' + sLineBreak +
+               'to estimate the Ic magnitude (also uses 2MASS J).';
+begin
+  if current.cstar <> nil then begin
+    data := Trim(InputBox('Estimate Ic from UCAC',entmsg,''));
+    if Length(data)<>0 then begin
+       rok := current.UCAC4_To_Ic(data);
     end;
     if rok then begin
       // reloading after data has been set
@@ -2014,6 +2055,22 @@ begin
     data := Trim(InputBox('Estimate BV from URAT',entmsg,''));
     if Length(data)<>0 then begin
        rok := current.URAT_ToBV(data);
+    end;
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.EstIURATMIClick(Sender: TObject);
+var data:string;   rok:Boolean;
+const entmsg = 'Enter URAT magnitude to estimate Ic magnitude (also uses 2MASS J).';
+begin
+  if current.cstar <> nil then begin
+    data := Trim(InputBox('Estimate Ic from URAT',entmsg,''));
+    if Length(data)<>0 then begin
+       rok := current.URAT_To_Ic(data);
     end;
     if rok then begin
       // reloading after data has been set

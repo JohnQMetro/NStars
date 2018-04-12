@@ -908,7 +908,7 @@ begin
   // B Catalog conversion for Infrared (unneeded if I is bright enough)
   if BcatI and (imag > 8.5) then USNO_I_Adjust(imag,jmag,hmag,kmag,imag);
   // UCAC fir Model Magnitude is not Rc
-  if RUCAC then UCAC_To_RcS(rmag,jmag,rmag);
+  if RUCAC then UCAC_To_RcS(rmag,jmag,hmag,kmag,rmag);
 
   // planets?
   hasplanet := xparser.MovePast('Substellar companion');
