@@ -41,6 +41,8 @@ ExclSearch = class
       eoffsets:TIntegerDynArray;
   end;
 
+RealArray = array of Real;
+
 // a case-insenstive version of AnsiPos
 function CaseIPos(const base:string; const pattern:string):Integer;
 
@@ -129,6 +131,7 @@ function ParseByChar(indata:string; delim:Char; empt,trail:Boolean):TStringList;
 // another parse by char, but with no escapes, returns nil if the count is below min
 function SplitWithDelim(const indata:string; delim:Char; min:Integer):TStringList;
 function SplitWithSpaces(indata:string; min:Integer):TStringList;
+function SplitWithSpacesToReal(indata:string; min:Integer; var results:RealArray):Boolean;
 
 (* function TrimZeros: removes zeros from start and end of a
 formatted number. *)
@@ -1161,6 +1164,27 @@ begin
   // special case...
   if (min = 0) and (Length(indata)=0) then Result := TStringList.Create
   else Result := SplitWithDelim(indata,' ',min);
+end;
+//--------------------------------------------------------------------
+function SplitWithSpacesToReal(indata:string; min:Integer; var results:RealArray):Boolean;
+var tstr:TStringList;
+    xarr:RealArray;
+    dex:Integer;
+begin
+  Result := False;
+  tstr := SplitWithSpaces(indata,min);
+  if (tstr = nil) then Exit;
+  if (tstr.Count < min) then Exit;
+  // converting the real
+  SetLength(xarr,tstr.Count);
+  for dex := 0 to tstr.Count-1 do begin
+    if not StrToReal(tstr[dex],xarr[dex]) then Exit;
+  end;
+  // here, all have been converted fine, we copy to the results array
+  FreeAndNil(tstr);
+  SetLength(results,Length(xarr));
+  for dex := 0 to Length(xarr)-1 do results[dex] := xarr[dex];
+  Result := True;
 end;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

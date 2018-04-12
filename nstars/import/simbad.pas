@@ -764,6 +764,7 @@ var xparser:StringParsing;
     clindex,clhigh:Integer;
     fluxsrc:string;
     johnson_R,johnson_I,denisi:Boolean;
+    BcatB,BcatI,RUCAC:Boolean;
     checkx:Boolean;
 const extrps = '<INPUT TYPE="hidden" NAME="parents" ID="parents" VALUE="';
       extrcs = '<INPUT TYPE="hidden" NAME="children" ID="children" VALUE="';
@@ -880,10 +881,18 @@ begin
   johnson_R := False;  johnson_I := False;  denisi := False;
   while ExtractFlux(xparser,fluxchar,fvalue,ferror,fluxsrc) do begin
     AssignFlux(fluxchar,fvalue,ferror);
-    if (fluxchar = 'R') then johnson_R := (fluxsrc='2002yCat.2237....0D');
+    // checking for sources that likely need to be adjusted...
+    if (fluxchar = 'B') then BcatB := (fluxsrc='2003AJ....125..984M');
+    if (fluxchar = 'R') then begin
+      johnson_R := (fluxsrc='2002yCat.2237....0D');
+      RUCAC := (fluxsrc='2012yCat.1322....0Z'); // UCAC bandpass is not Rc
+    end;
     if (fluxchar = 'I') then begin
       johnson_I := (fluxsrc = '2002yCat.2237....0D');
-      if (not johnson_I) then denisi := (fluxsrc = '2005yCat.2263....0T');
+      if (not johnson_I) then begin
+        denisi := (fluxsrc = '2005yCat.2263....0T');
+        BcatI := (fluxsrc='2003AJ....125..984M');
+      end;
     end;
   end;
   xparser.ClearLimitString;
@@ -894,6 +903,12 @@ begin
     else Johnson_to_Cousins(vmag,rmag,imag,dumflux,imag);
   end;
   if (imag < 90) and denisi then imag := DENIStoCousinsI(imag);
+  // B Catalog conversions for B2 (assuming B2 instead of B1)
+  if BcatB then USNO_B2_Adjust(bmag,jmag,hmag,kmag,bmag);
+  // B Catalog conversion for Infrared (unneeded if I is bright enough)
+  if BcatI and (imag > 8.5) then USNO_I_Adjust(imag,jmag,hmag,kmag,imag);
+  // UCAC fir Model Magnitude is not Rc
+  if RUCAC then UCAC_To_RcS(rmag,jmag,rmag);
 
   // planets?
   hasplanet := xparser.MovePast('Substellar companion');

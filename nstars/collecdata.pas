@@ -20,6 +20,7 @@ StarProxy = class
     function FoundListToString(inlinst:TGASList):string;
     function GetCurrentParallax:Real;
     procedure ApplyTGASChange(newdata:TGASData);
+    function ShowBVEst(Vest:Real; Best:Currency; amsg:string):Boolean;
   public
     // system level information
     sys:StarSystem;
@@ -61,6 +62,7 @@ StarProxy = class
     function SDSS_Helper(indata:string):Boolean;
     function Tycho2_Helper(indata:string):Boolean;
     function VizierAPASSGet(simbadalso:Boolean):Boolean;
+    function URAT_ToBV(indata:string):Boolean;
     function UCAC4_ToBV_Helper(indata:string):Boolean;
 end;
 
@@ -295,6 +297,40 @@ begin
   // done...
   newdata.matched := True;
 end;
+//----------------------------------------------------------
+function StarProxy.ShowBVEst(Vest:Real; Best:Currency; amsg:string):Boolean;
+var msgdata:string;
+    rval:Word;
+begin
+  Result := False;
+  // building the message to show
+  msgdata := 'The estimates are :' + sLineBreak;
+  // V and B
+  msgdata += 'V estimate : ' + FloatToStrF(Vest,ffFixed,2,3);
+  msgdata += sLineBreak;
+  msgdata += 'B estimate : ' + CurrToStrF(Best,ffFixed,3);
+  msgdata += sLineBreak;
+  // final touches
+  msgdata += 'Do you want to use these magnitudes?';
+  // asking
+  // asking if we want to use the estimated magnitudes
+  rval := mrNo;
+  rval := MessageDlg(msgdata, mtConfirmation,[mbYes, mbNo],0);
+  if (rval = mrYes) then begin
+    // setting B
+    cstar.fluxtemp.blue_mag := Best;
+    cstar.fluxtemp.blue_err := 0.16;
+    // setting V
+    cstar.SetVisualMagnitude(Vest);
+    // adding some notes
+    if not cstar.NotesConatins(amsg) then begin
+      cstar.AppndNote(' ' + amsg,False);
+    end;
+    sys.UpdateEstimates;
+    Result := True;
+  end;
+end;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // public methods
 constructor StarProxy.Create;
@@ -1019,50 +1055,44 @@ begin
   if not fok then ShowMessage('Unable to get lookup catalog id!');
 end;
 //----------------------------------------------------------
-function StarProxy.UCAC4_ToBV_Helper(indata:string):Boolean;
-var sc:Integer;   ucac4val:Double;
-    Vest:Real;   Best:Currency;
-    msgdata:string;
-    rval:Word;
-const amsg = 'BV estimated from UCAC4';
+function StarProxy.URAT_ToBV(indata:string):Boolean;
+var params:RealArray;
+    gval,Best:Currency;
+    Vest:Real;
+const amsg = 'BV estimated from URAT/G';
 begin
   Result := False;
-  Assert(cstar<>nil);
-  Val(Trim(indata),ucac4val,sc);
-  if sc<>0 then begin
-    ShowMessage('Unable to parse the input!');
-    Exit;
-  end;
-  if not UCAC_2MASS_ToBV(ucac4val,cstar.fluxtemp.K_mag,Vest,Best) then begin
-    ShowMessage('Cannot estimate, Color out of range!');
-    Exit;
-  end;
-  // building the message to show
-  msgdata := 'The estimates are :' + sLineBreak;
-  // V and B
-  msgdata += 'V estimate : ' + FloatToStrF(Vest,ffFixed,2,3);
-  msgdata += sLineBreak;
-  msgdata += 'B estimate : ' + CurrToStrF(Best,ffFixed,3);
-  msgdata += sLineBreak;
-  // final touches
-  msgdata += 'Do you want to use these magnitudes?';
-  // asking
-  // asking if we want to use the UCAC4 Model-Fit-Magnitude derived values
-  rval := mrNo;
-  rval := MessageDlg(msgdata, mtConfirmation,[mbYes, mbNo],0);
-  if (rval = mrYes) then begin
-    // setting B
-    cstar.fluxtemp.blue_mag := Best;
-    cstar.fluxtemp.blue_err := 0.16;
-    // setting V
-    cstar.SetVisualMagnitude(Vest);
-    // adding some notes
-    if not cstar.NotesConatins(amsg) then begin
-      cstar.AppndNote(' ' + amsg,False);
-    end;
-    sys.UpdateEstimates;
-    Result := True;
-  end;
+  if SplitWithSpacesToReal(indata,1,params) then begin
+    // setting gval
+    if Length(params) >= 2 then gval := params[1]
+    else gval := cstar.fluxtemp.gaia_mag;
+    // calling the transform function
+    if not URATG_ToBV(params[0],gval,cstar.fluxtemp.J_mag,cstar.fluxtemp.H_mag,
+       cstar.fluxtemp.K_mag,Best,Vest) then begin
+         ShowMessage('Cannot estimate, Color out of range!');
+       end else Result := ShowBVEst(Vest,Best,amsg);
+  end
+  else ShowMessage('Unable to parse the input');
+end;
+//----------------------------------------------------------
+function StarProxy.UCAC4_ToBV_Helper(indata:string):Boolean;
+var params:RealArray;
+    gval,Best:Currency;
+    Vest:Real;
+const amsg = 'BV estimated from UCAC4/G';
+begin
+  Result := False;
+  if SplitWithSpacesToReal(indata,1,params) then begin
+    // setting gval
+    if Length(params) >= 2 then gval := params[1]
+    else gval := cstar.fluxtemp.gaia_mag;
+    // calling the transform function
+    if not UC2MG_To_BV(params[0],gval,cstar.fluxtemp.J_mag,cstar.fluxtemp.H_mag,
+       cstar.fluxtemp.K_mag,Best,Vest) then begin
+         ShowMessage('Cannot estimate, Color out of range!');
+       end else Result := ShowBVEst(Vest,Best,amsg);
+  end
+  else ShowMessage('Unable to parse the input');
 end;
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

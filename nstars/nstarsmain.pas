@@ -23,7 +23,9 @@ type
     AddBDMI: TMenuItem;
     AricnsDataCB: TCheckBox;
     MenuItem1: TMenuItem;
-    UCAC4MagEstMI: TMenuItem;
+    FluxEstSubMenu: TMenuItem;
+    EstBVUATMI: TMenuItem;
+    EstBVUCACMI: TMenuItem;
     MISwapParallax: TMenuItem;
     ShowPosDegMI: TMenuItem;
     PosSepSetMI: TMenuItem;
@@ -188,6 +190,7 @@ type
     procedure ChangeStarToBDMIClick(Sender: TObject);
     procedure ComponentTabControlChange(Sender: TObject);
     procedure EnterPMPartsMIClick(Sender: TObject);
+    procedure EstBVUCACMIClick(Sender: TObject);
     procedure ExportListMIClick(Sender: TObject);
     procedure FindIDMIClick(Sender: TObject);
     procedure FindRemTGASMIClick(Sender: TObject);
@@ -208,7 +211,7 @@ type
     procedure LoadSimpleTGASClick(Sender: TObject);
     procedure LoadTGASCSVClick(Sender: TObject);
     procedure LuminosityProbMIClick(Sender: TObject);
-    procedure MenuItem4Click(Sender: TObject);
+    procedure EstBVUATMIClick(Sender: TObject);
     procedure MergeIntoMIClick(Sender: TObject);
     procedure MISwapParallaxClick(Sender: TObject);
     procedure New1Click(Sender: TObject);
@@ -503,6 +506,7 @@ end;
 procedure TNStarsMainForm.ComponentTabControlChange(Sender: TObject);
 var ztabdex,ztabcount:Integer;
     xtext:string;
+    feok:Boolean;
 begin
   if supstab then Exit;
   xtext := ComponentTabControl.Tabs.Text;
@@ -514,6 +518,9 @@ begin
   current.SetStar(ComponentTabControl.TabIndex+1);
   LoadAllStarData;
   PosSepSetMI.Enabled := (ComponentTabControl.TabIndex > 0);
+  feok := (current.cstar <> nil);
+  if feok then feok := (current.cstar.fluxtemp <> nil);
+  FluxEstSubMenu.Enabled := feok;
 end;
 
 
@@ -536,6 +543,23 @@ begin
     end;
     if rok then ShowMessage('Proper Motion set.')
     else ShowMessage('Proper Motion not set!');
+  end;
+end;
+
+procedure TNStarsMainForm.EstBVUCACMIClick(Sender: TObject);
+var data:string;   rok:Boolean;
+const entmsg = 'Enter UCAC magnitude (and optionally G for better results)' + sLineBreak +
+               'to estimate B and V magnitudes (also uses 2MASS JHK).';
+begin
+  if current.cstar <> nil then begin
+    data := Trim(InputBox('Estimate BV from UCAC',entmsg,''));
+    if Length(data)<>0 then begin
+       rok := current.UCAC4_ToBV_Helper(data);
+    end;
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
   end;
 end;
 
@@ -1981,9 +2005,21 @@ begin
   if current.sys <> nil then ChangeSystem;
 end;
 
-procedure TNStarsMainForm.MenuItem4Click(Sender: TObject);
+procedure TNStarsMainForm.EstBVUATMIClick(Sender: TObject);
+var data:string;   rok:Boolean;
+const entmsg = 'Enter URAT magnitude (and optionally G for better results)' + sLineBreak +
+               'to estimate B and V magnitudes (also uses 2MASS JHK).';
 begin
-
+  if current.cstar <> nil then begin
+    data := Trim(InputBox('Estimate BV from URAT',entmsg,''));
+    if Length(data)<>0 then begin
+       rok := current.URAT_ToBV(data);
+    end;
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
 end;
 
 procedure TNStarsMainForm.MergeIntoMIClick(Sender: TObject);

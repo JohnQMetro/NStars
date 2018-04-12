@@ -1,7 +1,7 @@
 object NStarsMainForm: TNStarsMainForm
-  Left = 303
+  Left = 271
   Height = 585
-  Top = 141
+  Top = 132
   Width = 851
   Caption = 'Nstars'
   ClientHeight = 565
@@ -1158,9 +1158,16 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Enter Tycho-2 Magnitudes...'
         OnClick = Tycho2MagMIClick
       end
-      object UCAC4MagEstMI: TMenuItem
-        Caption = 'Estimate from UCAC4 Mag...'
-        OnClick = UCAC4MagEstMIClick
+      object FluxEstSubMenu: TMenuItem
+        Caption = 'Estimate Magnitudes...'
+        object EstBVUATMI: TMenuItem
+          Caption = 'Estimate BV using URAT...'
+          OnClick = EstBVUATMIClick
+        end
+        object EstBVUCACMI: TMenuItem
+          Caption = 'Estimate BV using UCAC...'
+          OnClick = EstBVUCACMIClick
+        end
       end
       object MenuItem4: TMenuItem
         Caption = '-'
