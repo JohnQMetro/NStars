@@ -21,7 +21,7 @@ StarProxy = class
     function GetCurrentParallax:Real;
     procedure ApplyTGASChange(newdata:TGASData);
     function ShowBVEst(Vest:Real; Best:Currency; amsg:string):Boolean;
-    function ShowIEst(Icest:Currency; amsg:string):Boolean;
+    function ShowRIEst(Rcest,Icest:Currency; amsg:string):Boolean;
   public
     // system level information
     sys:StarSystem;
@@ -334,23 +334,40 @@ begin
     Result := True;
   end;
 end;
-function StarProxy.ShowIEst(Icest:Currency; amsg:string):Boolean;
+//---------------------------------------------------------------------
+function StarProxy.ShowRIEst(Rcest,Icest:Currency; amsg:string):Boolean;
 var msgdata:string;
     rval:Word;
+    urc,uic:Boolean;
 begin
   Result := False;
+  urc := Rcest < 90;
+  uic := Icest < 90;
   // building the message to show
-  msgdata := 'The Ic estimate is  :' + CurrToStrF(Icest,ffFixed,2);
-  msgdata += sLineBreak;
+  if not (urc or uic) then Exit;
+  if (urc and uic) then begin
+     msgdata := 'The estimates are :' + sLineBreak;
+     msgdata += 'Rc : ' + CurrToStrF(Rcest,ffFixed,2) + sLineBreak;
+     msgdata += 'Ic : ' + CurrToStrF(Icest,ffFixed,2) + sLineBreak;
+     msgdata += 'Do you want to use these magnitudes?';
+  end else begin
+    if urc then msgdata := 'The Rc estimate is  :' + CurrToStrF(Rcest,ffFixed,2)
+    else msgdata := 'The Ic estimate is  :' + CurrToStrF(Icest,ffFixed,2);
+    msgdata += sLineBreak;
   msgdata += 'Do you want to use this magnitude?';
+  end;
   // asking if we want to use the estimated magnitudes
   rval := mrNo;
   rval := MessageDlg(msgdata, mtConfirmation,[mbYes, mbNo],0);
   if (rval = mrYes) then begin
     // setting Ic
-    cstar.fluxtemp.I_mag := Icest;
+    if uic then cstar.fluxtemp.I_mag := Icest;
+    if urc then cstar.fluxtemp.red_mag := Rcest;
     // adding some notes
     if not cstar.NotesConatins(amsg) then begin
+      if uic and urc then amsg := 'RI ' + amsg
+      else if uic then amsg := 'Ic ' + amsg
+      else amsg := 'Rc ' + amsg;
       cstar.AppndNote(' ' + amsg,False);
     end;
     sys.UpdateEstimates;
@@ -1151,25 +1168,30 @@ begin
     // calling the transform function
     if not URATJ_To_Ic(params[0],cstar.fluxtemp.J_mag,Icest) then begin
          ShowMessage('Cannot estimate, Color out of range!');
-    end else Result := ShowIEst(Icest,amsg);
+    end else Result := ShowRIEst(99,Icest,amsg);
   end
   else ShowMessage('Unable to parse the input');
 end;
 //--------------------------------------------
 function StarProxy.UCAC4_To_Ic(indata:string):Boolean;
 var params:RealArray;
-    gval,Icest:Currency;
-const amsg = 'Ic estimated from UCAC/G+J.';
+    gval,Icest,Rcest:Currency;
+    urc,uic:Boolean;
+const amsg = 'estimated from UCAC/G+J.';
 begin
   Result := False;
   if SplitWithSpacesToReal(indata,1,params) then begin
     // setting gval
     if Length(params) >= 2 then gval := params[1]
     else gval := cstar.fluxtemp.gaia_mag;
-    // calling the transform function
-    if not UC2MG_To_Ic(params[0],gval,cstar.fluxtemp.J_mag,Icest) then begin
+    // calling the transform functions
+    Rcest := 99;
+    Icest := 99;
+    urc := UCAC_To_RcS(params[0],cstar.fluxtemp.J_mag,cstar.fluxtemp.H_mag,cstar.fluxtemp.K_mag, Rcest);
+    uic := UC2MG_To_Ic(params[0],gval,cstar.fluxtemp.J_mag,Icest);
+    if not (urc or uic)  then begin
          ShowMessage('Cannot estimate, Color out of range!');
-    end else Result := ShowIEst(Icest,amsg);
+    end else Result := ShowRIEst(Rcest,Icest,amsg);
   end
   else ShowMessage('Unable to parse the input');
 end;

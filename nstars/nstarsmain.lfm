@@ -1,7 +1,7 @@
 object NStarsMainForm: TNStarsMainForm
   Left = 271
   Height = 585
-  Top = 132
+  Top = 96
   Width = 851
   Caption = 'Nstars'
   ClientHeight = 565

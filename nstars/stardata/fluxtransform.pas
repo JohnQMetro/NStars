@@ -10,6 +10,9 @@ uses
 type RealArray = array of Real;
 
 
+(* Helper methods for flux conversions *)
+procedure LoadMulti(color1,color2:Real; fcubic:Boolean; var target:RealArray);
+function MakeColorCheck(mag1,mag2:Currency; min,max:Real; out color:Real):Boolean;
 (* Non-SDSS magnitude conversions *)
 function TychoToJohnson(const Bt,Vt:Real; out Bj,Vj:Real):Boolean;
 function TychoToFluxes(indata:string; out Vj:Real; out Bj:Currency):Boolean;
@@ -33,8 +36,9 @@ procedure FirstMagFromSumSecond(const sum_mag,mag_two:Real; out mag_one:Real);
 function MakeEPD(const val1,val2:Real):Real;
 (* Other methods *)
 function JohnsonQIndex(Uj,Bj,Vj:Real):Real;
-procedure LoadMulti(color1,color2:Real; fcubic:Boolean; var target:RealArray);
+
 function USNO_B2_Adjust(B2in,J,H,Ks:Currency; out Best:Currency):Boolean;
+function USNO_R2_Adjust(R2in,J,H,Ks:Currency; out Rcest:Currency):Boolean;
 function USNO_I_Adjust(Iin,J,H,Ks:Currency; out Icest:Currency):Boolean;
 function UCAC_To_RcS(UCACin,J,H,Ks:Currency; out RcEst:Currency):Boolean;
 (* BV estimation methods *)
@@ -47,6 +51,37 @@ function URATJ_To_Ic(URATin,Jin:Currency; out Icest:Currency):Boolean;
 function UC2MG_To_Ic(UCACin,Gin,J:Currency; out Icest:Currency):Boolean;
 //******************************************************************************
 implementation
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(* Helper procedure for multilinear fits *)
+procedure LoadMulti(color1,color2:Real; fcubic:Boolean; var target:RealArray);
+begin
+  if fcubic then SetLength(target,7)
+  else SetLength(target,6);
+  target[0] := 1;
+  target[1] := color1;
+  target[2] := Sqr(color1);
+  if not fcubic then begin
+    target[3] := color1 * color2;
+    target[4] := color2;
+    target[5] := Sqr(color2);
+  end else begin
+    target[3] := intpower(color1,3);
+    target[4] := color1 * color2;
+    target[5] := color2;
+    target[6] := Sqr(color2);
+  end;
+end;
+//-----------------------------------------------------------
+(* handles computing a colour and checking if it is within bounds. *)
+function MakeColorCheck(mag1,mag2:Currency; min,max:Real; out color:Real):Boolean;
+begin
+  Result := False;
+  if (mag1 > 90) or (mag2 > 90) then Exit;
+  color := CurrToReal(mag1) - CurrToReal(mag2);
+  if (color < min) or (color > max) then Exit;
+  Result := True;
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* Non-SDSS magnitude conversions *)
 //--------------------------------------------------------
@@ -213,42 +248,30 @@ end;
 as a single string), and converts them to numeric values *)
 function APASS_to_Fluxes(indata:string; out VBinc:Boolean; out Vj,Vje,Vest:Real;
                                         out Bj,Bje,Best,Rc,Ic:Currency):Boolean;
-var splitlist:TStringList;
+var maglist:RealArray;
+    mllen:Integer;
     vc,verr,bc,berr:Real;
     gc,rcs,ics:Real;
-    temp1,temp2,temp3,temp4,xgc,xrc,xic:Real;
     listx:Integer;
 begin
   Result := False;
   // getting the list of values
-  splitlist := SplitWithSpaces(indata,5);
-  if splitlist = nil then Exit;
-  if (splitlist.Count = 6) or (splitlist.Count = 5) then VBinc := False
-  else if (splitlist.Count = 10) or (splitlist.Count = 9) then VBinc := True
-  else begin
-    FreeAndNil(splitlist);    Exit;
-  end;
+  if not SplitWithSpacesToReal(indata,5,maglist) then Exit;
+  // checking the count
+  mllen := Length(maglist);
+  if (mllen = 7) or (mllen = 8) or (mllen > 10) then Exit;
+  VBinc := (mllen >= 9);
   // getting gri
   if VBInc then listx := 4
   else listx := 0;
-  if not StrToRealBoth(splitlist[listx],splitlist[listx+2],gc,rcs) then begin
-    FreeAndNil(splitlist);    Exit;
-  end;
-  if not StrToReal(splitlist[listx+4],ics) then begin
-    FreeAndNil(splitlist);    Exit;
-  end;
+  gc := maglist[listx];
+  rcs := maglist[listx+2];
+  ics := maglist[listx+4];
   // getting V and B
   if VBInc then begin
-    // V
-    if not StrToRealBoth(splitlist[0],splitlist[1],vc,verr) then begin
-      FreeAndNil(splitlist);    Exit;
-    end;
-    // B
-    if not StrToRealBoth(splitlist[2],splitlist[3],bc,berr) then begin
-      FreeAndNil(splitlist);    Exit;
-    end;
+    vc := maglist[0];    verr := maglist[1];
+    bc := maglist[2];    berr := maglist[3];
   end;
-  FreeAndNil(splitlist);
   // now, we convert SDSS gri to estimates for V,B,Rc, and Ic
   Pgri_to_BVRI(gc,rcs,ics,Best,Vest,Rc,Ic);
   // also, adding non-converted V,B (if available)
@@ -316,11 +339,22 @@ end;
 // takes g' r' i' insput (Real) and produces B V Rc Ic output
 procedure Pgri_to_BVRI(gp,rp,ip:Real; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency);
 var g,r,i:Real;
+    gmr,gmi,interm:Real;
+    dottarg:RealArray;
+const rcoff:array[0..6] of Real = (-13.066,31.365,-23.509,6.1836,-0.57465,0.52648,0.12508 );
 begin
   g := gp + 0.060*( (gp-rp) - 0.53 );
   r := rp + 0.035*( (rp-ip) - 0.21 );
   i := ip + 0.041*( (rp-ip) - 0.21 );
-  SDSS_gri2BVRI_c(g,r,i,Bj,Vj,Rc,Ic)
+  SDSS_gri2BVRI_c(g,r,i,Bj,Vj,Rc,Ic);
+  (* Estimated Rc is rather dim for M dwarfs, so I have derived an alternate fit... *)
+  gmr := gp - rp;
+  gmi := gp - ip;
+  if (gmr >= 0.746) and (gmr <= 1.631) and (gmi >= 1.034) and (gmi <= 3.640) then begin
+    LoadMulti(gmr,gmi,True,dottarg);
+    interm := dot2(rcoff,dottarg,7);
+    Rc := gp - interm;
+  end;
 end;
 //-----------------------------------------------------------
 (* From 'Transformation of Pan-STARRS1 gri to Stetson BVRI magnitudes. Photometry
@@ -409,26 +443,7 @@ function JohnsonQIndex(Uj,Bj,Vj:Real):Real;
 begin
   Result := (Uj-Bj) - 0.72*(Bj-Vj);
 end;
-//--------------------------------------------------------
-(* Helper procedure for multilinear fits *)
-procedure LoadMulti(color1,color2:Real; fcubic:Boolean; var target:RealArray);
-begin
-  if fcubic then SetLength(target,7)
-  else SetLength(target,6);
-  target[0] := 1;
-  target[1] := color1;
-  target[2] := Sqr(color1);
-  if not fcubic then begin
-    target[3] := color1 * color2;
-    target[4] := color2;
-    target[5] := Sqr(color2);
-  end else begin
-    target[3] := intpower(color1,3);
-    target[4] := color1 * color2;
-    target[5] := color2;
-    target[6] := Sqr(color2);
-  end;
-end;
+
 //--------------------------------------------------------
 (* Trying to estimate a better value of B from USNO B Blue2 and JHKs. Still not
 very accurate, but probably better than using Blue2 directly. Rvar 0.080992.
@@ -455,6 +470,34 @@ begin
   // finishing off
   Best := J + resval;
   Best := RoundCurrency(Best,False);
+  Result := True;
+end;
+//---------------------------------------------------------------------------------
+(* Trying to estimate a better value of R from USNO B Red2 and JHKs. Still not
+very accurate, but probably better than using Red2 directly. Rvar 0.0397
+Please note that the redder the star, the worse the estimate gets. *)
+function USNO_R2_Adjust(R2in,J,H,Ks:Currency; out Rcest:Currency):Boolean;
+var br2mj,hmks:Real;
+    resval:Real;
+    cbases:RealArray;
+const coff:array[0..6] of Real = ( 1.1125, -0.3534, 0.22185, -0.031435, 1.5609, 3.2721, -7.3793 );
+begin
+  Result := False;
+  // reject...
+  if (R2in > 90) or (J > 90) or (H > 90) or (Ks > 90) then Exit;
+  // computing source colors
+  br2mj := CurrToReal(R2in) - CurrToReal(J);
+  hmks := CurrToReal(H) - CurrToReal(Ks);
+  if (br2mj < -1.23) or (br2mj > 4.639) then Exit;
+  if (hmks < -0.024) or (hmks > 0.572) then Exit;
+  // computing the result
+  LoadMulti(br2mj,hmks,True,cbases);
+  resval := dot2(cbases,coff,7);
+  // checking to see if the result is within expected bounds
+  if (resval < 0.787) or (resval > 3.924) then Exit;
+  // finishing off
+  Rcest := J + resval;
+  Rcest := RoundCurrency(Rcest,False);
   Result := True;
 end;
 //-------------------------------------------------------
@@ -488,29 +531,34 @@ end;
 (* Simbad sometimes treats UCAC fit model magnitude as equivalent to R, which it
 is not. A rough conversion *)
 function UCAC_To_RcS(UCACin,J,H,Ks:Currency; out RcEst:Currency):Boolean;
-var ucmj,hmks:Real;
+var ucmj,hmks,jmh:Real;
     resval:Real;
     loadsx:RealArray;
 const coff1:array[0..3] of Real = ( 1.2065, -0.29338, 0.32443, -0.033418 );
-      coff2:array[0..2] of Real = ( 0.70733, -0.014663, 0.2121 );
-      coff3:array[0..5] of Real =  ( -4.6435, 2.0551, 0.11689, -5.0649, 3.3925, 21.868 );
+      coff2:array[0..5] of Real = ( -2.2857, 2.1749, -0.039459, -2.7215, 5.08, -0.089002 );
+      coff3:array[0..5] of Real = ( -5.7412, 2.0188, 0.13279, -5.365, 7.5649, 20.135 );
 begin
   Result := False;
   // reject...
   if (UCACin > 90) or (J > 90) then Exit;
   // computing source color
   ucmj := CurrToReal(UCACin) - CurrToReal(J);
-  if (ucmj < -0.934) or (ucmj > 8.582) then Exit;
+  if (ucmj < -0.698) or (ucmj > 8.582) then Exit;
   // 2 versions...
   if (ucmj < 5.14) and (ucmj > 2.225) then begin
     // uses accurate Rc for 416 stars (SN 35)
     resval := PolEval(ucmj,coff1,4);
   end else begin
-    // uses too dim Rc calculated from APASS g r i for 64467 stars (UCAC4)
-    if (ucmj < 2.284) then resval := PolEval(ucmj,coff2,3)
-    else begin
-      // for the red end, scatter is very bad (RV 0.52)
-      if (H > 90) or (ks > 90) then Exit;
+    if (H > 90) then Exit;
+    // covering stars with lower (bluer) UCAC - J, using calculated Rc for 35k stars
+    if (ucmj < 2.3) then begin
+      jmh := CurrToReal(J) - CurrToReal(H);
+      if (jmh < 0.093) or (jmh > 2.117) then Exit;
+      LoadMulti(ucmj,jmh,False,loadsx);
+      resval := dot2(coff2,loadsx,6);
+    end else begin
+      // for the red end, scatter is very bad (RV 0.469)
+      if (H > 90) or (Ks > 90) then Exit;
       hmks := CurrToReal(H) - CurrToReal(Ks);
       if (hmks < 0.290) or (hmks >0.934) then Exit;
       LoadMulti(ucmj,hmks,False,loadsx);
@@ -528,41 +576,37 @@ end;
 (* Estimates B and V for KM dwarfs using URAT fit model magnitude, as well as
 H and Ks. If a valid GAIA G and J is provided, better results can be obtained. *)
 function URATG_ToBV(URATin:Real; Gin,J,H,Ks:Currency; out Best:Currency; out Vest:Real):Boolean;
-var urmh,urmks, gmj,urmj:Real; // colors
+var urmh,urmks,urmj,gmks:Real; // colors
     interm:Real; // tempval
     useGV,useGB:Boolean;
     colorhash:RealArray;
 const coffV:array[0..3] of Real = ( 1.6941, -2.5794, 1.4319, -0.19351 );
-      coffVG:array[0..6] of Real = ( -1.4931, 2.6083, -1.2978, 0.096152, 1.1882, -0.53183, -0.47574 );
+      coffVG:array[0..6] of Real = ( 0.5861, -3.3368, 1.2116, -0.24007, 0.58804, 1.2639, -0.32317 );
       coffB:array[0..3] of Real = ( 0.93501, -1.2878, 1.1813, -0.17572 );
-      coffBG:array[0..5] of Real = (-1.9505,1.1713,-0.90763,1.8594,1.474,-1.2772 );
+      coffBG:array[0..5] of Real = ( -1.785, 2.1492, -0.64765, 1.3077, -0.33171, -0.82774 );
 begin
   Result := False;
-  // required mangitudes
-  if (URATin > 90) or (H > 90) or (Ks > 90) then Exit;
-  // initial check to see if we have G and J
-  useGV := (Gin < 90) and (J < 90);
-  useGB := False;
-  // calculating colors
-  urmj := URATin - CurrToReal(J);
-  urmks := URATin - CurrToReal(Ks);
-  // oob rejects
-  if (urmj < 0.941) or (urmj > 3.452) then Exit;
-  if (urmks < 1.338) or (urmks > 4.352) then Exit;
-  // testing if we use G-J as well
+  // V check
+  useGV := (Gin < 90);
   if useGV then begin
-    useGB := (urmks >= 1.450);
-    useGV := (urmh >= 1.376) and  (urmh <= 3.847);
-    if useGB or useGV then begin
-       gmj := CurrToReal(Gin) - currToReal(J);
-       useGV := useGV and (gmj >= 1.097) and (gmj<= 8.279);
-       useGB := useGB and (gmj >= 1.097) and (gmj <= 3.496);
-    end;
+    useGV := MakeColorCheck(URATin,J,0.890,2.923,urmj);
+    useGV := useGV and MakeColorCheck(Gin,Ks,1.57,4.38,gmks);
+  end;
+  if not useGV then begin
+    if not MakeColorCheck(URATin,H,1.320,4.194,urmh) then Exit;
+  end;
+  // B check
+  if useGV then begin
+    useGB := MakeColorCheck(URATin,J,0.890,2.953,urmj);
+    useGB := useGB and MakeColorCheck(Gin,Ks,1.57,4.38,urmj);
+  end;
+  if not useGB then begin
+    if not MakeColorCheck(URATin,Ks,1.338,4.35,urmks) then Exit;
   end;
   // finally, computing...
   // B
   if useGB then begin
-    LoadMulti(urmks,gmj,False,colorhash);
+    LoadMulti(gmks,urmj,False,colorhash);
     interm := dot2(colorhash,coffBG,6);
   end else begin
     interm := PolEval(urmks,coffB,4);
@@ -571,7 +615,7 @@ begin
   Best := RoundCurrency(Best,False);
   // V
   if useGV then begin
-    LoadMulti(urmj,gmj,True,colorhash);
+    LoadMulti(urmj,gmks,True,colorhash);
     interm := dot2(colorhash,coffVG,7);
   end else begin
     interm := PolEval(urmh,coffV,4);

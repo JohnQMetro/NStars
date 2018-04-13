@@ -589,11 +589,11 @@ end;
 
 procedure TNStarsMainForm.EstIUCACMIClick(Sender: TObject);
 var data:string;   rok:Boolean;
-const entmsg = 'Enter UCAC4 magnitude (and optionally G for better results)' + sLineBreak +
-               'to estimate the Ic magnitude (also uses 2MASS J).';
+const entmsg = 'Enter UCAC4 magnitude (and optionally G for better I results)' + sLineBreak +
+               'to estimate Rc and Ic magnitude (also uses 2MASS J).';
 begin
   if current.cstar <> nil then begin
-    data := Trim(InputBox('Estimate Ic from UCAC',entmsg,''));
+    data := Trim(InputBox('Estimate RI from UCAC',entmsg,''));
     if Length(data)<>0 then begin
        rok := current.UCAC4_To_Ic(data);
     end;
