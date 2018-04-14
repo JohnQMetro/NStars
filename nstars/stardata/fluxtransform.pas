@@ -581,7 +581,7 @@ var urmh,urmks,urmj,gmks:Real; // colors
     useGV,useGB:Boolean;
     colorhash:RealArray;
 const coffV:array[0..3] of Real = ( 1.6941, -2.5794, 1.4319, -0.19351 );
-      coffVG:array[0..6] of Real = ( 0.5861, -3.3368, 1.2116, -0.24007, 0.58804, 1.2639, -0.32317 );
+      coffVG:array[0..5] of Real = ( -0.57493, 0.80089, -0.44462, 1.2176, -0.48984, -0.72724 );
       coffB:array[0..3] of Real = ( 0.93501, -1.2878, 1.1813, -0.17572 );
       coffBG:array[0..5] of Real = ( -1.785, 2.1492, -0.64765, 1.3077, -0.33171, -0.82774 );
 begin
@@ -589,14 +589,14 @@ begin
   // V check
   useGV := (Gin < 90);
   if useGV then begin
-    useGV := MakeColorCheck(URATin,J,0.890,2.923,urmj);
-    useGV := useGV and MakeColorCheck(Gin,Ks,1.57,4.38,gmks);
+    useGV := MakeColorCheck(URATin,J,0.941,2.98,urmj);
+    useGV := useGV and MakeColorCheck(Gin,Ks,1.57,4.25,gmks);
   end;
   if not useGV then begin
     if not MakeColorCheck(URATin,H,1.320,4.194,urmh) then Exit;
   end;
   // B check
-  if useGV then begin
+  if Gin < 90 then begin
     useGB := MakeColorCheck(URATin,J,0.890,2.953,urmj);
     useGB := useGB and MakeColorCheck(Gin,Ks,1.57,4.38,urmj);
   end;
@@ -615,8 +615,8 @@ begin
   Best := RoundCurrency(Best,False);
   // V
   if useGV then begin
-    LoadMulti(urmj,gmks,True,colorhash);
-    interm := dot2(colorhash,coffVG,7);
+    LoadMulti(gmks,urmj,False,colorhash);
+    interm := dot2(colorhash,coffVG,6);
   end else begin
     interm := PolEval(urmh,coffV,4);
   end;

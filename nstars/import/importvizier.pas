@@ -67,7 +67,7 @@ APASSVizieRData = class(VizieRDataBase)
 end;
 
 //-------------------------------------------------------------
-function MakeVizieRParams(targetname:string; radius:Real):TStringList;
+// function MakeVizieRParams(targetname:string; radius:Real):TStringList;
 function MakeVizAPASS_Params(targetname:string; radius:Real):string;
 function GetFromVizier(targetname:string):APASSVizieRData;
 
@@ -101,7 +101,7 @@ begin
   if xparser<>nil then FreeAndNil(xparser);
   parsed := False;
   xparser := StringParsing.Create(instr,True);
-  if not xparser.MovePast('<h1>VizieR Result Page</h1>') then Exit;
+  if not xparser.MovePast('<h1>VizieR</h1>') then Exit;
   Result := True;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -172,7 +172,7 @@ begin
   // moving to the data row
   while xparser.MovePast('<TR class=''tuple-2''>') do begin
     // skipping the 11 fields we do not use
-    if not xparser.MovePastNTimes('<TD',11) then Continue;
+    if not xparser.MovePastNTimes('<TD',12) then Continue;
     // getting V Magnitude
     if not NextTableCell(vmag) then Continue;
     if not NextTableCell(vemag) then Continue;
@@ -292,6 +292,7 @@ begin
   Result := True;  targ := apass_ic[index];
 end;
 //================================================================
+(*
 function MakeVizieRParams(targetname:string; radius:Real):TStringList;
 begin
   Result := TStringList.Create;
@@ -325,27 +326,32 @@ begin
   Result.Add('-c.u');  Result.Add('arcmin');
   Result.Add('-4c');  Result.Add('Go!');
 end;
+*)
 //------------------------------------------------
 function MakeVizAPASS_Params(targetname:string; radius:Real):string;
 begin
-  Result :='-to=4&-from=-2&-this=-2&';
-  Result += '%2F%2Fsource=II%2F336&%2F%2Ftables=II%2F336%2Fapass9';
-  Result += '&-out.max=50&%2F%2FCDSportal=http%3A%2F%2Fcdsportal.u-strasbg.fr';
-  Result += '%2FStoreVizierData.html&-out.form=HTML+Table&%2F%2Foutaddvalue=default';
-  Result += '&-oc.form=sexa&-nav=cat%3AII%2F336%26tab%3A%7BII%2F336%2Fapass9';
-  Result += '%7D%26key%3Asource%3DII%2F336%26HTTPPRM%3A%26&-c=';
+  Result := '-to=4&-from=-3&-this=-3&%2F%2F';
+  Result += 'source=II%2F336%2Fapass9&%2F%2Ftables=II%2F336%2F';
+  Result += 'apass9&-out.max=50&%2F%2FCDSportal=http%3A%2F%2F';
+  Result += 'cdsportal.u-strasbg.fr%2FStoreVizierData.html&-out.form=';
+  Result += 'HTML+Table&-out.add=_r&-out.add=_RAJ%2C_DEJ&%2F%2F';
+  Result += 'outaddvalue=default&-sort=_r&-oc.form=sexa&-nav=';
+  Result += 'cat%3AII%2F336%26tab%3A%7BII%2F336%2Fapass9%7D%26key%3A';
+  Result += 'source%3DII%2F336%2Fapass9%26HTTPPRM%3A%26-out.max%3D50%26';
+  Result += '-out.form%3DHTML+Table%26-out.add%3D_r%26-out.add%3D_RAJ%2C_DEJ';
+  Result += '%26-sort%3D_r%26-oc.form%3Dsexa%26&-c=';
   Result += EncodeURLElement(targetname) + '&-c.eq=J2000&-c.r=';
-  Result += Trim(FloatToStrF(radius,ffFixed,3,1)) + '&-c.u=arcmin';
-  Result += '&-c.geom=r&-source=II%2F336%2Fapass9&-order=I&-out=recno&recno=';
-  Result += '&-out=RAJ2000&RAJ2000=&-out=DEJ2000&DEJ2000=&-out=e_RAJ2000&';
-  Result += 'e_RAJ2000=&-out=e_DEJ2000&e_DEJ2000=&-out=Field&Field=&-out=nobs';
-  Result += '&nobs=&-out=mobs&mobs=&-out=B-V&B-V=&-out=e_B-V&e_B-V=&-out=';
-  Result += 'Vmag&Vmag=&-out=e_Vmag&e_Vmag=&u_e_Vmag=&-out=Bmag&Bmag=&-out=';
-  Result += 'e_Bmag&e_Bmag=&u_e_Bmag=&-out=g%27mag&g%27mag=&-out=e_g%27mag';
-  Result += '&e_g%27mag=&u_e_g%27mag=&-out=r%27mag&r%27mag=&-out=e_r%27mag';
-  Result += '&e_r%27mag=&u_e_r%27mag=&-out=i%27mag&i%27mag=&-out=e_i%27mag';
-  Result += '&e_i%27mag=&u_e_i%27mag=&%2F%2Fnoneucd1p=on&-file=.&-meta.ucd=2';
-  Result += '&-meta=1&-meta.foot=1&-usenav=1&-bmark=POST';
+  Result += Trim(FloatToStrF(radius,ffFixed,4,2)) + '&-c.u=arcmin&-c.geom=';
+  Result += 'r&-source=II%2F336%2Fapass9&-order=I&-out.orig=standard&-out=';
+  Result += 'recno&recno=&-out=RAJ2000&RAJ2000=&-out=DEJ2000&DEJ2000=';
+  Result += '&e_RAJ2000=&e_DEJ2000=&-out=Field&Field=&-out=nobs&nobs=&-out=';
+  Result += 'mobs&mobs=&-out=B-V&B-V=&-out=e_B-V&e_B-V=&-out=Vmag&Vmag=';
+  Result += '&-out=e_Vmag&e_Vmag=&u_e_Vmag=&-out=Bmag&Bmag=&-out=e_Bmag';
+  Result += '&e_Bmag=&u_e_Bmag=&-out=g%27mag&g%27mag=&-out=e_g%27mag&e_g%27';
+  Result += 'mag=&u_e_g%27mag=&-out=r%27mag&r%27mag=&-out=e_r%27mag&e_r%27';
+  Result += 'mag=&u_e_r%27mag=&-out=i%27mag&i%27mag=&-out=e_i%27mag&e_i%27';
+  Result += 'mag=&u_e_i%27mag=&%2F%2Fnoneucd1p=on&-file=.&-meta.ucd=2&-meta=';
+  Result += '1&-meta.foot=1&-usenav=1&-bmark=POST';
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++
 function GetFromVizier(targetname:string):APASSVizieRData;
