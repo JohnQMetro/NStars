@@ -1161,7 +1161,7 @@ end;
 function StarProxy.URAT_To_Ic(indata:string):Boolean;
 var params:RealArray;
     Icest:Currency;
-const amsg = 'Ic estimated from URAT+J.';
+const amsg = 'estimated from URAT+J.';
 begin
   Result := False;
   if SplitWithSpacesToReal(indata,1,params) then begin

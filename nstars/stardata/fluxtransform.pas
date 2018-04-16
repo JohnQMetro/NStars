@@ -598,8 +598,8 @@ begin
   // B check
   if Gin < 90 then begin
     useGB := MakeColorCheck(URATin,J,0.890,2.953,urmj);
-    useGB := useGB and MakeColorCheck(Gin,Ks,1.57,4.38,urmj);
-  end;
+    useGB := useGB and MakeColorCheck(Gin,Ks,1.57,4.38,gmks);
+  end else useGB := False;
   if not useGB then begin
     if not MakeColorCheck(URATin,Ks,1.338,4.35,urmks) then Exit;
   end;

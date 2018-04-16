@@ -29,13 +29,15 @@
       <Unit2>
         <Filename Value="collecdata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1175"/>
-        <CursorPos X="26" Y="1187"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="1157"/>
+        <CursorPos X="15" Y="1164"/>
         <UsageCount Value="201"/>
         <Bookmarks Count="1">
           <Item0 X="3" Y="764" ID="2"/>
         </Bookmarks>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -508,10 +510,9 @@
       <Unit48>
         <Filename Value="stardata\fluxtransform.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="604"/>
-        <CursorPos X="30" Y="618"/>
+        <TopLine Value="592"/>
+        <CursorPos X="60" Y="601"/>
         <UsageCount Value="204"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
