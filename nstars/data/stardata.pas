@@ -117,6 +117,8 @@ StarSystem = class (StarBase)
     procedure UpdateEstimates;
     function WriteEstimateData():Integer;
     function HipTycNames():TStringList;
+    (* Gaia DR2 related *)
+    function GetStuffForMatching(stardex:Integer; out starloc:Location; out stnames:StarName; out sysnames:StarName):Boolean;
 
     (* filters *)
     function RVZ:Boolean;
@@ -1587,6 +1589,19 @@ begin
   end;
   // we never return empty TStringList Objects
   if Result.Count = 0 then FreeAndNil(Result);
+end;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(* Gaia DR2 related *)
+//------------------------------------
+function StarSystem.GetStuffForMatching(stardex:Integer; out starloc:Location; out stnames:StarName; out sysnames:StarName):Boolean;
+begin
+  Result := False;
+  if (stardex > GetCompC) or (stardex < 1) then Exit;
+  sysnames := nameset;
+  stnames := new_components[stardex-1].GetNames;
+  if new_components[stardex-1].HasLocation then starloc := new_components[stardex-1].GetLocation
+  else starloc := the_location;
+  Result := True;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* true if the radial velocity is zero: we need that value set

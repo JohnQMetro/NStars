@@ -150,6 +150,7 @@ Location = class
     function PositionProperMotionMatch(other:Location; max_dist,max_pmangdiff,max_pmmagpdiff,max_pmmagdiff:Real):Boolean;
     function GetUVWVelocities(lefthanded:Boolean; out uv,vv,wv:Real):Boolean;
     function GetUVWString(lefthanded:Boolean):string;
+    procedure MakeGetJ2015p5Pos(out radeg:Real; out decdeg:Real);
 
     // importing data from special sources
     function SetFromTGAS(instar:TGASData):Boolean;
@@ -541,6 +542,7 @@ end;
 function Location.YearDiff(target_year:Integer):Real;
 var startyear:Real;
 const JultoGreg = 1.000020534302552;
+      BestoGreg = 1.000000999621512;
 begin
   // epoch start year
   if xepoch = eJ2000 then startyear := 2000
@@ -554,7 +556,8 @@ begin
   // subtracting light year
   startyear -= GetDistance(False);
   // converting to gregorian
-  startyear := startyear * JultoGreg;
+  if (xepoch = eB1950) or (xepoch = eB1975) then startyear := startyear / BestoGreg
+  else startyear := startyear / JultoGreg;
   // finally
   Result := target_year - startyear;
 end;
@@ -1384,6 +1387,53 @@ begin
   Result += 'V: ' + Trim(FloatToStrF(vout,ffFixed,7,2)) + ' km/s , ';
   Result += 'W: ' + Trim(FloatToStrF(wout,ffFixed,7,2)) + ' km/s';
 end;
+//-------------------------------------------------
+(* Estimates a J2015.5 position for the location. This is used to help
+match the star up with a star from GAIA DR2. *)
+procedure Location.MakeGetJ2015p5Pos(out radeg:Real; out decdeg:Real);
+var startra,startdec:Real;
+    timeoffset, cosdec:Real;
+    okay:Boolean;
+    pmra,pmdec:Real;
+begin
+  startra := GetDecimalRightAscension();
+  startdec := GetDecimalDeclination();
+  // in this case, it is already done...
+  if (xepoch = zJ2015h) then begin
+    radeg := startra;
+    decdeg := startdec;
+  end
+  else begin
+    (* since the time period will usualy be 15.5 years or less, and great
+    precision is unneeded, radial velocity and matrix transforms will not be
+    into account (except for B to J) *)
+    if xepoch = eB1950 then begin
+      okay := MatrixTransform(startra,startdec,B1950toJ2000,startra,startdec);
+      Assert(okay);
+      timeoffset := 65.5002175;
+    end else if xepoch = eB1975 then begin
+      okay := MatrixTransform(startra,startdec,B1975toJ2000,startra,startdec);
+      Assert(okay);
+      timeoffset := 40.500752;
+    end else if xepoch = eJ2000 then timeoffset := 15.5
+    else if xepoch = zJ2014 then timeoffset := 1.5
+    else if xepoch = zJ2015 then timeoffset := 0.5
+    else if xepoch = zJ2017 then timeoffset := -1.5
+    else Assert(false);
+  end;
+  // converting proper motion...
+  pmdec := pm_magnitude * cosd(pm_posang);
+  pmra := pm_magnitude * sind(pm_posang);
+  // new position
+  decdeg := startdec + pmdec * timeoffset;
+  if decdeg >= 90 then decdeg := 89.999999
+  else if decdeg <= -90 then decdeg := -89.999999;
+  cosdec := cosd((decdeg + startdec)/2);
+  radeg := startra + ((timeoffset * pmra)/cosdec);
+  if radeg < 0 then radeg := 360.0 + radeg
+  else if radeg >= 36.0 then radeg -= 360.0
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // importing data from special sources
 function Location.SetFromTGAS(instar:TGASData):Boolean;

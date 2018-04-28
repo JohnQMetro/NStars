@@ -9,7 +9,8 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, Math, Character, fgl,
-    StarDataBase, df_strings, StarEstimator, StarExt2,constellation, unitdata;
+    StarDataBase, df_strings, StarEstimator, StarExt2,constellation, unitdata,
+    gaiadr2base;
 
 const ComponentStrings:array[0..21] of string = ('','A','B','C','D','AB','BC',
       'CD','Aa','Ab','Ac','Ba','Bb','Ca','Cb','Da','Db','Aab','AC','AD','E','CE');
@@ -46,6 +47,7 @@ NewStarBase = class(StarBase)
     function MakeOutputLineOne(isBD:Boolean):string;
   public
     fluxtemp:StarFluxPlus;
+    dr2mags:GaiaDR2Mags;
     // properties
     property isBrownDwarf:Boolean read GisBrownDwarf;
     property isWhiteDwarf:Boolean read GisWhiteDwarf;
@@ -195,8 +197,8 @@ begin
   Result += completter + ';';
   Result += Bool2Str(nameset <> nil) + ';' + Bool2Str(the_location <> nil) + ';';
   Result += spectraltype + ';' + Bool2Str(fluxtemp <> nil);
+  Result += ';' + Bool2Str(dr2mags <> nil);
 end;
-
 //+++++++++++++++++++++++++++++++++++++++
 function NewStarBase.isSpectralTypeEmpty:Boolean;
 begin
@@ -261,6 +263,7 @@ begin
   if nameset<>nil then nameset.Free;
   if the_location<>nil then the_location.Free;
   if fluxtemp<>nil then fluxtemp.Free;
+  if dr2mags<>nil then dr2mags.Free;
   inherited;
 end;
 
@@ -364,7 +367,8 @@ begin
   if the_location <> nil then Writeln(outfile,the_location.ConvertAllToString);
   // fluxes, temperature, and Fe/H
   if fluxtemp <> nil then Writeln(outfile,fluxtemp.ToIOString);
-
+  // Gaia DR2 magnitudes
+  if dr2mags <> nil then Writeln(outfile,dr2mags.ToSemiString());
 end;
 //----------------------------------
 (* does not handle line one (since that might indicate different classes. *)
@@ -404,6 +408,12 @@ begin
     Readln(infile,cline);
     errmsg := 'Unable to convert input fluxes/temperature/FeH!';
     if not fluxtemp.FromIOString(cline) then Exit;
+  end;
+  // Gaia DR2 magnitudes
+  if (dr2mags <> nil) then begin
+    ReadLn(infile,cline);
+    errmsg := 'Unable to convert Gaia DR2 magnitudes!';
+    if not dr2mags.SetFromLine(cline) then Exit;
   end;
   // done
   Result := True;
@@ -471,6 +481,7 @@ begin
   VariableType := NOT_VARIABLE;
   estimator := nil;
   fluxtemp := nil;
+  dr2mags := nil;
   secondary_mag := 99.9;
   premain := False;
 end;
@@ -640,6 +651,8 @@ begin
   end;
   // fluxes, temperature, and Fe/H
   if fluxtemp <> nil then Writeln(outfile,fluxtemp.ToIOString);
+  // gaia dr2 magnitudes
+  if dr2mags <> nil then WriteLn(outfile,dr2mags.ToSemiString());
 end;
 
 //-------------------------
@@ -713,6 +726,11 @@ begin
     errmsg := 'Unable to convert input fluxes/temperature/FeH!';
     if not fluxtemp.FromIOString(cline) then Exit;
   end;
+  if (dr2mags<>nil) then begin
+    Readln(infile,cline);
+    errmsg := 'Unable to convert Gaia DR2 magnitudes!';
+    if not dr2mags.SetFromLine(cline) then Exit;
+  end;
   // done
   Result := True;
 end;
@@ -728,7 +746,7 @@ begin
   // reading and initial checking...
   Readln(infile,cline);
   if Length(cline) = 0 then raise Exception.Create('First star/brown dwarf line is empty!');
-  clist := SplitWithDelim(cline,';',6);
+  clist := SplitWithDelim(cline,';',7);
   if clist = nil then begin
     clist.Free;
     raise Exception.Create('First star/brown dwarf line is lacking fields!');
@@ -753,13 +771,16 @@ begin
   buffer := clist[5];
   // if AnsiEndsStr('?',buffer) then buffer := Trim(Copy(buffer,1,Length(buffer)-1));
   Result.SpectralClass := buffer;
-  // the seventh (optional, for now) shows whether we have extra flux/temp/feh
-  if clist.Count >=7 then begin
-    bool1 := Str2BoolR(clist[6]);
-    if bool1 then Result.fluxtemp := StarFluxPlus.Create
-    else Result.fluxtemp := nil;
-  end
+  // the seventh shows whether we have extra flux/temp/feh
+  bool1 := Str2BoolR(clist[6]);
+  if bool1 then Result.fluxtemp := StarFluxPlus.Create
   else Result.fluxtemp := nil;
+  // the eighth (optional for now) shows whether we have Gaia DR2 magnitudes
+  if clist.Count >=8 then begin
+    bool1 := Str2BoolR(clist[7]);
+    if bool1 then Result.dr2mags:= GaiaDR2Mags.Create()
+    else Result.dr2mags := nil;
+  end else Result.dr2mags := nil;
   clist.Free;
   // conversion from old to new only
 (* Result.parentpllx := parent_pllx;

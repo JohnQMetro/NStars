@@ -1,0 +1,102 @@
+object GaiaDR2Picker: TGaiaDR2Picker
+  Left = 263
+  Height = 473
+  Top = 135
+  Width = 539
+  Caption = 'Match Stars with GAIA DR2'
+  ClientHeight = 473
+  ClientWidth = 539
+  LCLVersion = '1.8.2.0'
+  object StarListGrid: TStringGrid
+    Left = 192
+    Height = 264
+    Top = 184
+    Width = 328
+    AutoFillColumns = True
+    ColCount = 1
+    Columns = <    
+      item
+        Title.Caption = 'Title'
+        Width = 324
+      end>
+    FixedCols = 0
+    FixedRows = 0
+    TabOrder = 0
+    ColWidths = (
+      324
+    )
+  end
+  object Star2MatchLbl: TLabel
+    Left = 8
+    Height = 24
+    Top = 72
+    Width = 147
+    Caption = 'Star to Match :'
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -21
+    Font.Name = 'Arial'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object StarInfo1Lbl: TLabel
+    Left = 168
+    Height = 15
+    Top = 78
+    Width = 63
+    Caption = 'StarInfo1Lbl'
+    ParentColor = False
+  end
+  object AutoMatchCB: TCheckBox
+    Left = 8
+    Height = 19
+    Top = 12
+    Width = 273
+    Caption = 'Automatically match if only one match is found'
+    Checked = True
+    State = cbChecked
+    TabOrder = 1
+  end
+  object StartMatchBtn: TToggleBox
+    Left = 304
+    Height = 25
+    Top = 8
+    Width = 96
+    Caption = 'Start Matching'
+    TabOrder = 2
+  end
+  object MatchCountLbl: TLabel
+    Left = 8
+    Height = 15
+    Top = 48
+    Width = 314
+    Caption = '99999 Systems to Check, 888 Stars match, 777 Stars skipped.'
+    ParentColor = False
+  end
+  object StarInfo2Lbl: TLabel
+    Left = 8
+    Height = 15
+    Top = 104
+    Width = 63
+    Caption = 'StarInfo2Lbl'
+    ParentColor = False
+  end
+  object MatchSelectedBtn: TButton
+    Left = 8
+    Height = 25
+    Top = 128
+    Width = 131
+    Caption = 'Match to Selected'
+    TabOrder = 3
+  end
+  object SkipStarBtn: TButton
+    Left = 8
+    Height = 25
+    Top = 160
+    Width = 75
+    Caption = 'Skip Star'
+    TabOrder = 4
+  end
+end

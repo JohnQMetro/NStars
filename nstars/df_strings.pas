@@ -166,7 +166,7 @@ function Real2StrZ(const inp:Extended; dprec,mwbd:Integer):string;
 function Real2StrZP(const inp:Extended; dprec,mwbd:Integer):string;
 
 (* magnitude to string, with + sign for positive and 0 prefix *)
-function MagToString(const inmag:Currency):string;
+function MagToString(const inmag:Currency; quad:Boolean):string;
 
 (* get substring and convert to currency *)
 function SubstrCurr(const sourcestr:string; index,len:Integer; out res:Currency):Boolean;
@@ -1356,7 +1356,7 @@ begin
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* magnitude to string, with + sign for positive and 0 prefix *)
-function MagToString(const inmag:Currency):string;
+function MagToString(const inmag:Currency; quad:Boolean):string;
 var isneg:Boolean;
     absmag:Currency;
     magstr:string;
@@ -1370,7 +1370,8 @@ begin
   if isneg then absmag := -inmag
   else absmag := inmag;
   // initial converstion to string
-  magstr := CurrToStrF(absmag,ffFixed,3);
+  if quad then magstr := CurrToStrF(absmag,ffFixed,4)
+  else magstr := CurrToStrF(absmag,ffFixed,3);
   // zero pre-padding
   if Length(magstr) = (speclen-1) then magstr := '0' + magstr;
   Assert(Length(magstr) = speclen);

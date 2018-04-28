@@ -13,7 +13,8 @@ uses
   NewStar, catalogedit, starextraedit, stardataedit, StarDataBase,
   starlocatedit, newImports,  starext2edit, FindDuplInterF, ImportDataForm,
   MainLocatEdit, df_strings, sptfluxest, PPMMatchForm, Utilities2, tgas_import,
-  export_form, ExtraImports;
+  export_form, ExtraImports,
+  dr2loadstore;
 
 type
 

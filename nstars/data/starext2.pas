@@ -174,7 +174,7 @@ implementation
 function StarFluxPlus.XMagToString(const imag:Currency):string;
 begin
   if imag > 99 then Result := '+99.999'
-  else Result := MagToString(imag);
+  else Result := MagToString(imag,False);
 end;
 //---------------------------------
 function StarFluxPlus.InStrToMag(const instr:string):Currency;
