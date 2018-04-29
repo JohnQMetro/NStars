@@ -1360,7 +1360,7 @@ function MagToString(const inmag:Currency; quad:Boolean):string;
 var isneg:Boolean;
     absmag:Currency;
     magstr:string;
-const speclen = 6;
+    speclen:Integer;
 begin
   // I will only support -100.000 < inmag < +100.000
   Assert(inmag<100);
@@ -1369,6 +1369,8 @@ begin
   isneg := (inmag < 0);
   if isneg then absmag := -inmag
   else absmag := inmag;
+  if quad then speclen := 7
+  else speclen := 6;
   // initial converstion to string
   if quad then magstr := CurrToStrF(absmag,ffFixed,4)
   else magstr := CurrToStrF(absmag,ffFixed,3);

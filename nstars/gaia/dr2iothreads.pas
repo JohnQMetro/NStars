@@ -61,7 +61,6 @@ procedure LoadStoreDR2Thread.Execute;
 var err_msg:string;
     okay,isfinished:Boolean;
     fullcount,donecount:Integer;
-const BATCHAMOUNT = 30000;
 begin
   PostMessage(msgTarget,MSG_IOSTART,0,0);
   // starting (including opening the file for i/o
@@ -84,8 +83,8 @@ begin
   // once we get here, we load or store the stars in batches
   isfinished := False;
   repeat
-    if loadmode then okay := DR2Data.InputStars(BATCHAMOUNT,isfinished,err_msg)
-    else okay := DR2Data.OutputStars(BATCHAMOUNT,isfinished,err_msg);
+    if loadmode then okay := DR2Data.InputStars(1000,isfinished,err_msg)
+    else okay := DR2Data.OutputStars(4000,isfinished,err_msg);
     if okay then begin
       if loadmode then donecount := DR2Data.StarCount
       else donecount := DR2Data.OutputtedAmount();
@@ -93,7 +92,7 @@ begin
     end else Break;
   until isfinished;
   // after the loop, we have succeeded or failed
-  if not okay then PostMessage(msgTarget,MSG_INTFAIL,0,0)
+  if not okay then PostString(MSG_INTFAIL,err_msg)
   else PostMessage(msgTarget,MSG_DONE,0,0);
 end;
 //-----------------------------------------------------
@@ -103,6 +102,7 @@ begin
   msgTarget := mtarget;
   loadMode := inLoadMode;
   if (not loadMode) then Assert(DR2Data <> nil);
+  inherited Create(createSuspended);
 end;
 //=====================================================
 procedure LoadDR2FromSourceThread.PostString(msgID:Cardinal; msgText:string);
@@ -125,7 +125,7 @@ procedure LoadDR2FromSourceThread.Execute;
 var err_msg:string;
     okay,isfinished:Boolean;
     fullcount,donecount:Integer;
-const BATCHAMOUNT = 20000;
+const BATCHAMOUNT = 1000;
 begin
   PostMessage(msgTarget,MSG_IOSTART,0,0);
   // starting (including opening the file for i/o)
@@ -148,7 +148,7 @@ begin
     if not okay then Break;
   until isfinished;
   // after the loop, we have succeeded or failed
-  if not okay then PostMessage(msgTarget,MSG_INTFAIL,0,0)
+  if not okay then PostString(MSG_INTFail,err_msg)
   else PostMessage(msgTarget,MSG_DONE,0,0);
 end;
 //-----------------------------------------------------
@@ -156,6 +156,7 @@ constructor LoadDR2FromSourceThread.Create(createSuspended:Boolean; params:GaiaS
 begin
   sparams := params;
   msgTarget := mtarget;
+  inherited Create(createSuspended);
 end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 begin

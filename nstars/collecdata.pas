@@ -7,7 +7,8 @@ interface
 uses SysUtils, StdCtrls, Classes, StrUtils, Dialogs, Controls, Forms, FileUtil,
   stardata, newlocation, namedata, recons, constellation, sptfluxest, df_strings,
   Arcins, cluster, tgas, simbad, NewStar, newImports, StarDataBase, ExtraImports,
-  StarExt2,fluxtransform,ImportVizier,Utilities2,StarEstimator, guessstype;
+  StarExt2,fluxtransform,ImportVizier,Utilities2,StarEstimator, guessstype,
+  gaiadr2holder;
 
 type
 
@@ -48,6 +49,7 @@ StarProxy = class
     function LocateConst:Integer;
     function ShowTGASMatches(byname:Boolean):Boolean;
     function TGASStarMatch:Boolean;
+    function GaiaDR2ShowMatch(maxdist:Single):Boolean;
     function SimbadDownload(simbadurl:string; fluxonly:Boolean):Boolean;
     function SimbadDownloadLogg(simbadurl:string):Boolean;
     function SimbadCatalogs(simbadurl:string):Boolean;
@@ -600,6 +602,51 @@ begin
   else begin
     starlist.Free;
     ShowMessage(msg);
+  end;
+end;
+//----------------------------------------------------------
+function StarProxy.GaiaDR2ShowMatch(maxdist:Single):Boolean;
+var cloc:Location;
+    name_star,name_sys:StarName;
+    rok,ismulti:Boolean;
+    outdata:GaiaList;
+    mtype:GaiaDR2_MatchType;
+    topstr:String;
+begin
+  Result := False;
+  if DR2Data = nil then Exit;
+  if (maxdist >= 3.75) or (maxdist <= 0) then Exit;
+  if (sys = nil) then Exit;
+  // getting current star data
+  rok := sys.GetStuffForMatching(starindex,cloc,name_star,name_sys);
+  if not rok then Exit;
+  if (cloc = nil) and (name_star = nil) and (name_sys = nil) then Exit;
+  // using the star data to find matches...
+  ismulti := (sys.GetCompC > 1);
+  outdata := DR2Data.FindMatches(ismulti,name_star,name_sys,cloc,mtype);
+  Result := True;
+  // checking the result...
+  if (outdata = nil) then ShowMessage('No matches found!')
+  else if (outdata.Count = 0) then ShowMessage('No Matches Found!')
+  else begin
+    // top line
+    if mtype = G2_STARNAME then topstr := 'Name Match to Star'
+    else if mtype = G2_SYSNAME then topstr := 'Name Match to System'
+    else if mtype = G2_NONE then topstr := 'No Matches'
+    else topstr := 'Location Matches';
+    topstr += ' | ' + IntToStr(outdata.Count) + 'matches.' + sLineBreak;
+    // the data for star 0
+    topstr += sLineBreak;
+    topstr += outdata[0].MakeSummaryString();
+    // if there is a star 1, we display it as well
+    if outdata.Count > 1 then begin
+       topstr += sLineBreak + sLineBreak;
+       topstr += outdata[1].MakeSummaryString();
+    end;
+    // finishing
+    ClearGaiaList(outdata);
+    outdata.Free;
+    ShowMessage(topstr);
   end;
 end;
 //----------------------------------------------------------

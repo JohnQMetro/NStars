@@ -1,7 +1,7 @@
 object GaiaDR2LoadStoreForm: TGaiaDR2LoadStoreForm
-  Left = 972
+  Left = 561
   Height = 90
-  Top = 180
+  Top = 240
   Width = 412
   Caption = 'GaiaDR2LoadStoreForm'
   ClientHeight = 90
@@ -14,6 +14,8 @@ object GaiaDR2LoadStoreForm: TGaiaDR2LoadStoreForm
     Height = 20
     Top = 32
     Width = 392
+    Max = 200
+    Smooth = True
     TabOrder = 0
   end
   object MainActionLabel: TLabel

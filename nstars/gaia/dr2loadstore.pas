@@ -116,12 +116,15 @@ end;
 procedure TGaiaDR2LoadStoreForm.HandleCounts(var Msg:TLMessage);
 var omsg:string ;
     rcount,total:Integer;
+    fracdone:Double;
 begin
   rcount := Integer(Msg.wParam);
   total := Integer(Msg.lParam);
   omsg := IntToStr(rcount) + ' of ' + IntToStr(total) + ' stars ';
   if storemode then omsg += 'written.'
   else omsg += 'read.';
+  fracdone := 200*(rcount / total);
+  FileOpProgress.Position := Trunc(fracdone);
   ActionStatusLabel.Caption := omsg;
 end;
 //-----------------------------------
@@ -133,7 +136,9 @@ begin
   if storemode then dispmsg := 'Export'
   else dispmsg := 'Loading';
   dispmsg += ' done. This dialog will now close';
+  FileOpProgress.Position := 200;
   ShowMessage(dispmsg);
+  Close();
 end;
 //-----------------------------------
 procedure TGaiaDR2LoadStoreForm.HandleFail(var Msg:TLMessage);

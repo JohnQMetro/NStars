@@ -14,7 +14,7 @@ uses
   starlocatedit, newImports,  starext2edit, FindDuplInterF, ImportDataForm,
   MainLocatEdit, df_strings, sptfluxest, PPMMatchForm, Utilities2, tgas_import,
   export_form, ExtraImports,
-  dr2loadstore;
+  dr2loadstore, dr2sourceload,gaiadr2holder;
 
 type
 
@@ -30,6 +30,13 @@ type
     EstIUCACMI: TMenuItem;
     EstIURATMI: TMenuItem;
     EstBVCMCMI: TMenuItem;
+    MenuItem10: TMenuItem;
+    LoadGaiaDR2CSV: TMenuItem;
+    ImpGaiaDR2MI: TMenuItem;
+    MenuItem11: TMenuItem;
+    ExpGaiaDR2CSV: TMenuItem;
+    MenuItem12: TMenuItem;
+    FinDR2MatchMI: TMenuItem;
     MISwapParallax: TMenuItem;
     ShowPosDegMI: TMenuItem;
     PosSepSetMI: TMenuItem;
@@ -197,14 +204,17 @@ type
     procedure EstBVCMCMIClick(Sender: TObject);
     procedure EstBVUCACMIClick(Sender: TObject);
     procedure EstIUCACMIClick(Sender: TObject);
+    procedure ExpGaiaDR2CSVClick(Sender: TObject);
     procedure ExportListMIClick(Sender: TObject);
     procedure FindIDMIClick(Sender: TObject);
+    procedure FinDR2MatchMIClick(Sender: TObject);
     procedure FindRemTGASMIClick(Sender: TObject);
     procedure GetLoggMIClick(Sender: TObject);
     procedure GotoBM_1MIClick(Sender: TObject);
     procedure GotoBM_2MIClick(Sender: TObject);
     procedure GuessSpectraMIClick(Sender: TObject);
     procedure HasProbMIClick(Sender: TObject);
+    procedure ImpGaiaDR2MIClick(Sender: TObject);
     procedure ImportFrSN35MIClick(Sender: TObject);
     procedure ImportRemTGAS_MIClick(Sender: TObject);
     procedure ImportTGASLeftMIClick(Sender: TObject);
@@ -214,6 +224,7 @@ type
     (* menu item actions *)
     procedure ListOfStarSystemsClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure LoadGaiaDR2CSVClick(Sender: TObject);
     procedure LoadSimpleTGASClick(Sender: TObject);
     procedure LoadTGASCSVClick(Sender: TObject);
     procedure LuminosityProbMIClick(Sender: TObject);
@@ -605,6 +616,15 @@ begin
   end;
 end;
 
+procedure TNStarsMainForm.ExpGaiaDR2CSVClick(Sender: TObject);
+begin
+  if DR2Data = nil then Exit;
+  GeneralModCheck(Sender);
+  if GaiaDR2LoadStoreForm = nil then GaiaDR2LoadStoreForm := TGaiaDR2LoadStoreForm.Create(Self);
+  GaiaDR2LoadStoreFormModeStore := True;
+  GaiaDR2LoadStoreForm.Show;
+end;
+
 procedure TNStarsMainForm.ExportListMIClick(Sender: TObject);
 begin
   if primaryl <> nil then begin
@@ -648,6 +668,16 @@ begin
     ShowMessage('Nothing found!');
   end;
 end;
+
+procedure TNStarsMainForm.FinDR2MatchMIClick(Sender: TObject);
+var xres:Boolean;
+begin
+  if current <> nil then begin
+    xres := current.GaiaDR2ShowMatch(0.3);
+    if not xres then ShowMessage('Unable to try Gaia Match');
+  end;
+end;
+
 //---------------------------------------------------------------
 
 procedure TNStarsMainForm.FindRemTGASMIClick(Sender: TObject);
@@ -747,6 +777,13 @@ begin
   HasProbMI.Checked := True;
   primaryl.HasProblems;
   if current.sys <> nil then  ChangeSystem;
+end;
+
+procedure TNStarsMainForm.ImpGaiaDR2MIClick(Sender: TObject);
+begin
+  GeneralModCheck(Sender);
+  if GaiaDR2LSourceForm = nil then GaiaDR2LSourceForm := TGaiaDR2LSourceForm.Create(Self);
+  GaiaDR2LSourceForm.Show;
 end;
 
 procedure TNStarsMainForm.ImportFrSN35MIClick(Sender: TObject);
@@ -2030,6 +2067,14 @@ begin
   tgas_main := TGASCollection.Create;
   firststartup := True;
   loadlist := True;
+end;
+
+procedure TNStarsMainForm.LoadGaiaDR2CSVClick(Sender: TObject);
+begin
+  GeneralModCheck(Sender);
+  if GaiaDR2LoadStoreForm = nil then GaiaDR2LoadStoreForm := TGaiaDR2LoadStoreForm.Create(Self);
+  GaiaDR2LoadStoreFormModeStore := False;
+  GaiaDR2LoadStoreForm.Show;
 end;
 
 procedure TNStarsMainForm.LoadTGASCSVClick(Sender: TObject);

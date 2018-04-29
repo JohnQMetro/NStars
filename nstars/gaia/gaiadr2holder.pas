@@ -26,6 +26,7 @@ GaiaStarStrip = class
     property Level:Integer read glevel;
     constructor Create(in_level:Integer);
     destructor Destroy; override;
+    function MaxSize():Integer;
     procedure AddStar(thestar:GaiaDR2Star; index:Integer); // does NO checking
     function GetStarsCloseTo(rap,decp:Double; maxsep:Double; var putHere:GaiaList):Integer;
 end;
@@ -72,7 +73,7 @@ GaiaDR2Collection = class
     property StarCount:Integer read scount;
     constructor Create;
     destructor Destroy; override;
-    function FindMatches(starname,sysname:StarName; starloc:Location; out mtype:GaiaDR2_MatchType):GaiaList;
+    function FindMatches(multiple:Boolean; starname,sysname:StarName; starloc:Location; out mtype:GaiaDR2_MatchType):GaiaList;
     // file I/O
     function StartOutput(filename:TFileName; out err_msg:string):Boolean;
     function OutputStars(oamount:Integer; out finished:Boolean; out err_msg:string):Boolean;
@@ -100,10 +101,11 @@ implementation
 (* data:array of GaiaList; *)
 function GaiaStarStrip.AddNearby(slot:Integer; tra_in,tdecin:Double; maxsep:Double; var stickHere:GaiaList):Integer;
 var slotlist:GaiaList;
-    starmax,stardex:Integer;
+    starmax,stardex,qsize:Integer;
     cdist:Double;
 begin
   Result := 0;
+  qsize := Length(data);
   if data[slot] = nil then Exit;
   slotlist := data[slot];
   starmax := slotlist.Count - 1;
@@ -144,13 +146,22 @@ begin
   SetLength(data,0);
   inherited;
 end;
+//------------------------------------------
+function GaiaStarStrip.MaxSize():Integer;
+begin  Result := Length(data);  end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 procedure GaiaStarStrip.AddStar(thestar:GaiaDR2Star; index:Integer);
+var ra,dec:Double;
 begin
   if (level_var = 7) then begin
-     if data[0] = nil then data[index] := GaiaList.Create(False);
+     if data[0] = nil then data[0] := GaiaList.Create(False);
      data[0].Add(thestar);
   end else begin
+    if index > High(data) then begin
+       ra := thestar.astrometry.rapos;
+       dec := thestar.astrometry.decpos;
+       Assert(False);
+    end;
     if data[index] = nil then data[index] := GaiaList.Create(False);
     data[index].Add(thestar);
   end;
@@ -309,14 +320,16 @@ begin
   Result := GaiaList.Create(False);
   // looking for Tycho-2 catalog matches
   if namelist.GetCatValue('Tyc',nvalue) then begin
-    if tycMap.Find(nvalue,namepos) then begin
+    namepos := tycMap.IndexOf(nvalue);
+    if namepos >= 0 then begin
       gltyc := tycMap.Data[namepos];
       Result.Assign(gltyc);
     end;
   end;
   // looking for 2MASS catalog matches
   if namelist.GetCatValue('2MASS',nvalue) then begin
-    if TwoMMap.Find(nvalue,namepos) then begin
+    namepos := TwoMMap.IndexOf(nvalue);
+    if namepos >= 0 then begin
       gl2mass := TwoMMap.Data[namepos];
       AddUniqueToList(Result,gl2mass);
     end;
@@ -324,7 +337,8 @@ begin
   // looking for Hipparcos catalog matches
   if namelist.GetCatValue('Hip',nvalue) then begin
     if TryStrToInt(nvalue,hipidx) then begin
-      if HipMap.Find(hipidx,namepos) then begin
+      namepos := HipMap.IndexOf(hipidx);
+      if namepos >= 0 then begin
         glhip := HipMap.Data[namepos];
         AddUniqueToList(Result,glhip);
       end;
@@ -340,7 +354,7 @@ var ra15,dec15:Double;
 begin
   Assert((maxdist < 3.75) and (maxdist > 0),'The maxdist is out of bounds');
   Assert(matchThis <> nil,'The provided location is nil');
-  Result := GaiaList.Create;
+  Result := GaiaList.Create(False);
   // getting where to look
   matchThis.MakeGetJ2015p5Pos(ra15,dec15);
   looklevel := MakePositionIndexes(ra15,dec15,decindex,raindex);
@@ -393,7 +407,7 @@ begin
   // position based holders
   ncap := GaiaStarStrip.Create(7);
   scap := GaiaStarStrip.Create(7);
-  for ssdex := 4 to 714 do begin
+  for ssdex := 4 to 715 do begin
     locstrips[ssdex] := GaiaStarStrip.Create(GetLevelForIndex(ssdex));
   end;
   fmode := -1; // actually means 'no i/o going on'
@@ -415,10 +429,12 @@ begin
   inherited;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-function GaiaDR2Collection.FindMatches(starname,sysname:StarName; starloc:Location; out mtype:GaiaDR2_MatchType):GaiaList;
+function GaiaDR2Collection.FindMatches(multiple:Boolean; starname,sysname:StarName; starloc:Location; out mtype:GaiaDR2_MatchType):GaiaList;
+var resbak:GaiaList;
 begin
   mtype := G2_NONE;
   Result := nil;
+  resbak := nil;
   // looking for star names (best accuracy)
   if (starname <> nil) then begin
     Result := FindNameMatches(starname);
@@ -427,20 +443,25 @@ begin
       Exit;
     end;
   end;
-  // fallback system names (probably not the best)
+  // fallback system names (probably not the best, unless there is one star only)
   if (sysname <> nil) then begin
     Result := FindNameMatches(sysname);
     if Result <> nil then begin
       mtype := G2_SYSNAME;
-      Exit;
+      if (not multiple) then Exit;
+      resbak := Result;
     end;
   end;
   // position based (requires the most work)
   if (starloc <> nil) then begin
     Result := FindPositionMatches(starloc,maxdist);
     if Result <> nil then begin
-      mtype := G2_POSITION;
-      Exit;
+      if (resbak <> nil) then begin
+        AddUniqueToList(resbak,Result);
+        Result.Free;
+        Result := resbak;
+      end
+      else mtype := G2_POSITION;
     end;
   end;
 end;
@@ -607,6 +628,8 @@ amountread,amounttotal:Integer;   *)
 //---------------------------------------------
 function GaiaDR2Collection.StartSourceInput(params:GaiaSourceParams; out err_msg:string):Boolean;
 var readstr:string;
+    sizeraw:Double;
+    capest:Integer;
 begin
   Result := False;
   if fmode <> -1 then begin
@@ -629,6 +652,10 @@ begin
   and NOBODY CARES (except me). *)
   amounttotal := FileUtil.FileSize(sparams.infilename);
   amountread := Length(readstr)+1; // the only works properly if the line ending is 1 char
+  // setting up capacity
+  sizeraw := (amounttotal - 661) / 474.0;
+  capest := Trunc(sizeraw);
+  mainlist.Capacity := capest;
   ftarget := sparams.infilename;
   filecount := -1; // this not known in advance
   filedex := 0;
@@ -662,6 +689,7 @@ begin
       // try to convert the line to a gaia star
       if (not tempStar.SetFromSource(sdata,sparams.maxdist)) then begin
         filedex += iindex;
+        err_msg := 'Failed to convert line to Star/Brown Dwarf';
         FileClose();  Exit;
       end;
       // here, things are okay, so add the star

@@ -1047,6 +1047,17 @@ object NStarsMainForm: TNStarsMainForm
       object MenuItem6: TMenuItem
         Caption = '-'
       end
+      object ImpGaiaDR2MI: TMenuItem
+        Caption = 'Import Gaia DR2...'
+        OnClick = ImpGaiaDR2MIClick
+      end
+      object LoadGaiaDR2CSV: TMenuItem
+        Caption = 'Load GaiaDR2 CSV...'
+        OnClick = LoadGaiaDR2CSVClick
+      end
+      object MenuItem10: TMenuItem
+        Caption = '-'
+      end
       object LoadARICNSCatalogs1: TMenuItem
         Caption = 'Load ARICNS Catalogs...'
         OnClick = LoadARICNSCatalogs1Click
@@ -1107,6 +1118,13 @@ object NStarsMainForm: TNStarsMainForm
       object WrUnmCSVMI: TMenuItem
         Caption = 'Unmatched TGAS CSV...'
         OnClick = WrUnmCSVMIClick
+      end
+      object MenuItem11: TMenuItem
+        Caption = '-'
+      end
+      object ExpGaiaDR2CSV: TMenuItem
+        Caption = 'Gaia DR2 CSV...'
+        OnClick = ExpGaiaDR2CSVClick
       end
     end
     object ools1: TMenuItem
@@ -1199,6 +1217,13 @@ object NStarsMainForm: TNStarsMainForm
       object FindRemTGASMI: TMenuItem
         Caption = 'Find Remaining TGAS matches...'
         OnClick = FindRemTGASMIClick
+      end
+      object MenuItem12: TMenuItem
+        Caption = '-'
+      end
+      object FinDR2MatchMI: TMenuItem
+        Caption = 'Find Gaia DR2 Match'
+        OnClick = FinDR2MatchMIClick
       end
       object N4: TMenuItem
         Caption = '-'

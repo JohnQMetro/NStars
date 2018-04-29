@@ -1424,6 +1424,8 @@ begin
   // converting proper motion...
   pmdec := pm_magnitude * cosd(pm_posang);
   pmra := pm_magnitude * sind(pm_posang);
+  pmdec := pmdec / 3600000;
+  pmra := pmra / 3600000;
   // new position
   decdeg := startdec + pmdec * timeoffset;
   if decdeg >= 90 then decdeg := 89.999999
@@ -1431,7 +1433,7 @@ begin
   cosdec := cosd((decdeg + startdec)/2);
   radeg := startra + ((timeoffset * pmra)/cosdec);
   if radeg < 0 then radeg := 360.0 + radeg
-  else if radeg >= 36.0 then radeg -= 360.0
+  else if radeg >= 360.0 then radeg -= 360.0
 end;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

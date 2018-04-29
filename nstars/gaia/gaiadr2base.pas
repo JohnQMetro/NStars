@@ -13,9 +13,14 @@ type
 stars directly as well as being used in the GaiaDR2Star class. *)
 GaiaDR2Mags = class
   protected
+    const defbad:Currency = 99.999;
+    function StrToMag(inval:string; var target:Currency):Boolean;
+    function StrToMagE(inval:string; var target:Currency):Boolean;
     function GtoStr:string;
     function BPtoStr:string;
     function RPtoStr:string;
+    function vbpmrp:Boolean;
+    function mbpmrp:Currency;
   public
     G,BP,RP:Currency; // the core data. note that DR2 G is not the same as DR1 G
     Gerr,BPerr,RPerr:Currency;
@@ -26,7 +31,9 @@ GaiaDR2Mags = class
     property GString:string read GtoStr;
     property BPString:string read GtoStr;
     property RPString:string read GtoStr;
-
+    // other properties
+    property ValidBPmRP:Boolean read vbpmrp;
+    property BPminRP:Currency read mbpmrp;
     // basic constructors
     constructor Create(); overload;
     constructor Create(Gstr:string; BPstr:string; RPstr:string); overload;
@@ -42,6 +49,8 @@ GaiaDR2Mags = class
     function ToSemiString():string;
     function MakeCopy():GaiaDR2Mags;
     function DisplayData():string;
+    // photometry stuff
+    function MakeVest(out Vest:Real):Boolean;
 end;
 
 (* Hold the various IDS for a star that can come with Gaia Data. *)
@@ -88,7 +97,7 @@ GaiaDR2Astrometry = class
     hasRV:Boolean;
     RV,RVerr:Double;
     // constants
-    const Header = 'RA (deg);RA err (mas);Dec (deg);Dec err (mas);Parallax;Pllx Err;PM RA;PM RA err;PM Dec;PM Dec Err;RV,RV err;Gal Long;Gal Lat';
+    const Header = 'RA (deg);RA err (mas);Dec (deg);Dec err (mas);Parallax;Pllx Err;PM RA;PM RA err;PM Dec;PM Dec Err;RV;RV err;Gal Long;Gal Lat';
     const fieldcount = 14;
 
     // methods
@@ -176,6 +185,20 @@ function StarHeader():string;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 implementation
 //=========================================================================
+function GaiaDR2Mags.StrToMag(inval:string; var target:Currency):Boolean;
+begin
+  Result := True;
+  if inval = '' then target := defbad
+  else Result := Str2Curr(inval,target);
+end;
+//----------------------------------------------------------
+function GaiaDR2Mags.StrToMagE(inval:string; var target:Currency):Boolean;
+begin
+  Result := True;
+  if inval = '' then target := 0
+  else Result := Str2Curr(inval,target);
+end;
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function GaiaDR2Mags.GtoStr:string;
 begin
   if G > 90 then Result := ''
@@ -193,19 +216,25 @@ begin
   if RP > 90 then Result := ''
   else Result := MagToString(RP,True);
 end;
+//--------------------------------------
+function GaiaDR2Mags.vbpmrp:Boolean;
+begin  Result := (BP < 90) and (RP < 90);  end;
+//------------------------------------------
+function GaiaDR2Mags.mbpmrp:Currency;
+begin  Result := (BP - RP);  end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // basic constructors
 constructor GaiaDR2Mags.Create(); overload;
 begin
-  G := 99.999;  BP := 99.999;   RP := 99.999;
+  G := defbad;  BP := defbad;   RP := defbad;
   Gerr := 0;   BPerr := 0;   RPerr := 0;
 end;
 //--------------------------------------------------
 constructor GaiaDR2Mags.Create(Gstr:string; BPstr:string; RPstr:string); overload;
 begin
-  if (not Str2Curr(Gstr,G)) then Fail;
-  if (not Str2Curr(BPstr,BP)) then Fail;
-  if (not Str2Curr(RPstr,RP)) then Fail;
+  if (not StrToMag(Gstr,G)) then Fail;
+  if (not StrToMag(BPstr,BP)) then Fail;
+  if (not StrToMag(RPstr,RP)) then Fail;
   Gerr := 0;   BPerr := 0;   RPerr := 0;
 end;
 //--------------------------------------------------
@@ -220,7 +249,7 @@ function GaiaDR2Mags.SetG(source:string):Boolean;
 var temp_g:Currency;
 begin
   Result := False;
-  if (not Str2Curr(source,temp_g)) then Exit;
+  if (not StrToMag(source,temp_g)) then Exit;
   G := temp_g;  Result := True;
 end;
 //-------------------------
@@ -228,7 +257,7 @@ function GaiaDR2Mags.SetBP(source:string):Boolean;
 var temp_bp:Currency;
 begin
   Result := False;
-  if (not Str2Curr(source,temp_bp)) then Exit;
+  if (not StrToMag(source,temp_bp)) then Exit;
   BP := temp_bp;  Result := True;
 end;
 //-------------------------
@@ -236,7 +265,7 @@ function GaiaDR2Mags.SetRP(source:string):Boolean;
 var temp_rp:Currency;
 begin
   Result := False;
-  if (not Str2Curr(source,temp_rp)) then Exit;
+  if (not StrToMag(source,temp_rp)) then Exit;
   RP := temp_rp;  Result := True;
 end;
 //-------------------------
@@ -246,14 +275,14 @@ begin
   Result := False;
   // bounds checking
   if (source = nil) or (startdex < 0) then Exit;
-  if (startdex+6) >= source.Count then Exit;
+  if (startdex+6) > source.Count then Exit;
   // trying to convert to the magnitudes
-  if (not Str2Curr(source[startdex],temp_g)) then Exit;
-  if (not Str2Curr(source[startdex+1],temp_ge)) then Exit;
-  if (not Str2Curr(source[startdex+2],temp_bp)) then Exit;
-  if (not Str2Curr(source[startdex+3],temp_bpe)) then Exit;
-  if (not Str2Curr(source[startdex+4],temp_rp)) then Exit;
-  if (not Str2Curr(source[startdex+5],temp_rpe)) then Exit;
+  if (not StrToMag(source[startdex],temp_g)) then Exit;
+  if (not StrToMagE(source[startdex+1],temp_ge)) then Exit;
+  if (not StrToMag(source[startdex+2],temp_bp)) then Exit;
+  if (not StrToMagE(source[startdex+3],temp_bpe)) then Exit;
+  if (not StrToMag(source[startdex+4],temp_rp)) then Exit;
+  if (not StrToMagE(source[startdex+5],temp_rpe)) then Exit;
   // if we get here, things are converted
   G := temp_g;
   Gerr := temp_ge;
@@ -343,7 +372,20 @@ begin
     Result += 'BP-RP: ' + MagToString(bpmrp,False);
   end;
 end;
-
+//---------------------------------------------------------------
+function GaiaDR2Mags.MakeVest(out Vest:Real):Boolean;
+var bpmrp,interm:Real;
+const coffs:array[0..2] of Real = (-0.0176,-0.00686,-0.1732);
+begin
+  Result := False;
+  if (G >= 90) then Exit;
+  if not ValidBPmRp then Exit;
+  bpmrp := CurrToReal(BPminRP);
+  if (bpmrp <= -0.5) or (bpmrp >= 2.75) then Exit;
+  interm := PolEval(bpmrp,coffs,3);
+  Vest := CurrToReal(G) - interm;
+  Result := True;
+end;
 //=========================================================================
 procedure GaiaDR2IDs.ResultHelper(var target:string; const idlabel:string; const id2add:string);
 begin
@@ -457,7 +499,7 @@ begin
   Result := False;
   // basic reject conditions
   if (source = nil) or (maxdist < 0) then Exit;
-  if (startdex < 0) or ((startdex + 2*fieldcount) >= source.Count) then Exit;
+  if (startdex < 0) or ((startdex + 2*fieldcount) > source.Count) then Exit;
   // tycho-2
   index := startdex;
   if source[index] <> '' then begin
@@ -555,7 +597,7 @@ begin
   // positions
   Result := Real2StrZ(rapos,7,3) + ';' + DtoStr(rapos_err,3) + ';';
   Result += Real2Str(decpos,7,2,True,True) + ';' + DtoStr(decpos_err,3) + ';';
-  Result := DtoStr(parallax,4) + ';' + DtoStr(parallax_err,4) + ';';
+  Result += DtoStr(parallax,4) + ';' + DtoStr(parallax_err,4) + ';';
   // proper motions
   Result += DtoStr(rapm,3) + ';' + DtoStr(rapm_err,3) + ';';
   Result += DtoStr(decpm,3) + ';' + DtoStr(decpm_err,3) + ';';
@@ -565,7 +607,7 @@ begin
     Result += DtoStr(RV,2) + ';' + DtoStr(RVerr,2) + ';';
   end;
   // galactic longtitude and latitude
-  Result += Real2StrZ(glong,7,3) + ';' + Real2StrZ(glat,7,3);
+  Result += Real2StrZ(glong,7,3) + ';' + Real2Str(glat,7,2,True,True);
 end;
 //--------------------------------------------------
 function GaiaDR2Astrometry.SetFromList(source:TStringList;startdex:Integer):Boolean;
@@ -642,7 +684,7 @@ end;
 //----------------------------------------
 function GaiaDR2Astrometry.GetStringParallax():String;
 begin
-  Result += 'Pllx: ' + DtoStr(parallax,2) + '±' + DtoStr(parallax_err,2) + ' mas';
+  Result := 'Pllx: ' + DtoStr(parallax,2) + '±' + DtoStr(parallax_err,2) + ' mas';
 end;
 //----------------------------------------
 function GaiaDR2Astrometry.GetStringPM():String;
@@ -752,7 +794,7 @@ var temp_teff:Integer;
 begin
   Result := False;
   if (source = nil) or (startdex < 0) then Exit;
-  if (startdex + fieldcount) <= source.Count then Exit;
+  if (startdex + fieldcount) < source.Count then Exit;
   // we have enough items, so starting to parse...
   if (source[startdex] = '') then temp_teff := 0
   else if not TryStrToInt(source[startdex],temp_teff) then Exit;
@@ -874,6 +916,7 @@ begin
   fmax += GaiaDR2Mags.fieldcount + GaiaDR2Extra.fieldcount;
   xlist := SplitWithDelim(semi_source,';',fmax);
   if (xlist = nil) then Exit;
+  ClearContents();
   // individual parsing : gaia id
   if not TryStrToQWord(xlist[0],gaia_id) then begin
     xlist.Free;    Exit;
@@ -892,7 +935,7 @@ begin
     xlist.Free;  tempids.Free;
     Exit;
   end;
-  fcount := 1 + GaiaDR2IDS.fieldcount;
+  fcount := fieldcount + GaiaDR2IDS.fieldcount;
   // Astrometry
   tempastro := GaiaDR2Astrometry.Create;
   if (not tempastro.SetFromList(xlist,fcount)) then begin
@@ -911,7 +954,7 @@ begin
   fcount += GaiaDR2Mags.fieldcount;
   // Extra Stuff
   tempextra := GaiaDR2Extra.Create;
-  if (tempextra.SetFromList(xlist,fcount)) then begin
+  if (not tempextra.SetFromList(xlist,fcount)) then begin
     xlist.Free;
     tempids.Free;  tempastro.Free;
     tempmags.Free;   tempextra.Free;
@@ -919,7 +962,6 @@ begin
   end;
   xlist.Free;
   // copying the created data over
-  ClearContents();
   ids := tempids;
   astrometry := tempastro;
   mags := tempmags;
@@ -931,11 +973,16 @@ begin
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function GaiaDR2Star.MakeSummaryString():string;
+var vest:Real;
 begin
   Result := '';
   if not is_valid then Exit;
   if distance > 0 then Result += Trim(FloatToStrF(distance,ffFixed,7,3)) + ' | ';
-  Result += GaiaID() + ' | ' + mags.DisplayData() + sLineBreak;
+  Result += GaiaID() + ' | ' + mags.DisplayData();
+  if mags.MakeVest(vest) then begin
+    Result += ', Vest: ' + Trim(FloatToStrF(vest,ffFixed,6,2));
+  end;
+  Result += sLineBreak;
   Result += IfThen(matched,'Matched','Unmatched') + ' | ';
   if selectionAfail then Result += 'Fails Selection A | ';
   if selectionBfail then Result += 'Fails Selection B | ';
@@ -1040,17 +1087,23 @@ begin
   decdex := Trunc((dec+90.0)*4.0);
   // right ascension requires special stuff
   if ((level = 7) or (level = 6)) then  radex_base := (ra*4)/32.0
-  else radex_base := (ra*4)/(intpower(2,level-1));
+  else radex_base := (ra*4.0)/(intpower(2,level-1));
   radex := Trunc(radex_base);
   // done
   Result := level;
 end;
 //-----------------------------------------------------------------
+// mostly used to determine the level from strip array index
 function GetLevelForIndex(indexin:Integer):Integer;
 var absdec,level:Integer;
+    isneg:Boolean;
 begin
+  // converting the indexin to equivalent of Abs(Dec)
   Assert((indexin > 0) and (indexin < 720));
-  absdec := Trunc(Abs((indexin / 4.0) - 90.0));
+  absdec := Abs(indexin - 360);
+  if (indexin < 360) then absdec -= 1;
+  absdec := absdec div 4;
+  // assigning the level based on that
   if (absdec < 60) then level := 1
   else if (absdec < 75) then level := 2
   else if (absdec < 82) then level := 3
