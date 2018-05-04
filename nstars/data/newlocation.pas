@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, Math, DAMath, df_strings, tgas, newImports,
-  Utilities2;
+  Utilities2, gaiadr2base;
 
 type
 
@@ -155,6 +155,7 @@ Location = class
     // importing data from special sources
     function SetFromTGAS(instar:TGASData):Boolean;
     function SetFromImported(instar:ImportedData; epch:EpochType; srcin:string; setlocat:Boolean):Boolean;
+    function SetFromGaiaDR2(inastro:GaiaDR2Astrometry; ckeepold:Boolean):Boolean;
     // to and from strings as a whole
     function ConvertAllToString:string;
     function ConvertAllFromString(inval:string):Boolean;
@@ -205,6 +206,8 @@ uvwTconsts:array[0..8] of Real = (-0.0548755604,-0.8734370902,-0.4838350155,
                                   +0.4941094279,-0.4448296300,+0.7469822445,
                                   -0.8676661490,-0.1980763734,+0.4559837762);
 kmps_auy = 4.74057183;
+
+GAIA2_TAG = 'Gaia DR2';
 
 
 var
@@ -1025,7 +1028,7 @@ end;
 function Location.GetProperMotionMagStr(prec:Integer):string;
 begin
   Assert(prec>=0);
-  Result := Trim(FloatToStrF(pm_magnitude,ffFixed,5,2));
+  Result := Trim(FloatToStrF(pm_magnitude,ffFixed,5,prec));
 end;
 //------------------------------------
 function Location.GetProperMotionAngleStr(prec:Integer; padding:Boolean):string;
@@ -1519,6 +1522,41 @@ begin
     if (not setok) then Exit;
   end;
   // finally
+  Result := True;
+end;
+//--------------------------------------------------
+function Location.SetFromGaiaDR2(inastro:GaiaDR2Astrometry; ckeepold:Boolean):Boolean;
+var uhrs:Integer;   umin:Integer;   hsec:Double;
+    pmmag, pmang:Double;
+    ddeg:Real;
+begin
+  // bas cases
+  Result := False;
+  if inastro = nil then Exit;
+  // otherwise
+  if not SetPositionDDeg(zJ2015h,inastro.rapos,inastro.decpos) then Exit;
+  // parallax
+  if (Length(source) = 0) or (source = GAIA2_TAG) then begin
+    parallax := inastro.parallax;
+    parallax_err := inastro.parallax_err;
+    uncertain := (parallax_err >= 4);
+    binarycopy := False;
+  end
+  else begin
+    // if ckeepold = True, we keep the old parallax if the old error is smaller
+    if (inastro.parallax_err > parallax_err) and ckeepold then begin
+      AddPToOld(GAIA2_TAG,inastro.parallax,inastro.parallax_err);
+      Exit;
+    end;
+    // otherwise, we use the Gaia DR2 Parallax
+    binarycopy := False;
+    UpdateParallax(inastro.parallax,inastro.parallax_err);
+  end;
+  source := GAIA2_TAG;
+  // proper motion
+  ProperMotionConvert(inastro.decpm,inastro.rapm,pm_magnitude,pm_posang);
+  // radial velocity
+  if inastro.hasRV then radialV := inastro.RV;
   Result := True;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

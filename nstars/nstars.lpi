@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="57">
+    <Units Count="61">
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -339,6 +339,25 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit56>
+      <Unit57>
+        <Filename Value="gaia\gaiamagsui.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="GaiaMagsFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit57>
+      <Unit58>
+        <Filename Value="gaia\dr2matchthread.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit58>
+      <Unit59>
+        <Filename Value="startproxy.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit59>
+      <Unit60>
+        <Filename Value="gaia\dr2addnew.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit60>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -29,8 +29,8 @@ GaiaDR2Mags = class
     const fieldcount = 6;
     // string versions of the magnitudes
     property GString:string read GtoStr;
-    property BPString:string read GtoStr;
-    property RPString:string read GtoStr;
+    property BPString:string read BPtoStr;
+    property RPString:string read RPtoStr;
     // other properties
     property ValidBPmRP:Boolean read vbpmrp;
     property BPminRP:Currency read mbpmrp;
@@ -45,6 +45,9 @@ GaiaDR2Mags = class
     function SetFromList(source:TStringList; startdex:Integer):Boolean;
     function SetFromLine(source:string):Boolean;
     function SetFromSource(source:TStringList; startdex:Integer; out bpfe:Double; out rpfe:Double):Boolean;
+    procedure ClearG();
+    procedure ClearBP();
+    procedure ClearRP();
     // outputting data
     function ToSemiString():string;
     function MakeCopy():GaiaDR2Mags;
@@ -344,6 +347,15 @@ begin
   // done
   Result := True;
 end;
+//-----------------------------
+procedure GaiaDR2Mags.ClearG();
+begin  G := 99.999;  Gerr := 0;  end;
+//-----------------------------
+procedure GaiaDR2Mags.ClearBP();
+begin  BP := 99.999;  BPerr := 0;  end;
+//-----------------------------
+procedure GaiaDR2Mags.ClearRP();
+begin  RP := 99.999;  RPerr := 0;  end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // outputting data
 function GaiaDR2Mags.ToSemiString():string;
@@ -821,30 +833,33 @@ var tempreal:Single;
 begin
   Result := False;
   if (source = nil) then Exit;
-  if (startdex < 0) or ((startdex+7) >= source.Count) then Exit;
-  (* Checking variable type first. Unfortunaty, the only specific type that GAIA
-  DR2 recognizes that will be within 100ly is Delta Scuti + SX Phoenicis type. *)
+  if (startdex < 0) or ((startdex+8) >= source.Count) then Exit;
+  (* Checking variable type first. Gaia makes checking a bit complicated because
+  the varibale data is speread. Specific types are BY Draconis and 'Delta Scuti
+  + SX Phoenicis' type (there are others, but those are generally distant luminous
+  types like RR Lyrae and Cepheids).*)
   if source[startdex] = 'VARIABLE' then begin
     if source[startdex+1] <> '' then vartype := source[startdex+1]
+    else if (source[startdex+2] <> '') then vartype := 'BYDra'
     else vartype := 'Variable';
   end else vartype := '';
   // TEff
-  if source[startdex+2] = '' then Teff := 0
+  if source[startdex+3] = '' then Teff := 0
   else begin
-    if not TryStrToFloat(source[startdex+2],tempreal) then Exit;
+    if not TryStrToFloat(source[startdex+3],tempreal) then Exit;
     Teff := round(tempreal);
   end;
   // G-band extinction
-  if source[startdex+3] = '' then extinction := -1
-  else if not TryStrToFloat(source[startdex+3],extinction) then Exit;
+  if source[startdex+4] = '' then extinction := -1
+  else if not TryStrToFloat(source[startdex+4],extinction) then Exit;
   // BP-RP reddening
-  if source[startdex+4] = '' then reddening := -1
-  else if not TryStrToFloat(source[startdex+4],reddening) then Exit;
+  if source[startdex+5] = '' then reddening := -1
+  else if not TryStrToFloat(source[startdex+5],reddening) then Exit;
   // radius
-  if source[startdex+5] = '' then radius := 0
-  else if not TryStrToFloat(source[startdex+5],radius) then Exit;
+  if source[startdex+6] = '' then radius := 0
+  else if not TryStrToFloat(source[startdex+6],radius) then Exit;
   // luminosity
-  if source[startdex+6] = '' then luminosity := 0
+  if source[startdex+7] = '' then luminosity := 0
   else if not TryStrToFloat(source[startdex+6],luminosity) then Exit;
   // done
   Result := True;
@@ -1002,7 +1017,7 @@ var mainlist:TStringList;
 begin
   Result := False;
   // basic splitting
-  mainlist := SplitWithDelim(source,',',53);
+  mainlist := SplitWithDelim(source,',',54);
   if mainlist = nil then Exit;
   // some setup before detailed parsing
   ClearContents();
@@ -1023,7 +1038,7 @@ begin
     if not extra.SetFromSource(mainlist,24) then Exit;
     // extra identifiers
     ids := GaiaDR2ids.Create;
-    if not ids.SetFromSourceList(mainlist,31,maxdist) then Exit;
+    if not ids.SetFromSourceList(mainlist,32,maxdist) then Exit;
     // 'phot_bp_rp_excess_factor' is the final field to read
     if mainlist[21] = '' then bprp_excess := -1
     else if not TryStrToFloat(mainlist[21],bprp_excess) then Exit;

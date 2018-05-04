@@ -1,10 +1,10 @@
 object NStarsMainForm: TNStarsMainForm
   Left = 271
-  Height = 585
+  Height = 577
   Top = 96
   Width = 851
   Caption = 'Nstars'
-  ClientHeight = 565
+  ClientHeight = 557
   ClientWidth = 851
   Color = clBtnFace
   Font.Color = clWindowText
@@ -614,10 +614,15 @@ object NStarsMainForm: TNStarsMainForm
               ClientHeight = 214
               ClientWidth = 576
               inline StarFluxTEffFrame: TStarExtras2Frame
-                Left = 4
+                Left = 2
                 Top = 4
+                Width = 584
+                ClientWidth = 584
                 inherited FluxGroup: TGroupBox
+                  Left = 2
+                  Width = 574
                   ClientHeight = 114
+                  ClientWidth = 570
                   inherited ULabel: TLabel
                     Height = 13
                     Width = 34
@@ -765,6 +770,39 @@ object NStarsMainForm: TNStarsMainForm
                 Caption = 'Pre Main Sequence'
                 OnChange = PreMainSeqCBChange
                 TabOrder = 3
+              end
+            end
+            object MoreMagsTab: TTabSheet
+              Caption = 'More Magnitudes'
+              ClientHeight = 214
+              ClientWidth = 576
+              inline GaiaMagsFrame1: TGaiaMagsFrame
+                Top = 2
+                inherited GaiaMagsBox: TGroupBox
+                  ClientHeight = 79
+                  OnExit = nil
+                  inherited GLabel: TLabel
+                    Height = 13
+                    Width = 34
+                  end
+                  inherited BPMLbl1: TLabel
+                    Height = 13
+                  end
+                  inherited BPLabel: TLabel
+                    Height = 13
+                    Width = 39
+                  end
+                  inherited BPMLbl2: TLabel
+                    Height = 13
+                  end
+                  inherited RPLabel: TLabel
+                    Height = 13
+                    Width = 40
+                  end
+                  inherited BPMLbl3: TLabel
+                    Height = 13
+                  end
+                end
               end
             end
           end
@@ -1224,6 +1262,10 @@ object NStarsMainForm: TNStarsMainForm
       object FinDR2MatchMI: TMenuItem
         Caption = 'Find Gaia DR2 Match'
         OnClick = FinDR2MatchMIClick
+      end
+      object StarGaiaMatchMI: TMenuItem
+        Caption = 'Start Gaia Matching...'
+        OnClick = StarGaiaMatchMIClick
       end
       object N4: TMenuItem
         Caption = '-'

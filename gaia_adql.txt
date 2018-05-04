@@ -1,5 +1,5 @@
-SELECT TOP 200 gaia.source_id,ra,ra_error,dec,dec_error,parallax,parallax_error,pmra,pmra_error,pmdec,pmdec_error,l AS gal_long,b AS gal_lat,	
-astrometric_n_good_obs_al,astrometric_chi2_al,phot_g_mean_flux_over_error, phot_g_mean_mag, phot_bp_mean_flux_over_error, phot_bp_mean_mag,phot_rp_mean_flux_over_error, phot_rp_mean_mag, phot_bp_rp_excess_factor, radial_velocity, radial_velocity_error, phot_variable_flag, vtype.best_class_name AS variable_type, teff_val, a_g_val, e_bp_min_rp_val, radius_val, lum_val, tycho.original_ext_source_id AS Tycho2, tycho.angular_distance AS tycho_dist, tmass.original_ext_source_id AS TwoMASS, tmass.angular_distance AS twomass_dist, hip.original_ext_source_id AS Hipparcos, hip.angular_distance AS hip_dist, allwise.original_ext_source_id AS wisea, allwise.angular_distance AS wisea_dist, apass.original_ext_source_id AS apassdr9, apass.angular_distance AS apass_dist, gsc.original_ext_source_id AS gsc23, gsc.angular_distance AS gsc23_dist, panstarr.original_ext_source_id AS panstarrs1, panstarr.angular_distance AS panstarrs1_dist, ppmxl.original_ext_source_id AS ppmxl_id, ppmxl.angular_distance AS ppmxl_dist, rave.original_ext_source_id AS rave_dr5, rave.angular_distance AS rave_dr5_dist, sdss.original_ext_source_id AS sdss_dr9, sdss.angular_distance AS sdss_dist, urat.original_ext_source_id as urat_1, urat.angular_distance as urat_1_dist 
+SELECT gaia.source_id,ra,ra_error,dec,dec_error,parallax,parallax_error,pmra,pmra_error,pmdec,pmdec_error,l AS gal_long,b AS gal_lat,	
+astrometric_n_good_obs_al,astrometric_chi2_al,phot_g_mean_flux_over_error, phot_g_mean_mag, phot_bp_mean_flux_over_error, phot_bp_mean_mag,phot_rp_mean_flux_over_error, phot_rp_mean_mag, phot_bp_rp_excess_factor, radial_velocity, radial_velocity_error, phot_variable_flag, vtype.best_class_name AS variable_type, vrot.solution_id AS vrotid,teff_val, a_g_val, e_bp_min_rp_val, radius_val, lum_val, tycho.original_ext_source_id AS Tycho2, tycho.angular_distance AS tycho_dist, tmass.original_ext_source_id AS TwoMASS, tmass.angular_distance AS twomass_dist, hip.original_ext_source_id AS Hipparcos, hip.angular_distance AS hip_dist, allwise.original_ext_source_id AS wisea, allwise.angular_distance AS wisea_dist, apass.original_ext_source_id AS apassdr9, apass.angular_distance AS apass_dist, gsc.original_ext_source_id AS gsc23, gsc.angular_distance AS gsc23_dist, panstarr.original_ext_source_id AS panstarrs1, panstarr.angular_distance AS panstarrs1_dist, ppmxl.original_ext_source_id AS ppmxl_id, ppmxl.angular_distance AS ppmxl_dist, rave.original_ext_source_id AS rave_dr5, rave.angular_distance AS rave_dr5_dist, sdss.original_ext_source_id AS sdss_dr9, sdss.angular_distance AS sdss_dist, urat.original_ext_source_id as urat_1, urat.angular_distance as urat_1_dist 
 FROM gaiadr2.gaia_source AS gaia
 LEFT OUTER JOIN gaiadr2.tycho2_best_neighbour AS tycho ON (gaia.source_id = tycho.source_id) 
 FULL OUTER JOIN gaiadr2.tmass_best_neighbour AS tmass ON (gaia.source_id = tmass.source_id) 
@@ -13,7 +13,8 @@ FULL OUTER JOIN gaiadr2.ravedr5_best_neighbour AS rave ON (gaia.source_id = rave
 FULL OUTER JOIN gaiadr2.sdssdr9_best_neighbour AS sdss ON (gaia.source_id = sdss.source_id)	
 FULL OUTER JOIN gaiadr2.urat1_best_neighbour AS urat ON (gaia.source_id = urat.source_id)
 FULL OUTER JOIN gaiadr2.vari_classifier_result AS vtype ON (gaia.source_id = vtype.source_id)
-WHERE parallax > 200.0
+FULL OUTER JOIN gaiadr2.vari_rotation_modulation AS vrot ON (gaia.source_id = vrot.source_id)
+WHERE parallax > 30
 
 
 offest -0.029

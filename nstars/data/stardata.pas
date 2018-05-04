@@ -6,7 +6,7 @@ interface
 
 uses SysUtils, Classes, df_strings, StrUtils,
  StarDataBase, newlocation, namedata, unitdata, simbad, sptfluxest,
- NewStar, tgas, constellation, StarEstimator, StarExt2;
+ NewStar, tgas, constellation, StarEstimator, StarExt2, gaiadr2base;
 
 type
 //----------------------------------------------------------
@@ -119,7 +119,10 @@ StarSystem = class (StarBase)
     function HipTycNames():TStringList;
     (* Gaia DR2 related *)
     function GetStuffForMatching(stardex:Integer; out starloc:Location; out stnames:StarName; out sysnames:StarName):Boolean;
-
+    function ApplyGaiaObject(stardex:Integer; inobj:GaiaDR2Star; conditional:Boolean):Boolean;
+    function ContainsNonDR2Parallax():Boolean;
+    function StarSummaryWhat(stardex:Integer):string;
+    function StarSummaryIDPos(stardex:Integer):string;
     (* filters *)
     function RVZ:Boolean;
     function LessThanLY(otherpoint:Location; maxdist:Real; targyear:Integer):Boolean;
@@ -1603,6 +1606,142 @@ begin
   else starloc := the_location;
   Result := True;
 end;
+//--------------------------------------------
+function StarSystem.ApplyGaiaObject(stardex:Integer; inobj:GaiaDR2Star; conditional:Boolean):Boolean;
+var cur_component:NewStarBase;
+    cur_star:StarInfo;
+    star_locat:Location;
+    star_namez:StarName;
+    cok:Boolean;
+    rap,decp:Real;
+begin
+  Result := False;
+  if (stardex > GetCompC) or (stardex < 1) then Exit;
+  if (inobj = nil) then Exit;
+  if (not inobj.isValid) then Exit;
+  // past the bad cases...
+  cur_component := new_components[stardex-1];
+  // location
+  if (stardex = 1) then begin
+    cok := the_location.SetFromGaiaDR2(inobj.astrometry,conditional);
+    if (cok or (not conditional)) then BinaryLocationUpdate();
+    // possibly updating the constellation
+    if cok then begin
+      rap := the_location.GetDecimalRightAscension;
+      decp := the_location.GetDecimalDeclination;
+      constellation := Const_Data.LocatePoint(rap,decp,the_location.Epoch);
+    end;
+  end else begin
+    star_locat := cur_component.GetLocation;
+    if (star_locat = nil) then begin
+      star_locat := Location.Create;
+      cur_component.InsertLocation(star_locat);
+    end;
+    cok := star_locat.SetFromGaiaDR2(inobj.astrometry,conditional);
+  end;
+  // magnitudes
+  cur_component.dr2mags.Free;
+  cur_component.dr2mags := inobj.mags.MakeCopy();
+  // identifiers
+  if (GetCompC = 1) then begin
+    if (nameset = nil) then nameset := StarName.Create;
+    nameset.SetCat(inobj.GaiaID());
+    nameset.SetMultipleCat(inobj.ids.IDStrings(false));
+  end else begin
+    star_namez := cur_component.MakeOrGetNames;
+    star_namez.SetCat(inobj.GaiaID());
+    star_namez.SetMultipleCat(inobj.ids.IDStrings(false));
+  end;
+  // TEff and perhaps variable type
+  if (not cur_component.isBrownDwarf) and (inobj.extra <> nil) then begin
+    cur_star := (cur_component as StarInfo);
+    // most Gaia variable types are distant luminous types like Cepheids or RR Lyrae stars.
+    if (inobj.extra.vartype <> '') then begin
+      if inobj.extra.vartype = 'DSCT_SXPHE' then cur_star.VariableType := DETA_SCUTI
+      else if inobj.extra.vartype = 'BYDra' then cur_star.VariableType := BY_DRACONIS
+      else if cur_star.VariableType = NOT_VARIABLE then cur_star.VariableType := VARIABLE;
+    end;
+    // TEff
+    if (inobj.extra.Teff > 0) then begin
+      if cur_star.fluxtemp = nil then cur_star.fluxtemp := StarFluxPlus.Create;
+      cur_star.fluxtemp.EffectiveTemp:= inobj.extra.Teff ;
+    end;
+  end;
+  // done
+  Result := True;
+end;
+//--------------------------------------------
+function StarSystem.ContainsNonDR2Parallax():Boolean;
+var cindex:Integer;
+    cloc:Location;
+begin
+  Result := True;
+  if the_location.source <> GAIA2_TAG then Exit;
+  // looping
+  if GetCompC > 1 then begin
+    for cindex:= 1 to MaxCInd do begin
+      cloc := new_components[cindex].GetLocation;
+      if cloc <> nil then begin
+        if cloc.source <> GAIA2_TAG then Exit;;
+      end;
+    end;
+  end;
+  // get here, all DR2!
+  Result := False;
+end;
+//----------------------------------------------
+function StarSystem.StarSummaryWhat(stardex:Integer):string;
+var comp:NewStarBase;
+    starc:StarInfo;
+begin
+  Assert((stardex >= 1) and (stardex <= GetCompC));
+  comp := new_components[stardex-1];
+  // name
+  Result := GetPreferredName();
+  if GetCompC > 1 then Result += ' ' + comp.Component;
+  // spectral type
+  Result += ' | ' + comp.SpectralClass + ' | ';
+  if comp.isBrownDwarf then Result += 'Brown Dwarf'
+  else begin
+    starc := comp as StarInfo;
+    Result += TypeLabels[Ord(starc.ClassifySpectralType())];
+    if starc.VisualMagnitude < 90 then begin
+      Result += ' | V:' + Trim(FloatToStrF(starc.VisualMagnitude,ffFixed,5,2));
+    end;
+  end;
+end;
+//----------------------------------------------
+function StarSystem.StarSummaryIDPos(stardex:Integer):string;
+var comp:NewStarBase;
+    locx:Location;
+    cname:StarName;
+begin
+  Assert((stardex >= 1) and (stardex <= GetCompC));
+  comp := new_components[stardex-1];
+  // we start with identifiers
+  Result := '';
+  if GetCompC = 1 then cname := nameset
+  else cname := comp.GetNames();
+  if cname = nil then begin
+    Result := 'SYSN: ';
+    cname := nameset;
+  end;
+  Result += cname.LimitedListofCats(100) + sLineBreak;
+  // position... get the location object we will use
+  if (GetCompC = 0) or (stardex = 1) then locx := the_location
+  else begin
+    locx := comp.GetLocation;
+    if locx = nil then locx := the_location;
+  end;
+  // added position and motion to the result
+  Result += 'RA: ' + Trim(FloatToStrF(locx.GetDecimalRightAscension,ffFixed,9,5)) + '°';
+  Result += ', Dec: ' + Trim(FloatToStrF(locx.GetDecimalDeclination,ffFixed,9,5)) + '°';
+  Result += sLineBreak + 'Pllx: ' + locx.GetParallaxString(3,False) + '±';
+  Result += locx.GetParallaxErrString(3,False) + sLineBreak;
+  Result += 'Proper Motion: ' + locx.GetProperMotionMagStr(2) + ' at ';
+  Result += locx.GetProperMotionAngleStr(1,False) + '°';
+end;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* true if the radial velocity is zero: we need that value set
 for proper velocity and motion calculations *)

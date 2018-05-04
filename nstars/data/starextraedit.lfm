@@ -7,8 +7,8 @@ object StarExtraDataFrame: TStarExtraDataFrame
   ClientWidth = 342
   OnClick = FrameClick
   TabOrder = 0
-  DesignLeft = 1013
-  DesignTop = 416
+  DesignLeft = 687
+  DesignTop = 387
   object MassLabel: TLabel
     Left = 197
     Height = 15
@@ -83,7 +83,7 @@ object StarExtraDataFrame: TStarExtraDataFrame
     Left = 205
     Height = 15
     Top = 72
-    Width = 127
+    Width = 128
     Caption = 'Age (in Billions of Years)'
     ParentColor = False
   end

@@ -59,22 +59,23 @@ const
   completters:array[0..11] of string = ('A','B','C','D','E','F','Aa','Ab',
     'Ba','Bb','Ca','Cb');
 
-  vtype:array[0..4] of string = (' ','UV Ceti type','BY Draconis type',
-        'Delta Scuti type','ZZ Ceti type');
+  vtype:array[0..5] of string = (' ','UV Ceti type','BY Draconis type',
+        'Delta Scuti type','ZZ Ceti type','RS Can.Ven. type');
 
-  catexp:array[0..63] of string = ('G','Giclas','Gl','Gliese','L','Luyten',
+  catexp:array[0..61] of string = ('G','Giclas','Gl','Gliese','L','Luyten',
            'Vys','Vyssotsky','Sm','Smethells','Kr','Krüger','Wo','Woolley',
            'VB','Van Biesbroeck','Gr','Greenstein','Kui','Kuiper',
            'KUI','Kuiper','Kpr','Kuiper','Gmb','Groombridge','Zkh','Zakhozhaj',
            'Lal','Lalande','Lac','Lacaille','San','Sanduleak','Bu','Burnham',
            'Cin','Cincinnati','Cou','Couteau','H','Herschel','HJ','J.Herschel',
            'I','Innes','Mel','Melotte','Rob','Roberts','Wor','Worley',
-           'Tou','Toulouse','Gmb','Groombridge','Steph','Stephenson',
+           'Tou','Toulouse','Steph','Stephenson',
            'Tok','Tokovinin','Wg','Wegner','Ton','Tonantzintla');
 
-  prefcats:array[0..31] of string = ('Gl','GJ','Wolf','Ross','HD','Hip', 'LHS',
-        'BD','CD','L','WD','LP','LTT','NLTT','CPD','VB','EG','Gr','Tyc','2MASS',
-        'UCAC4','Wo','G','Vys','DENIS','WISE','Gmb','Luhman','SCR','Sao','YPC','Sm');
+  prefcats:array[0..33] of string = ('Gl','GJ','Wolf','Ross','HD','Hip', 'LHS',
+        '2MASS','Tyc','BD','CD','L','WD','LP','LTT','NLTT','CPD','VB','EG','Gr',
+        'UCAC4','Wo','G','Vys','DENIS','WISE','Gmb','Luhman','SCR','Sao','YPC',
+        'Sm','Gaia2','WISEA');
 
   ArityLabels:array[0..6] of string = ('Single','Possibly Double',
       'Spectroscopic Binary', 'Other Binary', 'Double or Multiple',

@@ -2,9 +2,9 @@ object StarExtras2Frame: TStarExtras2Frame
   Left = 0
   Height = 206
   Top = 0
-  Width = 584
+  Width = 582
   ClientHeight = 206
-  ClientWidth = 584
+  ClientWidth = 582
   OnClick = FrameClick
   TabOrder = 0
   DesignLeft = 283
@@ -13,10 +13,10 @@ object StarExtras2Frame: TStarExtras2Frame
     Left = 4
     Height = 132
     Top = 54
-    Width = 574
+    Width = 570
     Caption = 'Magnitudes'
     ClientHeight = 112
-    ClientWidth = 570
+    ClientWidth = 566
     TabOrder = 0
     OnClick = FluxGroupClick
     object ULabel: TLabel

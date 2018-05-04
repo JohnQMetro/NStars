@@ -57,7 +57,7 @@ object GaiaDR2LSourceForm: TGaiaDR2LSourceForm
     ParentFont = False
     TabOrder = 1
     EditMask = '0.00'
-    Text = '0.40'
+    Text = '0.50'
     SpaceChar = '_'
   end
   object PllxOffsetEdit: TMaskEdit

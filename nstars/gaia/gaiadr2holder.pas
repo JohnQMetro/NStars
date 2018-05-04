@@ -15,12 +15,18 @@ GaiaDR2_IntMap = TFPGMap<Integer,GaiaList>;
 
 GaiaDR2_MatchType = ( G2_NONE, G2_STARNAME, G2_SYSNAME, G2_POSITION);
 
+DR2MatchConditions = record
+  skip_matched:Boolean;  // ignore matched dr2 objects
+  skip_reject:Boolean;   // ignore dr2 objects where permaReject = True
+  max_search_dist:Single; // maximum dist in arcmins to look for location matches
+end;
+
 // used only for position based storage and matching in GaiaDR2Collection
 GaiaStarStrip = class
   protected
     level_var:Integer;
     data:array of GaiaList;
-    function AddNearby(slot:Integer; tra_in,tdecin:Double; maxsep:Double; var stickHere:GaiaList):Integer;
+    function AddNearby(slot:Integer; tra_in,tdecin:Double; mparams:DR2MatchConditions; var stickHere:GaiaList):Integer;
     function glevel():Integer;
   public
     property Level:Integer read glevel;
@@ -28,7 +34,7 @@ GaiaStarStrip = class
     destructor Destroy; override;
     function MaxSize():Integer;
     procedure AddStar(thestar:GaiaDR2Star; index:Integer); // does NO checking
-    function GetStarsCloseTo(rap,decp:Double; maxsep:Double; var putHere:GaiaList):Integer;
+    function GetStarsCloseTo(rap,decp:Double; mparams:DR2MatchConditions; var putHere:GaiaList):Integer;
 end;
 
 // input parameters
@@ -57,6 +63,8 @@ GaiaDR2Collection = class
     // for input from source...
     amountread,amounttotal:Integer;
     sparams:GaiaSourceParams;
+    // index for unmatched
+    cunmatched:Integer;
 
     function AddToStringMap(thestar:GaiaDR2Star; target:GaiaDR2_StringMap; idstr:string):Boolean;
     function AddToHipparcos(thestar:GaiaDR2Star):Boolean;
@@ -64,16 +72,15 @@ GaiaDR2Collection = class
     procedure AddStar(thestar:GaiaDR2Star);
     procedure ClearStringMap(target:GaiaDR2_StringMap);
     procedure ClearIntMap(target:GaiaDR2_IntMap);
-    function FindNameMatches(namelist:StarName):GaiaList;
-    function FindPositionMatches(matchThis:Location; maxdist:Single):GaiaList;
+    function FindNameMatches(namelist:StarName; mparams:DR2MatchConditions):GaiaList;
+    function FindPositionMatches(matchThis:Location; mparams:DR2MatchConditions):GaiaList;
     procedure FileClose();
     function scount():Integer;
   public
-    maxdist:Single;
     property StarCount:Integer read scount;
     constructor Create;
     destructor Destroy; override;
-    function FindMatches(multiple:Boolean; starname,sysname:StarName; starloc:Location; out mtype:GaiaDR2_MatchType):GaiaList;
+    function FindMatches(multiple:Boolean; starname,sysname:StarName; starloc:Location; mparams:DR2MatchConditions ;out mtype:GaiaDR2_MatchType):GaiaList;
     // file I/O
     function StartOutput(filename:TFileName; out err_msg:string):Boolean;
     function OutputStars(oamount:Integer; out finished:Boolean; out err_msg:string):Boolean;
@@ -85,13 +92,17 @@ GaiaDR2Collection = class
     function StartSourceInput(params:GaiaSourceParams; out err_msg:string):Boolean;
     function ReadSourceStars(iamount:Integer; out finished:Boolean; out err_msg:string):Boolean;
     function SourceReadAmount(total:Boolean):Int64;
+    // unmatched and rejected manipulation
+    function NextUnmatched(out star_dex:Integer):GaiaDR2Star;
+    procedure ResetUnmatchedIndex();
+    function ClearMarks(matched_mark,perma_reject_mark:Boolean):Boolean;
 end;
 
 // sorts a GaiaList by distance...
 procedure SortLisByDistance(var thelist:GaiaList);
 // clears a GaiaList (sets distance to zero)
 procedure ClearGaiaList(var thelist:GaiaList);
-procedure AddUniqueToList(var targetlist:GaiaList; sourcelist:GaiaList);
+procedure AddUniqueToList(var targetlist:GaiaList; sourcelist:GaiaList; mparams:DR2MatchConditions);
 
 var
     DR2Data:GaiaDR2Collection;
@@ -99,7 +110,7 @@ var
 implementation
 //==========================================================
 (* data:array of GaiaList; *)
-function GaiaStarStrip.AddNearby(slot:Integer; tra_in,tdecin:Double; maxsep:Double; var stickHere:GaiaList):Integer;
+function GaiaStarStrip.AddNearby(slot:Integer; tra_in,tdecin:Double; mparams:DR2MatchConditions; var stickHere:GaiaList):Integer;
 var slotlist:GaiaList;
     starmax,stardex,qsize:Integer;
     cdist:Double;
@@ -110,8 +121,10 @@ begin
   slotlist := data[slot];
   starmax := slotlist.Count - 1;
   for stardex := 0 to starmax do begin
+    if mparams.skip_matched and slotlist[stardex].matched then Continue;
+    if mparams.skip_reject and slotlist[stardex].permaReject then Continue;
     cdist := slotlist[stardex].astrometry.GetDistanceTo(tra_in,tdecin);
-    if (cdist <= maxsep) then begin
+    if (cdist <= mparams.max_search_dist) then begin
       slotlist[stardex].distance := cdist;
       stickHere.Add(slotlist[stardex]);
       Inc(Result);
@@ -167,14 +180,14 @@ begin
   end;
 end;
 //-----------------------------------------
-function GaiaStarStrip.GetStarsCloseTo(rap,decp:Double; maxsep:Double; var putHere:GaiaList):Integer;
+function GaiaStarStrip.GetStarsCloseTo(rap,decp:Double; mparams:DR2MatchConditions; var putHere:GaiaList):Integer;
 var raindex,decdex,calc_level:Integer;
     tra,tdec,offset:Real;
     cosdec,decleft:Double;
     nextpos:Integer;
 begin
   // asserts
-  Assert((maxsep >= 0) and (maxsep < 3.75),'Maximum separation not in range!');
+  Assert((mparams.max_search_dist >= 0) and (mparams.max_search_dist < 3.75),'Maximum separation not in range!');
   Assert(putHere <> nil,'Target List is nil!');
   // we get the indexes and positions
   tra := rap;
@@ -184,25 +197,25 @@ begin
   // checking to see if we look in more than one slot...
   // horizontal...
   offset := (tra - (raindex * 360.0/Length(data)))*cosdec;
-  if (offset < maxsep) then begin
+  if (offset < mparams.max_search_dist) then begin
     if (raindex = 0) then nextpos := High(data)
     else nextpos := raindex - 1;
   end else begin
     offset := (((raindex+1) * 360.0/Length(data))-tra)*cosdec;
-    if (offset < maxsep) then begin
+    if (offset < mparams.max_search_dist) then begin
       if (raindex = High(data)) then nextpos := 0
       else nextpos := raindex + 1;
     end else nextpos := -1;
   end;
   // vertical...
   decleft := 15*Frac(tdec + 90)*4;
-  if (decleft < maxsep) then Result := -1
-  else if (decleft + maxsep) > 15 then Result := 1
+  if (decleft < mparams.max_search_dist) then Result := -1
+  else if (decleft + mparams.max_search_dist) > 15 then Result := 1
   else Result := 0;
   (* The task now is to go through the stars in the targeted slots and
   calculate the separations, keeping the ones below the limit *)
-  AddNearby(raindex,tra,tdec,maxsep,putHere);
-  if nextpos >= 0 then AddNearby(nextpos,tra,tdec,maxsep,putHere);
+  AddNearby(raindex,tra,tdec,mparams,putHere);
+  if nextpos >= 0 then AddNearby(nextpos,tra,tdec,mparams,putHere);
 
 end;
 //==========================================================
@@ -310,7 +323,7 @@ begin
   target.Clear;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-function GaiaDR2Collection.FindNameMatches(namelist:StarName):GaiaList;
+function GaiaDR2Collection.FindNameMatches(namelist:StarName; mparams:DR2MatchConditions):GaiaList;
 var nvalue:string;
     namepos,hipidx:Integer;
     gltyc,glhip,gl2mass:GaiaList;
@@ -323,6 +336,7 @@ begin
     namepos := tycMap.IndexOf(nvalue);
     if namepos >= 0 then begin
       gltyc := tycMap.Data[namepos];
+      AddUniqueToList(Result,gltyc,mparams);
       Result.Assign(gltyc);
     end;
   end;
@@ -331,7 +345,7 @@ begin
     namepos := TwoMMap.IndexOf(nvalue);
     if namepos >= 0 then begin
       gl2mass := TwoMMap.Data[namepos];
-      AddUniqueToList(Result,gl2mass);
+      AddUniqueToList(Result,gl2mass,mparams);
     end;
   end;
   // looking for Hipparcos catalog matches
@@ -340,7 +354,7 @@ begin
       namepos := HipMap.IndexOf(hipidx);
       if namepos >= 0 then begin
         glhip := HipMap.Data[namepos];
-        AddUniqueToList(Result,glhip);
+        AddUniqueToList(Result,glhip,mparams);
       end;
     end;
   end;
@@ -348,11 +362,11 @@ begin
   if Result.Count = 0 then FreeAndNil(Result);
 end;
 //---------------------------------------------------------------------
-function GaiaDR2Collection.FindPositionMatches(matchThis:Location; maxdist:Single):GaiaList;
+function GaiaDR2Collection.FindPositionMatches(matchThis:Location; mparams:DR2MatchConditions):GaiaList;
 var ra15,dec15:Double;
     raindex,decindex, looksee,looklevel:Integer;
 begin
-  Assert((maxdist < 3.75) and (maxdist > 0),'The maxdist is out of bounds');
+  Assert((mparams.max_search_dist < 3.75) and (mparams.max_search_dist > 0),'The maxdist is out of bounds');
   Assert(matchThis <> nil,'The provided location is nil');
   Result := GaiaList.Create(False);
   // getting where to look
@@ -361,20 +375,20 @@ begin
   // special pole checks
   if looklevel = 7 then begin
     if decindex < 4 then begin
-      looksee := scap.GetStarsCloseTo(ra15,dec15,maxdist,Result);
-      if (looksee > 0) then locstrips[4].GetStarsCloseTo(ra15,dec15,maxdist,Result);
+      looksee := scap.GetStarsCloseTo(ra15,dec15,mparams,Result);
+      if (looksee > 0) then locstrips[4].GetStarsCloseTo(ra15,dec15,mparams,Result);
     end else begin
-      looksee := ncap.GetStarsCloseTo(ra15,dec15,maxdist,Result);
-      if (looksee < 0) then locstrips[715].GetStarsCloseTo(ra15,dec15,maxdist,Result);
+      looksee := ncap.GetStarsCloseTo(ra15,dec15,mparams,Result);
+      if (looksee < 0) then locstrips[715].GetStarsCloseTo(ra15,dec15,mparams,Result);
     end;
   end else begin
-    looksee := locstrips[decindex].GetStarsCloseTo(ra15,dec15,maxdist,Result);
+    looksee := locstrips[decindex].GetStarsCloseTo(ra15,dec15,mparams,Result);
     if looksee < 0 then begin
-       if decindex = 4 then scap.GetStarsCloseTo(ra15,dec15,maxdist,Result)
-       else locstrips[decindex-1].GetStarsCloseTo(ra15,dec15,maxdist,Result);
+       if decindex = 4 then scap.GetStarsCloseTo(ra15,dec15,mparams,Result)
+       else locstrips[decindex-1].GetStarsCloseTo(ra15,dec15,mparams,Result);
     end else if looksee > 0 then begin
-       if decindex = 715 then ncap.GetStarsCloseTo(ra15,dec15,maxdist,Result)
-       else locstrips[decindex+1].GetStarsCloseTo(ra15,dec15,maxdist,Result);
+       if decindex = 715 then ncap.GetStarsCloseTo(ra15,dec15,mparams,Result)
+       else locstrips[decindex+1].GetStarsCloseTo(ra15,dec15,mparams,Result);
     end;
   end;
   // at the end, check how many stars we have found
@@ -399,7 +413,6 @@ end;
 constructor GaiaDR2Collection.Create;
 var ssdex:Integer;
 begin
-  maxdist := 0.3;
   mainlist := GaiaList.Create(True);
   tycMap := GaiaDR2_StringMap.Create;
   hipMap := GaiaDR2_IntMap.Create;
@@ -411,6 +424,7 @@ begin
     locstrips[ssdex] := GaiaStarStrip.Create(GetLevelForIndex(ssdex));
   end;
   fmode := -1; // actually means 'no i/o going on'
+  cunmatched := -1;
 end;
 //-----------------------------------------
 destructor GaiaDR2Collection.Destroy;
@@ -429,7 +443,7 @@ begin
   inherited;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-function GaiaDR2Collection.FindMatches(multiple:Boolean; starname,sysname:StarName; starloc:Location; out mtype:GaiaDR2_MatchType):GaiaList;
+function GaiaDR2Collection.FindMatches(multiple:Boolean; starname,sysname:StarName; starloc:Location; mparams:DR2MatchConditions; out mtype:GaiaDR2_MatchType):GaiaList;
 var resbak:GaiaList;
 begin
   mtype := G2_NONE;
@@ -437,7 +451,7 @@ begin
   resbak := nil;
   // looking for star names (best accuracy)
   if (starname <> nil) then begin
-    Result := FindNameMatches(starname);
+    Result := FindNameMatches(starname,mparams);
     if Result <> nil then begin
       mtype := G2_STARNAME;
       Exit;
@@ -445,7 +459,7 @@ begin
   end;
   // fallback system names (probably not the best, unless there is one star only)
   if (sysname <> nil) then begin
-    Result := FindNameMatches(sysname);
+    Result := FindNameMatches(sysname,mparams);
     if Result <> nil then begin
       mtype := G2_SYSNAME;
       if (not multiple) then Exit;
@@ -454,10 +468,10 @@ begin
   end;
   // position based (requires the most work)
   if (starloc <> nil) then begin
-    Result := FindPositionMatches(starloc,maxdist);
+    Result := FindPositionMatches(starloc,mparams);
     if Result <> nil then begin
       if (resbak <> nil) then begin
-        AddUniqueToList(resbak,Result);
+        AddUniqueToList(resbak,Result,mparams);
         Result.Free;
         Result := resbak;
       end
@@ -715,6 +729,41 @@ begin
   if total then Result := amounttotal
   else Result := amountread;
 end;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// unmatched and rejected manipulation
+//-------------------------------------
+function GaiaDR2Collection.NextUnmatched(out star_dex:Integer):GaiaDR2Star;
+begin
+  // what we do if we are already past the end
+  Result := nil;
+  star_dex := cunmatched;
+  if (cunmatched >= StarCount) then Exit;;
+  // moving to the next unmatched star (unless we reach the end first)
+  repeat
+    Inc(cunmatched);
+    if (cunmatched >= StarCount) then Break;
+  until (not mainlist[cunmatched].matched);
+  // after, we check if we are at the end..
+  star_dex := cunmatched;
+  if (cunmatched >= StarCount) then Exit
+  else Result := mainlist[cunmatched];
+end;
+//-------------------------------------
+procedure GaiaDR2Collection.ResetUnmatchedIndex();
+begin  cunmatched := -1;   end;
+//-------------------------------------
+function GaiaDR2Collection.ClearMarks(matched_mark,perma_reject_mark:Boolean):Boolean;
+var cstar:GaiaDR2Star;
+begin
+  Result := False;
+  if not (matched_mark or perma_reject_mark) then Exit;
+  // looping
+  for cstar in mainlist do begin
+    if matched_mark then cstar.matched := False;
+    if perma_reject_mark then cstar.permaReject := False;
+  end;
+  Result := True;
+end;
 //============================================================================
 // sorts a GaiaList by distance...
 procedure SortLisByDistance(var thelist:GaiaList);
@@ -758,21 +807,19 @@ end;
 //-----------------------------------------------
 (* adds the items in the second list to the first if they are not already in
 the first list. *)
-procedure AddUniqueToList(var targetlist:GaiaList; sourcelist:GaiaList);
+procedure AddUniqueToList(var targetlist:GaiaList; sourcelist:GaiaList; mparams:DR2MatchConditions);
 var sindex,tindex,smax:Integer;
     foundx:Boolean;
 begin
   if sourcelist = nil then Exit;
   if sourcelist.Count = 0 then Exit;
   if targetlist = nil then Exit;
-  if targetlist.Count = 0 then begin
-    targetList.Assign(sourcelist);
-    Exit;
-  end;
   // looping over the items in the second list
   smax := sourcelist.Count - 1;
   for sindex := 0 to smax do begin
     foundx := false;
+    if mparams.skip_reject and sourcelist[sindex].permaReject then Continue;
+    if mparams.skip_matched and sourcelist[sindex].matched then Continue;
     for tindex := 0 to (targetlist.Count -1 ) do begin
       foundx := (targetlist[tindex] = sourcelist[sindex]);
       if foundx then Break;

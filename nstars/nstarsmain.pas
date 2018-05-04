@@ -8,13 +8,14 @@ uses
   LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus, StrUtils, Types,
   CheckLst, MaskEdit,
-  collecdata, stardata, namedata, newlocation, unitdata, aricns_load,
+  collecdata, startproxy, stardata, namedata, newlocation, unitdata, aricns_load,
   arcins_star, Arcins, gnotes_form, cluster, clusteredit, tgas, simbad,
   NewStar, catalogedit, starextraedit, stardataedit, StarDataBase,
   starlocatedit, newImports,  starext2edit, FindDuplInterF, ImportDataForm,
   MainLocatEdit, df_strings, sptfluxest, PPMMatchForm, Utilities2, tgas_import,
   export_form, ExtraImports,
-  dr2loadstore, dr2sourceload,gaiadr2holder;
+  dr2loadstore, dr2sourceload,gaiadr2holder,gaiamagsui, gaiadr2match,
+  dr2addnew;
 
 type
 
@@ -23,6 +24,7 @@ type
   TNStarsMainForm = class(TForm)
     AddBDMI: TMenuItem;
     AricnsDataCB: TCheckBox;
+    GaiaMagsFrame1: TGaiaMagsFrame;
     MenuItem1: TMenuItem;
     FluxEstSubMenu: TMenuItem;
     EstBVUATMI: TMenuItem;
@@ -37,6 +39,7 @@ type
     ExpGaiaDR2CSV: TMenuItem;
     MenuItem12: TMenuItem;
     FinDR2MatchMI: TMenuItem;
+    StarGaiaMatchMI: TMenuItem;
     MISwapParallax: TMenuItem;
     ShowPosDegMI: TMenuItem;
     PosSepSetMI: TMenuItem;
@@ -50,6 +53,7 @@ type
     StarFluxTEffFrame: TStarExtras2Frame;
     StarLocatFrame1: TStarLocatFrame;
     SystemNotesMemo: TMemo;
+    MoreMagsTab: TTabSheet;
     UseExtraDataCB: TCheckBox;
     UseSepLocatCB: TCheckBox;
     ExtraStarDataTabs: TPageControl;
@@ -257,6 +261,7 @@ type
     procedure SimpleTGASCSVexpClick(Sender: TObject);
     procedure StarExtraDataFrame1Click(Sender: TObject);
     procedure StarExtraDataFrame1Exit(Sender: TObject);
+    procedure StarGaiaMatchMIClick(Sender: TObject);
     procedure StarLocatFrame1Exit(Sender: TObject);
     procedure StarToSysMIClick(Sender: TObject);
     procedure SystemEditPageSetChange(Sender: TObject);
@@ -1005,6 +1010,7 @@ begin
      if current.cstar <> nil then current.cstar.premain := PreMainSeqCB.Checked;
      StarLocatFrame1.SaveData(False);
      StarFluxTEffFrame.SaveExternal;
+     GaiaMagsFrame1.SaveExternal;
   end;
 end;
 //---------------------------------------------------
@@ -1197,6 +1203,7 @@ var arity,I:Integer;
 begin
   StarModCheck(Sender);
   // trying to nullify to avoid issues
+  GaiaMagsFrame1.SetToNothing();
   StarFluxTEffFrame.SetToNothing;
   StarDataCoreFrame.ChangeStar(nil,nil,1);
   // we delete a star using the proxy
@@ -1565,12 +1572,14 @@ begin
     StarCatIDFrame.ChangeObject(nil);
     StarCatIDFrame.Enabled := False;
     StarFluxTEffFrame.SetToSun;
+    GaiaMagsFrame1.SetToSun();
   end
   else begin
     StarCatIDFrame.Enabled := True;
     StarDataCoreFrame.ChangeStar(current.ccomponent,current.sysl,current.sys.GetCompC);
     StarCatIDFrame.ChangeObject(current.ccomponent);
     StarFluxTEffFrame.SetToComponent(current.ccomponent);
+    GaiaMagsFrame1.SetToComponent(current.ccomponent);
   end;
   // done
 end;
@@ -2042,6 +2051,7 @@ begin
      StarLocatFrame1.Setup(StarParallaxChanged);
      StarLocatFrame1.Enabled := False;
      StarFluxTEffFrame.SetToNothing;
+     GaiaMagsFrame1.SetToNothing;
      StarFluxTEffFrame.SetFluxTempChangeHandler(FluxTEffChange);
      firststartup := False;
   end;
@@ -2545,6 +2555,15 @@ end;
 procedure TNStarsMainForm.StarExtraDataFrame1Exit(Sender: TObject);
 begin
   StarExtraDataFrame1.SaveValues(True);
+end;
+
+procedure TNStarsMainForm.StarGaiaMatchMIClick(Sender: TObject);
+begin
+  if (primaryl = nil) then Exit;
+  if (DR2Data <> nil) and (primaryl.GetCount > 1) then begin
+    if GaiaDR2Picker = nil then GaiaDR2Picker := TGaiaDR2Picker.Create(Self);
+    GaiaDR2Picker.Show;
+  end;
 end;
 
 procedure TNStarsMainForm.StarLocatFrame1Exit(Sender: TObject);
