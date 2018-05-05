@@ -28,15 +28,15 @@ object NStarsMainForm: TNStarsMainForm
       Left = 6
       Height = 514
       Top = 2
-      Width = 624
-      ActivePage = ComponentTab
-      TabIndex = 1
+      Width = 628
+      ActivePage = SystemNames
+      TabIndex = 0
       TabOrder = 0
       OnChange = SystemEditPageSetChange
       object SystemNames: TTabSheet
         Caption = 'Names'
         ClientHeight = 488
-        ClientWidth = 616
+        ClientWidth = 620
         object MainSystemName: TLabeledEdit
           Left = 3
           Height = 21
@@ -369,7 +369,15 @@ object NStarsMainForm: TNStarsMainForm
           Top = 8
           TabOrder = 12
           inherited CatNamesGB: TGroupBox
+            Left = 8
+            Top = 8
+            Width = 220
             ClientHeight = 182
+            ClientWidth = 216
+            inherited CatIDListBox: TListBox
+              Left = 8
+              Width = 192
+            end
           end
         end
         inline MainLocatEditFrame1: TMainLocatEditFrame
@@ -492,12 +500,12 @@ object NStarsMainForm: TNStarsMainForm
       object ComponentTab: TTabSheet
         Caption = 'Components'
         ClientHeight = 488
-        ClientWidth = 616
+        ClientWidth = 620
         object ComponentTabControl: TTabControl
           Left = 6
           Height = 480
           Top = 8
-          Width = 600
+          Width = 620
           OnChange = ComponentTabControlChange
           TabIndex = 0
           Tabs.Strings = (
@@ -598,7 +606,15 @@ object NStarsMainForm: TNStarsMainForm
             Top = 20
             TabOrder = 2
             inherited CatNamesGB: TGroupBox
+              Left = 8
+              Top = 8
+              Width = 200
               ClientHeight = 182
+              ClientWidth = 196
+              inherited CatIDListBox: TListBox
+                Left = 8
+                Width = 180
+              end
             end
           end
           object ExtraStarDataTabs: TPageControl
@@ -811,7 +827,7 @@ object NStarsMainForm: TNStarsMainForm
       object TabSheet1: TTabSheet
         Caption = 'Fiction'
         ClientHeight = 488
-        ClientWidth = 616
+        ClientWidth = 620
         ImageIndex = 2
         object Label16: TLabel
           Left = 3
@@ -1067,6 +1083,10 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Import V Rc Ic from SN 35...'
         OnClick = ImportFrSN35MIClick
       end
+      object Viz2MassGetMI: TMenuItem
+        Caption = 'VizieR 2Mass Fluxes...'
+        OnClick = Viz2MassGetMIClick
+      end
       object MenuItem3: TMenuItem
         Caption = '-'
       end
@@ -1092,6 +1112,10 @@ object NStarsMainForm: TNStarsMainForm
       object LoadGaiaDR2CSV: TMenuItem
         Caption = 'Load GaiaDR2 CSV...'
         OnClick = LoadGaiaDR2CSVClick
+      end
+      object AddUMGaiaDR2MI: TMenuItem
+        Caption = 'Add Unmatched Gaia DR2...'
+        OnClick = AddUMGaiaDR2MIClick
       end
       object MenuItem10: TMenuItem
         Caption = '-'

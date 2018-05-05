@@ -165,7 +165,7 @@ begin
     stardex := xstardex;
     // performing the match, we might skip if the location already is DR2
     currentSystem.GetStuffForMatching(xstardex,starloc,stnames,sysnames);
-    if (starloc.source = GAIA2_TAG) and params.skip_dr2 then Continue;
+    if (starloc.source = GAIA2_TAG) and (not starloc.IsACopy) and params.skip_dr2 then Continue;
     matchlist := DR2Data.FindMatches(starcount > 1,stnames,sysnames,starloc,qparams,mtype);
     // checking the results
     if (mtype = G2_NONE) then Continue;

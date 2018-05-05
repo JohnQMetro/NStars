@@ -67,6 +67,7 @@ StarProxy = class
     function SDSS_Helper(indata:string):Boolean;
     function Tycho2_Helper(indata:string):Boolean;
     function VizierAPASSGet(simbadalso:Boolean):Boolean;
+    function Vizier2MASSGet():Boolean;
     function URAT_ToBV(indata:string):Boolean;
     function UCAC4_ToBV_Helper(indata:string):Boolean;
     function CMC_ToBV(indata:string):Boolean;
@@ -1020,6 +1021,65 @@ begin
     end;
   end;
   if not fok then ShowMessage('Unable to get lookup catalog id!');
+end;
+//----------------------------------------------------------
+function StarProxy.Vizier2MASSGet():Boolean;
+var gname:string;
+    fok,boxo,boxo1,boxo2:Boolean;
+    downd:VizieR2MASSData;
+    outdex,outmax:Integer;
+    outmsg,buffer:string;
+    rval:Word;
+    vmago:Real;
+    fetchfail:Boolean;
+begin
+  Result := False;
+  gname := '';
+  fok := (sys<>nil);
+  if fok then begin
+    if sys.GetCompC = 1 then begin
+      if sysn <> nil then sysn.GetCatValue('2MASS',gname);
+    end else begin
+      if cstarn <> nil then cstarn.GetCatValue('2MASS',gname);
+    end;
+    fok := (Length(gname)<>0);
+    if fok then begin
+      // finally, we can truly start here!
+      Screen.Cursor := crHourGlass;
+      downd := Get2MASSFromVizier(gname);
+      if (downd = nil) or (downd.AllBad()) then begin
+        Screen.Cursor := crDefault;
+        ShowMessage('Unable to find valid 2MASS results!');
+        if downd <> nil then downd.Free;
+      end else begin
+        // building the data message to display
+        outmsg := 'Found 2MASS Results: ' + sLineBreak;
+        outmsg += downd.ToString() + sLineBreak;
+        outmsg += ' Do you want to use these values?';
+        // showing that message
+        Screen.Cursor := crDefault;
+        rval := mrNo;
+        rval := MessageDlg(outmsg, mtConfirmation,[mbYes, mbNo],0);
+        // if we are told to go ahead...
+        if (rval = mrYes) then begin
+          // this is in the fluxtemp object
+          if ccomponent.fluxtemp = nil then begin
+            fok := True;
+            ccomponent.fluxtemp := StarFluxPlus.Create;
+          end;
+          if not downd.jbad then ccomponent.fluxtemp.J_mag := downd.J;
+          if not downd.hbad then ccomponent.fluxtemp.H_mag := downd.H;
+          if not downd.kbad then begin
+             ccomponent.fluxtemp.K_mag := downd.Ks;
+             ccomponent.fluxtemp.K_err := downd.Kserr;
+          end;
+          Result := True;
+        end;
+        FreeAndNil(downd);
+      end;
+    end;
+  end;
+  if not fok then ShowMessage('Object does not have 2MASS ID!');
 end;
 //----------------------------------------------------------
 function StarProxy.URAT_ToBV(indata:string):Boolean;

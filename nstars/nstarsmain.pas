@@ -15,7 +15,7 @@ uses
   MainLocatEdit, df_strings, sptfluxest, PPMMatchForm, Utilities2, tgas_import,
   export_form, ExtraImports,
   dr2loadstore, dr2sourceload,gaiadr2holder,gaiamagsui, gaiadr2match,
-  dr2addnew;
+  gaiadr2add;
 
 type
 
@@ -39,6 +39,8 @@ type
     ExpGaiaDR2CSV: TMenuItem;
     MenuItem12: TMenuItem;
     FinDR2MatchMI: TMenuItem;
+    AddUMGaiaDR2MI: TMenuItem;
+    Viz2MassGetMI: TMenuItem;
     StarGaiaMatchMI: TMenuItem;
     MISwapParallax: TMenuItem;
     ShowPosDegMI: TMenuItem;
@@ -234,6 +236,7 @@ type
     procedure LuminosityProbMIClick(Sender: TObject);
     procedure EstBVUATMIClick(Sender: TObject);
     procedure EstIURATMIClick(Sender: TObject);
+    procedure AddUMGaiaDR2MIClick(Sender: TObject);
     procedure MergeIntoMIClick(Sender: TObject);
     procedure MISwapParallaxClick(Sender: TObject);
     procedure New1Click(Sender: TObject);
@@ -287,6 +290,7 @@ type
 
     procedure SystemNotesMemoExit(Sender: TObject);
     procedure VisualMagEntryClick(Sender: TObject);
+    procedure Viz2MassGetMIClick(Sender: TObject);
     procedure WriteEstimatorMIClick(Sender: TObject);
     procedure WrUnmCSVMIClick(Sender: TObject);
     procedure AddStar1Click(Sender: TObject);
@@ -1435,6 +1439,18 @@ begin
 
 end;
 
+procedure TNStarsMainForm.Viz2MassGetMIClick(Sender: TObject);
+var vizres:Boolean;
+begin
+    if current <> nil then begin
+    vizres := current.Vizier2MASSGet();
+    if vizres then begin
+      current.sys.UpdateEstimates;
+      StarData1;
+    end;
+  end;
+end;
+
 procedure TNStarsMainForm.WriteEstimatorMIClick(Sender: TObject);
 begin
   if primaryl = nil then Exit;
@@ -2133,6 +2149,12 @@ begin
       StarData1;
     end;
   end;
+end;
+
+procedure TNStarsMainForm.AddUMGaiaDR2MIClick(Sender: TObject);
+begin
+  if GaiaDR2AddForm = nil then GaiaDR2AddForm := TGaiaDR2AddForm.Create(Self);
+  GaiaDR2AddForm.Show;
 end;
 
 procedure TNStarsMainForm.MergeIntoMIClick(Sender: TObject);

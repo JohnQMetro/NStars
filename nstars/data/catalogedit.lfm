@@ -2,26 +2,26 @@ object CatalogIDEditFrame: TCatalogIDEditFrame
   Left = 0
   Height = 216
   Top = 0
-  Width = 209
+  Width = 220
   ClientHeight = 216
-  ClientWidth = 209
+  ClientWidth = 220
   TabOrder = 0
   DesignLeft = 480
   DesignTop = 273
   object CatNamesGB: TGroupBox
-    Left = 8
+    Left = 6
     Height = 200
-    Top = 8
-    Width = 191
+    Top = 4
+    Width = 206
     Caption = 'Catalog Names'
     ClientHeight = 180
-    ClientWidth = 187
+    ClientWidth = 202
     TabOrder = 0
     object CatIDListBox: TListBox
-      Left = 8
+      Left = 6
       Height = 144
       Top = 26
-      Width = 172
+      Width = 189
       ItemHeight = 0
       OnClick = CatIDListBoxClick
       PopupMenu = CatalogPopupMenu

@@ -137,15 +137,13 @@ function MakeSimbadCoordLookupURL(const rastring,decstring:string; arcminp:Integ
 function MakeSimbadIdLookupURL(ident:string):string;
 function GetSimbadDataURL(inurl:string; out fetchfail:Boolean):SimbadData;
 
-const ok_catalogs:array[0..65] of string = ('BD','CD','CPD','Wolf','Ross','FK5',
+const ok_catalogs:array[0..70] of string = ('BD','CD','CPD','Wolf','Ross','FK5',
       'HD','HR','SAO','LHS','LFT','LTT','Vys','2MASS','DENIS','Luhman','Lal',
       'ADS','LDS','AC','Lac','LP','Gmb','L','SO','SCR','LPM','Kr','WISE',
       'PPM','Zkh','Sm','WDS','G','Sa','NLTT','VVO','Ruiz','Wor','Heintz',
       'Struve','Bu','Tou','SIPS','WISEP','SDSS','VB','WD','LEHPM','WT','SIP',
       'BPM','LSPM','San','2MUCD','APMPM','BRI','AG','UCAC4','GSC','GD',
-      'KIC','Ton','ULAS','PM','Gaia');
-
-      extended_cats:array[0..4] of string = ('UCAC4','PM','RX','RAVE','USNO');
+      'KIC','Ton','ULAS','PM','WISEA','RAVE','RX','GSC2.3','1RXS','URAT1');
 
 const sys_cats:array[0..25] of string = ('Gl','GJ','ADS','WDS','BD','HD','CD',
        'CPD','Struve','Vys','Bu','Kpr','LDS','Luhman','Sm','Wo','I','HJ','Wor',
@@ -205,6 +203,14 @@ begin
     if sc<>0 then ctag := 'EG' // should not happen
     else if egint < 203 then ctag := 'EG'
     else ctag := 'Gr';
+  end
+  else if ctag = 'Gaia' then begin
+    // my name list currently cannot handle spaces, so we get rid of them...
+    if AnsiStartsStr('DR1',iddata) then ctag := 'GaiaDR1'
+    else if AnsiStartsStr('DR2',iddata) then ctag := 'GaiaDR2'
+    else if AnsiStartsStr('DR3',iddata) then ctag := 'GaiaDR3'  // forthcoming
+    else Result := False;
+    if not Result then iddata := Trim(RightStr(iddata,Length(iddata)-3));
   end
   // double star catalogs should have the right info
   else if ctag = '**' then begin

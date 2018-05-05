@@ -184,7 +184,8 @@ function BrownDwarfSpectra(specstr:string):Boolean;
 
 // a function that is meant to get a simbad object for a tgas entry
 function TGASToSimbad(inpllx:TGASData):SimbadData;
-
+// a function that is meant to get a simbad entry for a Gaia object
+function GaiaToSimbad(ingaiaid:GaiaDR2IDs):SimbadData;
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 implementation
@@ -1944,7 +1945,26 @@ begin
   else downurl := MakeSimbadIdLookupURL('Tyc ' + tycid);
   Result := GetSimbadDataURL(downurl,discardfail);
 end;
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// a function that is meant to get a simbad entry for a Gaia object
+function GaiaToSimbad(ingaiaid:GaiaDR2IDs):SimbadData;
+var tmid,tycid,downurl:string;
+    hipid:Integer;
+    discardfail:Boolean;
+begin
+  Result := nil;
+  if ingaiaid = nil then Exit;
+  tmid := ingaiaid.TwoMASS;
+  tycid := ingaiaid.Tycho2;
+  hipid := ingaiaid.Hip;
+
+  if Length(tycid)<>0 then downurl := MakeSimbadIdLookupURL('Tyc ' + tycid)
+  else if Length(tmid)<>0 then downurl := MakeSimbadIdLookupURL('2MASS ' + tmid)
+  else if hipid <> 0 then downurl := MakeSimbadIdLookupURL('Hip ' + IntToStr(hipid))
+  else Exit;
+  Result := GetSimbadDataURL(downurl,discardfail);
+end;
+//===========================================================================
 constructor SysOutParams.Create;
 begin
   idOffset := 10000;
