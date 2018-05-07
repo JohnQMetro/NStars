@@ -2580,9 +2580,13 @@ begin
 end;
 
 procedure TNStarsMainForm.StarGaiaMatchMIClick(Sender: TObject);
+var xindex:Integer;
 begin
   if (primaryl = nil) then Exit;
   if (DR2Data <> nil) and (primaryl.GetCount > 1) then begin
+    xindex := primaryl.GetIndex;
+    if xindex = 0 then xindex := 1;
+    sysstart := xindex;
     if GaiaDR2Picker = nil then GaiaDR2Picker := TGaiaDR2Picker.Create(Self);
     GaiaDR2Picker.Show;
   end;

@@ -16,6 +16,7 @@ type
     AutoMatchCB: TCheckBox;
     AutoMatchVmagCB: TCheckBox;
     aseclbl: TLabel;
+    AddCompMatchBtn: TButton;
     RejectObjBtn: TButton;
     StartMatchBtn: TButton;
     MaxDistLabel: TLabel;
@@ -32,6 +33,7 @@ type
     StarInfo1Lbl: TLabel;
     MatchCountLbl: TLabel;
     StarListGrid: TStringGrid;
+    procedure AddCompMatchBtnClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure MatchSelectedBtnClick(Sender: TObject);
     procedure MaxDistEditKeyPress(Sender: TObject; var Key: char);
@@ -140,6 +142,12 @@ begin
   starsmatched := 0;
   syscount := 0;
 end;
+
+procedure TGaiaDR2Picker.AddCompMatchBtnClick(Sender: TObject);
+begin
+  dataToCheck.system.AddNewSepLocation();
+end;
+
 //------------------------------------------------
 procedure TGaiaDR2Picker.StartMatchBtnClick(Sender: TObject);
 begin
@@ -262,6 +270,7 @@ begin
   MatchSelectedBtn.Enabled := enabled;
   SkipStarBtn.Enabled := enabled;
   RejectObjBtn.Enabled := enabled;
+  AddCompMatchBtn.Enabled := enabled;
 end;
 //---------------------------------------------------
 procedure TGaiaDR2Picker.SetMatchCountLabel();

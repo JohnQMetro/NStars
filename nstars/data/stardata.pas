@@ -62,6 +62,7 @@ StarSystem = class (StarBase)
     function GetNewStar(index:Integer):NewStarBase;
     function AddStar:StarInfo;
     function AddBrownDwarf:BrownDwarfInfo;
+    procedure AddNewSepLocation();
     function InsertStarAtIndex(index:Integer; out starPtr:StarInfo):Boolean;
     function DelStar(index:Integer):Boolean;
     (* name stuff *)
@@ -120,6 +121,7 @@ StarSystem = class (StarBase)
     (* Gaia DR2 related *)
     function GetStuffForMatching(stardex:Integer; out starloc:Location; out stnames:StarName; out sysnames:StarName):Boolean;
     function ApplyGaiaObject(stardex:Integer; inobj:GaiaDR2Star; conditional:Boolean):Boolean;
+    function ApplyGaiaNameMags(stardex:Integer; inobj:GaiaDR2Star):Boolean;
     function ContainsNonDR2Parallax():Boolean;
     function StarSummaryWhat(stardex:Integer):string;
     function StarSummaryIDPos(stardex:Integer):string;
@@ -413,6 +415,13 @@ function StarSystem.AddBrownDwarf:BrownDwarfInfo;
 begin
   AppendNewComponent(BrownDwarfInfo.Create);
   Result := BrownDwarfInfo(new_components[MaxCInd]);
+end;
+//----------------------------------------------------------
+procedure StarSystem.AddNewSepLocation();
+var nstar:StarInfo;
+begin
+  nstar := AddStar();
+  nstar.CopyLocation(the_location,True);
 end;
 //---------------------------------------------------------
 function StarSystem.InsertStarAtIndex(index:Integer; out starPtr:StarInfo):Boolean;
@@ -1667,6 +1676,33 @@ begin
       if cur_star.fluxtemp = nil then cur_star.fluxtemp := StarFluxPlus.Create;
       cur_star.fluxtemp.EffectiveTemp:= inobj.extra.Teff ;
     end;
+  end;
+  // done
+  Result := True;
+end;
+//--------------------------------------------
+function StarSystem.ApplyGaiaNameMags(stardex:Integer; inobj:GaiaDR2Star):Boolean;
+var cur_component:NewStarBase;
+    star_namez:StarName;
+begin
+  Result := False;
+  if (stardex > GetCompC) or (stardex < 1) then Exit;
+  if (inobj = nil) then Exit;
+  if (not inobj.isValid) then Exit;
+  // past the bad cases...
+  cur_component := new_components[stardex-1];
+  // magnitudes
+  cur_component.dr2mags.Free;
+  cur_component.dr2mags := inobj.mags.MakeCopy();
+  // identifiers
+  if (GetCompC = 1) then begin
+    if (nameset = nil) then nameset := StarName.Create;
+    nameset.SetCat(inobj.GaiaID());
+    nameset.SetMultipleCat(inobj.ids.IDStrings(false));
+  end else begin
+    star_namez := cur_component.MakeOrGetNames;
+    star_namez.SetCat(inobj.GaiaID());
+    star_namez.SetMultipleCat(inobj.ids.IDStrings(false));
   end;
   // done
   Result := True;

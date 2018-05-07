@@ -143,7 +143,9 @@ begin
     if simdat = nil then dotmass := True
     else if simdat.KMagnitudeError = 0 then dotmass := True;
   end;
-  if dotmass then tmassd := Get2MASSFromVizier(curobj.ids.TwoMASS);
+  if dotmass and (Length(curobj.ids.TwoMASS) > 0) then begin
+    tmassd := Get2MASSFromVizier(curobj.ids.TwoMASS);
+  end;
   // the star or brown dwarf should not be ignored, but do we add it automatically?
   autoadd := (curobj.astrometry.parallax_err <= autoparams.maxPllxError);
   autoadd := autoadd and (autoparams.minGMag >= curobj.mags.G);

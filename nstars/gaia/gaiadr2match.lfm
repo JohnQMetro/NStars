@@ -203,4 +203,14 @@ object GaiaDR2Picker: TGaiaDR2Picker
     OnClick = RejectObjBtnClick
     TabOrder = 5
   end
+  object AddCompMatchBtn: TButton
+    Left = 368
+    Height = 25
+    Top = 327
+    Width = 112
+    Caption = 'Add Component'
+    Enabled = False
+    OnClick = AddCompMatchBtnClick
+    TabOrder = 6
+  end
 end

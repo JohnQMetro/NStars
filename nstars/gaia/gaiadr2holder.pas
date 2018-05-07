@@ -117,6 +117,7 @@ var slotlist:GaiaList;
 begin
   Result := 0;
   qsize := Length(data);
+  if level_var = 7 then slot := 0;
   if data[slot] = nil then Exit;
   slotlist := data[slot];
   starmax := slotlist.Count - 1;

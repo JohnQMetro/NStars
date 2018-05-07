@@ -20,8 +20,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="2141"/>
-        <CursorPos X="23" Y="2157"/>
+        <TopLine Value="404"/>
+        <CursorPos X="3" Y="404"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -30,13 +30,14 @@
       <Unit2>
         <Filename Value="collecdata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1305"/>
-        <CursorPos X="12" Y="1316"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="487"/>
+        <CursorPos X="20" Y="510"/>
         <UsageCount Value="201"/>
         <Bookmarks Count="1">
           <Item0 Y="147" ID="2"/>
         </Bookmarks>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -153,10 +154,11 @@
       <Unit15>
         <Filename Value="data\stardata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="166"/>
-        <CursorPos X="10" Y="188"/>
+        <EditorIndex Value="10"/>
+        <TopLine Value="2266"/>
+        <CursorPos X="15" Y="2063"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
@@ -329,10 +331,11 @@
       <Unit31>
         <Filename Value="data\newlocation.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="139"/>
-        <CursorPos X="10" Y="661"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="151"/>
+        <CursorPos X="14" Y="159"/>
         <UsageCount Value="202"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit31>
       <Unit32>
@@ -365,10 +368,9 @@
         <Filename Value="import\importvizier.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ImportVizier"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <TopLine Value="461"/>
-        <CursorPos X="24" Y="480"/>
+        <CursorPos X="10" Y="468"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -548,19 +550,22 @@
         <ComponentName Value="GaiaDR2Picker"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="110"/>
-        <CursorPos X="5" Y="127"/>
+        <EditorIndex Value="9"/>
+        <TopLine Value="238"/>
+        <CursorPos X="3" Y="300"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit52>
       <Unit53>
         <Filename Value="gaia\gaiadr2holder.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="735"/>
-        <CursorPos X="41" Y="748"/>
+        <EditorIndex Value="7"/>
+        <TopLine Value="112"/>
+        <CursorPos Y="123"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit53>
       <Unit54>
@@ -569,7 +574,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="94"/>
         <CursorPos Y="109"/>
-        <UsageCount Value="178"/>
+        <UsageCount Value="183"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit54>
       <Unit55>
@@ -581,7 +586,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="61"/>
         <CursorPos Y="108"/>
-        <UsageCount Value="176"/>
+        <UsageCount Value="181"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit55>
       <Unit56>
@@ -593,7 +598,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="110"/>
         <CursorPos Y="86"/>
-        <UsageCount Value="142"/>
+        <UsageCount Value="147"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit56>
       <Unit57>
@@ -605,15 +610,15 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="161"/>
         <CursorPos X="26" Y="182"/>
-        <UsageCount Value="95"/>
+        <UsageCount Value="100"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit57>
       <Unit58>
         <Filename Value="gaia\dr2matchthread.pas"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="162"/>
-        <CursorPos X="46" Y="168"/>
-        <UsageCount Value="83"/>
+        <TopLine Value="100"/>
+        <CursorPos X="68" Y="114"/>
+        <UsageCount Value="88"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit58>
@@ -623,15 +628,17 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="390"/>
         <CursorPos X="106" Y="450"/>
-        <UsageCount Value="78"/>
+        <UsageCount Value="83"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
         <Filename Value="gaia\dr2addnew.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="15" Y="223"/>
-        <UsageCount Value="52"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="130"/>
+        <CursorPos X="48" Y="146"/>
+        <UsageCount Value="57"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit60>
       <Unit61>
@@ -640,10 +647,13 @@
         <ComponentName Value="GaiaDR2AddForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="89"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="169"/>
         <CursorPos X="18" Y="102"/>
-        <UsageCount Value="42"/>
+        <UsageCount Value="47"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit61>
       <Unit62>
@@ -750,7 +760,128 @@
         <UsageCount Value="7"/>
       </Unit73>
     </Units>
-    <JumpHistory HistoryIndex="-1"/>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="216" Column="10" TopLine="193"/>
+      </Position1>
+      <Position2>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="225" Column="20" TopLine="202"/>
+      </Position2>
+      <Position3>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="249" Column="23" TopLine="226"/>
+      </Position3>
+      <Position4>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="250" Column="35" TopLine="227"/>
+      </Position4>
+      <Position5>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="251" Column="44" TopLine="228"/>
+      </Position5>
+      <Position6>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="252" Column="36" TopLine="229"/>
+      </Position6>
+      <Position7>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="254" Column="28" TopLine="231"/>
+      </Position7>
+      <Position8>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="255" Column="16" TopLine="233"/>
+      </Position8>
+      <Position9>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="256" Column="36" TopLine="234"/>
+      </Position9>
+      <Position10>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="304" Column="10" TopLine="281"/>
+      </Position10>
+      <Position11>
+        <Filename Value="gaia\dr2matchthread.pas"/>
+        <Caret Line="150" Column="5" TopLine="145"/>
+      </Position11>
+      <Position12>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="63" Column="18" TopLine="59"/>
+      </Position12>
+      <Position13>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="2589" Column="24" TopLine="2582"/>
+      </Position13>
+      <Position14>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="63" Column="17" TopLine="52"/>
+      </Position14>
+      <Position15>
+        <Filename Value="gaia\gaiadr2match.pas"/>
+        <Caret Line="291" Column="3" TopLine="267"/>
+      </Position15>
+      <Position16>
+        <Filename Value="gaia\gaiadr2match.pas"/>
+        <Caret Line="299" Column="3" TopLine="299"/>
+      </Position16>
+      <Position17>
+        <Filename Value="gaia\gaiadr2match.pas"/>
+        <Caret Line="271" Column="37" TopLine="255"/>
+      </Position17>
+      <Position18>
+        <Filename Value="gaia\dr2matchthread.pas"/>
+        <Caret Line="231" TopLine="217"/>
+      </Position18>
+      <Position19>
+        <Filename Value="gaia\dr2matchthread.pas"/>
+        <Caret Line="166" TopLine="153"/>
+      </Position19>
+      <Position20>
+        <Filename Value="gaia\dr2matchthread.pas"/>
+        <Caret Line="231" TopLine="217"/>
+      </Position20>
+      <Position21>
+        <Filename Value="gaia\dr2matchthread.pas"/>
+        <Caret Line="166" TopLine="153"/>
+      </Position21>
+      <Position22>
+        <Filename Value="gaia\dr2matchthread.pas"/>
+        <Caret Line="231" TopLine="217"/>
+      </Position22>
+      <Position23>
+        <Filename Value="gaia\dr2matchthread.pas"/>
+        <Caret Line="166" TopLine="153"/>
+      </Position23>
+      <Position24>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="123" Column="23" TopLine="117"/>
+      </Position24>
+      <Position25>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="1701" Column="11" TopLine="1690"/>
+      </Position25>
+      <Position26>
+        <Filename Value="gaia\dr2matchthread.pas"/>
+        <Caret Line="39" Column="21" TopLine="22"/>
+      </Position26>
+      <Position27>
+        <Filename Value="gaia\dr2matchthread.pas"/>
+        <Caret Line="114" Column="68" TopLine="100"/>
+      </Position27>
+      <Position28>
+        <Filename Value="gaia\gaiadr2holder.pas"/>
+        <Caret Line="122" TopLine="106"/>
+      </Position28>
+      <Position29>
+        <Filename Value="gaia\gaiadr2holder.pas"/>
+        <Caret Line="121" TopLine="106"/>
+      </Position29>
+      <Position30>
+        <Filename Value="gaia\gaiadr2holder.pas"/>
+        <Caret Line="123" TopLine="112"/>
+      </Position30>
+    </JumpHistory>
   </ProjectSession>
   <Debugging>
     <Watches Count="2">

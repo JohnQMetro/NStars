@@ -37,6 +37,7 @@ DR2MatchData = class
     constructor Create;
     destructor Destroy; override;
     function ApplyMatch(using:Integer; conditional:Boolean):Boolean;
+    function ApplySome(using:Integer):Boolean;
     function RejectObject(thisOne:Integer):Integer;
 end;
 //---------------------------------------------------------------------
@@ -109,6 +110,20 @@ begin
   Result := True;
 end;
 //-----------------------------------------
+function DR2MatchData.ApplySome(using:Integer):Boolean;
+var starm:GaiaDR2Star;
+begin
+  Result := False;
+  // bad cases which should not happen
+  if (matches = nil) or (system = nil) then Exit;
+  if (using < 0) or (using >= matches.Count) then Exit;
+  // applying the match
+  starm := matches[using];
+  system.ApplyGaiaNameMags(stardex,starm);
+  // done
+  Result := True;
+end;
+//-----------------------------------------
 function DR2MatchData.RejectObject(thisOne:Integer):Integer;
 begin
   Result := -1;
@@ -147,7 +162,7 @@ end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // does a gaia match for the stars in the current system
 procedure MatchToDR2Thread.MatchForSystem();
-var starcount,xstardex:Integer;
+var xstardex,starcount:Integer;
     starloc:Location;
     stnames,sysnames:StarName;
     matchlist:GaiaList;
@@ -158,23 +173,31 @@ var starcount,xstardex:Integer;
 begin
   // initial system values
   currentSystem := primaryl.SystemAtIndex(sysdex);
-  starcount := currentSystem.GetCompC;
   hasmatch := False;
+  xstardex := 1;
   // trying to match each component individually with DR2
-  for xstardex := 1 to starcount do begin
+  while xstardex <= currentSystem.GetCompC do begin;
     stardex := xstardex;
+    starcount := currentSystem.GetCompC;
     // performing the match, we might skip if the location already is DR2
     currentSystem.GetStuffForMatching(xstardex,starloc,stnames,sysnames);
-    if (starloc.source = GAIA2_TAG) and (not starloc.IsACopy) and params.skip_dr2 then Continue;
+    if (starloc.HasGaiaDR2()) and (not starloc.IsACopy) and params.skip_dr2 then begin
+      Inc(xstardex);
+      Continue;
+    end;
     matchlist := DR2Data.FindMatches(starcount > 1,stnames,sysnames,starloc,qparams,mtype);
     // checking the results
-    if (mtype = G2_NONE) then Continue;
+    if (mtype = G2_NONE) then begin
+      Inc(xstardex);
+      Continue;
+    end;
     hasmatch := True;
     // are conditions good for an auto match up?
     doautomatch := (params.auto_match_good and (starcount = 1));
     if doautomatch then begin
        doautomatch := (mtype = G2_SYSNAME) and (matchlist.Count = 1);
        if doautomatch then doautomatch := (not matchlist[0].selectionAfail) and (not matchlist[0].selectionBfail);
+       if doautomatch then doautomatch := (matchlist[0].astrometry.parallax_err < 0.12);
        // for tighter auto fits, requre v mag close enough
        if doautomatch and params.auto_match_v then begin
           doautomatch := not currentSystem.IsBrownDwarf(xstardex);   // Brown Dwarfs have no V
@@ -188,6 +211,8 @@ begin
     // that was ugly, but now we know...
     if doautomatch then begin
       currentSystem.ApplyGaiaObject(stardex,matchlist[0],params.match_conditional);
+      matchlist[0].matched := True;
+      matchlist[0].permaReject:=False;
       ClearGaiaList(matchlist);
       FreeAndNil(matchlist);
       PostMessage(msgTarget,MSG_STARMATCHED,0,0);
@@ -198,6 +223,7 @@ begin
       RTLeventResetEvent(waitlock); // once resumed, we clear the wait
     end;
     if doquit then Break; // UI has signalled quitting
+    Inc(xstardex);
   end;
   // the system has been fully handled...
   if hasmatch then currentSystem.UpdateEstimates; // not always needed, but often is.
@@ -232,7 +258,7 @@ begin
   params := mparams;
   qparams.max_search_dist:= params.max_search_dist;
   qparams.skip_matched := params.skip_matched;
-  qparams.skip_matched := params.skip_matched;
+  qparams.skip_reject := params.skip_reject;
   // additional
   msgTarget := mtarget;
   waitlock := RTLEventCreate;

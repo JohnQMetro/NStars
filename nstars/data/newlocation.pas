@@ -156,6 +156,7 @@ Location = class
     function SetFromTGAS(instar:TGASData):Boolean;
     function SetFromImported(instar:ImportedData; epch:EpochType; srcin:string; setlocat:Boolean):Boolean;
     function SetFromGaiaDR2(inastro:GaiaDR2Astrometry; ckeepold:Boolean):Boolean;
+    function HasGaiaDR2():Boolean;
     // to and from strings as a whole
     function ConvertAllToString:string;
     function ConvertAllFromString(inval:string):Boolean;
@@ -1559,6 +1560,15 @@ begin
   if inastro.hasRV then radialV := inastro.RV;
   Result := True;
 end;
+//---------------------------------------------------
+function Location.HasGaiaDR2():Boolean;
+begin
+  Result := True;
+  if (source = GAIA2_TAG) then Exit;
+  if AnsiContainsStr(oldparallax,GAIA2_TAG) then Exit;
+  Result := False;
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // to and from strings as a whole
 //------------------------------------------

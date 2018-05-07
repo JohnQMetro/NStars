@@ -367,13 +367,15 @@ object NStarsMainForm: TNStarsMainForm
         inline CatalogIDEditSystem: TCatalogIDEditFrame
           Left = 380
           Top = 8
+          Width = 228
+          ClientWidth = 228
           TabOrder = 12
           inherited CatNamesGB: TGroupBox
             Left = 8
             Top = 8
-            Width = 220
+            Width = 212
             ClientHeight = 182
-            ClientWidth = 216
+            ClientWidth = 208
             inherited CatIDListBox: TListBox
               Left = 8
               Width = 192
