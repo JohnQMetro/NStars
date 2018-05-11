@@ -1684,6 +1684,7 @@ end;
 function StarSystem.ApplyGaiaNameMags(stardex:Integer; inobj:GaiaDR2Star):Boolean;
 var cur_component:NewStarBase;
     star_namez:StarName;
+    xloc:Location;
 begin
   Result := False;
   if (stardex > GetCompC) or (stardex < 1) then Exit;
@@ -1703,6 +1704,12 @@ begin
     star_namez := cur_component.MakeOrGetNames;
     star_namez.SetCat(inobj.GaiaID());
     star_namez.SetMultipleCat(inobj.ids.IDStrings(false));
+  end;
+  // parallax: sometime we add it to the *old* not used parallax
+  if (stardex = 1) then  the_location.GaiaAddToOld(inobj.astrometry)
+  else if (cur_component.HasLocation) then begin
+    xloc := cur_component.GetLocation;
+    xloc.GaiaAddToOld(inobj.astrometry);
   end;
   // done
   Result := True;

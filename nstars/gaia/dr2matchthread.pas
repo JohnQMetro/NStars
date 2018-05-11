@@ -120,6 +120,7 @@ begin
   // applying the match
   starm := matches[using];
   system.ApplyGaiaNameMags(stardex,starm);
+  starm.permaReject:= True;
   // done
   Result := True;
 end;
@@ -163,7 +164,7 @@ end;
 // does a gaia match for the stars in the current system
 procedure MatchToDR2Thread.MatchForSystem();
 var xstardex,starcount:Integer;
-    starloc:Location;
+    starloc,oldloc:Location;
     stnames,sysnames:StarName;
     matchlist:GaiaList;
     mtype:GaiaDR2_MatchType;
@@ -175,15 +176,18 @@ begin
   currentSystem := primaryl.SystemAtIndex(sysdex);
   hasmatch := False;
   xstardex := 1;
+  oldloc := nil;
   // trying to match each component individually with DR2
   while xstardex <= currentSystem.GetCompC do begin;
     stardex := xstardex;
     starcount := currentSystem.GetCompC;
     // performing the match, we might skip if the location already is DR2
     currentSystem.GetStuffForMatching(xstardex,starloc,stnames,sysnames);
-    if (starloc.HasGaiaDR2()) and (not starloc.IsACopy) and params.skip_dr2 then begin
-      Inc(xstardex);
-      Continue;
+    if params.skip_dr2 and (oldloc <> starloc) then begin
+      if (starloc.HasGaiaDR2()) and (not starloc.IsACopy) then begin
+        Inc(xstardex);
+        Continue;
+      end;
     end;
     matchlist := DR2Data.FindMatches(starcount > 1,stnames,sysnames,starloc,qparams,mtype);
     // checking the results
@@ -288,7 +292,7 @@ begin
     sparam.skip_matched := True;
     sparam.skip_reject := True;
     sparam.auto_match_good := True;
-    sparam.auto_match_v := True;
+    sparam.auto_match_v := False;
   end;
   sparam.max_search_dist := 0.3;
   sparam.match_conditional :=True;

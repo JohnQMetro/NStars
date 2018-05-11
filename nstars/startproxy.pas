@@ -73,6 +73,7 @@ StarProxy = class
     function CMC_ToBV(indata:string):Boolean;
     function URAT_To_Ic(indata:string):Boolean;
     function UCAC4_To_Ic(indata:string):Boolean;
+    function BPRP_To_VRI():Boolean;
 end;
 
 var
@@ -1086,7 +1087,7 @@ function StarProxy.URAT_ToBV(indata:string):Boolean;
 var params:RealArray;
     gval,Best:Currency;
     Vest:Real;
-const amsg = 'BV estimated from URAT/G';
+const amsg = 'BV estimated from URAT/G1';
 begin
   Result := False;
   if SplitWithSpacesToReal(indata,1,params) then begin
@@ -1106,7 +1107,7 @@ function StarProxy.UCAC4_ToBV_Helper(indata:string):Boolean;
 var params:RealArray;
     gval,Best:Currency;
     Vest:Real;
-const amsg = 'BV estimated from UCAC4/G';
+const amsg = 'BV estimated from UCAC4/G1';
 begin
   Result := False;
   if SplitWithSpacesToReal(indata,1,params) then begin
@@ -1126,7 +1127,7 @@ function StarProxy.CMC_ToBV(indata:string):Boolean;
 var params:RealArray;
     gval,Best:Currency;
     Vest:Real;
-const amsg = 'BV estimated from CMC r’/G';
+const amsg = 'BV estimated from CMC r’/G1';
 begin
   Result := False;
   if SplitWithSpacesToReal(indata,1,params) then begin
@@ -1161,7 +1162,7 @@ function StarProxy.UCAC4_To_Ic(indata:string):Boolean;
 var params:RealArray;
     gval,Icest,Rcest:Currency;
     urc,uic:Boolean;
-const amsg = 'estimated from UCAC/G+J.';
+const amsg = 'estimated from UCAC/G1+J.';
 begin
   Result := False;
   if SplitWithSpacesToReal(indata,1,params) then begin
@@ -1178,6 +1179,65 @@ begin
     end else Result := ShowRIEst(Rcest,Icest,amsg);
   end
   else ShowMessage('Unable to parse the input');
+end;
+//-------------------------------------------
+function StarProxy.BPRP_To_VRI():Boolean;
+var okay:Boolean;
+    BPmRP,Gin,Rcest,Icest:Currency;
+    Vest:Real;
+    msgdata:string;
+    rval:Word;
+const amsg = 'VRI estimated from Gaia DR2 magnitudes.';
+begin
+  Result := False;
+  // basic bad exit cases...
+  if ccomponent = nil then begin
+    ShowMessage('No Star to estimate!');
+    Exit;
+  end;
+  okay := ccomponent.dr2mags <> nil;
+  if okay then okay := ccomponent.dr2mags.ValidBPmRP;
+  if okay then okay := (ccomponent.dr2mags.G < 90);
+  if not okay then begin
+     ShowMessage('Object does not have all Gaia Magnitudes!');
+     Exit;
+  end;
+  // getting the magnitudes and the values...
+  BPmRP := ccomponent.dr2mags.BPminRP;
+  Gin := ccomponent.dr2mags.G;
+  if not Gaia2ToVRI(Gin,BPmRP,Vest,Rcest,Icest) then begin
+    ShowMessage('Cannot estimate: BP-RP not within range!');
+    Exit;
+  end;
+  // building the message to show
+  msgdata := 'The estimates are :' + sLineBreak;
+  // magnitudes
+  msgdata += 'V estimate : ' + FloatToStrF(Vest,ffFixed,2,3);
+  msgdata += sLineBreak;
+  msgdata += 'Rc estimate : ' + CurrToStrF(Rcest,ffFixed,3);
+  msgdata += sLineBreak;
+  msgdata += 'Ic estimate : ' + CurrToStrF(Icest,ffFixed,3);
+  msgdata += sLineBreak;
+  // final touches
+  msgdata += 'Do you want to use these magnitudes?';
+  // asking
+  // asking if we want to use the estimated magnitudes
+  rval := mrNo;
+  rval := MessageDlg(msgdata, mtConfirmation,[mbYes, mbNo],0);
+  if (rval = mrYes) then begin
+    // setting V
+    if cstar <> nil then cstar.SetVisualMagnitude(Vest);
+    if ccomponent.fluxtemp = nil then ccomponent.fluxtemp := StarFluxPlus.Create;
+    // Rc and Ic
+    ccomponent.fluxtemp.red_mag := Rcest;
+    ccomponent.fluxtemp.I_mag := Icest;
+    // adding some notes
+    if not cstar.NotesConatins(amsg) then begin
+      cstar.AppndNote(' ' + amsg,False);
+    end;
+    sys.UpdateEstimates;
+    Result := True;
+  end;
 end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 begin

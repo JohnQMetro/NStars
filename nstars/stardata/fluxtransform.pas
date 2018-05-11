@@ -18,6 +18,7 @@ function TychoToJohnson(const Bt,Vt:Real; out Bj,Vj:Real):Boolean;
 function TychoToFluxes(indata:string; out Vj:Real; out Bj:Currency):Boolean;
 procedure Johnson_to_Cousins(inV:Real; inR,inI:Currency; out Rc,Ic:Currency);
 function DENIStoCousinsI(const inDenisI:Currency):Currency;
+function Gaia2ToVRI(Gmag:Currency; BPmRP:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 (* SDSS related magnitude conversions *)
 procedure SDSS_gri2BVRI(g,r,i:Real; out Bj,Vj,Rc,Ic:Real);
 function SDSS_ugriz2BVRI(u,g,r,i,z:Real; out Bj,Vj,Rc,Ic:Real):Boolean;
@@ -175,7 +176,30 @@ begin
   real_cousins := 1.04*real_denis-0.501;
   Result := RealToCurr(real_cousins);
 end;
-
+//----------------------------------------------------------------------
+(* From '﻿Gaia Data Release 2: Photometric content and validation' (Evans+ 2018)
+Does not work for M3.5 or redder. *)
+function Gaia2ToVRI(Gmag:Currency; BPmRP:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+var bmr,interm:Real;
+const coffV:array[0..2] of Real = (-0.0176  ,-0.00686,-0.1732 );
+      coffR:array[0..2] of Real = (-0.003226, 0.3833 ,-0.1345 );
+      coffI:array[0..2] of Real = ( 0.02085 , 0.7419 ,-0.09631);
+begin
+  Result := False;
+  if (BPmRP >= 2.75) or (BPmRP <= -0.5) then Exit;
+  if Gmag > 90 then Exit;
+  // converting
+  bmr := CurrToReal(BPmRP);
+  interm := PolEval(bmr,coffV,3);
+  Vest := CurrToReal(Gmag) - interm;
+  interm := PolEval(bmr,coffR,3);
+  Rcest := CurrToReal(Gmag) - interm;
+  Rcest := RoundCurrency(Rcest,False);
+  interm := PolEval(bmr,coffI,3);
+  Icest := CurrToReal(Gmag) - interm;
+  Icest := RoundCurrency(Rcest,False);
+  Result := True;
+end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* SDSS related magnitude conversions *)
 //-------------------------------------------------------------

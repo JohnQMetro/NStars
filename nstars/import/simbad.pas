@@ -210,7 +210,7 @@ begin
     else if AnsiStartsStr('DR2',iddata) then ctag := 'GaiaDR2'
     else if AnsiStartsStr('DR3',iddata) then ctag := 'GaiaDR3'  // forthcoming
     else Result := False;
-    if not Result then iddata := Trim(RightStr(iddata,Length(iddata)-3));
+    if Result then iddata := Trim(RightStr(iddata,Length(iddata)-3));
   end
   // double star catalogs should have the right info
   else if ctag = '**' then begin

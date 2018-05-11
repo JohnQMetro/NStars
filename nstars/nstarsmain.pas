@@ -40,6 +40,7 @@ type
     MenuItem12: TMenuItem;
     FinDR2MatchMI: TMenuItem;
     AddUMGaiaDR2MI: TMenuItem;
+    GaiaDR2MagMI: TMenuItem;
     Viz2MassGetMI: TMenuItem;
     StarGaiaMatchMI: TMenuItem;
     MISwapParallax: TMenuItem;
@@ -211,16 +212,20 @@ type
     procedure EstBVUCACMIClick(Sender: TObject);
     procedure EstIUCACMIClick(Sender: TObject);
     procedure ExpGaiaDR2CSVClick(Sender: TObject);
+    procedure Export1Click(Sender: TObject);
     procedure ExportListMIClick(Sender: TObject);
     procedure FindIDMIClick(Sender: TObject);
     procedure FinDR2MatchMIClick(Sender: TObject);
     procedure FindRemTGASMIClick(Sender: TObject);
+    procedure FluxEstSubMenuClick(Sender: TObject);
+    procedure GaiaDR2MagMIClick(Sender: TObject);
     procedure GetLoggMIClick(Sender: TObject);
     procedure GotoBM_1MIClick(Sender: TObject);
     procedure GotoBM_2MIClick(Sender: TObject);
     procedure GuessSpectraMIClick(Sender: TObject);
     procedure HasProbMIClick(Sender: TObject);
     procedure ImpGaiaDR2MIClick(Sender: TObject);
+    procedure Import1Click(Sender: TObject);
     procedure ImportFrSN35MIClick(Sender: TObject);
     procedure ImportRemTGAS_MIClick(Sender: TObject);
     procedure ImportTGASLeftMIClick(Sender: TObject);
@@ -240,6 +245,7 @@ type
     procedure MergeIntoMIClick(Sender: TObject);
     procedure MISwapParallaxClick(Sender: TObject);
     procedure New1Click(Sender: TObject);
+    procedure ools1Click(Sender: TObject);
     procedure ParallaxEntryMIClick(Sender: TObject);
     procedure PllxImportMIClick(Sender: TObject);
     procedure PosSepSetMIClick(Sender: TObject);
@@ -629,9 +635,18 @@ procedure TNStarsMainForm.ExpGaiaDR2CSVClick(Sender: TObject);
 begin
   if DR2Data = nil then Exit;
   GeneralModCheck(Sender);
-  if GaiaDR2LoadStoreForm = nil then GaiaDR2LoadStoreForm := TGaiaDR2LoadStoreForm.Create(Self);
+  if GaiaDR2LoadStoreForm <> nil then FreeAndNil(GaiaDR2LoadStoreForm);
+  GaiaDR2LoadStoreForm := TGaiaDR2LoadStoreForm.Create(Self);
   GaiaDR2LoadStoreFormModeStore := True;
   GaiaDR2LoadStoreForm.Show;
+end;
+
+procedure TNStarsMainForm.Export1Click(Sender: TObject);
+begin
+   // validation
+  SimpleTGASCSVexp.Enabled := (tgas_main <> nil) and (tgas_main.StarCount > 0);
+  WrUnmCSVMI.Enabled := (tgas_main <> nil) and (tgas_main.StarCount > 0);
+  ExpGaiaDR2CSV.Enabled := (DR2Data <> nil);
 end;
 
 procedure TNStarsMainForm.ExportListMIClick(Sender: TObject);
@@ -750,6 +765,23 @@ begin
   ShowMessage('All Done');
 end;
 
+procedure TNStarsMainForm.FluxEstSubMenuClick(Sender: TObject);
+begin
+  GaiaDR2MagMI.Enabled := (current.ccomponent.dr2mags <> nil) and (current.ccomponent.dr2mags.ValidBPmRP);
+end;
+
+procedure TNStarsMainForm.GaiaDR2MagMIClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.BPRP_To_VRI();
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
 procedure TNStarsMainForm.GetLoggMIClick(Sender: TObject);
 begin
   SimbadIDFetch(2);
@@ -791,8 +823,14 @@ end;
 procedure TNStarsMainForm.ImpGaiaDR2MIClick(Sender: TObject);
 begin
   GeneralModCheck(Sender);
-  if GaiaDR2LSourceForm = nil then GaiaDR2LSourceForm := TGaiaDR2LSourceForm.Create(Self);
+  if GaiaDR2LSourceForm <> nil then FreeAndNil(GaiaDR2LSourceForm);
+  GaiaDR2LSourceForm := TGaiaDR2LSourceForm.Create(Self);
   GaiaDR2LSourceForm.Show;
+end;
+
+procedure TNStarsMainForm.Import1Click(Sender: TObject);
+begin
+  AddUMGaiaDR2MI.Enabled := (DR2Data <> nil) and (DR2Data.StarCount > 0);
 end;
 
 procedure TNStarsMainForm.ImportFrSN35MIClick(Sender: TObject);
@@ -2098,7 +2136,8 @@ end;
 procedure TNStarsMainForm.LoadGaiaDR2CSVClick(Sender: TObject);
 begin
   GeneralModCheck(Sender);
-  if GaiaDR2LoadStoreForm = nil then GaiaDR2LoadStoreForm := TGaiaDR2LoadStoreForm.Create(Self);
+  if GaiaDR2LoadStoreForm <> nil then FreeAndNil(GaiaDR2LoadStoreForm);
+  GaiaDR2LoadStoreForm := TGaiaDR2LoadStoreForm.Create(Self);
   GaiaDR2LoadStoreFormModeStore := False;
   GaiaDR2LoadStoreForm.Show;
 end;
@@ -2224,6 +2263,32 @@ begin
   primaryl.LoadListBox;
   Save1.Enabled := False;
   ChangeSystem;
+end;
+
+procedure TNStarsMainForm.ools1Click(Sender: TObject);
+var tgas_okay, notsol, notbd:Boolean;
+begin
+  // validation
+  FinDR2MatchMI.Enabled := (DR2Data <> nil) and (DR2Data.StarCount > 0);
+  StarGaiaMatchMI.Enabled := (DR2Data <> nil) and (DR2Data.StarCount > 0);
+  tgas_okay := (tgas_main <> nil) and (tgas_main.StarCount > 0);
+  TGASFind.Enabled := tgas_okay;
+  TGASNameMatchMI.Enabled := tgas_okay;
+  TGASBinarySecMatchMI.Enabled := tgas_okay;
+  FindRemTGASMI.Enabled := tgas_okay;
+  PosSepSetMI.Enabled:= (current <> nil) and (current.starindex > 1);
+  notsol := (current <> nil) and (current.sys <> nil) and (current.sys.GetId() > 1 );
+  MISwapParallax.Enabled := (current <> nil) and (current.cstarl <> nil) and (current.cstarl.oldparallax <> '');
+  ParallaxEntryMI.Enabled := notsol;
+  EnterPMPartsMI.Enabled := notsol;
+  FindConstellation1.Enabled := notsol;
+  SimbadLocLook.Enabled := notsol;
+  SimbadIDLook.Enabled := notsol;
+  notbd := notsol and (current.ccomponent <> nil) and (not current.ccomponent.isBrownDwarf);
+  APASSfluxMI.Enabled := notbd;
+  SDSSMagEntryMI.Enabled:= notsol;
+  Tycho2MagMI.Enabled := notbd;
+  FluxEstSubMenu.Enabled:= notbd;
 end;
 
 procedure TNStarsMainForm.ParallaxEntryMIClick(Sender: TObject);

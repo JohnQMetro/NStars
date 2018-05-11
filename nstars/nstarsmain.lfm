@@ -1,5 +1,5 @@
 object NStarsMainForm: TNStarsMainForm
-  Left = 271
+  Left = 281
   Height = 577
   Top = 96
   Width = 851
@@ -1065,6 +1065,7 @@ object NStarsMainForm: TNStarsMainForm
     end
     object Import1: TMenuItem
       Caption = 'Import'
+      OnClick = Import1Click
       object RECONSNearest1001: TMenuItem
         Caption = 'RECONS Nearest 100...'
         OnClick = RECONSNearest1001Click
@@ -1164,6 +1165,7 @@ object NStarsMainForm: TNStarsMainForm
     end
     object Export1: TMenuItem
       Caption = 'Export'
+      OnClick = Export1Click
       object ExportListMI: TMenuItem
         Caption = 'Export List ...'
         OnClick = ExportListMIClick
@@ -1193,6 +1195,7 @@ object NStarsMainForm: TNStarsMainForm
     end
     object ools1: TMenuItem
       Caption = 'Tools'
+      OnClick = ools1Click
       object RenumberIDs1: TMenuItem
         Caption = 'Renumber ID''s'
         OnClick = RenumberIDs1Click
@@ -1242,6 +1245,7 @@ object NStarsMainForm: TNStarsMainForm
       end
       object FluxEstSubMenu: TMenuItem
         Caption = 'Estimate Magnitudes...'
+        OnClick = FluxEstSubMenuClick
         object EstBVUATMI: TMenuItem
           Caption = 'Estimate BV using URAT...'
           OnClick = EstBVUATMIClick
@@ -1261,6 +1265,10 @@ object NStarsMainForm: TNStarsMainForm
         object EstIUCACMI: TMenuItem
           Caption = 'Estimate RI using UCAC...'
           OnClick = EstIUCACMIClick
+        end
+        object GaiaDR2MagMI: TMenuItem
+          Caption = 'Estimate VRI from Gaia DR2...'
+          OnClick = GaiaDR2MagMIClick
         end
       end
       object MenuItem4: TMenuItem

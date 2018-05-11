@@ -1,7 +1,7 @@
 object GaiaDR2Picker: TGaiaDR2Picker
-  Left = 243
+  Left = 279
   Height = 360
-  Top = 187
+  Top = 182
   Width = 999
   Caption = 'Match Stars with GAIA DR2'
   ClientHeight = 360
@@ -74,17 +74,17 @@ object GaiaDR2Picker: TGaiaDR2Picker
     Left = 8
     Height = 25
     Top = 328
-    Width = 131
+    Width = 112
     Caption = 'Match to Selected'
     Enabled = False
     OnClick = MatchSelectedBtnClick
     TabOrder = 1
   end
   object SkipStarBtn: TButton
-    Left = 160
+    Left = 128
     Height = 25
     Top = 328
-    Width = 75
+    Width = 64
     Caption = 'Skip Star'
     Enabled = False
     OnClick = SkipStarBtnClick
@@ -194,7 +194,7 @@ object GaiaDR2Picker: TGaiaDR2Picker
     TabOrder = 4
   end
   object RejectObjBtn: TButton
-    Left = 256
+    Left = 208
     Height = 25
     Top = 328
     Width = 91
@@ -204,13 +204,23 @@ object GaiaDR2Picker: TGaiaDR2Picker
     TabOrder = 5
   end
   object AddCompMatchBtn: TButton
-    Left = 368
+    Left = 432
     Height = 25
-    Top = 327
-    Width = 112
+    Top = 328
+    Width = 104
     Caption = 'Add Component'
     Enabled = False
     OnClick = AddCompMatchBtnClick
     TabOrder = 6
+  end
+  object UseNoPllxBtn: TButton
+    Left = 304
+    Height = 25
+    Top = 328
+    Width = 115
+    Caption = 'Use without Parallax'
+    Enabled = False
+    OnClick = UseNoPllxBtnClick
+    TabOrder = 7
   end
 end

@@ -479,6 +479,7 @@ begin
       else mtype := G2_POSITION;
     end;
   end;
+  if (Result = nil) then mtype := G2_NONE;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // file I/O

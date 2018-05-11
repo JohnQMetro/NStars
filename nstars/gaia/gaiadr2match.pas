@@ -17,6 +17,7 @@ type
     AutoMatchVmagCB: TCheckBox;
     aseclbl: TLabel;
     AddCompMatchBtn: TButton;
+    UseNoPllxBtn: TButton;
     RejectObjBtn: TButton;
     StartMatchBtn: TButton;
     MaxDistLabel: TLabel;
@@ -43,6 +44,7 @@ type
     procedure StarListGridPrepareCanvas(sender: TObject; aCol, aRow: Integer;
       aState: TGridDrawState);
     procedure StartMatchBtnClick(Sender: TObject);
+    procedure UseNoPllxBtnClick(Sender: TObject);
   private
     mparams:DR2MatchParams;
     dataToCheck:DR2MatchData;
@@ -135,12 +137,13 @@ end;
 //-----------------------------------------------------------
 procedure TGaiaDR2Picker.FormActivate(Sender: TObject);
 begin
-  InitDR2MatchParam(mparams,True);
+  InitDR2MatchParam(mparams,False);
   dataToCheck := nil;
   mthread := nil;
   thread_is_active := False;
   starsmatched := 0;
   syscount := 0;
+  LoadMatchParams();
 end;
 
 procedure TGaiaDR2Picker.AddCompMatchBtnClick(Sender: TObject);
@@ -156,6 +159,18 @@ begin
     StartMatchBtn.Enabled := False;
     mthread.WaitIsOver(True);
     EnableButtons(False);
+  end;
+end;
+
+procedure TGaiaDR2Picker.UseNoPllxBtnClick(Sender: TObject);
+begin
+  if StarListGrid.Row >= 0 then begin
+    EnableButtons(False);
+    dataToCheck.ApplySome(StarListGrid.Row);
+    FreeAndNil(dataToCheck);
+    StarListGrid.Row := -1;
+    StarListGrid.RowCount := 0;
+    mthread.WaitIsOver(False);
   end;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -271,6 +286,7 @@ begin
   SkipStarBtn.Enabled := enabled;
   RejectObjBtn.Enabled := enabled;
   AddCompMatchBtn.Enabled := enabled;
+  UseNoPllxBtn.Enabled := enabled;
 end;
 //---------------------------------------------------
 procedure TGaiaDR2Picker.SetMatchCountLabel();
