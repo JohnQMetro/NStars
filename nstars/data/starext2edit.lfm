@@ -281,7 +281,7 @@ object StarExtras2Frame: TStarExtras2Frame
       ParentColor = False
     end
     object GaiaEdit: TMaskEdit
-      Left = 364
+      Left = 368
       Height = 24
       Top = 8
       Width = 66
@@ -301,8 +301,8 @@ object StarExtras2Frame: TStarExtras2Frame
       Left = 318
       Height = 15
       Top = 12
-      Width = 38
-      Caption = 'G Mag:'
+      Width = 44
+      Caption = 'G1 Mag:'
       ParentColor = False
     end
   end

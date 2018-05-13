@@ -1030,6 +1030,7 @@ object NStarsMainForm: TNStarsMainForm
     end
     object Star1: TMenuItem
       Caption = 'Star'
+      OnClick = Star1Click
       object AddStar1: TMenuItem
         Caption = 'Add Star'
         OnClick = AddStar1Click
@@ -1242,6 +1243,10 @@ object NStarsMainForm: TNStarsMainForm
       object Tycho2MagMI: TMenuItem
         Caption = 'Enter Tycho-2 Magnitudes...'
         OnClick = Tycho2MagMIClick
+      end
+      object PanStarrEstMI: TMenuItem
+        Caption = 'Enter Pan-STARRS Magnitudes...'
+        OnClick = PanStarrEstMIClick
       end
       object FluxEstSubMenu: TMenuItem
         Caption = 'Estimate Magnitudes...'

@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Dialogs, Controls, Forms, StrUtils,
   tgas, stardata, newlocation, namedata, NewStar, constellation, gaiadr2holder,
   simbad, guessstype, sptfluxest, fluxtransform, starext2, importvizier,
-  df_strings;
+  df_strings, Utilities;
 
 type
 
@@ -23,8 +23,7 @@ StarProxy = class
     function FoundListToString(inlinst:TGASList):string;
     function GetCurrentParallax:Real;
     procedure ApplyTGASChange(newdata:TGASData);
-    function ShowBVEst(Vest:Real; Best:Currency; amsg:string):Boolean;
-    function ShowRIEst(Rcest,Icest:Currency; amsg:string):Boolean;
+    function ShowEst(Vest:Real; Best,Rcest,Icest:Currency; amsg:string):Boolean;
   public
     // system level information
     sys:StarSystem;
@@ -74,6 +73,7 @@ StarProxy = class
     function URAT_To_Ic(indata:string):Boolean;
     function UCAC4_To_Ic(indata:string):Boolean;
     function BPRP_To_VRI():Boolean;
+    function PanStarrs_To_BVRI(indata:string):Boolean;
 end;
 
 var
@@ -179,78 +179,81 @@ begin
   newdata.matched := True;
 end;
 //----------------------------------------------------------
-function StarProxy.ShowBVEst(Vest:Real; Best:Currency; amsg:string):Boolean;
+function StarProxy.ShowEst(Vest:Real; Best,Rcest,Icest:Currency; amsg:string):Boolean;
 var msgdata:string;
     rval:Word;
+    usecount:Integer;
+    vstr,bstr,outm:string;
 begin
   Result := False;
+  usecount := 0;
+  outm := '';
   // building the message to show
   msgdata := 'The estimates are :' + sLineBreak;
-  // V and B
-  msgdata += 'V estimate : ' + FloatToStrF(Vest,ffFixed,2,3);
-  msgdata += sLineBreak;
-  msgdata += 'B estimate : ' + CurrToStrF(Best,ffFixed,3);
-  msgdata += sLineBreak;
-  // final touches
-  msgdata += 'Do you want to use these magnitudes?';
-  // asking
+  // B and V
+  if (Best < 90) then begin
+    bstr := CurrToStrF(Best,ffFixed,3);
+    msgdata += 'B : ' + bstr + sLineBreak;
+    Inc(usecount);
+    outm += 'B';
+  end;
+  if (Vest < 90) then begin
+    vstr := FloatToStrF(Vest,ffFixed,2,3);
+    msgdata += 'V : ' + vstr + sLineBreak;
+    Inc(usecount);
+    outm += 'V';
+  end;
+  // Rc and Ic
+  if (Rcest < 90) then begin
+    msgdata += 'Rc : ' + CurrToStrF(Rcest,ffFixed,3) + sLineBreak;
+    Inc(usecount);
+    outm += 'R';
+  end;
+  if (Icest < 90) then begin
+    msgdata += 'Ic : ' + CurrToStrF(Icest,ffFixed,3) + sLineBreak;
+    Inc(usecount);
+    outm += 'I';
+  end;
+  if (usecount = 0) then Exit
+  else if usecount = 1 then msgdata += 'Do you want to use this magnitude?'
+  else msgdata += 'Do you want to use these magnitudes?';
   // asking if we want to use the estimated magnitudes
   rval := mrNo;
   rval := MessageDlg(msgdata, mtConfirmation,[mbYes, mbNo],0);
   if (rval = mrYes) then begin
-    // setting B
-    cstar.fluxtemp.blue_mag := Best;
-    cstar.fluxtemp.blue_err := 0.16;
-    // setting V
-    cstar.SetVisualMagnitude(Vest);
+    // V and B
+    if (Best < 90) or (Vest < 90) then begin
+      // for brown dwarfs (unlikley), we put the magnitudes in the notes
+      if ccomponent.isBrownDwarf then begin
+        if (Vest < 90) then ccomponent.AppndNote('V~' + vstr,False);
+        if (Best < 90) then begin
+          if (Vest < 90) then ccomponent.AppndNote(', ',False);
+          ccomponent.AppndNote('B~' + bstr,False);
+        end;
+      // otherwise, setting the star magnitudes
+      end else begin
+        if (Vest < 90) then cstar.SetVisualMagnitude(Vest);
+        if (Best < 90) then begin
+          if cstar.fluxtemp = nil then cstar.fluxtemp := StarFluxPlus.Create;
+          cstar.fluxtemp.blue_mag := Best;
+        end;
+      end;
+    end;
+    // Rc and Ic
+    if (Rcest < 90) or (Icest < 90) then begin
+      if ccomponent.fluxtemp = nil then ccomponent.fluxtemp := StarFluxPlus.Create;
+      if (Rcest < 90) then ccomponent.fluxtemp.red_mag := Rcest;
+      if (Icest < 90) then ccomponent.fluxtemp.I_mag := Icest;
+    end;
     // adding some notes
-    if not cstar.NotesConatins(amsg) then begin
-      cstar.AppndNote(' ' + amsg,False);
+    if not ccomponent.NotesConatins(amsg) then begin
+      ccomponent.AppndNote(' ' + outm + ' ' + amsg,False);
     end;
     sys.UpdateEstimates;
     Result := True;
   end;
 end;
-//---------------------------------------------------------------------
-function StarProxy.ShowRIEst(Rcest,Icest:Currency; amsg:string):Boolean;
-var msgdata:string;
-    rval:Word;
-    urc,uic:Boolean;
-begin
-  Result := False;
-  urc := Rcest < 90;
-  uic := Icest < 90;
-  // building the message to show
-  if not (urc or uic) then Exit;
-  if (urc and uic) then begin
-     msgdata := 'The estimates are :' + sLineBreak;
-     msgdata += 'Rc : ' + CurrToStrF(Rcest,ffFixed,2) + sLineBreak;
-     msgdata += 'Ic : ' + CurrToStrF(Icest,ffFixed,2) + sLineBreak;
-     msgdata += 'Do you want to use these magnitudes?';
-  end else begin
-    if urc then msgdata := 'The Rc estimate is  :' + CurrToStrF(Rcest,ffFixed,2)
-    else msgdata := 'The Ic estimate is  :' + CurrToStrF(Icest,ffFixed,2);
-    msgdata += sLineBreak;
-  msgdata += 'Do you want to use this magnitude?';
-  end;
-  // asking if we want to use the estimated magnitudes
-  rval := mrNo;
-  rval := MessageDlg(msgdata, mtConfirmation,[mbYes, mbNo],0);
-  if (rval = mrYes) then begin
-    // setting Ic
-    if uic then cstar.fluxtemp.I_mag := Icest;
-    if urc then cstar.fluxtemp.red_mag := Rcest;
-    // adding some notes
-    if not cstar.NotesConatins(amsg) then begin
-      if uic and urc then amsg := 'RI ' + amsg
-      else if uic then amsg := 'Ic ' + amsg
-      else amsg := 'Rc ' + amsg;
-      cstar.AppndNote(' ' + amsg,False);
-    end;
-    sys.UpdateEstimates;
-    Result := True;
-  end;
-end;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // public methods
 constructor StarProxy.Create;
@@ -1087,7 +1090,7 @@ function StarProxy.URAT_ToBV(indata:string):Boolean;
 var params:RealArray;
     gval,Best:Currency;
     Vest:Real;
-const amsg = 'BV estimated from URAT/G1';
+const amsg = 'estimated from URAT/G1';
 begin
   Result := False;
   if SplitWithSpacesToReal(indata,1,params) then begin
@@ -1098,7 +1101,7 @@ begin
     if not URATG_ToBV(params[0],gval,cstar.fluxtemp.J_mag,cstar.fluxtemp.H_mag,
        cstar.fluxtemp.K_mag,Best,Vest) then begin
          ShowMessage('Cannot estimate, Color out of range!');
-       end else Result := ShowBVEst(Vest,Best,amsg);
+       end else Result := ShowEst(Vest,Best,99,99,amsg);
   end
   else ShowMessage('Unable to parse the input');
 end;
@@ -1107,7 +1110,7 @@ function StarProxy.UCAC4_ToBV_Helper(indata:string):Boolean;
 var params:RealArray;
     gval,Best:Currency;
     Vest:Real;
-const amsg = 'BV estimated from UCAC4/G1';
+const amsg = 'estimated from UCAC4/G1';
 begin
   Result := False;
   if SplitWithSpacesToReal(indata,1,params) then begin
@@ -1118,7 +1121,7 @@ begin
     if not UC2MG_To_BV(params[0],gval,cstar.fluxtemp.J_mag,cstar.fluxtemp.H_mag,
        cstar.fluxtemp.K_mag,Best,Vest) then begin
          ShowMessage('Cannot estimate, Color out of range!');
-       end else Result := ShowBVEst(Vest,Best,amsg);
+       end else Result := ShowEst(Vest,Best,99,99,amsg);
   end
   else ShowMessage('Unable to parse the input');
 end;
@@ -1127,7 +1130,7 @@ function StarProxy.CMC_ToBV(indata:string):Boolean;
 var params:RealArray;
     gval,Best:Currency;
     Vest:Real;
-const amsg = 'BV estimated from CMC r’/G1';
+const amsg = 'estimated from CMC r’/G1';
 begin
   Result := False;
   if SplitWithSpacesToReal(indata,1,params) then begin
@@ -1138,7 +1141,7 @@ begin
     if not CMC15_ToBV(params[0],gval,cstar.fluxtemp.J_mag,
        cstar.fluxtemp.K_mag,Best,Vest) then begin
          ShowMessage('Cannot estimate, Color out of range!');
-       end else Result := ShowBVEst(Vest,Best,amsg);
+       end else Result := ShowEst(Vest,Best,99,99,amsg);
   end
   else ShowMessage('Unable to parse the input');
 end;
@@ -1153,7 +1156,7 @@ begin
     // calling the transform function
     if not URATJ_To_Ic(params[0],cstar.fluxtemp.J_mag,Icest) then begin
          ShowMessage('Cannot estimate, Color out of range!');
-    end else Result := ShowRIEst(99,Icest,amsg);
+    end else Result := ShowEst(99,99,99,Icest,amsg);
   end
   else ShowMessage('Unable to parse the input');
 end;
@@ -1176,7 +1179,7 @@ begin
     uic := UC2MG_To_Ic(params[0],gval,cstar.fluxtemp.J_mag,Icest);
     if not (urc or uic)  then begin
          ShowMessage('Cannot estimate, Color out of range!');
-    end else Result := ShowRIEst(Rcest,Icest,amsg);
+    end else Result := ShowEst(99,99,RcEst,Icest,amsg);
   end
   else ShowMessage('Unable to parse the input');
 end;
@@ -1187,7 +1190,7 @@ var okay:Boolean;
     Vest:Real;
     msgdata:string;
     rval:Word;
-const amsg = 'VRI estimated from Gaia DR2 magnitudes.';
+const amsg = 'estimated from Gaia DR2 magnitudes.';
 begin
   Result := False;
   // basic bad exit cases...
@@ -1209,35 +1212,31 @@ begin
     ShowMessage('Cannot estimate: BP-RP not within range!');
     Exit;
   end;
-  // building the message to show
-  msgdata := 'The estimates are :' + sLineBreak;
-  // magnitudes
-  msgdata += 'V estimate : ' + FloatToStrF(Vest,ffFixed,2,3);
-  msgdata += sLineBreak;
-  msgdata += 'Rc estimate : ' + CurrToStrF(Rcest,ffFixed,3);
-  msgdata += sLineBreak;
-  msgdata += 'Ic estimate : ' + CurrToStrF(Icest,ffFixed,3);
-  msgdata += sLineBreak;
-  // final touches
-  msgdata += 'Do you want to use these magnitudes?';
-  // asking
-  // asking if we want to use the estimated magnitudes
-  rval := mrNo;
-  rval := MessageDlg(msgdata, mtConfirmation,[mbYes, mbNo],0);
-  if (rval = mrYes) then begin
-    // setting V
-    if cstar <> nil then cstar.SetVisualMagnitude(Vest);
-    if ccomponent.fluxtemp = nil then ccomponent.fluxtemp := StarFluxPlus.Create;
-    // Rc and Ic
-    ccomponent.fluxtemp.red_mag := Rcest;
-    ccomponent.fluxtemp.I_mag := Icest;
-    // adding some notes
-    if not cstar.NotesConatins(amsg) then begin
-      cstar.AppndNote(' ' + amsg,False);
+  Result := ShowEst(Vest,99,Rcest,Icest,amsg);
+end;
+//----------------------------------------------------------------
+function StarProxy.PanStarrs_To_BVRI(indata:string):Boolean;
+var params:RealArray;
+    Best,Icest,Rcest:Currency;
+    Bx,Ix,Rx,Vest:Real;
+const amsg = 'estimated from Pan-STARRS gri';
+begin
+  Result := False;
+  if SplitWithSpacesToReal(indata,3,params) then begin
+    // calling the transform function
+    if not PanSTARRSgri_to_BVRI(params[0],params[1],params[2],Bx,Vest,Rx,Ix) then begin
+      ShowMessage('Cannot estimate, Colors out of range!');
+    end
+    else begin
+      // converting to decimal
+      Best := RoundCurrency(RealToCurr(Bx),False);
+      Rcest := RoundCurrency(RealToCurr(Rx),False);
+      Icest := RoundCurrency(RealToCurr(Ix),False);
+      // showing the message...
+      Result := ShowEst(Vest,Best,Rcest,Icest,amsg);
     end;
-    sys.UpdateEstimates;
-    Result := True;
-  end;
+  end
+  else ShowMessage('Input not in expected format!');
 end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 begin

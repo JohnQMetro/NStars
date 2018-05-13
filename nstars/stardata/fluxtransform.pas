@@ -197,7 +197,7 @@ begin
   Rcest := RoundCurrency(Rcest,False);
   interm := PolEval(bmr,coffI,3);
   Icest := CurrToReal(Gmag) - interm;
-  Icest := RoundCurrency(Rcest,False);
+  Icest := RoundCurrency(Icest,False);
   Result := True;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

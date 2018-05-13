@@ -41,6 +41,7 @@ type
     FinDR2MatchMI: TMenuItem;
     AddUMGaiaDR2MI: TMenuItem;
     GaiaDR2MagMI: TMenuItem;
+    PanStarrEstMI: TMenuItem;
     Viz2MassGetMI: TMenuItem;
     StarGaiaMatchMI: TMenuItem;
     MISwapParallax: TMenuItem;
@@ -246,6 +247,7 @@ type
     procedure MISwapParallaxClick(Sender: TObject);
     procedure New1Click(Sender: TObject);
     procedure ools1Click(Sender: TObject);
+    procedure PanStarrEstMIClick(Sender: TObject);
     procedure ParallaxEntryMIClick(Sender: TObject);
     procedure PllxImportMIClick(Sender: TObject);
     procedure PosSepSetMIClick(Sender: TObject);
@@ -268,6 +270,7 @@ type
     procedure SimbadURLDataClick(Sender: TObject);
     procedure SimbURLCGIDClick(Sender: TObject);
     procedure SimpleTGASCSVexpClick(Sender: TObject);
+    procedure Star1Click(Sender: TObject);
     procedure StarExtraDataFrame1Click(Sender: TObject);
     procedure StarExtraDataFrame1Exit(Sender: TObject);
     procedure StarGaiaMatchMIClick(Sender: TObject);
@@ -829,8 +832,18 @@ begin
 end;
 
 procedure TNStarsMainForm.Import1Click(Sender: TObject);
+var notsun:Boolean;
 begin
   AddUMGaiaDR2MI.Enabled := (DR2Data <> nil) and (DR2Data.StarCount > 0);
+  notsun := (current <> nil) and (current.sys <> nil) and (current.sys.GetId > 0);
+  GetARICNSStarData.Enabled := adat.loaded and notsun;
+  GetARICNSDesignations1.Enabled := adat.loaded and notsun;
+  GetArcSystemName.Enabled := adat.loaded and notsun and (current.sys.GetCompC > 1);
+  SimbadUrlData.Enabled := notsun;
+  SimbURLCGID.Enabled := notsun;
+  SimbadDataFetch.Enabled := notsun;
+  SimbadIDFluxMI.Enabled := notsun;
+  GetLoggMI.Enabled := notsun;
 end;
 
 procedure TNStarsMainForm.ImportFrSN35MIClick(Sender: TObject);
@@ -2278,7 +2291,7 @@ begin
   FindRemTGASMI.Enabled := tgas_okay;
   PosSepSetMI.Enabled:= (current <> nil) and (current.starindex > 1);
   notsol := (current <> nil) and (current.sys <> nil) and (current.sys.GetId() > 1 );
-  MISwapParallax.Enabled := (current <> nil) and (current.cstarl <> nil) and (current.cstarl.oldparallax <> '');
+  MISwapParallax.Enabled := (current <> nil) and (current.sysl <> nil) and (current.sysl.oldparallax <> '');
   ParallaxEntryMI.Enabled := notsol;
   EnterPMPartsMI.Enabled := notsol;
   FindConstellation1.Enabled := notsol;
@@ -2289,6 +2302,23 @@ begin
   SDSSMagEntryMI.Enabled:= notsol;
   Tycho2MagMI.Enabled := notbd;
   FluxEstSubMenu.Enabled:= notbd;
+end;
+
+procedure TNStarsMainForm.PanStarrEstMIClick(Sender: TObject);
+var data:string;   rok:Boolean;
+const entmsg = 'Enter Pan-STARRS Magnitudes (g r i), with' + sLineBreak +
+               'the values separated by spaces, below:';
+begin
+  if current.cstar <> nil then begin
+    data := Trim(InputBox('Pan-STARRS to Johnson-Cousins (Kostov+ 2017)',entmsg,''));
+    if Length(data)<>0 then begin
+       rok := current.PanStarrs_To_BVRI(data);
+    end;
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
 end;
 
 procedure TNStarsMainForm.ParallaxEntryMIClick(Sender: TObject);
@@ -2632,6 +2662,18 @@ begin
     if not writeok then ShowMessage('File not created (nothing to write?).');
   end;
   SaveStarList.Filter := oldfilter;
+end;
+
+procedure TNStarsMainForm.Star1Click(Sender: TObject);
+var notsun:Boolean;
+begin
+  notsun := (current <> nil) and (current.sys <> nil) and (current.sys.GetId > 1);
+  AddStar1.Enabled := notsun;
+  AddBDMI.Enabled := notsun;
+  InsertStarMI.Enabled := notsun;
+  ChangeStarToBDMI.Enabled := notsun and (not current.ccomponent.isBrownDwarf);
+  RemoveStar1.Enabled := notsun and (current.sys.GetCompC > 1);
+  StarToSysMI.Enabled := notsun and (current.sys.GetCompC > 1) and (current.starindex > 1);
 end;
 
 procedure TNStarsMainForm.StarExtraDataFrame1Click(Sender: TObject);

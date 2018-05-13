@@ -444,8 +444,8 @@ begin
     // we have to move the other stars to make room
     starmax := High(new_components);
     SetLength(new_components,GetCompC+1);
-    for stardex := index-1 to starmax do begin
-      new_components[stardex+1] := new_components[stardex];
+    for stardex := (starmax+1) downto index do begin
+      new_components[stardex] := new_components[stardex-1];
     end;
     // inserting the new
     new_components[index-1] := tempstar;
