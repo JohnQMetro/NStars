@@ -179,7 +179,7 @@ function MakeUltracoolDatabaseConst():ImportParameters;
 
 
 //------------------------------------
-function ImportedDataToSimbad(incsd:ImportedData):SimbadData;
+function ImportedDataToSimbad(incsd:ImportedData; xepoch:Real):SimbadData;
 
 var carnegie_params:ImportParameters;
     sn38_params:ImportParameters;
@@ -1268,10 +1268,11 @@ end;
 //==============================================================
 // useful functions
 // takes imported data and tries to get a SimbadData
-function ImportedDataToSimbad(incsd:ImportedData):SimbadData;
+function ImportedDataToSimbad(incsd:ImportedData; xepoch:Real):SimbadData;
 var curid,lookup_url:string;
     idcount,iddex:Integer;
     discardfail:Boolean;
+    qEpoch:EpochType;
 begin
   Result := nil;
   Assert(incsd<>nil);
@@ -1286,7 +1287,16 @@ begin
     end;
   end;
   // here, we try a location based lookup
-  lookup_url := MakeSimbadCoordLookupURL(incsd.rapos,incsd.decpos,1,incsd.b1950pos);
+  if (xepoch = 2000) then qEpoch := eJ2000
+  else if (incsd.b1950pos) then qEpoch := eB1950
+  else if (xepoch = 1975) then qEpoch := eB1975
+  else if (xepoch = 1991.25) then qEpoch := zJ1991q
+  else if (xepoch = 2014) then qEpoch := zJ2014
+  else if (xepoch = 2015) then qEpoch := zJ2015
+  else if (xepoch = 2015.5) then qEpoch := zJ2015h
+  else if (xepoch = 2017) then qEpoch := zJ2017
+  else qEpoch := eJ2000;
+  lookup_url := MakeSimbadCoordLookupURL(incsd.rapos,incsd.decpos,1,qEpoch);
   Result := GetSimbadDataURL(lookup_url,discardfail);
 end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

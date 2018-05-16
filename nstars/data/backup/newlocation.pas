@@ -1425,7 +1425,7 @@ begin
     else if xepoch = zJ2014 then timeoffset := 1.5
     else if xepoch = zJ2015 then timeoffset := 0.5
     else if xepoch = zJ2017 then timeoffset := -1.5
-    else if xepoch = zJ1991q then timeoffset := 24.25
+    else if xepoch = zJ1991q then timeoffset := 24.25;
     else Assert(false);
   end;
   // converting proper motion...

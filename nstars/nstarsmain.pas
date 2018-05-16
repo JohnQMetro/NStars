@@ -2541,7 +2541,7 @@ begin
     rastring := current.sysl.RightAscensionHMS;
     decstring := current.sysl.DeclinationDMS;
     // making the url
-    simbadurl := MakeSimbadCoordLookupURL(rastring,decstring,2,False);
+    simbadurl := MakeSimbadCoordLookupURL(rastring,decstring,2,current.sysl.Epoch);
     Screen.Cursor := crDefault;
     // launching the browser to open this URL
     OpenURL(simbadurl);

@@ -11,7 +11,7 @@ type
   RMatrix = array of array of Real;
 
   // custom enum for epoch
-  EpochType = (eB1950,eB1975,eJ2000,zJ2014,zJ2015,zJ2017,zJ2015h);
+  EpochType = (eB1950,eB1975,eJ2000,zJ2014,zJ2015,zJ2017,zJ2015h,zJ1991q);
 
 (* Checks if the sizes of A and B allow them to be multiplied *)
 function CheckMatrixDimensions(const A,B:RMatrix):Boolean;
@@ -446,12 +446,7 @@ function GetTransformToGalactic(sepoch:EpochType):RMatrix;
 begin
   if sepoch = eB1950 then Result := B1950toGalactic
   else if sepoch = eB1975 then Result := B1975toGalactic
-  else if sepoch = eJ2000 then Result := J2000toGalactic
-  else if sepoch = zJ2014 then Result := J2000toGalactic
-  else if sepoch = zJ2015 then Result := J2000toGalactic
-  else if sepoch = zJ2015h then Result := J2000toGalactic
-  else if sepoch = zJ2017 then Result := J2000toGalactic
-  else Assert(False);
+  else Result := J2000toGalactic;
 end;
 //------------------------------------
 function GetTransformToJ2000(sepoch:EpochType):RMatrix;

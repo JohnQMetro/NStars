@@ -1501,9 +1501,10 @@ begin
   if const_params.xparams.epochdata = 2014 then depoch := zJ2014
   else if const_params.xparams.epochdata = 2015 then depoch := zJ2015
   else if const_params.xparams.epochdata = 2015.5 then depoch := zJ2015h
+  else if const_params.xparams.epochdata = 1991.25 then depoch := zJ1991q
   else  depoch := eJ2000;
   // getting the simbad data
-  simbx := ImportedDataToSimbad(inpllx);
+  simbx := ImportedDataToSimbad(inpllx,const_params.xparams.epochdata);
   if simbx = nil then begin
     simloc := primaryl.FindFromCatList(inpllx.nameids,sstar_where);
     inpllx.ismatched := ( simloc >= 0 );
@@ -1552,6 +1553,7 @@ begin
   if const_params.xparams.epochdata = 2014 then depoch := zJ2014
   else if const_params.xparams.epochdata = 2015 then depoch := zJ2015
   else if const_params.xparams.epochdata = 2015.5 then depoch := zJ2015h
+  else if const_params.xparams.epochdata = 1991.25 then depoch := zJ1991q
   else  depoch := eJ2000;
   // looking to see if the system is already in the list
   idloc := primaryl.FindFromCatList(inpllx.nameids,sstar_where);
@@ -1566,7 +1568,7 @@ begin
     (* Reject based on parallax *)
     if (not const_params.TestParallax(inpllx)) then Exit;
     // downloading the simbad object
-    simbx := ImportedDataToSimbad(inpllx);
+    simbx := ImportedDataToSimbad(inpllx,const_params.xparams.epochdata);
     if simbx = nil then begin
       inpllx.check:= True;  Exit;
     end;

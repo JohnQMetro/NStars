@@ -7,7 +7,7 @@ unit ExtraImports;
 interface
 
 uses
-  Classes, SysUtils, df_strings, Utilities, newImports2, simbad;
+  Classes, SysUtils, df_strings, Utilities, newImports2, simbad, Utilities2;
 
 type
 
@@ -484,7 +484,7 @@ begin
   Result := GetSimbadDataURL(lookup_url,discardfail);
   if Result <> nil then Exit;
   // here, we try a location based lookup
-  lookup_url := MakeSimbadCoordLookupURL(rapos,decpos,1,False);
+  lookup_url := MakeSimbadCoordLookupURL(rapos,decpos,1,eJ2000);
   Result := GetSimbadDataURL(lookup_url,discardfail);
 end;
 //---------------------------------------------------------

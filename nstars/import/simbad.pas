@@ -10,7 +10,7 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, Math, fgl,
-  df_strings, StringParser, fluxtransform, unitdata, Utilities;
+  df_strings, StringParser, fluxtransform, unitdata, Utilities, Utilities2;
 
 type
 
@@ -133,7 +133,7 @@ SimbadData = class
     function MakeFeHString:string;
 end;
 
-function MakeSimbadCoordLookupURL(const rastring,decstring:string; arcminp:Integer; b1950:Boolean):string;
+function MakeSimbadCoordLookupURL(const rastring,decstring:string; arcminp:Integer; inEpoch:EpochType):string;
 function MakeSimbadIdLookupURL(ident:string):string;
 function GetSimbadDataURL(inurl:string; out fetchfail:Boolean):SimbadData;
 
@@ -1042,10 +1042,12 @@ begin
 end;
 
 //======================================================================
-function MakeSimbadCoordLookupURL(const rastring,decstring:string; arcminp:Integer; b1950:Boolean):string;
+function MakeSimbadCoordLookupURL(const rastring,decstring:string; arcminp:Integer; inEpoch:EpochType):string;
 var partstr1,partstr2:string;
 const simbad_loc_lookup1 = 'http://simbad.u-strasbg.fr/simbad/sim-coo?Coord=';
       simbad_disp = '&submit=display+selected+measurements';
+      coofep = '&CooFrame=ICRS&CooEpoch=';
+      cooNone = '&CooEqui=2000&CooDefinedFrames=none';
 begin
   Assert(arcminp>0);
   Assert(Length(rastring)<>0);
@@ -1054,10 +1056,18 @@ begin
   Result := simbad_loc_lookup1;
   partstr1 := rastring + ' ' + decstring;
   partstr2 := StringToUrlQ(partstr1);
-  Result := Result + partstr2;
-  // the epoch is either J2000 (IRCS) or B1950 (FK4)
-  if b1950 then Result += '&CooDefinedFrames=FK4-B1950'
-  else Result += '&CooDefinedFrames=ICRS-J2000';
+  Result += partstr2;
+  // epoch options
+  case inEpoch of
+    eB1950: Result += '&CooDefinedFrames=FK4-B1950';
+    eB1975: Result += '&CooFrame=FK4&CooEpoch=1975&CooEqui=1975&CooDefinedFrames=none';
+    eJ2000: Result += '&CooDefinedFrames=ICRS-J2000';
+    zJ2014: Result += coofep + '2014' + cooNone;
+    zJ2015: Result += coofep + '2015' + cooNone;
+    zJ2017: Result += coofep + '2017' + cooNone;
+    zJ2015h: Result += coofep + '2015.5' + cooNone;
+    zJ1991q: Result += coofep + '1991.25' + cooNone;
+  end;
   // adding upto radius
   Result := Result + '&Radius=';
   // the radius
