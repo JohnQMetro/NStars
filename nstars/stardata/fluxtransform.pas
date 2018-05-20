@@ -19,6 +19,7 @@ function TychoToFluxes(indata:string; out Vj:Real; out Bj:Currency):Boolean;
 procedure Johnson_to_Cousins(inV:Real; inR,inI:Currency; out Rc,Ic:Currency);
 function DENIStoCousinsI(const inDenisI:Currency):Currency;
 function Gaia2ToVRI(Gmag:Currency; BPmRP:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+function Gaia2To2MASS(Gmag:Currency; BPmRP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 (* SDSS related magnitude conversions *)
 procedure SDSS_gri2BVRI(g,r,i:Real; out Bj,Vj,Rc,Ic:Real);
 function SDSS_ugriz2BVRI(u,g,r,i,z:Real; out Bj,Vj,Rc,Ic:Real):Boolean;
@@ -198,6 +199,43 @@ begin
   interm := PolEval(bmr,coffI,3);
   Icest := CurrToReal(Gmag) - interm;
   Icest := RoundCurrency(Icest,False);
+  Result := True;
+end;
+//------------------------------------------------------------------
+(* This could be useful for binary components. For some reason, it also goes
+much more into the red than the VRI transformations:
+NOTE: however, it seems to give bad results for red dwarfs. avoid. *)
+function Gaia2To2MASS(Gmag:Currency; BPmRP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
+var bmr,gr,interm:Real;
+const coffKs:array[0..2] of Real = ( -0.1885 , 2.092 ,-0.1345 );
+      coffH:array[0..2] of Real  = ( -0.1621 , 1.628 ,-0.1328 );
+      coffJ:array[0..2] of Real  = ( -0.01883, 1.394 ,-0.07893);
+begin
+  Result := False;
+  if (BPmRP >= 5.5) or (BPmRP <= -0.5) then Exit;
+  if Gmag > 90 then Exit;
+  // converting
+  bmr := CurrToReal(BPmRP);
+  gr := CurrToReal(Gmag);
+  // J
+  interm := PolEval(bmr,coffJ,3);
+  Jest := gr - interm;
+  Jest := RoundCurrency(Jest,False);
+  // H
+  if (BPmRP < 5) and (BpmRP > 0.25) then begin
+    interm := PolEval(bmr,coffH,3);
+    Hest := gr - interm;
+    Hest := RoundCurrency(Hest,False);
+  end
+  else Hest := 99.999;
+  // Ks
+  if BpmRP > 0.25 then begin
+    interm := PolEval(bmr,coffKs,3);
+    Ksest := gr - interm;
+    Ksest := RoundCurrency(Ksest,False);
+  end
+  else Ksest := 99.999;
+  // done
   Result := True;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

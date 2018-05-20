@@ -89,11 +89,11 @@ object GaiaDR2AddForm: TGaiaDR2AddForm
   end
   object AutAddParBox: TGroupBox
     Left = 280
-    Height = 153
+    Height = 192
     Top = 32
     Width = 240
     Caption = 'Auto-Add Settings'
-    ClientHeight = 133
+    ClientHeight = 172
     ClientWidth = 236
     TabOrder = 1
     object GMagEdit: TMaskEdit
@@ -177,6 +177,41 @@ object GaiaDR2AddForm: TGaiaDR2AddForm
       Width = 144
       Caption = ' Passes Selection C Test'
       TabOrder = 3
+    end
+    object AutoRejEdit: TMaskEdit
+      Left = 152
+      Height = 25
+      Top = 132
+      Width = 48
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -15
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Quality = fqDraft
+      MaxLength = 4
+      ParentFont = False
+      TabOrder = 4
+      EditMask = '0.00'
+      Text = '2.00'
+      SpaceChar = '_'
+    end
+    object AutoRqjLabel: TLabel
+      Left = 8
+      Height = 15
+      Top = 138
+      Width = 128
+      Caption = 'Auto-Reject Min Pllx Err:'
+      ParentColor = False
+    end
+    object maslbl3: TLabel
+      Left = 206
+      Height = 15
+      Top = 138
+      Width = 22
+      Caption = 'mas'
+      ParentColor = False
     end
   end
   object AddCountLabel: TLabel

@@ -8,8 +8,8 @@ uses
   LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus, StrUtils, Types,
   CheckLst, MaskEdit,
-  collecdata, startproxy, stardata, namedata, newlocation, unitdata, aricns_load,
-  arcins_star, Arcins, gnotes_form, cluster, clusteredit, tgas, simbad,
+  collecdata, startproxy, stardata, namedata, newlocation, unitdata, gnotes_form,
+  cluster, clusteredit, tgas, simbad,
   NewStar, catalogedit, starextraedit, stardataedit, StarDataBase,
   starlocatedit, newImports,  starext2edit, FindDuplInterF, ImportDataForm,
   MainLocatEdit, df_strings, sptfluxest, PPMMatchForm, Utilities2, tgas_import,
@@ -23,7 +23,6 @@ type
 
   TNStarsMainForm = class(TForm)
     AddBDMI: TMenuItem;
-    AricnsDataCB: TCheckBox;
     GaiaMagsFrame1: TGaiaMagsFrame;
     MenuItem1: TMenuItem;
     FluxEstSubMenu: TMenuItem;
@@ -41,7 +40,9 @@ type
     FinDR2MatchMI: TMenuItem;
     AddUMGaiaDR2MI: TMenuItem;
     GaiaDR2MagMI: TMenuItem;
+    MLDeleteSysMI: TMenuItem;
     PanStarrEstMI: TMenuItem;
+    MainListPopupMenu: TPopupMenu;
     Viz2MassGetMI: TMenuItem;
     StarGaiaMatchMI: TMenuItem;
     MISwapParallax: TMenuItem;
@@ -101,11 +102,6 @@ type
     MenuItem5: TMenuItem;
     APASSfluxMI: TMenuItem;
     MenuItem6: TMenuItem;
-    LoadARICNSCatalogs1: TMenuItem;
-    GetARICNSStarData: TMenuItem;
-    GetARICNSDesignations1: TMenuItem;
-    GetArcSystemName: TMenuItem;
-    MenuItem7: TMenuItem;
     Tycho2MagMI: TMenuItem;
     SDSSMagEntryMI: TMenuItem;
     SearchNotesMI: TMenuItem;
@@ -161,7 +157,6 @@ type
     SaveStarList: TSaveDialog;
     Import1: TMenuItem;
     Export1: TMenuItem;
-    RECONSNearest1001: TMenuItem;
     ools1: TMenuItem;
     RenumberIDs1: TMenuItem;
     SortbyDistance1: TMenuItem;
@@ -220,6 +215,7 @@ type
     procedure FindRemTGASMIClick(Sender: TObject);
     procedure FluxEstSubMenuClick(Sender: TObject);
     procedure GaiaDR2MagMIClick(Sender: TObject);
+    procedure GaiaJHKMagMIClick(Sender: TObject);
     procedure GetLoggMIClick(Sender: TObject);
     procedure GotoBM_1MIClick(Sender: TObject);
     procedure GotoBM_2MIClick(Sender: TObject);
@@ -243,8 +239,10 @@ type
     procedure EstBVUATMIClick(Sender: TObject);
     procedure EstIURATMIClick(Sender: TObject);
     procedure AddUMGaiaDR2MIClick(Sender: TObject);
+    procedure MainListPopupMenuPopup(Sender: TObject);
     procedure MergeIntoMIClick(Sender: TObject);
     procedure MISwapParallaxClick(Sender: TObject);
+    procedure MLDeleteSysMIClick(Sender: TObject);
     procedure New1Click(Sender: TObject);
     procedure ools1Click(Sender: TObject);
     procedure PanStarrEstMIClick(Sender: TObject);
@@ -306,7 +304,6 @@ type
     procedure Open1Click(Sender: TObject);
     procedure Save1Click(Sender: TObject);
     procedure RemoveStar1Click(Sender: TObject);
-    procedure RECONSNearest1001Click(Sender: TObject);
     procedure ProblemCBClick(Sender: TObject);
     procedure RenumberIDs1Click(Sender: TObject);
     procedure SortbyDistance1Click(Sender: TObject);
@@ -316,8 +313,6 @@ type
     procedure FindConstellation1Click(Sender: TObject);
     procedure StarDisplaySetChange(Sender: TObject);
     procedure FindbyName1Click(Sender: TObject);
-    procedure LoadARICNSCatalogs1Click(Sender: TObject);
-    procedure GetARICNSStarDataClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure DeleteSystem1Click(Sender: TObject);
     procedure AddBinaryNote1Click(Sender: TObject);
@@ -328,10 +323,8 @@ type
     procedure ShowGlobalNotes1Click(Sender: TObject);
     procedure ShowDistance1Click(Sender: TObject);
     procedure LocationUncertian1Click(Sender: TObject);
-    procedure GetARICNSDesignations1Click(Sender: TObject);
     procedure HasSpectralType1Click(Sender: TObject);
     procedure RenameCatalogs1Click(Sender: TObject);
-    procedure ARICNSDiff1Click(Sender: TObject);
     procedure UseNameBtnClick(Sender: TObject);
     procedure FictionalNamesEditExit(Sender: TObject);
     procedure PoliticalStatusMemoExit(Sender: TObject);
@@ -340,11 +333,11 @@ type
     procedure EditClusters1Click(Sender: TObject);
     procedure NoAssociatedCluster1Click(Sender: TObject);
     procedure Name2300adEditExit(Sender: TObject);
-    procedure GetArcSystemNameClick(Sender: TObject);
   private
     { Private declarations }
     supstab:Boolean;
     parallax_source:string;
+    x_popup_index:Integer;
     procedure StarParallaxChanged(Sender: TObject);
     procedure MainParallaxChange(Sender: TObject);
     procedure FluxTEffChange(Sender:TObject);
@@ -375,6 +368,7 @@ type
     // filters menu checks removal
     procedure UncheckFilters;
     procedure NewLocChangeCheck;
+    function MLSetPopupIndex:Boolean;
   end;
 
 var
@@ -448,8 +442,6 @@ begin
   // reloading star data
   LoadAllStarData;
   RemoveStar1.Enabled := True;
-  // disabing menus if necessary
-  if (adat.loaded) then GetArcSystemName.Enabled := True;
 end;
 
 procedure TNStarsMainForm.AddBDMIClick(Sender: TObject);
@@ -469,8 +461,6 @@ begin
   // loading star data
   LoadAllStarData;
   RemoveStar1.Enabled := True;
-  // disabing menus if necessary
-  if (adat.loaded) then GetArcSystemName.Enabled := True;
 end;
 
 procedure TNStarsMainForm.APASSfluxMIClick(Sender: TObject);
@@ -785,6 +775,18 @@ begin
   end;
 end;
 
+procedure TNStarsMainForm.GaiaJHKMagMIClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.GaiaDR2_To_JHK();
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
 procedure TNStarsMainForm.GetLoggMIClick(Sender: TObject);
 begin
   SimbadIDFetch(2);
@@ -836,9 +838,6 @@ var notsun:Boolean;
 begin
   AddUMGaiaDR2MI.Enabled := (DR2Data <> nil) and (DR2Data.StarCount > 0);
   notsun := (current <> nil) and (current.sys <> nil) and (current.sys.GetId > 0);
-  GetARICNSStarData.Enabled := adat.loaded and notsun;
-  GetARICNSDesignations1.Enabled := adat.loaded and notsun;
-  GetArcSystemName.Enabled := adat.loaded and notsun and (current.sys.GetCompC > 1);
   SimbadUrlData.Enabled := notsun;
   SimbURLCGID.Enabled := notsun;
   SimbadDataFetch.Enabled := notsun;
@@ -1095,62 +1094,6 @@ begin
   StarModCheck(Sender);
   SystemModCheck(Sender);
 end;
-//-----------------------------------------------------------------
-procedure TNStarsMainForm.GetARICNSDesignations1Click(Sender: TObject);
-const catfound='Catalog designations found are listed below:';
-var msgvalue:string;
-    nummsg, bval:string;
-    resvalue:Boolean;
-    inarity,outarity, mval:Integer;
-    Save_Cursor:TCursor;
-begin
-  // set the hourglass...
-  Save_Cursor := Screen.Cursor;
-  Screen.Cursor := crHourGlass;
-  // finding the specific arity
-  inarity := current.sys.GetCompC;
-  if (inarity = 1) then mval := 0
-  else mval := 1;
-  // value displaying and getting OK or cancel
-  msgvalue := FindDesignations(current.sys,current.starindex, mval);
-  if msgvalue='' then begin
-    if (inarity=1) then begin
-      // a common reason for not finding things is a mismatch is the arity
-      outarity := FindAricnsArity(current.sys);
-      // building the result message
-      if (outarity = 0) then nummsg := 'The System was not found!'
-      else if (outarity = 1) then nummsg := 'The System was found, but there is uncertainty in components. Check ARICNS manually'
-      else begin
-        Str(outarity,bval);
-        nummsg := 'The arity of the System should be ' + Trim(bval) + '. Please increase the arity to match!';
-      end;
-    end
-    else nummsg := 'No designations found for this component!';
-    // showing a message
-    Screen.Cursor := Save_Cursor;
-    ShowMessage(nummsg);
-  end
-  else begin
-    Screen.Cursor := Save_Cursor;
-    resvalue := InputQuery('ARICNS Names',catfound,msgvalue);
-    // if the conditions are met
-    if resvalue and (inarity=1) then begin
-      CatalogIDEditSystem.AddCatalogNamesExternal(msgvalue,False);
-    end
-    else if resvalue then begin
-      StarCatIDFrame.AddCatalogNamesExternal(msgvalue,False);
-    end;
-  end;
-end;
-
-procedure TNStarsMainForm.GetARICNSStarDataClick(Sender: TObject);
-begin
-  loadlist := False;
-  ARICNS_CheckSystem := current.sys;
-  ARICNS_CheckStar := current.starindex;
-  ArcinsDataDisplay := TArcinsDataDisplay.Create(Self);
-  ArcinsDataDisplay.Show;
-end;
 //----------------------------------------------------------------------
 procedure TNStarsMainForm.HasPlanetsCBClick(Sender: TObject);
 begin
@@ -1232,17 +1175,6 @@ end;
 
 //-----------------------------------------------------
 
-procedure TNStarsMainForm.RECONSNearest1001Click(Sender: TObject);
-var qfile:TFileName;
-begin
-  GeneralModCheck(Sender);
-  if OpenStarList.Execute then begin
-    qfile := OpenStarList.FileName;
-    primaryl.GetFromRecons(qfile);
-    Save1.Enabled := false;
-  end;
-end;
-
 procedure TNStarsMainForm.RemoveFilters1Click(Sender: TObject);
 begin
   Screen.Cursor := crHourGlass;
@@ -1279,9 +1211,6 @@ begin
   // loading star data
   supstab := False;
   LoadAllStarData;
-  // disabing menus if necessary
-  arity := current.sys.GetCompC;
-  if (arity = 1) then GetArcSystemName.Enabled := False;
 end;
 
 procedure TNStarsMainForm.RenameCatalogs1Click(Sender: TObject);
@@ -1403,9 +1332,6 @@ begin
   // has planets
   HasPlanetsCB.Checked := current.sys.has_planets;
   // aricns and simbad
-  AricnsDataCB.Enabled:= True;
-  AricnsDataCB.Checked:= current.sys.aricns_data;
-  AricnsDataCB.Enabled:= False;
   SimbadDataCB.Enabled:= True;
   SimbadDataCB.Checked:= current.sys.simbad_data;
   SimbadDataCB.Enabled:= False;
@@ -1718,20 +1644,6 @@ begin
   // loading star data
   LoadAllStarData;
   RemoveStar1.Enabled := True;
-  // disabing menus if necessary
-  if (adat.loaded) then GetArcSystemName.Enabled := True;
-end;
-
-
-procedure TNStarsMainForm.ARICNSDiff1Click(Sender: TObject);
-const prompt1 = 'Finding the difference between this list and ARICNS.';
-      prompt2 = 'Please Wait.';
-      prompt3 = 'Done. Find the file ''arcdiff.txt'' for the results.';
-begin
-  // getting the list and getting OK or cancel
-  ShowMessage(prompt1+#13#10+prompt2);
-  primaryl.AricnsDiff('arcdiff.txt');
-  ShowMessage(prompt3);
 end;
 
 procedure TNStarsMainForm.BayerPickListChange(Sender: TObject);
@@ -1847,21 +1759,6 @@ begin
     RemoveStar1.Enabled := True;
   end;
 end;
-//--------------------------------------------------
-procedure TNStarsMainForm.LoadARICNSCatalogs1Click(Sender: TObject);
-var A:Integer;
-begin
-  ClearAdat;
-  AricnsLoadForm := TAricnsLoadForm.Create(Self);
-  AricnsLoadForm.Show;
-  GetARICNSStarData.Enabled := True;
-  GetARICNSDesignations1.Enabled := True;
-  // ARICNSDiff1.Enabled := True;
-  // the GetArcSystemName menu item
-  A := current.sys.GetCompC;
-  if A>1 then GetArcSystemName.Enabled := True
-  else GetArcSystemName.Enabled := False;
-end;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++
 procedure TNStarsMainForm.ChangeSystem;
@@ -1891,11 +1788,6 @@ begin
   ListOfStarSystems.Items[ListOfStarSystems.ItemIndex] := MainSystemName.Text;
   // enabling or disabling certain items
   SystemEnableDisable;
-  // we now enable or disbale the GetArcSystemName menu item
-  if (adat.loaded) then begin
-    if A>1 then GetArcSystemName.Enabled := True
-    else GetArcSystemName.Enabled := False;
-  end;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 procedure TNStarsMainForm.UncheckFilters;
@@ -2209,6 +2101,11 @@ begin
   GaiaDR2AddForm.Show;
 end;
 
+procedure TNStarsMainForm.MainListPopupMenuPopup(Sender: TObject);
+begin
+  MLSetPopupIndex();
+end;
+
 procedure TNStarsMainForm.MergeIntoMIClick(Sender: TObject);
 var mok:Boolean;
     targetid:Integer;
@@ -2254,6 +2151,34 @@ begin
   if xres then begin
     MainLocatEditFrame1.Reload;
   end;
+end;
+
+procedure TNStarsMainForm.MLDeleteSysMIClick(Sender: TObject);
+var delete_index,current_index:Integer;
+    new_sindex:Integer;
+    xstarsys:StarSystem;
+begin
+  Screen.Cursor := crHourGlass;
+  delete_index := x_popup_index;
+  current_index := ListOfStarSystems.ItemIndex;
+  if (current_index = delete_index) then begin
+    primaryl.DeleteCurrentSystem;
+    xstarsys := nil;
+  end
+  else begin
+    xstarsys := primaryl.RemoveSystem(delete_index);
+  end;
+  primaryl.LoadHereAndAfter(delete_index);
+  // changing the index if need be...
+  if current_index >= delete_index then begin
+    new_sindex := current_index - 1;
+    if ListOfStarSystems.Items.Count>0 then begin
+      ListOfStarSystems.ItemIndex := new_sindex;
+      primaryl.ChangeSystem(new_sindex);
+      ChangeSystem;
+    end;
+  end;
+  Screen.Cursor := crDefault;
 end;
 
 procedure TNStarsMainForm.New1Click(Sender: TObject);
@@ -2786,47 +2711,6 @@ begin
   current.sys.name2300ad := Name2300adEdit.Text;
   Name2300adEdit.Modified := False;
 end;
-//------------------------------------------------
-procedure TNStarsMainForm.GetArcSystemNameClick(Sender: TObject);
-const catfound='Catalog designations found are listed below:';
-var msgvalue:string;
-    nummsg, bval:string;
-    resvalue:Boolean;
-    inarity,outarity, mval:Integer;
-    Save_Cursor:TCursor;
-begin
-  // set the hourglass...
-  Save_Cursor := Screen.Cursor;
-  Screen.Cursor := crHourGlass;
-  // finding the specific arity
-  inarity := current.sys.GetCompC;
-  assert(inarity>1);
-  mval := 2;
-  // value displaying and getting OK or cancel
-  msgvalue := FindDesignations(current.sys,current.starindex, mval);
-  if msgvalue='' then begin
-    // a common reason for not finding things is a mismatch is the arity
-    outarity := FindAricnsArity(current.sys);
-    // building the result message
-    if (outarity = 0) then nummsg := 'The System was not found!'
-    else if (outarity = 1) then nummsg := 'The System was found, but there is uncertainty in components. Check ARICNS manually'
-    else begin
-      Str(outarity,bval);
-      nummsg := 'The arity of the System should be ' + Trim(bval) + '. Please increase the arity to match!';
-    end;
-    // showing a message
-    Screen.Cursor := Save_Cursor;
-    ShowMessage(nummsg);
-  end
-  else begin
-    Screen.Cursor := Save_Cursor;
-    resvalue := InputQuery('ARICNS System Names',catfound,msgvalue);
-    // if the conditions are met
-    if resvalue then begin
-      CatalogIDEditSystem.AddCatalogNamesExternal(msgvalue,False);
-    end;
-  end;
-end;
 //---------------------------------------------------
 procedure TNStarsMainForm.NewLocChangeCheck;
 var extrac,idl:Boolean;
@@ -2853,6 +2737,15 @@ begin
       UseSepLocatCB.Checked := False;
     end;
   end;
+end;
+//---------------------------------------
+function TNStarsMainForm.MLSetPopupIndex:Boolean;
+var ppoint:TPoint;
+begin
+  ppoint := MainListPopupMenu.PopupPoint;
+  ppoint := ListOfStarSystems.ScreenToClient(ppoint);
+  x_popup_index := ListOfStarSystems.ItemAtPos(ppoint,True);
+  Result := (x_popup_index >=0);
 end;
 //================================================================================
 

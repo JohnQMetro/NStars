@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="62">
+    <Units Count="58">
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -78,293 +78,271 @@
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="import\Arcins.pas"/>
+        <Filename Value="import\simbad.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
       <Unit9>
-        <Filename Value="import\arcins_star.pas"/>
+        <Filename Value="data\namedata.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="ArcinsDataDisplay"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
       </Unit9>
       <Unit10>
-        <Filename Value="import\recons.pas"/>
+        <Filename Value="data\unitdata.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit10>
       <Unit11>
-        <Filename Value="import\simbad.pas"/>
+        <Filename Value="data\constellation.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
       <Unit12>
-        <Filename Value="data\namedata.pas"/>
+        <Filename Value="data\stardata.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit12>
       <Unit13>
-        <Filename Value="data\unitdata.pas"/>
+        <Filename Value="import\isdbutils.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit13>
       <Unit14>
-        <Filename Value="data\constellation.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit14>
-      <Unit15>
-        <Filename Value="data\stardata.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit15>
-      <Unit16>
-        <Filename Value="import\isdbutils.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit16>
-      <Unit17>
         <Filename Value="data\newstar.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="NewStar"/>
-      </Unit17>
-      <Unit18>
+      </Unit14>
+      <Unit15>
         <Filename Value="data\stardatabase.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarDataBase"/>
-      </Unit18>
-      <Unit19>
+      </Unit15>
+      <Unit16>
         <Filename Value="data\catalogedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CatalogIDEditFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit19>
-      <Unit20>
+      </Unit16>
+      <Unit17>
         <Filename Value="data\starextraedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="StarExtraDataFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit20>
-      <Unit21>
+      </Unit17>
+      <Unit18>
         <Filename Value="data\stardataedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CoreStarDataFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit21>
-      <Unit22>
+      </Unit18>
+      <Unit19>
         <Filename Value="data\starlocatedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="StarLocatFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit22>
-      <Unit23>
+      </Unit19>
+      <Unit20>
         <Filename Value="import\newimports.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="newImports"/>
-      </Unit23>
-      <Unit24>
+      </Unit20>
+      <Unit21>
         <Filename Value="data\starext2.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarExt2"/>
-      </Unit24>
-      <Unit25>
+      </Unit21>
+      <Unit22>
         <Filename Value="data\starext2edit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="StarExtras2Frame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit25>
-      <Unit26>
+      </Unit22>
+      <Unit23>
         <Filename Value="import\extraimports.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ExtraImports"/>
-      </Unit26>
-      <Unit27>
+      </Unit23>
+      <Unit24>
         <Filename Value="stringparser.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StringParser"/>
-      </Unit27>
-      <Unit28>
+      </Unit24>
+      <Unit25>
         <Filename Value="findduplinterf.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FindCatDuplForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FindDuplInterF"/>
-      </Unit28>
-      <Unit29>
+      </Unit25>
+      <Unit26>
         <Filename Value="utilities.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Utilities"/>
-      </Unit29>
-      <Unit30>
+      </Unit26>
+      <Unit27>
         <Filename Value="import\importdataform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ImportForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ImportDataForm"/>
-      </Unit30>
-      <Unit31>
+      </Unit27>
+      <Unit28>
         <Filename Value="data\newlocation.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit31>
-      <Unit32>
+      </Unit28>
+      <Unit29>
         <Filename Value="data\mainlocatedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainLocatEditFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="MainLocatEdit"/>
-      </Unit32>
-      <Unit33>
+      </Unit29>
+      <Unit30>
         <Filename Value="ppmmatchform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PositionProperMotionMatchForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="PPMMatchForm"/>
-      </Unit33>
-      <Unit34>
+      </Unit30>
+      <Unit31>
         <Filename Value="import\importvizier.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ImportVizier"/>
-      </Unit34>
-      <Unit35>
+      </Unit31>
+      <Unit32>
         <Filename Value="utilities2.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Utilities2"/>
-      </Unit35>
-      <Unit36>
-        <Filename Value="import\aricns_load.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="AricnsLoadForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit36>
-      <Unit37>
+      </Unit32>
+      <Unit33>
         <Filename Value="import\export_form.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ExportForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit37>
-      <Unit38>
+      </Unit33>
+      <Unit34>
         <Filename Value="guessstype.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit38>
-      <Unit39>
+      </Unit34>
+      <Unit35>
         <Filename Value="stardata\starconstants.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit39>
-      <Unit40>
+      </Unit35>
+      <Unit36>
         <Filename Value="stardata\estbasics.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EstBasics"/>
-      </Unit40>
-      <Unit41>
+      </Unit36>
+      <Unit37>
         <Filename Value="stardata\whitedwarf.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="WhiteDwarf"/>
-      </Unit41>
-      <Unit42>
+      </Unit37>
+      <Unit38>
         <Filename Value="stardata\teffbcv.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TEffBCv"/>
-      </Unit42>
-      <Unit43>
+      </Unit38>
+      <Unit39>
         <Filename Value="stardata\sptfluxest.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit43>
-      <Unit44>
+      </Unit39>
+      <Unit40>
         <Filename Value="stardata\estutilsextra.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EstUtilsExtra"/>
-      </Unit44>
-      <Unit45>
+      </Unit40>
+      <Unit41>
         <Filename Value="stardata\starestimator.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarEstimator"/>
-      </Unit45>
-      <Unit46>
+      </Unit41>
+      <Unit42>
         <Filename Value="stardata\fluxtransform.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit46>
-      <Unit47>
+      </Unit42>
+      <Unit43>
         <Filename Value="import\newimports3.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="newImports3"/>
-      </Unit47>
-      <Unit48>
+      </Unit43>
+      <Unit44>
         <Filename Value="import\newimports2.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="newImports2"/>
-      </Unit48>
-      <Unit49>
+      </Unit44>
+      <Unit45>
         <Filename Value="gaia\tgas.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit49>
-      <Unit50>
+      </Unit45>
+      <Unit46>
         <Filename Value="gaia\tgas_import.pas"/>
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
-      </Unit50>
-      <Unit51>
+      </Unit46>
+      <Unit47>
         <Filename Value="gaia\gaiadr2base.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit51>
-      <Unit52>
+      </Unit47>
+      <Unit48>
         <Filename Value="gaia\gaiadr2match.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="GaiaDR2Picker"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit52>
-      <Unit53>
+      </Unit48>
+      <Unit49>
         <Filename Value="gaia\gaiadr2holder.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit53>
-      <Unit54>
+      </Unit49>
+      <Unit50>
         <Filename Value="gaia\dr2iothreads.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit54>
-      <Unit55>
+      </Unit50>
+      <Unit51>
         <Filename Value="gaia\dr2loadstore.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="GaiaDR2LoadStoreForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit55>
-      <Unit56>
+      </Unit51>
+      <Unit52>
         <Filename Value="gaia\dr2sourceload.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="GaiaDR2LSourceForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit56>
-      <Unit57>
+      </Unit52>
+      <Unit53>
         <Filename Value="gaia\gaiamagsui.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="GaiaMagsFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit57>
-      <Unit58>
+      </Unit53>
+      <Unit54>
         <Filename Value="gaia\dr2matchthread.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit58>
-      <Unit59>
+      </Unit54>
+      <Unit55>
         <Filename Value="startproxy.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit59>
-      <Unit60>
+      </Unit55>
+      <Unit56>
         <Filename Value="gaia\dr2addnew.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit60>
-      <Unit61>
+      </Unit56>
+      <Unit57>
         <Filename Value="gaia\gaiadr2add.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="GaiaDR2AddForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit61>
+      </Unit57>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

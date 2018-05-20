@@ -5,8 +5,8 @@ unit collecdata;
 interface
 
 uses SysUtils, StdCtrls, Classes, StrUtils, Dialogs, Controls, Forms, FileUtil,
-  stardata,startproxy, newlocation, namedata, recons, constellation, sptfluxest, df_strings,
-  Arcins, cluster, tgas, simbad, NewStar, newImports, StarDataBase, ExtraImports,
+  stardata,startproxy, newlocation, namedata, constellation, sptfluxest, df_strings,
+  cluster, tgas, simbad, NewStar, newImports, StarDataBase, ExtraImports,
   StarExt2,fluxtransform,ImportVizier,Utilities2,StarEstimator, guessstype,
   gaiadr2holder;
 
@@ -55,7 +55,6 @@ StarList = class
     function FindByString(inval:string; out where:Integer):Integer;
     function FindByID(tofind:Integer):Integer;
     function RenameCatalogs(indata:string):Integer;
-    function AricnsDiff(xoutfile:TFileName):Integer;
     function ReLinkCluster(inclus:ClusterData):Integer;
     function BoldAtIndex(theIndex:Integer):Boolean;
     function BoldAtFilteredIndex(theIndex:Integer):Boolean;
@@ -77,7 +76,6 @@ StarList = class
     procedure SaveToAstrosynthesis(fnin:TFileName; oparams:SysOutParams);
     procedure Save;
     procedure OpenFromFile(fnin:TFileName);
-    procedure GetFromRecons(fnin:TFileName);
     // filters
     procedure RadVIsZeroFilter;
     procedure DistanceTest(indist:Real; targyear:Integer);
@@ -404,74 +402,6 @@ begin
   // done
   newlist.Free;
   Result := rtotal;
-end;
-//---------------------------------------------------------
-function StarList.AricnsDiff(xoutfile:TFileName):Integer;
-var notaricns,aricnsnot:TStringList;
-    I,J,scount,ncount:Integer;
-    xcurrent:AricnsEntry;
-    buf:string;
-    faricnsdif:Text;
-begin
-  // we start
-  notaricns := TStringList.Create;
-  aricnsnot := TStringList.Create;
-  adat.urldata.UncheckAll;
-  // the main loop, looking for our stars in ARICNS
-  for I := 1 to maincount - 1 do begin
-    scount := System_List[I].GetCompC;
-    for J := 1 to scount do begin
-      xcurrent := FindAricnsEntry(System_List[I],J);
-      if (xcurrent=nil) then begin
-        buf := System_List[I].GetPreferredName;
-        notaricns.Add(buf);
-      end
-      else xcurrent.SetChecked(true);
-    end;
-  end;
-  // the second main loop
-  ncount := adat.urldata.GetCount;
-  for I := 0 to ncount - 1 do begin
-    // we have an aricns star not in our list!
-    if not (adat.urldata.IsChecked(I)) then begin
-      xcurrent := adat.urldata.GetAtIndex(I);
-      buf := GenerateDesignations(xcurrent,0);
-      aricnsnot.Add(buf);
-    end;
-  end;
-  // once here, all we really need to do is write to a file
-  // preparing the new file
-  AssignFile(faricnsdif,xoutfile);
-  Rewrite(faricnsdif);
-  // writing systems not in ARICNS
-  buf := 'Systems apparently not in ARICNS :';
-  Writeln(faricnsdif,buf);
-  buf := '-------------------------------------------';
-  Writeln(faricnsdif,buf);
-  Flush(faricnsdif);
-  // the header is done
-  for I := 0 to notaricns.Count - 1 do begin
-    Writeln(faricnsdif,notaricns[I]);
-  end;
-  Flush(faricnsdif);
-  // writing aricns stars not in our list
-  buf := ' ';
-  Writeln(faricnsdif,buf);
-  buf := 'ARICNS stars apprently not in the star list:';
-  Writeln(faricnsdif,buf);
-  buf := '--------------------------------------------';
-  Writeln(faricnsdif,buf);
-  Flush(faricnsdif);
-  // the header is done
-  for I := 0 to aricnsnot.Count - 1 do begin
-    Writeln(faricnsdif,aricnsnot[I]);
-  end;
-  Flush(faricnsdif);
-  // finishing
-  Close(faricnsdif);
-  Result := notaricns.Count + aricnsnot.Count;
-  notaricns.Free;
-  aricnsnot.Free;
 end;
 //---------------------------------------------------------
 function StarList.ReLinkCluster(inclus:ClusterData):Integer;
@@ -820,32 +750,6 @@ begin
   // loading the interface
   CopyToFiltered;
 end;
-//-----------------------------------------------------------
-procedure StarList.GetFromRecons(fnin:TFileName);
-var I:Integer;
-begin
-  if ImportRecons(fnin,1) then begin
-    // we clear out the old stuff
-    EmptyAll;
-    // pay heed to the new stuff
-    SetLength(System_List,rl_systnum+1);
-    for I := 1 to rl_systnum do begin
-      System_List[I] := ReconsList[I-1];
-    end;
-    idcount := rl_systnum+1;
-    maincount := rl_systnum+1;
-    // we now set item 0, which is the sun
-    System_List[0] := MakeSol;
-    // filenames
-    fnameset := False;
-    filename := '';
-    // loading the interface
-    CopyToFiltered;
-    // getting rid of recons
-    rl_systnum:=0;
-    SetLength(ReconsList,0);
-  end;
-end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // filters
 //-------------------------------------------------------
@@ -949,6 +853,7 @@ begin
 end;
 //----------------------------------------------------------
 procedure StarList.SpectralProblems;
+var I:Integer;
 begin
   ClearFiltered;
   // copying over
@@ -964,6 +869,7 @@ begin
 end;
 //----------------------------------------------------------
 procedure StarList.HasMultiples;
+var I:Integer;
 begin
   ClearFiltered;
   // copying over
@@ -979,6 +885,7 @@ begin
 end;
 //-----------------------------------------
 procedure StarList.LuminosityProblems;
+var I:Integer;
 begin
   ClearFiltered;
   // copying over
@@ -994,6 +901,7 @@ begin
 end;
 //---------------------------------------
 procedure StarList.HasProblems;
+var I:Integer;
 begin
   ClearFiltered;
   // copying over
@@ -1009,6 +917,7 @@ begin
 end;
 //-------------------------------------
 procedure StarList.NoMassBrownDwarfs;
+var I:Integer;
 begin
   ClearFiltered;
   // copying over

@@ -1555,6 +1555,7 @@ begin
     // otherwise, we use the Gaia DR2 Parallax
     binarycopy := False;
     UpdateParallax(inastro.parallax,inastro.parallax_err);
+    if inastro.parallax_err < 0.12 then uncertain := false;
   end;
   source := GAIA2_TAG;
   // proper motion

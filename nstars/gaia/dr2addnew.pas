@@ -28,6 +28,7 @@ DR2AutoAddSettings = record
   maxPllxError:Real;
   reqSelectionA:Boolean;
   reqSelectionC:Boolean;
+  minRejectError:Real;
 end;
 
 (* Class used when we pass data to the user for approval *)
@@ -124,7 +125,7 @@ begin
   PostMessage(msgTarget,MSG_CHECKADD,Int64(bundle),0);
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// does a gaia match for the stars in the current system
+// handles the current gaia object for addition/rejection, etc
 procedure AddFromDR2Thread.AddCheckForUnmatched();
 var autoadd:Boolean;
     simdat:SimbadData;
@@ -134,6 +135,12 @@ begin
   // quick ignore checks
   if baseparams.ignoreRejects and curobj.permaReject then Exit;
   if curobj.astrometry.parallax < baseparams.minpllx then Exit;
+  if curobj.astrometry.parallax_err >= autoparams.minRejectError then begin
+    if baseparams.ignoreRejects then begin
+      curobj.permaReject := True;
+      Exit;
+    end;
+  end;
   // simbad and two mass
   simdat := nil;
   tmassd := nil;

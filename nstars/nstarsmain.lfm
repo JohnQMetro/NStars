@@ -482,21 +482,13 @@ object NStarsMainForm: TNStarsMainForm
           OnExit = SystemNotesMemoExit
           TabOrder = 16
         end
-        object AricnsDataCB: TCheckBox
-          Left = 504
-          Height = 19
-          Top = 288
-          Width = 75
-          Caption = 'Aricns Data'
-          TabOrder = 17
-        end
         object SimbadDataCB: TCheckBox
           Left = 504
           Height = 19
           Top = 312
           Width = 80
           Caption = 'Simbad Data'
-          TabOrder = 18
+          TabOrder = 17
         end
       end
       object ComponentTab: TTabSheet
@@ -928,6 +920,7 @@ object NStarsMainForm: TNStarsMainForm
     ItemHeight = 0
     OnClick = ListOfStarSystemsClick
     OnDrawItem = ListofStarSystemsDrawItem
+    PopupMenu = MainListPopupMenu
     Style = lbOwnerDrawFixed
     TabOrder = 1
   end
@@ -1067,10 +1060,6 @@ object NStarsMainForm: TNStarsMainForm
     object Import1: TMenuItem
       Caption = 'Import'
       OnClick = Import1Click
-      object RECONSNearest1001: TMenuItem
-        Caption = 'RECONS Nearest 100...'
-        OnClick = RECONSNearest1001Click
-      end
       object PllxImportMI: TMenuItem
         Caption = 'Import Parallaxes...'
         OnClick = PllxImportMIClick
@@ -1122,25 +1111,6 @@ object NStarsMainForm: TNStarsMainForm
         OnClick = AddUMGaiaDR2MIClick
       end
       object MenuItem10: TMenuItem
-        Caption = '-'
-      end
-      object LoadARICNSCatalogs1: TMenuItem
-        Caption = 'Load ARICNS Catalogs...'
-        OnClick = LoadARICNSCatalogs1Click
-      end
-      object GetARICNSStarData: TMenuItem
-        Caption = 'Get ARICNS Star Data...'
-        OnClick = GetARICNSStarDataClick
-      end
-      object GetARICNSDesignations1: TMenuItem
-        Caption = 'Get ARICNS Designations...'
-        OnClick = GetARICNSDesignations1Click
-      end
-      object GetArcSystemName: TMenuItem
-        Caption = 'Get ARICNS System Designations...'
-        OnClick = GetArcSystemNameClick
-      end
-      object MenuItem7: TMenuItem
         Caption = '-'
       end
       object SimbadURLData: TMenuItem
@@ -1426,5 +1396,14 @@ object NStarsMainForm: TNStarsMainForm
     Filter = 'Nstars Star List 2 (*.nsl2)|*.nsl2'
     left = 76
     top = 516
+  end
+  object MainListPopupMenu: TPopupMenu
+    OnPopup = MainListPopupMenuPopup
+    left = 144
+    top = 516
+    object MLDeleteSysMI: TMenuItem
+      Caption = 'Delete This System'
+      OnClick = MLDeleteSysMIClick
+    end
   end
 end

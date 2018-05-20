@@ -24,6 +24,7 @@ StarProxy = class
     function GetCurrentParallax:Real;
     procedure ApplyTGASChange(newdata:TGASData);
     function ShowEst(Vest:Real; Best,Rcest,Icest:Currency; amsg:string):Boolean;
+    function ShowEstJHK(Jest,Hest,Ksest:Currency; amsg:string):Boolean;
   public
     // system level information
     sys:StarSystem;
@@ -73,6 +74,7 @@ StarProxy = class
     function URAT_To_Ic(indata:string):Boolean;
     function UCAC4_To_Ic(indata:string):Boolean;
     function BPRP_To_VRI():Boolean;
+    function GaiaDR2_To_JHK():Boolean;
     function PanStarrs_To_BVRI(indata:string):Boolean;
 end;
 
@@ -253,7 +255,55 @@ begin
     Result := True;
   end;
 end;
-
+//----------------------------------------------------------
+function StarProxy.ShowEstJHK(Jest,Hest,Ksest:Currency; amsg:string):Boolean;
+var msgdata:string;
+    rval:Word;
+    usecount:Integer;
+    outm:string;
+begin
+  Result := False;
+  usecount := 0;
+  outm := '';
+  // building the message to show
+  msgdata := 'The estimates are :' + sLineBreak;
+  // J
+  if (Jest < 90) then begin
+    msgdata += 'J : ' + CurrToStrF(Jest,ffFixed,3) + sLineBreak;
+    Inc(usecount);
+    outm += 'J';
+  end;
+  // H
+  if (Hest < 90) then begin
+    msgdata += 'H : ' + CurrToStrF(Hest,ffFixed,3) + sLineBreak;
+    Inc(usecount);
+    outm += 'H';
+  end;
+  // Ks
+  if (Ksest < 90) then begin
+    msgdata += 'Ks: ' + CurrToStrF(Ksest,ffFixed,3) + sLineBreak;
+    Inc(usecount);
+    outm += 'R';
+  end;
+  if (usecount = 0) then Exit
+  else if usecount = 1 then msgdata += 'Do you want to use this magnitude?'
+  else msgdata += 'Do you want to use these magnitudes?';
+  // asking if we want to use the estimated magnitudes
+  rval := mrNo;
+  rval := MessageDlg(msgdata, mtConfirmation,[mbYes, mbNo],0);
+  if (rval = mrYes) then begin
+    if ccomponent.fluxtemp = nil then ccomponent.fluxtemp := StarFluxPlus.Create;
+    if (Jest < 90) then ccomponent.fluxtemp.J_mag := Jest;
+    if (Hest < 90) then ccomponent.fluxtemp.H_mag := Hest;
+    if (Ksest < 90) then ccomponent.fluxtemp.K_mag := Ksest;
+    // adding some notes
+    if not ccomponent.NotesConatins(amsg) then begin
+      ccomponent.AppndNote(' ' + outm + ' ' + amsg,False);
+    end;
+    sys.UpdateEstimates;
+    Result := True;
+  end;
+end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // public methods
 constructor StarProxy.Create;
@@ -1213,6 +1263,35 @@ begin
     Exit;
   end;
   Result := ShowEst(Vest,99,Rcest,Icest,amsg);
+end;
+//--------------------------------------------------------
+function StarProxy.GaiaDR2_To_JHK():Boolean;
+var okay:Boolean;
+    BPmRP,Gin,Jest,Hest,Ksest:Currency;
+    msgdata:string;
+const amsg = 'estimated from Gaia DR2 magnitudes.';
+begin
+  Result := False;
+  // basic bad exit cases...
+  if ccomponent = nil then begin
+    ShowMessage('No Star to estimate!');
+    Exit;
+  end;
+  okay := ccomponent.dr2mags <> nil;
+  if okay then okay := ccomponent.dr2mags.ValidBPmRP;
+  if okay then okay := (ccomponent.dr2mags.G < 90);
+  if not okay then begin
+     ShowMessage('Object does not have all Gaia Magnitudes!');
+     Exit;
+  end;
+  // getting the magnitudes and the values...
+  BPmRP := ccomponent.dr2mags.BPminRP;
+  Gin := ccomponent.dr2mags.G;
+  if not Gaia2To2MASS(Gin,BPmRP,Jest,Hest,Ksest) then begin
+    ShowMessage('Cannot estimate: BP-RP not within range!');
+    Exit;
+  end;
+  Result := ShowEstJHK(Jest,Hest,Ksest,amsg);
 end;
 //----------------------------------------------------------------
 function StarProxy.PanStarrs_To_BVRI(indata:string):Boolean;

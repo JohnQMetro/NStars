@@ -17,6 +17,9 @@ type
     AddCountLabel: TLabel;
     AddInfoBox: TGroupBox;
     AddStarButton: TButton;
+    AutoRqjLabel: TLabel;
+    maslbl3: TLabel;
+    AutoRejEdit: TMaskEdit;
     Viz2MCB: TCheckBox;
     DownSimCB: TCheckBox;
     SkipButton: TButton;
@@ -168,6 +171,7 @@ begin
   MaxPllxErrEdit.Enabled := doEnable;
   SelACB.Enabled := doEnable;
   SelCCB.Enabled := doEnable;
+  AutoRejEdit.Enabled := doEnable;
 end;
 //-------------------------------------------------
 procedure TGaiaDR2AddForm.SaveParams();
@@ -184,6 +188,7 @@ begin
   TryStrToFloat(MaxPllxErrEdit.Text,autoadd.maxPllxError);
   autoadd.reqSelectionA:= SelACB.Checked;
   autoadd.reqSelectionC:= SelCCB.Checked;
+  TryStrToFloat(AutoRejEdit.Text,autoadd.minRejectError);
 end;
 //-------------------------------------------------
 procedure TGaiaDR2AddForm.EnableButtons(doEnable:Boolean);
