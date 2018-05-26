@@ -41,6 +41,7 @@ type
     MaxPllxErrEdit: TMaskEdit;
     procedure AddStarButtonClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure RejectButtonClick(Sender: TObject);
     procedure SkipButtonClick(Sender: TObject);
     procedure StartStopButtonClick(Sender: TObject);
@@ -100,6 +101,11 @@ begin
 end;
 
 procedure TGaiaDR2AddForm.FormActivate(Sender: TObject);
+begin
+
+end;
+
+procedure TGaiaDR2AddForm.FormCreate(Sender: TObject);
 begin
   addedcount := 0;
   mthread := nil;

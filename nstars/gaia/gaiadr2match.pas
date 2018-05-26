@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Grids,
-  StdCtrls, MaskEdit, LMessages, dr2matchthread, collecdata, gaiadr2holder, Types;
+  StdCtrls, MaskEdit, LMessages, dr2matchthread, collecdata, gaiadr2holder,
+  Types, gaiadr2types;
 
 type
 

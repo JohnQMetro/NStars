@@ -10,7 +10,7 @@ matching is included with GaiaDR2Collection. *)
 uses
   Classes, SysUtils, LCLIntf, LMessages,
   gaiadr2holder, stardata, gaiadr2base, collecdata, newlocation, namedata,
-  NewStar;
+  NewStar, gaiadr2types;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 type
 

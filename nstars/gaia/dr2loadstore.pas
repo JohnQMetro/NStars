@@ -20,6 +20,7 @@ type
     StoreGaiaDialog: TSaveDialog;
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
   private
     storemode:Boolean;
     thread:LoadStoreDR2Thread;
@@ -51,7 +52,6 @@ implementation
 procedure TGaiaDR2LoadStoreForm.FormActivate(Sender: TObject);
 var fxname:TFileName;
 begin
-  thread := nil;
   storemode := GaiaDR2LoadStoreFormModeStore;
   // loading from file
   if not storemode then begin
@@ -80,6 +80,14 @@ begin
     FreeAndNil(thread);
   end;
 end;
+
+procedure TGaiaDR2LoadStoreForm.FormCreate(Sender: TObject);
+begin
+    thread := nil;
+    FileOpProgress.Position := 0;
+    ActionStatusLabel.Caption := 'Not Started';
+end;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // message handlers
 //-----------------------------------

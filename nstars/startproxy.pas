@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Dialogs, Controls, Forms, StrUtils,
   tgas, stardata, newlocation, namedata, NewStar, constellation, gaiadr2holder,
   simbad, guessstype, sptfluxest, fluxtransform, starext2, importvizier,
-  df_strings, Utilities;
+  df_strings, Utilities, gaiadr2types;
 
 type
 

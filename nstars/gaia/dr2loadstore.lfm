@@ -8,6 +8,7 @@ object GaiaDR2LoadStoreForm: TGaiaDR2LoadStoreForm
   ClientWidth = 412
   OnActivate = FormActivate
   OnClose = FormClose
+  OnCreate = FormCreate
   LCLVersion = '1.8.2.0'
   object FileOpProgress: TProgressBar
     Left = 8

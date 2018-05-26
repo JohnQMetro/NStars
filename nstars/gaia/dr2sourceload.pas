@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  MaskEdit, ComCtrls, LMessages, dr2iothreads, gaiadr2holder;
+  MaskEdit, ComCtrls, LMessages, dr2iothreads, gaiadr2holder, gaiadr2types;
 
 type
 
@@ -28,6 +28,7 @@ type
     MinIDDistEdit: TMaskEdit;
     PllxOffsetEdit: TMaskEdit;
     procedure FormActivate(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure PickSourceBtnClick(Sender: TObject);
     procedure PllxOffsetEditKeyPress(Sender: TObject; var Key: char);
     procedure StartImportBtnClick(Sender: TObject);
@@ -178,7 +179,12 @@ end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 procedure TGaiaDR2LSourceForm.FormActivate(Sender: TObject);
 begin
-  // setting up the progress bar overlay
+
+end;
+
+procedure TGaiaDR2LSourceForm.FormCreate(Sender: TObject);
+begin
+    // setting up the progress bar overlay
    PBarOverlayLabel.Parent := LoadProgressBar;
    PBarOverlayLabel.BringToFront();
    PBarOverlayLabel.Top := 0;
@@ -190,6 +196,7 @@ begin
    loadThread := nil;
    loadAmount := 0;
 end;
+
 //------------------------------------------------------------------
 procedure TGaiaDR2LSourceForm.PickSourceBtnClick(Sender: TObject);
 begin

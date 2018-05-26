@@ -5,7 +5,7 @@ unit dr2iothreads;
 interface
 
 uses
-  Classes, SysUtils, LCLIntf, LMessages, gaiadr2holder;
+  Classes, SysUtils, LCLIntf, LMessages, gaiadr2holder, gaiadr2types;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 type
 

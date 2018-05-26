@@ -5,21 +5,9 @@ unit gaiadr2holder;
 interface
 
 uses
-  Classes, SysUtils, fgl, DAMath, FileUtil, gaiadr2base, newlocation, namedata;
+  Classes, SysUtils, DAMath, FileUtil, gaiadr2base, newlocation, namedata, gaiadr2types;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 type
-
-GaiaList = TFPGObjectList<GaiaDR2Star>;
-GaiaDR2_StringMap = TFPGMap<string,GaiaList>;
-GaiaDR2_IntMap = TFPGMap<Integer,GaiaList>;
-
-GaiaDR2_MatchType = ( G2_NONE, G2_STARNAME, G2_SYSNAME, G2_POSITION);
-
-DR2MatchConditions = record
-  skip_matched:Boolean;  // ignore matched dr2 objects
-  skip_reject:Boolean;   // ignore dr2 objects where permaReject = True
-  max_search_dist:Single; // maximum dist in arcmins to look for location matches
-end;
 
 // used only for position based storage and matching in GaiaDR2Collection
 GaiaStarStrip = class
@@ -37,21 +25,14 @@ GaiaStarStrip = class
     function GetStarsCloseTo(rap,decp:Double; mparams:DR2MatchConditions; var putHere:GaiaList):Integer;
 end;
 
-// input parameters
-GaiaSourceParams = record
-  infilename:TFileName;
-  maxdist:Single;
-  parallaxOffset:Double;
-end;
-
 // the main Gaia DR2 star storage class
 GaiaDR2Collection = class
   protected
     mainlist:GaiaList;
     // name based lookup
-    tycMap:GaiaDR2_StringMap;
+    tycMap:GaiaStringMap;
     hipMap:GaiaDR2_IntMap;
-    twomMap:GaiaDR2_StringMap;
+    twomMap:GaiaStringMap;
     // position based lookup
     locstrips:array[4..715] of GaiaStarStrip;
     ncap,scap:GaiaStarStrip;
@@ -66,11 +47,9 @@ GaiaDR2Collection = class
     // index for unmatched
     cunmatched:Integer;
 
-    function AddToStringMap(thestar:GaiaDR2Star; target:GaiaDR2_StringMap; idstr:string):Boolean;
     function AddToHipparcos(thestar:GaiaDR2Star):Boolean;
     procedure AddToLocations(thestar:GaiaDR2Star);
     procedure AddStar(thestar:GaiaDR2Star);
-    procedure ClearStringMap(target:GaiaDR2_StringMap);
     procedure ClearIntMap(target:GaiaDR2_IntMap);
     function FindNameMatches(namelist:StarName; mparams:DR2MatchConditions):GaiaList;
     function FindPositionMatches(matchThis:Location; mparams:DR2MatchConditions):GaiaList;
@@ -98,11 +77,7 @@ GaiaDR2Collection = class
     function ClearMarks(matched_mark,perma_reject_mark:Boolean):Boolean;
 end;
 
-// sorts a GaiaList by distance...
-procedure SortLisByDistance(var thelist:GaiaList);
-// clears a GaiaList (sets distance to zero)
-procedure ClearGaiaList(var thelist:GaiaList);
-procedure AddUniqueToList(var targetlist:GaiaList; sourcelist:GaiaList; mparams:DR2MatchConditions);
+
 
 var
     DR2Data:GaiaDR2Collection;
@@ -220,26 +195,6 @@ begin
 
 end;
 //==========================================================
-(* adds a star to a string map, returns true if there is an id *)
-function GaiaDR2Collection.AddToStringMap(thestar:GaiaDR2Star; target:GaiaDR2_StringMap; idstr:string):Boolean;
-var holdlist:GaiaList;
-begin
-  Assert(thestar <> nil,'thestar must not be nil.');
-  Assert(target<>nil,'Target Stringmap must not be nil.');
-  // moving on...
-  Result := False;
-  if (idstr = '') then Exit;
-  // we look for a starlist associated with the string
-  if not target.TryGetData(idstr,holdlist) then begin
-    // if there is not, we create one and stick it in the map
-    holdlist := GaiaList.Create(False);
-    target.AddOrSetData(idstr,holdlist);
-  end;
-  // adding the star to the list
-  holdlist.Add(thestar);
-  Result := True;
-end;
-//-----------------------------------
 (* adds a star to the Hipparcos map, returns true if there is a Hipparcos ID. *)
 function GaiaDR2Collection.AddToHipparcos(thestar:GaiaDR2Star):Boolean;
 var holdlist:GaiaList;
@@ -279,32 +234,13 @@ begin
   Assert(thestar <> nil,'thestar must not be nil.');
   Assert(thestar.isValid,'thestar must be valid');
   mainlist.Add(thestar);
-  AddToStringMap(thestar,tycMap,thestar.ids.Tycho2);
+  tycMap.AddStarObj(thestar.ids.Tycho2,thestar);
   AddToHipparcos(thestar);
-  AddToStringMap(thestar,twomMap,thestar.ids.TwoMASS);
+  twomMap.AddStarObj(thestar.ids.TwoMASS,thestar);
   AddToLocations(thestar);
 end;
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-procedure GaiaDR2Collection.ClearStringMap(target:GaiaDR2_StringMap);
-var index,idxMax:Integer;
-    ckey:string;
-    clist:GaiaList;
-begin
-  if target = nil then Exit;
-  if target.Count = 0 then Exit;
-  idxMax := target.Count - 1;
-  // looping...
-  for index := 0 to idxMax do begin
-    ckey := target.Keys[index];
-    target.TryGetData(ckey,clist);
-    target.AddOrSetData(ckey,nil);
-    clist.Free;
-  end;
-  // all vales have been set to nil, we collape the list
-  target.Clear;
-end;
-//-----------------------------------
 procedure GaiaDR2Collection.ClearIntMap(target:GaiaDR2_IntMap);
 var index,idxMax:Integer;
     ckey:Integer;
@@ -334,20 +270,13 @@ begin
   Result := GaiaList.Create(False);
   // looking for Tycho-2 catalog matches
   if namelist.GetCatValue('Tyc',nvalue) then begin
-    namepos := tycMap.IndexOf(nvalue);
-    if namepos >= 0 then begin
-      gltyc := tycMap.Data[namepos];
-      AddUniqueToList(Result,gltyc,mparams);
-      Result.Assign(gltyc);
-    end;
+    gltyc := tycMap.Get(nvalue);
+    if gltyc <> nil then AddUniqueToList(Result,gltyc,mparams);
   end;
   // looking for 2MASS catalog matches
   if namelist.GetCatValue('2MASS',nvalue) then begin
-    namepos := TwoMMap.IndexOf(nvalue);
-    if namepos >= 0 then begin
-      gl2mass := TwoMMap.Data[namepos];
-      AddUniqueToList(Result,gl2mass,mparams);
-    end;
+    gl2mass := TwoMMap.Get(nvalue);
+    if gl2mass <> nil then AddUniqueToList(Result,gl2mass,mparams);
   end;
   // looking for Hipparcos catalog matches
   if namelist.GetCatValue('Hip',nvalue) then begin
@@ -415,9 +344,10 @@ constructor GaiaDR2Collection.Create;
 var ssdex:Integer;
 begin
   mainlist := GaiaList.Create(True);
-  tycMap := GaiaDR2_StringMap.Create;
+  tycMap := GaiaStringMap.Create;
   hipMap := GaiaDR2_IntMap.Create;
-  twomMap := GaiaDR2_StringMap.Create;
+  hipmap.Sorted := True;
+  twomMap := GaiaStringMap.Create;
   // position based holders
   ncap := GaiaStarStrip.Create(7);
   scap := GaiaStarStrip.Create(7);
@@ -431,9 +361,7 @@ end;
 destructor GaiaDR2Collection.Destroy;
 var ssdex:Integer;
 begin
-  ClearStringMap(tycMap);
   tycMap.Free;
-  ClearStringMap(twomMap);
   twomMap.Free;
   ClearIntMap(hipMap);
   hipMap.Free;
@@ -766,69 +694,7 @@ begin
   end;
   Result := True;
 end;
-//============================================================================
-// sorts a GaiaList by distance...
-procedure SortLisByDistance(var thelist:GaiaList);
-var lcount,iindex,oindex,sindex:Integer;
-    mindist:Single;
-    tempstar:GaiaDR2Star;
-begin
-  if (thelist = nil) then Exit;
-  lcount := thelist.Count;
-  if (lcount < 2) then Exit;
-  // doing a proper selection sort
-  for oindex := 0 to (lcount-2) do begin
-    sindex := oindex;
-    mindist := thelist[oindex].distance;
-    for iindex := (oindex+1) to (lcount-1) do begin
-      if thelist[iindex].distance < mindist then begin
-        sindex := iindex;
-        mindist := thelist[iindex].distance;
-      end;
-    end;
-    // swapping if need be
-    if sindex <> oindex then begin
-      tempstar := thelist[oindex];
-      thelist[oindex] := thelist[sindex];
-      thelist[sindex] := tempstar;
-    end;
-  end;
-  // done
-end;
-//-------------------------------------------
-// clears a GaiaList (sets distance to zero)
-procedure ClearGaiaList(var thelist:GaiaList);
-var iindex,imax:Integer;
-begin
-  if thelist = nil then Exit;
-  if thelist.Count = 0 then Exit;
-  imax := thelist.Count - 1;
-  for iindex := 0 to imax do thelist[iindex].distance := 0.0;
-  thelist.Clear;
-end;
-//-----------------------------------------------
-(* adds the items in the second list to the first if they are not already in
-the first list. *)
-procedure AddUniqueToList(var targetlist:GaiaList; sourcelist:GaiaList; mparams:DR2MatchConditions);
-var sindex,tindex,smax:Integer;
-    foundx:Boolean;
-begin
-  if sourcelist = nil then Exit;
-  if sourcelist.Count = 0 then Exit;
-  if targetlist = nil then Exit;
-  // looping over the items in the second list
-  smax := sourcelist.Count - 1;
-  for sindex := 0 to smax do begin
-    foundx := false;
-    if mparams.skip_reject and sourcelist[sindex].permaReject then Continue;
-    if mparams.skip_matched and sourcelist[sindex].matched then Continue;
-    for tindex := 0 to (targetlist.Count -1 ) do begin
-      foundx := (targetlist[tindex] = sourcelist[sindex]);
-      if foundx then Break;
-    end;
-    if not foundx then targetlist.Add(sourcelist[sindex]);
-  end;
-end;
+
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 begin

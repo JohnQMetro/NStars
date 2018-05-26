@@ -7,6 +7,7 @@ object GaiaDR2AddForm: TGaiaDR2AddForm
   ClientHeight = 456
   ClientWidth = 534
   OnActivate = FormActivate
+  OnCreate = FormCreate
   LCLVersion = '1.8.2.0'
   object AlertDoLbl: TLabel
     Left = 8
