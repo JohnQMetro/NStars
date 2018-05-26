@@ -1245,6 +1245,10 @@ object NStarsMainForm: TNStarsMainForm
           Caption = 'Estimate VRI from Gaia DR2...'
           OnClick = GaiaDR2MagMIClick
         end
+        object EstJHKGaia2MI: TMenuItem
+          Caption = 'Estimate JHKs from Gaia DR2...'
+          OnClick = EstJHKGaia2MIClick
+        end
       end
       object MenuItem4: TMenuItem
         Caption = '-'

@@ -1079,13 +1079,10 @@ end;
 //----------------------------------------------------------
 function StarProxy.Vizier2MASSGet():Boolean;
 var gname:string;
-    fok,boxo,boxo1,boxo2:Boolean;
+    fok:Boolean;
     downd:VizieR2MASSData;
-    outdex,outmax:Integer;
-    outmsg,buffer:string;
+    outmsg:string;
     rval:Word;
-    vmago:Real;
-    fetchfail:Boolean;
 begin
   Result := False;
   gname := '';
@@ -1258,8 +1255,11 @@ begin
   // getting the magnitudes and the values...
   BPmRP := ccomponent.dr2mags.BPminRP;
   Gin := ccomponent.dr2mags.G;
-  if not Gaia2ToVRI(Gin,BPmRP,Vest,Rcest,Icest) then begin
-    ShowMessage('Cannot estimate: BP-RP not within range!');
+  // for red stars, I'll use my own transform...
+  if BPmRP > 2 then okay := Gaia2ToVRI_MyWay(Gin,ccomponent.dr2mags.BP,ccomponent.dr2mags.RP,Vest,Rcest,Icest)
+  else okay := Gaia2ToVRI(Gin,BPmRP,Vest,Rcest,Icest);
+  if not okay then begin
+    ShowMessage('Cannot estimate: Colors not within range!');
     Exit;
   end;
   Result := ShowEst(Vest,99,Rcest,Icest,amsg);
@@ -1267,7 +1267,7 @@ end;
 //--------------------------------------------------------
 function StarProxy.GaiaDR2_To_JHK():Boolean;
 var okay:Boolean;
-    BPmRP,Gin,Jest,Hest,Ksest:Currency;
+    BP,RP,Gin,Jest,Hest,Ksest:Currency;
     msgdata:string;
 const amsg = 'estimated from Gaia DR2 magnitudes.';
 begin
@@ -1285,10 +1285,11 @@ begin
      Exit;
   end;
   // getting the magnitudes and the values...
-  BPmRP := ccomponent.dr2mags.BPminRP;
+  BP := ccomponent.dr2mags.BP;
+  RP := ccomponent.dr2mags.RP;
   Gin := ccomponent.dr2mags.G;
-  if not Gaia2To2MASS(Gin,BPmRP,Jest,Hest,Ksest) then begin
-    ShowMessage('Cannot estimate: BP-RP not within range!');
+  if not Gaia2To2MASS_MyWay(Gin,BP,RP,Jest,Hest,Ksest) then begin
+    ShowMessage('Cannot estimate: Colors not within range!');
     Exit;
   end;
   Result := ShowEstJHK(Jest,Hest,Ksest,amsg);

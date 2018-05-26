@@ -114,7 +114,7 @@ begin
   Result := nil;
   if Length(key) > 255 then Exit;
   if Length(key) = 0 then Exit;
-  Result := (Find(key) as GaiaList);
+  Result := (data.Find(key) as GaiaList);
 end;
 //------------------------------------
 function GaiaStringMap.GetFirst(const key:string):GaiaDR2Star;

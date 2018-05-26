@@ -40,6 +40,7 @@ type
     FinDR2MatchMI: TMenuItem;
     AddUMGaiaDR2MI: TMenuItem;
     GaiaDR2MagMI: TMenuItem;
+    EstJHKGaia2MI: TMenuItem;
     MLDeleteSysMI: TMenuItem;
     PanStarrEstMI: TMenuItem;
     MainListPopupMenu: TPopupMenu;
@@ -207,6 +208,7 @@ type
     procedure EstBVCMCMIClick(Sender: TObject);
     procedure EstBVUCACMIClick(Sender: TObject);
     procedure EstIUCACMIClick(Sender: TObject);
+    procedure EstJHKGaia2MIClick(Sender: TObject);
     procedure ExpGaiaDR2CSVClick(Sender: TObject);
     procedure Export1Click(Sender: TObject);
     procedure ExportListMIClick(Sender: TObject);
@@ -215,7 +217,6 @@ type
     procedure FindRemTGASMIClick(Sender: TObject);
     procedure FluxEstSubMenuClick(Sender: TObject);
     procedure GaiaDR2MagMIClick(Sender: TObject);
-    procedure GaiaJHKMagMIClick(Sender: TObject);
     procedure GetLoggMIClick(Sender: TObject);
     procedure GotoBM_1MIClick(Sender: TObject);
     procedure GotoBM_2MIClick(Sender: TObject);
@@ -624,6 +625,18 @@ begin
   end;
 end;
 
+procedure TNStarsMainForm.EstJHKGaia2MIClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.GaiaDR2_To_JHK();
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
 procedure TNStarsMainForm.ExpGaiaDR2CSVClick(Sender: TObject);
 begin
   if DR2Data = nil then Exit;
@@ -768,18 +781,6 @@ var rok:Boolean;
 begin
   if current.ccomponent <> nil then begin
     rok := current.BPRP_To_VRI();
-    if rok then begin
-      // reloading after data has been set
-      StarData1;
-    end;
-  end;
-end;
-
-procedure TNStarsMainForm.GaiaJHKMagMIClick(Sender: TObject);
-var rok:Boolean;
-begin
-  if current.ccomponent <> nil then begin
-    rok := current.GaiaDR2_To_JHK();
     if rok then begin
       // reloading after data has been set
       StarData1;
