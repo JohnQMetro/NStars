@@ -283,7 +283,7 @@ begin
   if (Ksest < 90) then begin
     msgdata += 'Ks: ' + CurrToStrF(Ksest,ffFixed,3) + sLineBreak;
     Inc(usecount);
-    outm += 'R';
+    outm += 'K';
   end;
   if (usecount = 0) then Exit
   else if usecount = 1 then msgdata += 'Do you want to use this magnitude?'
@@ -1233,10 +1233,9 @@ end;
 //-------------------------------------------
 function StarProxy.BPRP_To_VRI():Boolean;
 var okay:Boolean;
-    BPmRP,Gin,Rcest,Icest:Currency;
+    Gin,BPmRP, BPin,RPin:Currency;
+    Best,Rcest,Icest:Currency;
     Vest:Real;
-    msgdata:string;
-    rval:Word;
 const amsg = 'estimated from Gaia DR2 magnitudes.';
 begin
   Result := False;
@@ -1253,16 +1252,20 @@ begin
      Exit;
   end;
   // getting the magnitudes and the values...
+  BPin := ccomponent.dr2mags.BP;
+  RPin := ccomponent.dr2mags.RP;
   BPmRP := ccomponent.dr2mags.BPminRP;
   Gin := ccomponent.dr2mags.G;
   // for red stars, I'll use my own transform...
-  if BPmRP > 2 then okay := Gaia2ToVRI_MyWay(Gin,ccomponent.dr2mags.BP,ccomponent.dr2mags.RP,Vest,Rcest,Icest)
+  if BPmRP > 2 then okay := Gaia2ToVRI_MyWay(Gin,BPin,RPin,Vest,Rcest,Icest)
   else okay := Gaia2ToVRI(Gin,BPmRP,Vest,Rcest,Icest);
   if not okay then begin
     ShowMessage('Cannot estimate: Colors not within range!');
     Exit;
   end;
-  Result := ShowEst(Vest,99,Rcest,Icest,amsg);
+  // also, B
+  if not Gaia2ToB(Gin,BPin,RPin,Best) then Best := 99;
+  Result := ShowEst(Vest,Best,Rcest,Icest,amsg);
 end;
 //--------------------------------------------------------
 function StarProxy.GaiaDR2_To_JHK():Boolean;

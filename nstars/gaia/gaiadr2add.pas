@@ -17,9 +17,19 @@ type
     AddCountLabel: TLabel;
     AddInfoBox: TGroupBox;
     AddStarButton: TButton;
-    AutoRqjLabel: TLabel;
+    AutoRejectBox: TGroupBox;
+    ARGMagEdit: TMaskEdit;
+    BrightRejectLabel: TLabel;
+    ARMinPllxErrEdit: TMaskEdit;
+    ARMaxPMEdit: TMaskEdit;
+    ARMaxPMLabel: TLabel;
+    ARMaxGLat: TMaskEdit;
+    ARMaxGLatLabel: TLabel;
+    CB2MassNRej: TCheckBox;
+    Label1: TLabel;
+    Label2: TLabel;
     maslbl3: TLabel;
-    AutoRejEdit: TMaskEdit;
+    ARMinParallaxErrLabel: TLabel;
     Viz2MCB: TCheckBox;
     DownSimCB: TCheckBox;
     SkipButton: TButton;
@@ -42,14 +52,17 @@ type
     procedure AddStarButtonClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure IgnoreRejectCBChange(Sender: TObject);
     procedure RejectButtonClick(Sender: TObject);
     procedure SkipButtonClick(Sender: TObject);
     procedure StartStopButtonClick(Sender: TObject);
   private
+    skipreject:Boolean;
     addedcount:Integer;
     mthread:AddFromDR2Thread;
     sett:DR2AddSettings;
     autoadd:DR2AutoAddSettings;
+    autorej:DR2AutoRejectSettings;
     checkobj:DR2AddBundle;
     thread_is_active:Boolean;
 
@@ -62,9 +75,11 @@ type
 
     // other procedures
     procedure EnableParams(doEnable:Boolean);
+    procedure EnableRejectParams(doEnable:Boolean);
     procedure EnableButtons(doEnable:Boolean);
     procedure SaveParams();
     procedure SaveAutoParams();
+    procedure SaveRejectParams();
     procedure ThreadIsOver();
     procedure UpdateStarsAddedLabel();
     function CreateAndStartThread():Boolean;
@@ -110,7 +125,17 @@ begin
   addedcount := 0;
   mthread := nil;
   checkobj := nil;
-  thread_is_active := False
+  thread_is_active := False;
+  skipreject := IgnoreRejectCB.Checked;
+  EnableRejectParams(skipreject);
+end;
+
+procedure TGaiaDR2AddForm.IgnoreRejectCBChange(Sender: TObject);
+begin
+  if IgnoreRejectCB.Checked <> skipreject then begin
+    skipreject := IgnoreRejectCB.Checked;
+    EnableRejectParams(skipreject);
+  end;
 end;
 
 procedure TGaiaDR2AddForm.RejectButtonClick(Sender: TObject);
@@ -177,7 +202,15 @@ begin
   MaxPllxErrEdit.Enabled := doEnable;
   SelACB.Enabled := doEnable;
   SelCCB.Enabled := doEnable;
-  AutoRejEdit.Enabled := doEnable;
+end;
+//-------------------------------------------------
+procedure TGaiaDR2AddForm.EnableRejectParams(doEnable:Boolean);
+begin
+  ARGMagEdit.Enabled := doEnable;
+  ARMinPllxErrEdit.Enabled := doEnable;
+  ARMaxPMEdit.Enabled := doEnable;
+  ARMaxGLat.Enabled := doEnable;
+  CB2MassNRej.Enabled := doEnable;
 end;
 //-------------------------------------------------
 procedure TGaiaDR2AddForm.SaveParams();
@@ -194,7 +227,15 @@ begin
   TryStrToFloat(MaxPllxErrEdit.Text,autoadd.maxPllxError);
   autoadd.reqSelectionA:= SelACB.Checked;
   autoadd.reqSelectionC:= SelCCB.Checked;
-  TryStrToFloat(AutoRejEdit.Text,autoadd.minRejectError);
+end;
+//---------------------------------------------------
+procedure TGaiaDR2AddForm.SaveRejectParams();
+begin
+  TryStrToCurr(ARGMagEdit.Text,autorej.maxGMag);
+  TryStrToFloat(ARMinPllxErrEdit.Text,autorej.minPllxErr);
+  TryStrToFloat(ARMaxPMEdit.Text,autorej.maxPMMag);
+  TryStrToFloat(ARMaxGLat.Text,autorej.maxLatitude);
+  autorej.nevRej2Mass := CB2MassNRej.Checked;
 end;
 //-------------------------------------------------
 procedure TGaiaDR2AddForm.EnableButtons(doEnable:Boolean);
@@ -232,8 +273,10 @@ begin
   addedcount := 0;
   SaveParams();
   SaveAutoParams();
+  SaveRejectParams();
   EnableParams(False);
-  mthread := AddFromDR2Thread.Create(True,sett,autoadd,Handle);
+  EnableRejectParams(False);
+  mthread := AddFromDR2Thread.Create(True,sett,autoadd,autorej,Handle);
   thread_is_active := True;
   StartStopButton.Caption := 'Stop Adding';
   mthread.Start;

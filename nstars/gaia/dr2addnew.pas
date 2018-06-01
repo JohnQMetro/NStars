@@ -8,7 +8,7 @@ interface
 star list. *)
 
 uses
-  Classes, SysUtils, LCLIntf, LMessages,
+  Classes, SysUtils, LCLIntf, LMessages, DAMath,
   gaiadr2base, gaiadr2holder, stardata, collecdata, newlocation, namedata,
   NewStar, ImportVizier, simbad, StarExt2;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -28,7 +28,15 @@ DR2AutoAddSettings = record
   maxPllxError:Real;
   reqSelectionA:Boolean;
   reqSelectionC:Boolean;
-  minRejectError:Real;
+end;
+
+(* Settings / Options for auto rejecting unmatched stars, all must match *)
+DR2AutoRejectSettings = record
+  maxGMag:Currency;  // this brightness or dimmer required
+  minPllxErr:Real;   // parallax error must be this or bigger
+  maxPMMag:Real;     // large proper motions can be checked, require smaller
+  maxLatitude:Real; // galactic latitude must be within this band
+  nevRej2Mass:Boolean; // if true, a star is never rejected if it has a 2MASS match
 end;
 
 (* Class used when we pass data to the user for approval *)
@@ -50,6 +58,7 @@ AddFromDR2Thread = class(TThread)
   protected
     baseparams:DR2AddSettings;
     autoparams:DR2AutoAddSettings;
+    rejectparams:DR2AutoRejectSettings;
     curobj:GaiaDR2Star;
 
     msgTarget:THandle; // window handle for message target
@@ -58,10 +67,12 @@ AddFromDR2Thread = class(TThread)
 
     procedure PostCannotStart(why:string); // just in case things go badly wrong
     procedure PostConfirmAdd(curobj_in:GaiaDR2Star;simdat_in:SimbadData;tmassd_in:VizieR2MASSData); // send stuff to confirm add
+    function CheckForAutoReject():Boolean;
+    function CheckForAutoAdd():Boolean;
     procedure AddCheckForUnmatched();  // looks at the current gaia star/brown dwarf
     procedure Execute; override;  // top level execution
   public
-    constructor Create(createSuspended:Boolean; sett:DR2AddSettings; aparams:DR2AutoAddSettings; mtarget:THandle);
+    constructor Create(createSuspended:Boolean; sett:DR2AddSettings; aparams:DR2AutoAddSettings; rparams:DR2AutoRejectSettings; mtarget:THandle);
     procedure WaitIsOver(quit:Boolean);  // the form should call this to resume
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -125,6 +136,33 @@ begin
   PostMessage(msgTarget,MSG_CHECKADD,Int64(bundle),0);
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(*  autoparams:DR2AutoAddSettings;   rejectparams:DR2AutoRejectSettings;  *)
+// checking for automatic rejection, we work of a process of elimination
+function AddFromDR2Thread.CheckForAutoReject():Boolean;
+var cpmmag:Real;
+begin
+  Result := False;
+  if curobj.mags.G < rejectparams.maxGMag then Exit;
+  if curobj.astrometry.parallax_err < rejectparams.minPllxErr then Exit;
+  if Abs(curobj.astrometry.glat) > rejectparams.maxLatitude then Exit;
+  cpmmag := hypot(curobj.astrometry.rapm,curobj.astrometry.decpm);
+  if cpmmag > rejectparams.maxPMMag then Exit;
+  if curobj.ids.TwoMASS <> '' then Exit;
+  Result := True;
+end;
+//-----------------------------------------------
+// checking for automatic addition, by elimination
+function AddFromDR2Thread.CheckForAutoAdd():Boolean;
+begin
+  Result := False;
+  if curobj.selectionBfail then Exit;
+  if curobj.astrometry.parallax_err > autoparams.maxPllxError then Exit;
+  if curobj.mags.G < autoparams.minGMag then Exit;
+  if autoparams.reqSelectionA and curobj.selectionAfail then Exit;
+  if autoparams.reqSelectionC and curobj.selectionCfail then Exit;
+  Result := True;
+end;
+//--------------------------------------------------------
 // handles the current gaia object for addition/rejection, etc
 procedure AddFromDR2Thread.AddCheckForUnmatched();
 var autoadd:Boolean;
@@ -135,9 +173,10 @@ begin
   // quick ignore checks
   if baseparams.ignoreRejects and curobj.permaReject then Exit;
   if curobj.astrometry.parallax < baseparams.minpllx then Exit;
-  if curobj.astrometry.parallax_err >= autoparams.minRejectError then begin
-    if baseparams.ignoreRejects then begin
-      curobj.permaReject := True;
+  // auto reject testing
+  if baseparams.ignoreRejects then begin
+    if CheckForAutoReject() then begin
+      curobj.permaReject:= True;
       Exit;
     end;
   end;
@@ -154,12 +193,7 @@ begin
     tmassd := Get2MASSFromVizier(curobj.ids.TwoMASS);
   end;
   // the star or brown dwarf should not be ignored, but do we add it automatically?
-  autoadd := (curobj.astrometry.parallax_err <= autoparams.maxPllxError);
-  autoadd := autoadd and (autoparams.minGMag >= curobj.mags.G);
-  if autoadd then autoadd := not curobj.selectionBfail;
-  if autoadd and autoparams.reqSelectionA then autoadd := not curobj.selectionAfail;
-  if autoadd and autoparams.reqSelectionC then autoadd := not curobj.selectionCfail;
-
+  autoadd := CheckForAutoAdd();
   // now we know...
   if autoadd then begin
     AddGaiaStar(curobj,simdat,tmassd);
@@ -198,11 +232,12 @@ begin
   end;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-constructor AddFromDR2Thread.Create(createSuspended:Boolean; sett:DR2AddSettings; aparams:DR2AutoAddSettings; mtarget:THandle);
+constructor AddFromDR2Thread.Create(createSuspended:Boolean; sett:DR2AddSettings; aparams:DR2AutoAddSettings; rparams:DR2AutoRejectSettings; mtarget:THandle);
 begin
   // parameters
   baseparams := sett;
   autoparams := aparams;
+  rejectparams := rparams;
   // additional
   msgTarget := mtarget;
   waitlock := RTLEventCreate;

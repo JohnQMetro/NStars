@@ -53,6 +53,7 @@ function URATJ_To_Ic(URATin,Jin:Currency; out Icest:Currency):Boolean;
 function UC2MG_To_Ic(UCACin,Gin,J:Currency; out Icest:Currency):Boolean;
 function Gaia2ToVRI_MyWay(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 function Gaia2To2MASS_MyWay(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
+function Gaia2ToB(Gmag,BPmag,RPmag:Currency; out Best:Currency):Boolean;
 //******************************************************************************
 implementation
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -405,7 +406,7 @@ procedure Pgri_to_BVRI(gp,rp,ip:Real; out Bj:Currency; out Vj:Real; out Rc,Ic:Cu
 var g,r,i:Real;
     gmr,gmi,interm:Real;
     dottarg:RealArray;
-const rcoff:array[0..6] of Real = (-13.066,31.365,-23.509,6.1836,-0.57465,0.52648,0.12508 );
+const rcoff:array[0..6] of Real = ( -13.722, 33.573, -25.457, 6.6358, -0.36157, 0.32489, 0.10848 );
 begin
   g := gp + 0.060*( (gp-rp) - 0.53 );
   r := rp + 0.035*( (rp-ip) - 0.21 );
@@ -414,7 +415,7 @@ begin
   (* Estimated Rc is rather dim for M dwarfs, so I have derived an alternate fit... *)
   gmr := gp - rp;
   gmi := gp - ip;
-  if (gmr >= 0.746) and (gmr <= 1.631) and (gmi >= 1.034) and (gmi <= 3.640) then begin
+  if (gmr >= 0.746) and (gmr <= 1.631) and (gmi >= 1.034) and (gmi <= 4.418) then begin
     LoadMulti(gmr,gmi,True,dottarg);
     interm := dot2(rcoff,dottarg,7);
     Rc := gp - interm;
@@ -577,7 +578,7 @@ begin
   // reject...
   if (Iin > 90) or (J > 90) or (H > 90) or (Ks > 90) then Exit;
   // computing source colors
-  bimj := CurrToReal(Iin) - CurrToReal(Ks);
+  bimj := CurrToReal(Iin) - CurrToReal(J);
   hmks := CurrToReal(H) - CurrToReal(Ks);
   if (bimj < -2.875) or (bimj > 6.297) then Exit;
   if (hmks < -0.024) or (hmks > 0.418) then Exit;
@@ -1028,20 +1029,20 @@ begin
 end;
 //--------------------------------------------------
 (* Since the Gaia provided transforms for JHKs seem to work badly, I've done my
-own, for BP-RP > 0.52 only. *)
+own, for BP-RP > 1 only. *)
 function Gaia2To2MASS_MyWay(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 var bpmrp,gmrp:Real;
     interm:Real;
     colorx:RealArray;
-const coffj:array[0..5] of Real = ( -0.091095, 0.11109, -0.056139, 0.50835, 2.2822, -0.91771 );
-      coffh:array[0..4] of Real = ( -0.89044, 3.6186, -1.3065, 0.25853, -0.018941 );
-      coffk:array[0..4] of Real = ( -0.84228, 3.5762, -1.1865, 0.2202, -0.01507 );
+const coffj:array[0..5] of Real = ( -0.025999, 0.17069, -0.062699, 0.49271, 2.0394, -0.80351 );
+      coffh:array[0..4] of Real = ( -1.3427, 4.4554, -1.8405, 0.39909, -0.031809 );
+      coffk:array[0..4] of Real = ( -1.3698, 4.5444, -1.801, 0.38128, -0.029769 );
 begin
   Result := False;
   if (Gmag > 90) or (BPmag > 90) or (RPmag > 90) then Exit;
   // conveniently, the color bounds are almost the same for all results
-  if not MakeColorCheck(BPmag,RPmag,0.519,5.197,bpmrp) then Exit;
-  if not MakeColorCheck(Gmag,RPmag,0.311,1.897,gmrp) then Exit;
+  if not MakeColorCheck(BPmag,RPmag,0.99,5.197,bpmrp) then Exit;
+  if not MakeColorCheck(Gmag,RPmag,0.549,1.897,gmrp) then Exit;
   // computing the vector
   LoadMulti(bpmrp,gmrp,False,colorx);
   // J
@@ -1056,6 +1057,23 @@ begin
   interm := PolEval(bpmrp,coffk,5);
   Ksest := Gmag - RealToCurr(interm);
   Ksest := RoundCurrency(Ksest,False);
+  // done
+  Result := True;
+end;
+//-------------------------------------------------------------
+(* Rough transform to B for BP-RP > 1 using APASS B *)
+function Gaia2ToB(Gmag,BPmag,RPmag:Currency; out Best:Currency):Boolean;
+var bpmrp:Real;
+    interm:Real;
+const coffb:array[0..2] of Real = ( -0.42609, 1.6263, -0.16102 );
+begin
+  Result := False;
+  if (Gmag > 90) or (BPmag > 90) or (RPmag > 90) then Exit;
+  if not MakeColorCheck(BPmag,RPmag,0.99,3.83,bpmrp) then Exit;
+  // computing the results
+  interm := PolEval(bpmrp,coffb,3);
+  Best := Gmag + RealToCurr(interm);
+  Best := RoundCurrency(Best,False);
   // done
   Result := True;
 end;

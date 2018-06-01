@@ -1242,7 +1242,7 @@ object NStarsMainForm: TNStarsMainForm
           OnClick = EstIUCACMIClick
         end
         object GaiaDR2MagMI: TMenuItem
-          Caption = 'Estimate VRI from Gaia DR2...'
+          Caption = 'Estimate BVRI from Gaia DR2...'
           OnClick = GaiaDR2MagMIClick
         end
         object EstJHKGaia2MI: TMenuItem
