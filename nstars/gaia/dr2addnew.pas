@@ -147,7 +147,7 @@ begin
   if Abs(curobj.astrometry.glat) > rejectparams.maxLatitude then Exit;
   cpmmag := hypot(curobj.astrometry.rapm,curobj.astrometry.decpm);
   if cpmmag > rejectparams.maxPMMag then Exit;
-  if curobj.ids.TwoMASS <> '' then Exit;
+  if (curobj.ids.TwoMASS <> '') and rejectparams.nevRej2Mass then Exit;
   Result := True;
 end;
 //-----------------------------------------------
@@ -157,7 +157,7 @@ begin
   Result := False;
   if curobj.selectionBfail then Exit;
   if curobj.astrometry.parallax_err > autoparams.maxPllxError then Exit;
-  if curobj.mags.G < autoparams.minGMag then Exit;
+  if curobj.mags.G > autoparams.minGMag then Exit;
   if autoparams.reqSelectionA and curobj.selectionAfail then Exit;
   if autoparams.reqSelectionC and curobj.selectionCfail then Exit;
   Result := True;

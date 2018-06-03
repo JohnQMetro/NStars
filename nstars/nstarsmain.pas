@@ -772,8 +772,11 @@ begin
 end;
 
 procedure TNStarsMainForm.FluxEstSubMenuClick(Sender: TObject);
+var gaiaok:Boolean;
 begin
-  GaiaDR2MagMI.Enabled := (current.ccomponent.dr2mags <> nil) and (current.ccomponent.dr2mags.ValidBPmRP);
+  gaiaok := (current.ccomponent.dr2mags <> nil) and (current.ccomponent.dr2mags.ValidBPmRP);
+  GaiaDR2MagMI.Enabled := gaiaok;
+  EstJHKGaia2MI.Enabled := gaiaok;
 end;
 
 procedure TNStarsMainForm.GaiaDR2MagMIClick(Sender: TObject);
@@ -835,7 +838,7 @@ begin
 end;
 
 procedure TNStarsMainForm.Import1Click(Sender: TObject);
-var notsun:Boolean;
+var notsun, tgas_okay:Boolean;
 begin
   AddUMGaiaDR2MI.Enabled := (DR2Data <> nil) and (DR2Data.StarCount > 0);
   notsun := (current <> nil) and (current.sys <> nil) and (current.sys.GetId > 0);
@@ -844,6 +847,8 @@ begin
   SimbadDataFetch.Enabled := notsun;
   SimbadIDFluxMI.Enabled := notsun;
   GetLoggMI.Enabled := notsun;
+  tgas_okay := (tgas_main <> nil) and (tgas_main.StarCount > 0);
+  ImportTGASLeftMI.Enabled:= tgas_okay;
 end;
 
 procedure TNStarsMainForm.ImportFrSN35MIClick(Sender: TObject);

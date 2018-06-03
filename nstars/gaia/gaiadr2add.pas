@@ -128,6 +128,9 @@ begin
   thread_is_active := False;
   skipreject := IgnoreRejectCB.Checked;
   EnableRejectParams(skipreject);
+  AddStarButton.Enabled := False;
+  SkipButton.Enabled := False;
+  RejectButton.Enabled := False;
 end;
 
 procedure TGaiaDR2AddForm.IgnoreRejectCBChange(Sender: TObject);

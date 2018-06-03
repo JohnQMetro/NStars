@@ -145,9 +145,10 @@ const ok_catalogs:array[0..70] of string = ('BD','CD','CPD','Wolf','Ross','FK5',
       'BPM','LSPM','San','2MUCD','APMPM','BRI','AG','UCAC4','GSC','GD',
       'KIC','Ton','ULAS','PM','WISEA','RAVE','RX','GSC2.3','1RXS','URAT1');
 
-const sys_cats:array[0..25] of string = ('Gl','GJ','ADS','WDS','BD','HD','CD',
+const sys_cats:array[0..29] of string = ('Gl','GJ','ADS','WDS','BD','HD','CD',
        'CPD','Struve','Vys','Bu','Kpr','LDS','Luhman','Sm','Wo','I','HJ','Wor',
-       'LSPM','H','Kr','Tok','Balega','O.Struve','Stein');
+       'LSPM','H','Kr','Tok','Balega','O.Struve','Stein','Tok','Rob', 'Scholz',
+       'Balega');
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 implementation
