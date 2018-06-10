@@ -5,14 +5,11 @@ unit newlocation;
 interface
 
 uses
-  Classes, SysUtils, StrUtils, Math, DAMath, df_strings, tgas, newImports,
-  Utilities2, gaiadr2base;
+  Classes, SysUtils, StrUtils, Math, DAMath, LocatManip, df_strings, tgas,
+  newImports, Utilities2, gaiadr2base;
 
 type
 
-NsHours = 0..23;
-Ns60int = 0..59;
-NsDeg = 0..90;
 
 Location = class
   protected
@@ -28,7 +25,6 @@ Location = class
     // parallax and proper motion
     parallax,parallax_err:Real;  // in milli-arcseconds
     pm_magnitude,pm_posang:Real; // proper motion in mas/yr , angle in dec degrees
-    binarycopy:Boolean;
 
     // radial velocity (in km/s)
     radialv:Real;
@@ -41,6 +37,7 @@ Location = class
     function GParallax:Real;
     function GParallaxE:Real;
     function IsCopy:Boolean;
+
     // more property helper methods
     function GPMMag:Real;
     function GPMDir:Real;
@@ -63,11 +60,14 @@ Location = class
     procedure MakeVelocity(usematrix:RMatrix; out uv,vv,wv:Real);
     procedure MakeDeltaPos(opt:Integer; out delX,delY,delZ:Real);
     function YearDiff(target_year:Integer):Real;
+    function PosShiftHelper(inv:Boolean; out rapos:Real; out decpos:Real):Real;
+    procedure CalcShifts(timeoffset,startra,startdec:Real; out endra:Real; out enddec:Real);
 
   public
     uncertain:Boolean;   // uncertain parallax
     source:string;       // source for parallax and proper motion
     oldparallax:string;  // parallax backups
+    binarycopy:Boolean;
 
     // properties
     property Epoch:EpochType read GEpoch;
@@ -151,6 +151,7 @@ Location = class
     function GetUVWVelocities(lefthanded:Boolean; out uv,vv,wv:Real):Boolean;
     function GetUVWString(lefthanded:Boolean):string;
     procedure MakeGetJ2015p5Pos(out radeg:Real; out decdeg:Real);
+    function MakeJ2000pos():string;
 
     // importing data from special sources
     function SetFromTGAS(instar:TGASData):Boolean;
@@ -566,6 +567,56 @@ begin
   else startyear := startyear / JultoGreg;
   // finally
   Result := target_year - startyear;
+end;
+//---------------------------------------------------------
+// Mostly used to get the J2000 positions of Gaia objects, or vice versa.
+// inv means target is J2000. otherwise it is J2015.5
+function Location.PosShiftHelper(inv:Boolean; out rapos:Real; out decpos:Real):Real;
+var okay:Boolean;
+begin
+  Result := 0;
+  rapos := GetDecimalRightAscension();
+  decpos := GetDecimalDeclination();
+  // do nothing cases...
+  if inv and (xepoch = eJ2000) then Exit;
+  if (not inv) and (xepoch = zJ2015h) then Exit;
+  // for some epochs, we need to do a co-ordinate transform using matrixes...
+  if xepoch = eB1950 then begin
+      okay := MatrixTransform(rapos,decpos,B1950toJ2000,rapos,decpos);
+      Assert(okay);
+      Result := 65.5002175;
+  end else if xepoch = eB1975 then begin
+      okay := MatrixTransform(rapos,decpos,B1975toJ2000,rapos,decpos);
+      Assert(okay);
+      Result := 40.500752;
+  // for others, there is just a time shift
+  end else if xepoch = eJ2000 then Result := 15.5
+  else if xepoch = zJ2014 then Result := 1.5
+  else if xepoch = zJ2015 then Result := 0.5
+  else if xepoch = zJ2017 then Result := -1.5
+  else if xepoch = zJ1991q then Result := 24.25
+  else if xepoch = zJ2015h then Result := 0
+  else Assert(false);
+  // finishing off
+  if inv then Result -= 15.5;
+end;
+//------------------------------------------------------
+procedure Location.CalcShifts(timeoffset,startra,startdec:Real; out endra:Real; out enddec:Real);
+var pmdec,pmra,cosdec:Real;
+begin
+  // converting proper motion...
+  pmdec := pm_magnitude * cosd(pm_posang);
+  pmra := pm_magnitude * sind(pm_posang);
+  pmdec := pmdec / 3600000;
+  pmra := pmra / 3600000;
+  // new position
+  enddec := startdec + pmdec * timeoffset;
+  if enddec >= 90 then enddec := 89.999999
+  else if enddec <= -90 then enddec := -89.999999;
+  cosdec := cosd((enddec + startdec)/2);
+  endra := startra + ((timeoffset * pmra)/cosdec);
+  if endra < 0 then endra := 360.0 + endra
+  else if endra >= 360.0 then endra -= 360.0
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // startup methods
@@ -1398,51 +1449,42 @@ end;
 match the star up with a star from GAIA DR2. *)
 procedure Location.MakeGetJ2015p5Pos(out radeg:Real; out decdeg:Real);
 var startra,startdec:Real;
-    timeoffset, cosdec:Real;
-    okay:Boolean;
-    pmra,pmdec:Real;
+    timeoffset:Real;
 begin
-  startra := GetDecimalRightAscension();
-  startdec := GetDecimalDeclination();
+  timeoffset := PosShiftHelper(False,startra,startdec);
   // in this case, it is already done...
   if (xepoch = zJ2015h) then begin
     radeg := startra;
     decdeg := startdec;
   end
-  else begin
-    (* since the time period will usualy be 15.5 years or less, and great
-    precision is unneeded, radial velocity and matrix transforms will not be
-    into account (except for B to J) *)
-    if xepoch = eB1950 then begin
-      okay := MatrixTransform(startra,startdec,B1950toJ2000,startra,startdec);
-      Assert(okay);
-      timeoffset := 65.5002175;
-    end else if xepoch = eB1975 then begin
-      okay := MatrixTransform(startra,startdec,B1975toJ2000,startra,startdec);
-      Assert(okay);
-      timeoffset := 40.500752;
-    end else if xepoch = eJ2000 then timeoffset := 15.5
-    else if xepoch = zJ2014 then timeoffset := 1.5
-    else if xepoch = zJ2015 then timeoffset := 0.5
-    else if xepoch = zJ2017 then timeoffset := -1.5
-    else if xepoch = zJ1991q then timeoffset := 24.25
-    else Assert(false);
-  end;
-  // converting proper motion...
-  pmdec := pm_magnitude * cosd(pm_posang);
-  pmra := pm_magnitude * sind(pm_posang);
-  pmdec := pmdec / 3600000;
-  pmra := pmra / 3600000;
-  // new position
-  decdeg := startdec + pmdec * timeoffset;
-  if decdeg >= 90 then decdeg := 89.999999
-  else if decdeg <= -90 then decdeg := -89.999999;
-  cosdec := cosd((decdeg + startdec)/2);
-  radeg := startra + ((timeoffset * pmra)/cosdec);
-  if radeg < 0 then radeg := 360.0 + radeg
-  else if radeg >= 360.0 then radeg -= 360.0
+  else CalcShifts(timeoffset,startra,startdec,radeg,decdeg);
 end;
+//----------------------------------------------------
+function Location.MakeJ2000pos():string;
+var startra,startdec,timeoffset:Real;
+    radeg,decdeg:Real;
+    xhours:NsHours;
+    dec90:NsDeg;
+    ra_mins,dec_min:Ns60int;
+    ra_secs,dec_secs:Real;
+    is_south:Boolean;
+    rastr,decstr:string;
+begin
+  timeoffset := PosShiftHelper(True,startra,startdec);
+  // in this case, it is already done...
+  if (xepoch = eJ2000) then begin
+    radeg := startra;
+    decdeg := startdec;
+  end
+  else CalcShifts(timeoffset,startra,startdec,radeg,decdeg);
+  // producing string output
+  DecRA_To_HMS(radeg,xhours,ra_mins,ra_secs);
+  DecDec_To_DMS(decdeg,is_south,dec90,dec_min,dec_secs);
+  HMS_ToString(xhours,ra_mins,ra_secs,2,False,rastr);
+  DMS_ToString(is_south,dec90,dec_min,dec_secs,1,False,decstr);
 
+  Result := 'RA  : ' + rastr + sLineBreak + 'Dec : ' + decstr;
+end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // importing data from special sources
 function Location.SetFromTGAS(instar:TGASData):Boolean;

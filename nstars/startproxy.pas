@@ -25,6 +25,7 @@ StarProxy = class
     procedure ApplyTGASChange(newdata:TGASData);
     function ShowEst(Vest:Real; Best,Rcest,Icest:Currency; amsg:string):Boolean;
     function ShowEstJHK(Jest,Hest,Ksest:Currency; amsg:string):Boolean;
+    function GaiaTransHelper():Integer;
   public
     // system level information
     sys:StarSystem;
@@ -45,6 +46,7 @@ StarProxy = class
     procedure AddStar;
     procedure AddBrownDwarf;
     procedure InsertStar;
+    function SwapComponent():Boolean;
     procedure DeleteStar(index:Integer);
     // extra methods
     function StarNameTest:Boolean;
@@ -304,6 +306,29 @@ begin
     Result := True;
   end;
 end;
+//----------------------------------------------
+// 0 is default, 1 is red, 2 is blue
+function StarProxy.GaiaTransHelper():Integer;
+var bedre:Real;
+begin
+  Result := 0;
+  // red
+  if (ccomponent.fluxtemp <> nil) and (ccomponent.fluxtemp.J_mag < 90) then begin
+    if (ccomponent.dr2mags.BP >= 90) then Result := 1
+    else begin
+      bedre := ccomponent.dr2mags.BPerr / ccomponent.dr2mags.RPerr;
+      if bedre > 5 then Result := 1
+    end;
+    if (Result = 1) then Exit;
+  end;
+  // blue
+  if (ccomponent.dr2mags.RP >= 90) then Result := 2
+  else begin
+    bedre := ccomponent.dr2mags.BPerr / ccomponent.dr2mags.RPerr;
+    if (bedre < 0.5) and (ccomponent.dr2mags.RPerr > 0.01) then Result := 2
+  end;
+end;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // public methods
 constructor StarProxy.Create;
@@ -394,6 +419,25 @@ begin
   ccomponent := cstar;
   cstarl := nil;
   cstarn := nil;
+end;
+//--------------------------------------------------------
+function StarProxy.SwapComponent():Boolean;
+begin
+  // reject conditions
+  Result := False;
+  if sys = nil then Exit;
+  if starindex <= 0 then Exit;
+  if starindex >= sys.GetCompC then Exit;
+  // doing the swap
+  sys.SwapPositions(starindex);
+  // reloading the components...
+  sysl := sys.GetLocation;
+  ccomponent := sys.GetNewStar(starindex);
+  if ccomponent.isBrownDwarf then cstar := nil
+  else cstar := ccomponent as StarInfo;
+  cstarl := ccomponent.GetLocation;
+  cstarn := ccomponent.GetNames;
+  Result := True;
 end;
 //--------------------------------------------------------
 procedure StarProxy.DeleteStar(index:Integer);
@@ -1232,33 +1276,46 @@ begin
 end;
 //-------------------------------------------
 function StarProxy.BPRP_To_VRI():Boolean;
-var okay:Boolean;
-    Gin,BPmRP, BPin,RPin:Currency;
+var okay,dored:Boolean;
+    cpick:Integer;
+    Gin,BPmRP, BPin,RPin,Jin:Currency;
     Best,Rcest,Icest:Currency;
     Vest:Real;
 const amsg = 'estimated from Gaia DR2 magnitudes.';
 begin
   Result := False;
+  Best := 99;
   // basic bad exit cases...
   if ccomponent = nil then begin
     ShowMessage('No Star to estimate!');
     Exit;
   end;
   okay := ccomponent.dr2mags <> nil;
-  if okay then okay := ccomponent.dr2mags.ValidBPmRP;
   if okay then okay := (ccomponent.dr2mags.G < 90);
+  if okay then okay := (ccomponent.dr2mags.BP < 90) or (ccomponent.dr2mags.RP < 90);
   if not okay then begin
-     ShowMessage('Object does not have all Gaia Magnitudes!');
+     ShowMessage('Object does not have enough Gaia Magnitudes!');
      Exit;
   end;
-  // getting the magnitudes and the values...
+  // we have different methods depending on values...
+  cpick := GaiaTransHelper();
   BPin := ccomponent.dr2mags.BP;
   RPin := ccomponent.dr2mags.RP;
   BPmRP := ccomponent.dr2mags.BPminRP;
   Gin := ccomponent.dr2mags.G;
-  // for red stars, I'll use my own transform...
-  if BPmRP > 2 then okay := Gaia2ToVRI_MyWay(Gin,BPin,RPin,Vest,Rcest,Icest)
-  else okay := Gaia2ToVRI(Gin,BPmRP,Vest,Rcest,Icest);
+  okay := False;
+  // red
+  if cpick = 1 then begin
+    Jin := ccomponent.fluxtemp.J_mag;
+    okay := GaiaToVRI_Red(Gin,RPin,Jin,Vest,Rcest,Icest);
+  end else if cpick = 2 then begin
+    okay := GaiaToVRI_Blue(Gin,BPin,Vest,Rcest,Icest);
+  end;
+  if not okay then begin
+     // for red stars, I'll use my own transform...
+     if BPmRP > 2 then okay := Gaia2ToVRI_MyWay(Gin,BPin,RPin,Vest,Rcest,Icest)
+     else okay := Gaia2ToVRI(Gin,BPmRP,Vest,Rcest,Icest);
+  end;
   if not okay then begin
     ShowMessage('Cannot estimate: Colors not within range!');
     Exit;

@@ -91,6 +91,8 @@ StarList = class
     procedure SearchNotes(tofind:string);
     procedure SearchParallaxSource(tofind:string);
     procedure MultiHip();
+    procedure BadCompLet();
+    procedure HasNonGaiaDR2Pllx();
     // additional misc methods
     function FindViaSimbad(insim:SimbadData; out where:Integer):Integer;
     function FindFromCatList(inlist:TStringList; out where:Integer):Integer;
@@ -978,6 +980,38 @@ begin
     xolist.Free;
     // if we have multiple, we copy to the filtered list
     if xcount > 1 then begin
+      Inc(fcount);
+      SetLength(Filtered_List,fcount);
+      Filtered_List[fcount-1] := System_List[I];
+    end;
+  end;
+  // setting the pointers
+  SetAfterFilter;
+end;
+//---------------------------------------------------------
+procedure StarList.BadCompLet();
+var I:Integer;
+begin
+  ClearFiltered;
+  // copying over
+  for I := 0 to maincount - 1 do begin
+    if System_List[I].BadCompLetter then begin
+      Inc(fcount);
+      SetLength(Filtered_List,fcount);
+      Filtered_List[fcount-1] := System_List[I];
+    end;
+  end;
+  // setting the pointers
+  SetAfterFilter;
+end;
+//----------------------------------------------------------
+procedure StarList.HasNonGaiaDR2Pllx();
+var I:Integer;
+begin
+  ClearFiltered;
+  // copying over
+  for I := 0 to maincount - 1 do begin
+    if System_List[I].ContainsNonDR2Parallax() then begin
       Inc(fcount);
       SetLength(Filtered_List,fcount);
       Filtered_List[fcount-1] := System_List[I];

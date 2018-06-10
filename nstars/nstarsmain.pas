@@ -41,6 +41,9 @@ type
     AddUMGaiaDR2MI: TMenuItem;
     GaiaDR2MagMI: TMenuItem;
     EstJHKGaia2MI: TMenuItem;
+    NonDr2PlxMI: TMenuItem;
+    ShowJ2000posMI: TMenuItem;
+    SwapStarMI: TMenuItem;
     MLDeleteSysMI: TMenuItem;
     PanStarrEstMI: TMenuItem;
     MainListPopupMenu: TPopupMenu;
@@ -245,6 +248,7 @@ type
     procedure MISwapParallaxClick(Sender: TObject);
     procedure MLDeleteSysMIClick(Sender: TObject);
     procedure New1Click(Sender: TObject);
+    procedure NonDr2PlxMIClick(Sender: TObject);
     procedure ools1Click(Sender: TObject);
     procedure PanStarrEstMIClick(Sender: TObject);
     procedure ParallaxEntryMIClick(Sender: TObject);
@@ -260,6 +264,7 @@ type
     procedure SetBM_2MIClick(Sender: TObject);
     procedure SetMergeSrcMIClick(Sender: TObject);
     procedure ShowGalCoordMIClick(Sender: TObject);
+    procedure ShowJ2000posMIClick(Sender: TObject);
     procedure ShowPosDegMIClick(Sender: TObject);
     procedure ShowUVWMIClick(Sender: TObject);
     procedure SimbadDataFetchClick(Sender: TObject);
@@ -275,6 +280,7 @@ type
     procedure StarGaiaMatchMIClick(Sender: TObject);
     procedure StarLocatFrame1Exit(Sender: TObject);
     procedure StarToSysMIClick(Sender: TObject);
+    procedure SwapStarMIClick(Sender: TObject);
     procedure SystemEditPageSetChange(Sender: TObject);
     procedure TestVizDMIClick(Sender: TObject);
     procedure TGASBinarySecMatchMIClick(Sender: TObject);
@@ -1811,6 +1817,7 @@ begin
   SearchNotesMI.Checked := False;
   SearchPlxSrcMI.Checked := False;
   HasProbMI.Checked := False;
+  NonDr2PlxMI.Checked := False;
 end;
 //------------------------------------------------------------
 (* uses the current catalog name with some modifications as the
@@ -2209,6 +2216,14 @@ begin
   ChangeSystem;
 end;
 
+procedure TNStarsMainForm.NonDr2PlxMIClick(Sender: TObject);
+begin
+  UncheckFilters;
+  NonDr2PlxMI.Checked := True;
+  primaryl.HasProblems;
+  if current.sys <> nil then  ChangeSystem;
+end;
+
 procedure TNStarsMainForm.ools1Click(Sender: TObject);
 var tgas_okay, notsol, notbd:Boolean;
 begin
@@ -2419,6 +2434,22 @@ begin
   overall += latlongstr;
   Screen.Cursor := crDefault;
   ShowMessage(overall);
+end;
+
+procedure TNStarsMainForm.ShowJ2000posMIClick(Sender: TObject);
+var overall:string;
+begin
+  if (current = nil) then Exit;
+  if (current.sysl = nil) then Exit;
+  if current.sys.GetId = 1 then ShowMessage('Not applicable for the Sun.')
+  else begin
+     // applicable here!
+    Screen.Cursor := crHourGlass;
+    overall := current.sysl.MakeJ2000pos();
+    // showing the message
+    Screen.Cursor := crDefault;
+    ShowMessage(overall);
+  end;
 end;
 
 procedure TNStarsMainForm.ShowPosDegMIClick(Sender: TObject);
@@ -2659,6 +2690,16 @@ begin
   // appending the new system and moving to it..
   primaryl.AppendSystem(extracted);
   ChangeSystem;
+end;
+
+procedure TNStarsMainForm.SwapStarMIClick(Sender: TObject);
+begin
+  StarModCheck(Sender);
+  // we add a star using the proxy
+  if not current.SwapComponent() then Exit;
+  // reloading star data
+  if (current.starindex = 1) then MainLocatEditFrame1.ChangeLocation(current.sysl);
+  LoadAllStarData;
 end;
 
 procedure TNStarsMainForm.SystemEditPageSetChange(Sender: TObject);

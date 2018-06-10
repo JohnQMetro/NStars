@@ -41,6 +41,7 @@ StarName = class
     function RenameCats(incats:TStringList):Integer;
     (* returns the entire catalog list (for display) *)
     function GetList:TStringList;
+    function ExtractNonSystemCats:TStringList;
     (* string I/O *)
     function ToIOString:string;
     procedure FromString(inval:string);
@@ -346,6 +347,37 @@ end;
  begin
    Result := cat_desig;
  end;
+//---------------------------------------------
+function StarName.ExtractNonSystemCats:TStringList;
+var sysdex,catdex:Integer;
+    sysfound:Boolean;
+begin
+  Result := nil;
+  if (cat_desig = nil) or (cat_desig.Count = 0) then Exit;
+  Result := TStringList.Create;
+  Result.StrictDelimiter := True;
+  Result.Delimiter := ',';
+  // looping over the catalogs to see if they are system cats...
+  for catdex := (cat_desig.Count -1) downto 0 do begin
+    sysfound := False;
+    for sysdex := Low(sys_cats) to High(sys_cats) do begin
+      if AnsiStartsStr(sys_cats[sysdex],cat_desig[catdex]) then begin
+         if GetCCode(cat_desig[catdex]) = sys_cats[sysdex] then begin
+            sysfound := True;  Break;
+         end;
+      end;
+    end;
+    // here, if sysfound is still False, we move the string to Result
+    if (not sysfound) then begin
+       Result.Add(cat_desig[catdex]);
+       cat_desig.Delete(catdex);
+    end;
+  end;
+  // some final checks
+  if Result.Count = 0 then FreeAndNil(Result);
+  if cat_desig.Count = 0 then FreeAndNil(cat_desig);
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* string I/O *)
 function StarName.ToIOString:string;

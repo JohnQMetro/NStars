@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="59">
+    <Units Count="60">
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -347,6 +347,11 @@
         <Filename Value="gaia\gaiadr2types.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit58>
+      <Unit59>
+        <Filename Value="data\locatmanip.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="LocatManip"/>
+      </Unit59>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

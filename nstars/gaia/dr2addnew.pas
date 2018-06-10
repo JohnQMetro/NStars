@@ -8,7 +8,7 @@ interface
 star list. *)
 
 uses
-  Classes, SysUtils, LCLIntf, LMessages, DAMath,
+  Classes, SysUtils, LCLIntf, LMessages, Math, DAMath,
   gaiadr2base, gaiadr2holder, stardata, collecdata, newlocation, namedata,
   NewStar, ImportVizier, simbad, StarExt2;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -137,18 +137,39 @@ begin
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (*  autoparams:DR2AutoAddSettings;   rejectparams:DR2AutoRejectSettings;  *)
-// checking for automatic rejection, we work of a process of elimination
+// checking for automatic rejection, 2 zones
 function AddFromDR2Thread.CheckForAutoReject():Boolean;
-var cpmmag:Real;
+var cpmmag,pxerr,accepterr:Real;
 begin
   Result := False;
-  if curobj.mags.G < rejectparams.maxGMag then Exit;
-  if curobj.astrometry.parallax_err < rejectparams.minPllxErr then Exit;
-  if Abs(curobj.astrometry.glat) > rejectparams.maxLatitude then Exit;
-  cpmmag := hypot(curobj.astrometry.rapm,curobj.astrometry.decpm);
-  if cpmmag > rejectparams.maxPMMag then Exit;
+  if curobj.mags.G < rejectparams.maxGMag then Exit;   // too bright, include
   if (curobj.ids.TwoMASS <> '') and rejectparams.nevRej2Mass then Exit;
-  Result := True;
+  pxerr := curobj.astrometry.parallax_err;
+  // outisde 'zone of avoidance'
+  if Abs(curobj.astrometry.glat) > rejectparams.maxLatitude then begin
+     // if the parallax error is lower than the limit, okay
+    if ( pxerr < rejectparams.minPllxErr) then Exit;
+    // twice the limit is always reject, but between, the pmmag has to be met
+    if (pxerr < (2 * rejectparams.minPllxErr)) then begin
+      cpmmag := hypot(curobj.astrometry.rapm,curobj.astrometry.decpm);
+      if cpmmag > rejectparams.maxPMMag then Exit;
+    end;
+  end
+  // within the 'zone of avoidance'
+  else begin
+    (* We compute a parallax error that is always not rejected, between
+       auto include and auto reject. *)
+    accepterr := (autoparams.maxPllxError + rejectparams.minPllxErr) / 2.0;
+    accepterr := Max(autoparams.maxPllxError,accepterr);
+    if (pxerr < accepterr) then Exit;
+    // if the parallax error is below the limit, we do a pm check...
+    if (pxerr < rejectparams.minPllxErr) then begin
+      cpmmag := hypot(curobj.astrometry.rapm,curobj.astrometry.decpm);
+      if cpmmag > rejectparams.maxPMMag then Exit;
+    end;
+  end;
+
+  Result := True; // the object is rejected!
 end;
 //-----------------------------------------------
 // checking for automatic addition, by elimination

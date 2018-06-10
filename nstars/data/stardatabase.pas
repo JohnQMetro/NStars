@@ -20,6 +20,7 @@ StarBase = class
     // location
     function HasLocation:Boolean;
     function GetLocation:Location;
+    function ExtractLocation:Location;
     procedure ClearLocation;
     function CopyLocation(inval:Location; bincp:Boolean):Boolean;
     procedure InsertLocation(inval:Location);
@@ -104,6 +105,12 @@ end;
 function StarBase.GetLocation:Location;
 begin
   Result := the_location;
+end;
+//---------------------------------------------------------
+function StarBase.ExtractLocation:Location;
+begin
+  Result := the_location;
+  the_location := nil;
 end;
 //---------------------------------------------------------
 procedure StarBase.ClearLocation;

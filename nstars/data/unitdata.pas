@@ -6,6 +6,9 @@ interface
 
 uses StrUtils;
 
+type
+  TSysCat = array[0..29] of string;
+
 const
   constellations:array[0..263] of string = ('Andromeda','Andromedae','And',
     'Antlia','Antliae','Ant','Apus','Apodis','Aps','Aquarius','Aquarii','Aqr',
@@ -75,11 +78,15 @@ const
   prefcats:array[0..33] of string = ('Gl','GJ','Wolf','Ross','HD','Hip', 'LHS',
         '2MASS','Tyc','BD','CD','L','WD','LP','LTT','NLTT','CPD','VB','EG','Gr',
         'UCAC4','Wo','G','Vys','DENIS','WISE','Gmb','Luhman','SCR','Sao','YPC',
-        'Sm','Gaia2','WISEA');
+        'Sm','WISEA','GaiaDR2');
 
   ArityLabels:array[0..6] of string = ('Single','Possibly Double',
       'Spectroscopic Binary', 'Other Binary', 'Double or Multiple',
       'Eclipsing Binary','White Dwarf Companion');
+
+  const sys_cats:TSysCat = ('Gl','GJ','ADS','WDS','BD','HD','CD','CPD','Struve',
+       'Vys','Bu','Kpr','LDS','Luhman','Sm','Wo','I','HJ','Wor', 'LSPM','H',
+       'Kr','Tok','Balega','O.Struve','Stein','Tok','Rob', 'Scholz', 'Balega');
 
 type
 

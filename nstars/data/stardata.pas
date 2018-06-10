@@ -65,6 +65,7 @@ StarSystem = class (StarBase)
     procedure AddNewSepLocation();
     function InsertStarAtIndex(index:Integer; out starPtr:StarInfo):Boolean;
     function DelStar(index:Integer):Boolean;
+    function SwapPositions(stardex:Integer):Boolean;
     (* name stuff *)
     function GetPreferredName:string;
     function Get2300adName:string;
@@ -135,6 +136,7 @@ StarSystem = class (StarBase)
     function HasMultiples:Boolean;
     function LuminosityCloseToOne:Boolean;
     function NoMassBrownDwarf:Boolean;
+    function BadCompLetter:Boolean;
     (* clusters *)
     function InCluster(inclus:string):Boolean;
     function ClusterCount:Integer;
@@ -469,6 +471,40 @@ begin
   SetLength(new_components,MaxCInd);
   // if there is only one system left, we move stuff to system level...
   PostRemovalCleanup;
+  Result := True;
+end;
+//----------------------------------------------------
+(* Swaps poition of two components. special treatment needed if swap involves
+star 1 because of the system location... *)
+function StarSystem.SwapPositions(stardex:Integer):Boolean;
+var temp:NewStarBase;
+    locat2:Location;
+    locat2copy:Boolean;
+    rapos,decpos:Real;
+begin
+  Result := False;
+  if (stardex < 1) or (stardex >= GetCompC()) then Exit;
+  if (stardex = 1) and (new_components[1].HasLocation) then begin
+    // the parallax of star 2 will become the system parallax, it cannot be a binary copy
+    locat2 := new_components[1].ExtractLocation;
+    locat2copy := locat2.IsACopy;
+    if locat2copy then locat2.MakeNotCopy;
+    // moving the system parallax into star 1
+    if locat2copy then the_location.binarycopy := True;
+    new_components[0].InsertLocation(the_location);
+    // moving star 2 location into the_location
+    the_location := locat2;
+    // unlikely, but the constellation might change
+    rapos := the_location.GetDecimalRightAscension;
+    decpos := the_location.GetDecimalDeclination;
+    constellation := Const_Data.LocatePoint(rapos,decpos,the_location.Epoch);
+  end;
+  // the swap
+  temp := new_components[stardex-1];
+  new_components[stardex-1] := new_components[stardex];
+  new_components[stardex] := temp;
+  // post cleanup...
+  if (stardex = 1) then BinaryLocationUpdate;
   Result := True;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1180,6 +1216,9 @@ end;
 function StarSystem.MergeIntoSystem(var otherSystem:StarSystem):Boolean;
 var oclsit:ComponentList;
     addcount,ocount,addex:Integer;
+    xlist:TStringList;
+    oname:StarName;
+    testo:string;
 begin
   // initial rejection tests...
   Result := False;
@@ -1214,6 +1253,19 @@ begin
   AppendCommaNB(political_ownrs,otherSystem.political_ownrs);
   AppendCommaNB(description,otherSystem.description);
   AppendCommaNB(name2300ad,otherSystem.name2300ad);
+
+  // moving names from system names if need be...
+  if ocount = 1 then begin
+    xlist := nameset.ExtractNonSystemCats;
+    if (xlist <> nil) then begin
+      oname := new_components[0].MakeOrGetNames;
+      testo := xlist.DelimitedText;
+      oname.SetMultipleCat(testo);
+      xlist.Free;
+    end;
+    new_components[0].Component:= 'A';
+    new_components[1].Component:= 'B';
+  end;
 
   // finally
   Result := True;
@@ -1524,6 +1576,11 @@ begin
   if zstar.fluxtemp<>nil then begin
     new_browndwarf.fluxtemp := zstar.fluxtemp;
     zstar.fluxtemp := nil;
+  end;
+  // Gaia magnitudes
+  if zstar.dr2mags <> nil then begin
+    new_browndwarf.dr2mags := zstar.dr2mags;
+    zstar.dr2mags := nil;
   end;
   // notes
   tnotes := zstar.notes;
@@ -1903,6 +1960,13 @@ begin
     end;
   end;
   Result := False;
+end;
+//------------------------------------------------
+function StarSystem.BadCompLetter():Boolean;
+var clet:string;
+begin
+  clet := new_components[0].Component;
+  Result := (clet <> '') and (clet <> ' ') and (not AnsiStartsStr('A',clet));
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* clusters *)

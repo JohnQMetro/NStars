@@ -993,6 +993,10 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Show Position in Degrees...'
         OnClick = ShowPosDegMIClick
       end
+      object ShowJ2000posMI: TMenuItem
+        Caption = 'Show J2000 Position...'
+        OnClick = ShowJ2000posMIClick
+      end
       object MenuItem5: TMenuItem
         Caption = '-'
       end
@@ -1035,6 +1039,10 @@ object NStarsMainForm: TNStarsMainForm
       object InsertStarMI: TMenuItem
         Caption = 'Insert Star Here'
         OnClick = InsertStarMIClick
+      end
+      object SwapStarMI: TMenuItem
+        Caption = 'Swap Component with next'
+        OnClick = SwapStarMIClick
       end
       object ChangeStarToBDMI: TMenuItem
         Caption = 'Change Star to Brown Dwarf'
@@ -1351,6 +1359,10 @@ object NStarsMainForm: TNStarsMainForm
       object HasProbMI: TMenuItem
         Caption = 'Has Problems'
         OnClick = HasProbMIClick
+      end
+      object NonDr2PlxMI: TMenuItem
+        Caption = 'Has non-Gaia DR2 parallax'
+        OnClick = NonDr2PlxMIClick
       end
       object N7: TMenuItem
         Caption = '-'

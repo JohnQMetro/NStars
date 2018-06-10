@@ -386,11 +386,20 @@ begin
 end;
 //---------------------------------------------------------------
 function GaiaDR2Mags.MakeVest(out Vest:Real):Boolean;
-var bpmrp,interm:Real;
+var bpmrp,bpmg,interm:Real;
 const coffs:array[0..2] of Real = (-0.0176,-0.00686,-0.1732);
+      coffsB:array[0..2] of Real = (-0.2084,0.92954,0.022026);
 begin
   Result := False;
   if (G >= 90) then Exit;
+  if (BP >= 90) then Exit;
+  bpmg := CurrToReal(BP)-CurrToReal(G);
+  if (bpmg >= 0.867) and (bpmg <= 3.61) then begin
+    interm := PolEval(bpmg,coffsB,3);
+    Vest := CurrToReal(G) + interm;
+    Result := True;
+    Exit;
+  end;
   if not ValidBPmRp then Exit;
   bpmrp := CurrToReal(BPminRP);
   if (bpmrp <= -0.5) or (bpmrp >= 2.75) then Exit;
