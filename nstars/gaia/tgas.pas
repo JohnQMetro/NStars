@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, fgl, DAMath, StrUtils,
-  df_strings, namedata,simbad,Utilities2;
+  df_strings, star_names (* namedata *),simbad,Utilities2;
 
 type
 
@@ -73,7 +73,7 @@ TGASData = class
     // final stuff
     function SummaryString:string;
     function SummaryString2:string;
-    function NameMatch(namegroup:StarName):Boolean;
+    function NameMatch(namegroup:StarNames):Boolean;
 end;
 
 TGASList = TFPGObjectList<TGASData>;
@@ -621,7 +621,7 @@ begin
 end;
 //---------------------------------------------------------------------
 (* checks if the names contain a matching Hipparcos or Tycho catalog ID *)
-function TGASData.NameMatch(namegroup:StarName):Boolean;
+function TGASData.NameMatch(namegroup:StarNames):Boolean;
 var rok:Boolean;  catstr:string;
 begin
   Result := False;

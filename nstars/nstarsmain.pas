@@ -15,7 +15,7 @@ uses
   MainLocatEdit, df_strings, sptfluxest, PPMMatchForm, Utilities2, tgas_import,
   export_form, ExtraImports,
   dr2loadstore, dr2sourceload,gaiadr2holder,gaiamagsui, gaiadr2match,
-  gaiadr2add;
+  gaiadr2add, star_names;
 
 type
 
@@ -41,6 +41,7 @@ type
     AddUMGaiaDR2MI: TMenuItem;
     GaiaDR2MagMI: TMenuItem;
     EstJHKGaia2MI: TMenuItem;
+    DiffEpochMI: TMenuItem;
     NonDr2PlxMI: TMenuItem;
     ShowJ2000posMI: TMenuItem;
     SwapStarMI: TMenuItem;
@@ -207,6 +208,7 @@ type
     procedure CatDupesScanMIClick(Sender: TObject);
     procedure ChangeStarToBDMIClick(Sender: TObject);
     procedure ComponentTabControlChange(Sender: TObject);
+    procedure DiffEpochMIClick(Sender: TObject);
     procedure EnterPMPartsMIClick(Sender: TObject);
     procedure EstBVCMCMIClick(Sender: TObject);
     procedure EstBVUCACMIClick(Sender: TObject);
@@ -556,6 +558,14 @@ begin
   FluxEstSubMenu.Enabled := feok;
 end;
 
+procedure TNStarsMainForm.DiffEpochMIClick(Sender: TObject);
+begin
+  UncheckFilters;
+  DiffEpochMI.Checked := True;
+  primaryl.DifferingEpochs();
+  if current.sys <> nil then  ChangeSystem;
+end;
+
 
 procedure TNStarsMainForm.EnterPMPartsMIClick(Sender: TObject);
 var data1,data2:string;   rok:Boolean;
@@ -780,9 +790,9 @@ end;
 procedure TNStarsMainForm.FluxEstSubMenuClick(Sender: TObject);
 var gaiaok:Boolean;
 begin
-  gaiaok := (current.ccomponent.dr2mags <> nil) and (current.ccomponent.dr2mags.ValidBPmRP);
+  gaiaok := (current.ccomponent.dr2mags <> nil) and (current.ccomponent.dr2mags.G < 90);
   GaiaDR2MagMI.Enabled := gaiaok;
-  EstJHKGaia2MI.Enabled := gaiaok;
+  EstJHKGaia2MI.Enabled := gaiaok and (current.ccomponent.dr2mags.ValidBPmRP);
 end;
 
 procedure TNStarsMainForm.GaiaDR2MagMIClick(Sender: TObject);
@@ -1818,6 +1828,7 @@ begin
   SearchPlxSrcMI.Checked := False;
   HasProbMI.Checked := False;
   NonDr2PlxMI.Checked := False;
+  DiffEpochMI.Checked := False;
 end;
 //------------------------------------------------------------
 (* uses the current catalog name with some modifications as the
@@ -2220,7 +2231,7 @@ procedure TNStarsMainForm.NonDr2PlxMIClick(Sender: TObject);
 begin
   UncheckFilters;
   NonDr2PlxMI.Checked := True;
-  primaryl.HasProblems;
+  primaryl.HasNonGaiaDR2Pllx();
   if current.sys <> nil then  ChangeSystem;
 end;
 

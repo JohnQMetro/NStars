@@ -5,8 +5,9 @@ unit stardata;
 interface
 
 uses SysUtils, Classes, df_strings, StrUtils,
- StarDataBase, newlocation, namedata, unitdata, simbad, sptfluxest,
- NewStar, tgas, constellation, StarEstimator, StarExt2, gaiadr2base;
+ StarDataBase, newlocation, star_names (* namedata *), unitdata, simbad, sptfluxest,
+ NewStar, tgas, constellation, StarEstimator, StarExt2, gaiadr2base,
+ utilities2;
 
 type
 //----------------------------------------------------------
@@ -75,7 +76,7 @@ StarSystem = class (StarBase)
     function MakeVariableName:string;
     function MakeBayerStarName(index:Integer):string;
     function MakeVariableStarName(index:Integer):string;
-    function GetNameSet(index:Integer):StarName;
+    function GetNameSet(index:Integer):StarNames;
     (* text i/o *)
     function MakeLine1:string;
     function FromLine1(inval:string):Integer;
@@ -120,7 +121,7 @@ StarSystem = class (StarBase)
     function WriteEstimateData():Integer;
     function HipTycNames():TStringList;
     (* Gaia DR2 related *)
-    function GetStuffForMatching(stardex:Integer; out starloc:Location; out stnames:StarName; out sysnames:StarName):Boolean;
+    function GetStuffForMatching(stardex:Integer; out starloc:Location; out stnames:StarNames; out sysnames:StarNames):Boolean;
     function ApplyGaiaObject(stardex:Integer; inobj:GaiaDR2Star; conditional:Boolean):Boolean;
     function ApplyGaiaNameMags(stardex:Integer; inobj:GaiaDR2Star):Boolean;
     function ContainsNonDR2Parallax():Boolean;
@@ -137,6 +138,7 @@ StarSystem = class (StarBase)
     function LuminosityCloseToOne:Boolean;
     function NoMassBrownDwarf:Boolean;
     function BadCompLetter:Boolean;
+    function DifferingEpochs:Boolean;
     (* clusters *)
     function InCluster(inclus:string):Boolean;
     function ClusterCount:Integer;
@@ -313,7 +315,7 @@ begin
 end;
 //------------------------------------------------------
 function StarSystem.PostRemovalCleanup:Boolean;
-var name_left:StarName;
+var name_left:StarNames;
     cindex,ccount:Integer;
     ccat:string;
 begin
@@ -336,7 +338,7 @@ begin
       nameset.proper_name += name_left.proper_name;
     end;
     // catalog ids...
-    ccount := name_left.GetCatalogCount;
+    ccount := name_left.CatalogCount;
     for cindex := 0 to (ccount-1) do begin
       ccat := name_left.GetCatalog(cindex);
       nameset.SetCat(ccat);
@@ -367,7 +369,7 @@ begin
     // location is a must *unless this is the Sun*, by default
     the_location := Location.Create;
     // an extra nameset is also non-optional(except for the sun)
-    nameset := StarName.Create;
+    nameset := StarNames.Create;
   end;
   // finally, since a star system must have a star, we add one
   SetLength(new_components,1);
@@ -653,7 +655,7 @@ begin
   else Result := '';
 end;
 //---------------------------------------------------
-function StarSystem.GetNameSet(index:Integer):StarName;
+function StarSystem.GetNameSet(index:Integer):StarNames;
 begin
   if (not new_components[index].HasNames) then Result := nameset
   else Result := new_components[index].GetNames;
@@ -937,7 +939,7 @@ end;
 // a star name/catalog name search function
 function StarSystem.Search(infind:string; out where:Integer):Boolean;
 var I,constell:Integer;
-    TC:StarName;
+    TC:StarNames;
     buf:string;
 begin
   Result := False;
@@ -991,7 +993,7 @@ end;
 //------------------------------------------------------------
 function StarSystem.HasCatName(cc:string):Boolean;
 var I:Integer;
-    names:StarName;
+    names:StarNames;
 begin
   // we first loop over substars
   Result := True;
@@ -999,12 +1001,12 @@ begin
     for I := 0 to MaxCInd do begin
       if new_components[I].HasNames then begin
         names := new_components[I].GetNames;
-        if names.GetCat(cc)<>'' then Exit;
+        if names.HasCat(cc) then Exit;
       end;
     end;
   end;
   // we now do the main star list
-  Result := (nameset.GetCat(cc)<>'');
+  Result := nameset.HasCat(cc);
 end;
 //--------------------------------------------
 function StarSystem.SearchNotes(tofind:string):Boolean;
@@ -1077,7 +1079,7 @@ begin
 end;
 //-----------------------------------------------------------
 function StarSystem.CatalogMatch(othersys:StarSystem):Boolean;
-var cstar_name,other_name:StarName;
+var cstar_name,other_name:StarNames;
     thisdex,otherdex:Integer;
 begin
   // special bad cases
@@ -1118,7 +1120,7 @@ end;
 //-----------------------------------------------------
 function StarSystem.SystemIDSummary:string;
 var compdex:Integer;
-    cnameset:StarName;
+    cnameset:StarNames;
 begin
   Result := 'System ' + IntToStr(id) + ' ; ';
   Result += GetPreferredName + ' : ' + IntToStr(GetCompc);
@@ -1175,7 +1177,7 @@ end;
 //-------------------------------------------------------
 function StarSystem.GetStarsAndEmpty():ComponentList;
 var cstar:NewStarBase;
-    cnames:StarName;
+    cnames:StarNames;
     compdex,catdex:Integer;
     curcat:string;
 begin
@@ -1200,7 +1202,7 @@ begin
       // nameset
       if nameset<>nil then begin
         cnames := cstar.MakeOrGetNames();
-        for catdex := 0 to (nameset.GetCatalogCount-1) do begin
+        for catdex := 0 to (nameset.CatalogCount-1) do begin
           curcat := nameset.GetCatalog(catdex) + ' ' + cstar.Component;
           cnames.SetCat(curcat);
         end;
@@ -1217,7 +1219,7 @@ function StarSystem.MergeIntoSystem(var otherSystem:StarSystem):Boolean;
 var oclsit:ComponentList;
     addcount,ocount,addex:Integer;
     xlist:TStringList;
-    oname:StarName;
+    oname:StarNames;
     testo:string;
 begin
   // initial rejection tests...
@@ -1290,7 +1292,7 @@ end;
 //---------------------------------------------------------
 
 function StarSystem.TGAS2StarCheck(inlist:TGASList):Integer;
-var corematch:Integer; starxname:StarName;
+var corematch:Integer; starxname:StarNames;
 begin
   // 0 : no 2 star match
   Result := 0;
@@ -1352,7 +1354,7 @@ begin
 end;
 //-----------------------------------------------------------
 function StarSystem.SetTGASMatches(target:TGASCollection):Integer;
-var cnameset:StarName;
+var cnameset:StarNames;
     clocat:Location;
     cname:string;
     sdex:Integer;
@@ -1428,7 +1430,7 @@ end;
 // catalog renaming
 function StarSystem.CatRenames(incats:TStringList):Integer;
 var I:Integer;
-    names:StarName;
+    names:StarNames;
 begin
   // basic checks
   Assert(incats<>nil);
@@ -1613,7 +1615,7 @@ end;
 function StarSystem.WriteEstimateData():Integer;
 var curstar:StarInfo;
     sxidx:Integer;
-    qnames:StarName;
+    qnames:StarNames;
     oname:string;
 begin
   Result := 0;
@@ -1635,7 +1637,7 @@ begin
 end;
 //---------------------------------------------------------
 function StarSystem.HipTycNames():TStringList;
-var cnameset:StarName;
+var cnameset:StarNames;
     cname:string;
     sdex,startdex:Integer;
 begin
@@ -1663,7 +1665,7 @@ end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* Gaia DR2 related *)
 //------------------------------------
-function StarSystem.GetStuffForMatching(stardex:Integer; out starloc:Location; out stnames:StarName; out sysnames:StarName):Boolean;
+function StarSystem.GetStuffForMatching(stardex:Integer; out starloc:Location; out stnames:StarNames; out sysnames:StarNames):Boolean;
 begin
   Result := False;
   if (stardex > GetCompC) or (stardex < 1) then Exit;
@@ -1678,7 +1680,7 @@ function StarSystem.ApplyGaiaObject(stardex:Integer; inobj:GaiaDR2Star; conditio
 var cur_component:NewStarBase;
     cur_star:StarInfo;
     star_locat:Location;
-    star_namez:StarName;
+    star_namez:StarNames;
     cok:Boolean;
     rap,decp:Real;
 begin
@@ -1711,7 +1713,7 @@ begin
   cur_component.dr2mags := inobj.mags.MakeCopy();
   // identifiers
   if (GetCompC = 1) then begin
-    if (nameset = nil) then nameset := StarName.Create;
+    if (nameset = nil) then nameset := StarNames.Create;
     nameset.SetCat(inobj.GaiaID());
     nameset.SetMultipleCat(inobj.ids.IDStrings(false));
   end else begin
@@ -1740,7 +1742,7 @@ end;
 //--------------------------------------------
 function StarSystem.ApplyGaiaNameMags(stardex:Integer; inobj:GaiaDR2Star):Boolean;
 var cur_component:NewStarBase;
-    star_namez:StarName;
+    star_namez:StarNames;
     xloc:Location;
 begin
   Result := False;
@@ -1754,7 +1756,7 @@ begin
   cur_component.dr2mags := inobj.mags.MakeCopy();
   // identifiers
   if (GetCompC = 1) then begin
-    if (nameset = nil) then nameset := StarName.Create;
+    if (nameset = nil) then nameset := StarNames.Create;
     nameset.SetCat(inobj.GaiaID());
     nameset.SetMultipleCat(inobj.ids.IDStrings(false));
   end else begin
@@ -1815,7 +1817,7 @@ end;
 function StarSystem.StarSummaryIDPos(stardex:Integer):string;
 var comp:NewStarBase;
     locx:Location;
-    cname:StarName;
+    cname:StarNames;
 begin
   Assert((stardex >= 1) and (stardex <= GetCompC));
   comp := new_components[stardex-1];
@@ -1878,7 +1880,7 @@ is >= maxcname, often a sign we need to get more catnames *)
 function StarSystem.NotEnoughCats(maxcname:Integer):Boolean;
 var I:Integer;
 begin
-  I:= nameset.GetCatalogCount;
+  I:= nameset.CatalogCount;
   Result := (I<=maxcname);
 end;
 //---------------------------------------------------------
@@ -1968,6 +1970,28 @@ begin
   clet := new_components[0].Component;
   Result := (clet <> '') and (clet <> ' ') and (not AnsiStartsStr('A',clet));
 end;
+//----------------------------------------------
+// returns true if component star locations do not have the same epochs...
+function StarSystem.DifferingEpochs:Boolean;
+var mepoch:EpochType;
+    cdex:Integer;
+    cloc:Location;
+begin
+  // trivial: only one star
+  Result := False;
+  if GetCompC = 1 then Exit;
+  // otherwise, we get the system epoch and loop over the components
+  Result := True;
+  mepoch := the_location.Epoch;
+  for cdex := 1 to (GetCompC-1) do begin
+    cloc := new_components[cdex].GetLocation();
+    if cloc = nil then Continue;
+    if cloc.Epoch <> mepoch then Exit; // A true mismatch!
+  end;
+  // if we get here, no mismatch found
+  Result := False;
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* clusters *)
 //----------------------------------------------------
@@ -2112,7 +2136,7 @@ begin
 end;
 //============================================================================
 function SystemOutputter.GetCHVNames(sindex,maxlen:Integer):string;
-var xname:StarName;
+var xname:StarNames;
 begin
   xname := system.GetNameSet(sindex);
   Result := xname.LimitedListofCats(maxlen);
@@ -2319,7 +2343,7 @@ begin
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function SystemOutputter.AstroCatIDs(stardex:Integer):string;
-var qcurr_names:StarName;
+var qcurr_names:StarNames;
     catlist:string;
 begin
   // checks

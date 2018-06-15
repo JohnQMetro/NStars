@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, StrUtils,
-  namedata, df_strings, newlocation;
+  star_names, df_strings, newlocation;     (* ,namedata *)
 
 type
 
@@ -14,7 +14,7 @@ type
 StarBase = class
   protected
     the_location:Location;
-    nameset:StarName;
+    nameset:StarNames;
   public
     notes:string;
     // location
@@ -27,10 +27,10 @@ StarBase = class
     function CopyMotion(inval:Location):Boolean;
     // nameset
     function HasNames:Boolean;
-    function GetNames:StarName;
-    function MakeOrGetNames:StarName;
+    function GetNames:StarNames;
+    function MakeOrGetNames:StarNames;
     procedure ClearNames;
-    function CopyNames(inval:StarName):Boolean;
+    function CopyNames(inval:StarNames):Boolean;
     function TestClearNames:Boolean;
     // notes for file i/o
     function GetNotesFile:string;
@@ -151,29 +151,26 @@ begin
   Result := (nameset<>nil);
 end;
 //---------------------------------------------------------
-function StarBase.GetNames:StarName;
+function StarBase.GetNames:StarNames;
 begin
   Result := nameset;
 end;
 //---------------------------------------------------------
-function StarBase.MakeOrGetNames:StarName;
+function StarBase.MakeOrGetNames:StarNames;
 begin
-  if nameset = nil then nameset := StarName.Create;
+  if nameset = nil then nameset := StarNames.Create;
   Result := nameset;
 end;
 //---------------------------------------------------------
 procedure StarBase.ClearNames;
-begin
-  nameset.Free;
-  nameset := nil;
-end;
+begin FreeAndNil(nameset); end;
 //---------------------------------------------------------
-function StarBase.CopyNames(inval:StarName):Boolean;
+function StarBase.CopyNames(inval:StarNames):Boolean;
 begin
   Result := False;
   if (inval = nil) then Exit;
   if nameset<>nil then nameset.Free;
-  nameset := StarName.Create(inval);
+  nameset := StarNames.Create(inval);
   Result := True;
 end;
 //-------------------------------------------------
@@ -221,7 +218,7 @@ end;
 // additional method
 procedure StarBase.SetupNameLocation(doname,dolocat:Boolean);
 begin
-  if doname then nameset := StarName.Create
+  if doname then nameset := StarNames.Create
   else nameset := nil;
   if dolocat then the_location := Location.Create
   else the_location := nil;

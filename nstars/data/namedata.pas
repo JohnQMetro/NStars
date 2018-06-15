@@ -119,7 +119,7 @@ end;
 function StarName.GetCCode(inv:string):string;
 var qpos:Integer;
 begin
-  qpos := FindFirstOf(inv,' +-',1);
+  qpos := PosSetEx(' +-',inv,1);
   if qpos<1 then Result := ''
   else Result := copy(inv,1,qpos-1);
 end;

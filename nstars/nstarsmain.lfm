@@ -1364,6 +1364,10 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Has non-Gaia DR2 parallax'
         OnClick = NonDr2PlxMIClick
       end
+      object DiffEpochMI: TMenuItem
+        Caption = 'Differing Epochs'
+        OnClick = DiffEpochMIClick
+      end
       object N7: TMenuItem
         Caption = '-'
       end

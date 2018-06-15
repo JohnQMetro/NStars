@@ -9,7 +9,7 @@ matching is included with GaiaDR2Collection. *)
 
 uses
   Classes, SysUtils, LCLIntf, LMessages,
-  gaiadr2holder, stardata, gaiadr2base, collecdata, newlocation, namedata,
+  gaiadr2holder, stardata, gaiadr2base, collecdata, newlocation, star_names (* namedata *),
   NewStar, gaiadr2types;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 type
@@ -165,7 +165,7 @@ end;
 procedure MatchToDR2Thread.MatchForSystem();
 var xstardex,starcount:Integer;
     starloc,oldloc:Location;
-    stnames,sysnames:StarName;
+    stnames,sysnames:StarNames;
     matchlist:GaiaList;
     mtype:GaiaDR2_MatchType;
     hasmatch,doautomatch:Boolean;

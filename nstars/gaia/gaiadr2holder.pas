@@ -5,7 +5,7 @@ unit gaiadr2holder;
 interface
 
 uses
-  Classes, SysUtils, DAMath, FileUtil, gaiadr2base, newlocation, namedata, gaiadr2types;
+  Classes, SysUtils, DAMath, FileUtil, gaiadr2base, newlocation, star_names (* namedata *), gaiadr2types;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 type
 
@@ -51,7 +51,7 @@ GaiaDR2Collection = class
     procedure AddToLocations(thestar:GaiaDR2Star);
     procedure AddStar(thestar:GaiaDR2Star);
     procedure ClearIntMap(target:GaiaDR2_IntMap);
-    function FindNameMatches(namelist:StarName; mparams:DR2MatchConditions):GaiaList;
+    function FindNameMatches(namelist:StarNames; mparams:DR2MatchConditions):GaiaList;
     function FindPositionMatches(matchThis:Location; mparams:DR2MatchConditions):GaiaList;
     procedure FileClose();
     function scount():Integer;
@@ -59,7 +59,7 @@ GaiaDR2Collection = class
     property StarCount:Integer read scount;
     constructor Create;
     destructor Destroy; override;
-    function FindMatches(multiple:Boolean; starname,sysname:StarName; starloc:Location; mparams:DR2MatchConditions ;out mtype:GaiaDR2_MatchType):GaiaList;
+    function FindMatches(multiple:Boolean; starname,sysname:StarNames; starloc:Location; mparams:DR2MatchConditions ;out mtype:GaiaDR2_MatchType):GaiaList;
     // file I/O
     function StartOutput(filename:TFileName; out err_msg:string):Boolean;
     function OutputStars(oamount:Integer; out finished:Boolean; out err_msg:string):Boolean;
@@ -260,7 +260,7 @@ begin
   target.Clear;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-function GaiaDR2Collection.FindNameMatches(namelist:StarName; mparams:DR2MatchConditions):GaiaList;
+function GaiaDR2Collection.FindNameMatches(namelist:StarNames; mparams:DR2MatchConditions):GaiaList;
 var nvalue:string;
     namepos,hipidx:Integer;
     gltyc,glhip,gl2mass:GaiaList;
@@ -372,7 +372,7 @@ begin
   inherited;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-function GaiaDR2Collection.FindMatches(multiple:Boolean; starname,sysname:StarName; starloc:Location; mparams:DR2MatchConditions; out mtype:GaiaDR2_MatchType):GaiaList;
+function GaiaDR2Collection.FindMatches(multiple:Boolean; starname,sysname:StarNames; starloc:Location; mparams:DR2MatchConditions; out mtype:GaiaDR2_MatchType):GaiaList;
 var resbak:GaiaList;
 begin
   mtype := G2_NONE;

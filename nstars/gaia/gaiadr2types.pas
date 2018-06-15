@@ -11,7 +11,7 @@ type
 
 GaiaList = TFPGObjectList<GaiaDR2Star>;
 
-GaiaStringMap = class(TFPHashObjectList)
+GaiaStringMap = class (* (TFPHashObjectList) *)
   private
     data:TFPHashObjectList;
     function gcount():Integer;

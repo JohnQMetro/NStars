@@ -46,10 +46,6 @@ RealArray = array of Real;
 // a case-insenstive version of AnsiPos
 function CaseIPos(const base:string; const pattern:string):Integer;
 
-// lets you find the first character of a given set in a string at or after
-// a certain position
-function FindFirstOf(const base:string; const charset:string; pos:Integer):Integer;
-
 // lets you find the first character not of a given set in a string at or after
 // a certain position
 function FindFirstNotOf(const base:string; const charset:string; pos:Integer):Integer;
@@ -124,6 +120,9 @@ function RemUnlAfterAlt(var basestr:string; const pattern1,pattern2:string):Bool
 
 (* Get next word *)
 function ExtractFirstWord(var base:string; var oword:string):Boolean;
+
+(* replaces tabs with spaces, trims, and makes internal white space be 1 character long *)
+procedure CollapseWhiteSpace(var base:string);
 
 // a function to parse by a specific character
 function ParseByChar(indata:string; delim:Char; empt,trail:Boolean):TStringList;
@@ -356,34 +355,6 @@ begin
   lbase:= AnsiLowerCase(base);
   lpattern := AnsiLowerCase(pattern);
   Result := AnsiPos(lpattern,lbase);
-end;
-//==============================================================================
-function FindFirstOf(const base:string; const charset:string; pos:Integer):Integer;
-var csetlen, baselen:Integer;
-    I:Integer;
-    found:Boolean;
-begin
-  // calculating some lengths
-  csetlen := Length(charset);
-  baselen := Length(base);
-  // starting
-  found := false;
-  // bounds checking
-  if ((pos < 1) or (pos > baselen) or (csetlen = 0)) then
-  begin
-    Result := 0;
-    Exit;
-  end;
-  // the search loop
-  for I := pos to baselen do
-  begin
-    // getting the char and looking for it in the set
-    found := IsDelimiter(charset,base,I);
-    if found then Break;
-  end;
-  // returning...
-  if found then Result := I
-  else result := -1;
 end;
 //==============================================================================
 function FindFirstNotOf(const base:string; const charset:string; pos:Integer):Integer;
@@ -1101,6 +1072,21 @@ begin
   Result := True;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(* replaces tabs with spaces, trims, and makes internal white space be 1 character long *)
+procedure CollapseWhiteSpace(var base:string);
+var oldbase:string;
+begin
+  // reducing spaces
+  base := Trim(Tab2Space(base,1));
+  base := AnsiReplaceStr(base,' ',' ');
+  repeat
+    oldbase := base;
+    base := AnsiReplaceStr(base,'   ',' ');
+    base := AnsiReplaceStr(base,'  ',' ');
+  until (oldbase = base);
+  // done
+end;
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // a function to parse by a specific character, allows escaped
 function ParseByChar(indata:string; delim:Char; empt,trail:Boolean):TStringList;
 var pcount:Integer;
@@ -1157,10 +1143,7 @@ begin
   Result := nil;
   Assert(min>=0);
   // reducing spaces
-  indata := Trim(Tab2Space(indata,1));
-  indata := AnsiReplaceStr(indata,' ',' '); // nbsp
-  indata := AnsiReplaceStr(indata,'  ',' ');
-  indata := Trim(AnsiReplaceStr(indata,'  ',' ')); // enough for the purposes of this program
+  CollapseWhiteSpace(indata);
   // special case...
   if (min = 0) and (Length(indata)=0) then Result := TStringList.Create
   else Result := SplitWithDelim(indata,' ',min);

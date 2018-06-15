@@ -5,6 +5,7 @@ object CoreStarDataFrame: TCoreStarDataFrame
   Width = 388
   ClientHeight = 199
   ClientWidth = 388
+  LCLVersion = '1.8.2.0'
   TabOrder = 0
   DesignLeft = 455
   DesignTop = 254

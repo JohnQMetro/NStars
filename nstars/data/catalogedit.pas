@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls, Dialogs, Menus, Clipbrd,
-  StarDataBase, namedata, unitdata, simbad, df_strings, LCLIntf;
+  StarDataBase, star_names (* namedata *), unitdata, simbad, df_strings, LCLIntf;
 
 type
 
@@ -34,7 +34,7 @@ type
   private
     { private declarations }
     StarPointer:StarBase;
-    NamePointer:StarName;
+    NamePointer:StarNames;
     SystemLevel:Boolean;
     AddClickHandlerPointer:TNotifyEvent;
     popup_index:Integer;
@@ -134,7 +134,7 @@ begin
      end;
   end;
   // we now reset the index
-  icount := NamePointer.GetCatalogCount;
+  icount := NamePointer.CatalogCount;
   if icount=0 then begin
     RemCatBtn.Enabled := False;
     UseCatBtn.Enabled := False;
@@ -196,7 +196,7 @@ begin
     // getting the names and
     if StarPointer.HasNames then begin
       NamePointer := StarPointer.GetNames;
-      if NamePointer.GetCatalogCount <> 0 then begin
+      if not NamePointer.NoCatalogs then begin
         outvalue := NamePointer.GetList;
         CatIDListBox.Items.Text := outvalue.Text;
       end;
@@ -244,15 +244,12 @@ begin
   if NamePointer = nil then Exit;
   dindex := CatIDListBox.ItemIndex;
   if dindex < 0 then Exit;
-  // we get the catalog string
-  s1 := NamePointer.GetCatalog(dindex);
-  // to transform, we also need the parts
-  s2 := NamePointer.GetCCode(s1);
-  NamePointer.GetCatValue(s2,s3);
+  // we get the catalog strings
+  NamePointer.GetPartsByIndex(dindex,s1,s3);
   // we check the pairs
-  NameExpand(s2);
+  NameExpand(s1);
   // finishing the name
-  Result := s2 + ' ' + s3;
+  Result := s1 + ' ' + s3;
 end;
 
 end.

@@ -5,7 +5,7 @@ unit collecdata;
 interface
 
 uses SysUtils, StdCtrls, Classes, StrUtils, Dialogs, Controls, Forms, FileUtil,
-  stardata,startproxy, newlocation, namedata, constellation, sptfluxest, df_strings,
+  stardata,startproxy, newlocation, star_names (* namedata *), constellation, sptfluxest, df_strings,
   cluster, tgas, simbad, NewStar, newImports, StarDataBase, ExtraImports,
   StarExt2,fluxtransform,ImportVizier,Utilities2,StarEstimator, guessstype,
   gaiadr2holder;
@@ -93,6 +93,7 @@ StarList = class
     procedure MultiHip();
     procedure BadCompLet();
     procedure HasNonGaiaDR2Pllx();
+    procedure DifferingEpochs();
     // additional misc methods
     function FindViaSimbad(insim:SimbadData; out where:Integer):Integer;
     function FindFromCatList(inlist:TStringList; out where:Integer):Integer;
@@ -448,7 +449,7 @@ begin
 end;
 //-----------------------------------------------------------
 function StarList.GetNSDes(index:Integer):string;
-var names:StarName;
+var names:StarNames;
 begin
   // checks
   Assert(index>=0);
@@ -1020,6 +1021,22 @@ begin
   // setting the pointers
   SetAfterFilter;
 end;
+//----------------------------------------------------------
+procedure StarList.DifferingEpochs();
+var I:Integer;
+begin
+  ClearFiltered;
+  // copying over
+  for I := 0 to maincount - 1 do begin
+    if System_List[I].DifferingEpochs then begin
+      Inc(fcount);
+      SetLength(Filtered_List,fcount);
+      Filtered_List[fcount-1] := System_List[I];
+    end;
+  end;
+  // setting the pointers
+  SetAfterFilter;
+end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // additional misc methods
 function StarList.FindViaSimbad(insim:SimbadData; out where:Integer):Integer;
@@ -1382,7 +1399,7 @@ end;
 //---------------------------------------------------------------------
 function AddNewImportedSystem(xparams:ImportParameters; inpllx:ImportedData; insimb:SimbadData; picksysn:Boolean; depoch:EpochType):Boolean;
 var  currsys:StarSystem;        newid:Integer;
-     locat:Location;            nametest:StarName;
+     locat:Location;            nametest:StarNames;
      compptr:NewStarBase;
      rapos,decpos:Real;
 begin
@@ -1409,7 +1426,7 @@ begin
   if picksysn and currsys.AreNotesEmpty then begin
     nametest := currsys.GetNames;
     if nametest <> nil then begin
-      if nametest.GetCatalogCount<4 then begin
+      if nametest.CatalogCount < 4 then begin
          currsys.System_name:= nametest.GetRandomCat;
       end;
     end;

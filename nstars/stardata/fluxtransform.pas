@@ -56,6 +56,7 @@ function Gaia2To2MASS_MyWay(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Curre
 function Gaia2ToB(Gmag,BPmag,RPmag:Currency; out Best:Currency):Boolean;
 function GaiaToVRI_Red(Gmag,RPmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 function GaiaToVRI_Blue(Gmag,BPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+function GaiaToVRI_2M(Gmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 //******************************************************************************
 implementation
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1138,7 +1139,32 @@ begin
   // done
   Result := True;
 end;
-
+//-----------------------------------------------------------------
+function GaiaToVRI_2M(Gmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+var gmj:Real;
+    interm:Real;
+const coffv:array[0..3] of Real = ( 35.34, -30.245, 8.6621, -0.78355 );
+      coffr:array[0..3] of Real =  ( 11.947, -10.706, 3.1073, -0.28321 );
+      coffi:array[0..2] of Real = ( -0.97998, 1.3248, -0.17 );
+begin
+  Result := False;
+  if (Gmag > 90) or (Jmag > 90) then Exit;
+  // conveniently, the color bounds are the same for all results
+  if not MakeColorCheck(Gmag,Jmag,3.001,4.777,gmj) then Exit;
+  // V
+  interm := PolEval(gmj,coffv,4);
+  Vest := CurrToReal(Gmag) + interm;
+  // Rc
+  interm := PolEval(gmj,coffr,4);
+  Rcest := Gmag + RealToCurr(interm);
+  Rcest := RoundCurrency(Rcest,False);
+  // Ic
+  interm := PolEval(gmj,coffi,3);
+  Icest := Gmag - RealToCurr(interm);
+  Icest := RoundCurrency(Icest,False);
+  // done
+  Result := True;
+end;
 //******************************************************************************
 end.
 

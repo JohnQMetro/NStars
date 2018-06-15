@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="60">
+    <Units Count="61">
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -352,6 +352,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="LocatManip"/>
       </Unit59>
+      <Unit60>
+        <Filename Value="data\star_names.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit60>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

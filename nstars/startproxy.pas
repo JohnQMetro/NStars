@@ -9,7 +9,7 @@ collecdata unit. *)
 
 uses
   Classes, SysUtils, Dialogs, Controls, Forms, StrUtils,
-  tgas, stardata, newlocation, namedata, NewStar, constellation, gaiadr2holder,
+  tgas, stardata, newlocation, star_names (* namedata*), NewStar, constellation, gaiadr2holder,
   simbad, guessstype, sptfluxest, fluxtransform, starext2, importvizier,
   df_strings, Utilities, gaiadr2types;
 
@@ -30,12 +30,12 @@ StarProxy = class
     // system level information
     sys:StarSystem;
     sysl:Location;
-    sysn:StarName;
+    sysn:StarNames;
     // star level info
     ccomponent:NewStarBase;
     cstar:StarInfo;
     cstarl:Location;
-    cstarn:StarName;
+    cstarn:StarNames;
     starindex:Integer;
     // public methods
     constructor Create;
@@ -307,19 +307,22 @@ begin
   end;
 end;
 //----------------------------------------------
-// 0 is default, 1 is red, 2 is blue
+// 0 is default, 1 is red, 2 is blue, 3 is J only
 function StarProxy.GaiaTransHelper():Integer;
 var bedre:Real;
 begin
   Result := 0;
-  // red
+  // red and J
   if (ccomponent.fluxtemp <> nil) and (ccomponent.fluxtemp.J_mag < 90) then begin
-    if (ccomponent.dr2mags.BP >= 90) then Result := 1
+    if (ccomponent.dr2mags.BP >= 90) then begin
+      if (ccomponent.dr2mags.RP >= 90) then Result := 3
+      else Result := 1
+    end
     else begin
       bedre := ccomponent.dr2mags.BPerr / ccomponent.dr2mags.RPerr;
       if bedre > 5 then Result := 1
     end;
-    if (Result = 1) then Exit;
+    if (Result <> 0) then Exit;
   end;
   // blue
   if (ccomponent.dr2mags.RP >= 90) then Result := 2
@@ -579,7 +582,7 @@ end;
 //----------------------------------------------------------
 function StarProxy.GaiaDR2ShowMatch(maxdist:Single):Boolean;
 var cloc:Location;
-    name_star,name_sys:StarName;
+    name_star,name_sys:StarNames;
     rok,ismulti:Boolean;
     outdata:GaiaList;
     mtype:GaiaDR2_MatchType;
@@ -1292,7 +1295,6 @@ begin
   end;
   okay := ccomponent.dr2mags <> nil;
   if okay then okay := (ccomponent.dr2mags.G < 90);
-  if okay then okay := (ccomponent.dr2mags.BP < 90) or (ccomponent.dr2mags.RP < 90);
   if not okay then begin
      ShowMessage('Object does not have enough Gaia Magnitudes!');
      Exit;
@@ -1310,6 +1312,9 @@ begin
     okay := GaiaToVRI_Red(Gin,RPin,Jin,Vest,Rcest,Icest);
   end else if cpick = 2 then begin
     okay := GaiaToVRI_Blue(Gin,BPin,Vest,Rcest,Icest);
+  end else if cpick = 3 then begin
+    Jin := ccomponent.fluxtemp.J_mag;
+    okay := GaiaToVRI_2M(Gin,Jin,Vest,Rcest,Icest);
   end;
   if not okay then begin
      // for red stars, I'll use my own transform...

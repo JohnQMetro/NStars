@@ -201,10 +201,10 @@ begin
     else ctag := 'Gr';
   end
   else if ctag = 'Gaia' then begin
-    // my name list currently cannot handle spaces, so we get rid of them...
-    if AnsiStartsStr('DR1',iddata) then ctag := 'GaiaDR1'
-    else if AnsiStartsStr('DR2',iddata) then ctag := 'GaiaDR2'
-    else if AnsiStartsStr('DR3',iddata) then ctag := 'GaiaDR3'  // forthcoming
+    // gaia idents have two words
+    if AnsiStartsStr('DR1',iddata) then ctag := 'GaiaD R1'
+    else if AnsiStartsStr('DR2',iddata) then ctag := 'Gaia DR2'
+    else if AnsiStartsStr('DR3',iddata) then ctag := 'Gaia DR3'  // forthcoming
     else Result := False;
     if Result then iddata := Trim(RightStr(iddata,Length(iddata)-3));
   end
@@ -930,7 +930,7 @@ begin
   small number of siblings (a large number indicates a moving group or cluster). *)
   group := (childrenc > 0) or (parentc > 1);
   if (not group) and (parentc = 1) then group := (siblingc < 8);
-  // one child, has planets ⇒ not part of a group
+  // one child, has planets ⇒ not part of a groupp
   if group and (parentc = 0) and (siblingc = 0) then begin
     if (hasplanet) and (childrenc = 1) then group := False;
   end;

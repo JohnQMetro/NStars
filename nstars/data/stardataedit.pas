@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls, ExtCtrls, MaskEdit,
   StrUtils, Dialogs,
-  NewStar, namedata, newlocation, unitdata;
+  NewStar, star_names (* namedata *), newlocation, unitdata;
 
 type
 
@@ -232,7 +232,7 @@ begin
 end;
 //-------------------------------
 function TCoreStarDataFrame.LoadStarData:Boolean;
-var sname:StarName;
+var sname:StarNames;
     lumstr:string;
 begin
   Result := False;
@@ -303,7 +303,7 @@ end;
 //-------------------------------
 function TCoreStarDataFrame.SaveNameStuff:Boolean;
 var string1,string2:string;    sc,bint:Integer;
-    sname:StarName;
+    sname:StarNames;
 begin
   Result := False;
   if star_item = nil then Exit;
