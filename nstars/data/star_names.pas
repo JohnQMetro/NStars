@@ -29,6 +29,7 @@ StarNames = class
   protected
     catalogs:TFPHashObjectList;
     function ISDBProcess(inv:string):string;
+    function GetCatalog(index:Integer):string;
     function gcatc():Integer;
     function ncatz():Boolean;
     function isempt():Boolean;
@@ -47,19 +48,18 @@ StarNames = class
     (* Utilities *)
     function Search(infind:string; conste:Integer):Boolean;
     function AnyCatEquiv(check_against:StarNames):Boolean;
+    procedure TransferCatalogs(target:StarNames; const comp:string);
     (* managing the catalog list *)
     function SetCat(inval:string):Boolean;
     function SetMultipleCat(inval:string):Boolean;
     function SetISDBCat(inval:string):Boolean;
     function DelCat(incat:string):Boolean;
-    function DelByIndex(index:Integer):Boolean;
+    function DeleteThis(value:string):Boolean;
     function RenameCats(incats:TStringList):Integer;
     (* Getting individual catalog info *)
     function GetCat(inval:string):string;
     function HasCat(const tag:string):Boolean;
     function GetCatValue(const cc:string; out value:string):Boolean;
-    function GetPartsByIndex(const dex:Integer; out ctag:string; out idpart:string):Boolean;
-    function GetCatalog(index:Integer):string;
     function GetDefaultCatalog:string;
     function GetRandomCat:string;
     (* returns the entire catalog list (for display) *)
@@ -77,6 +77,7 @@ end;
 // helpers
 function ComponentsKindaMatch(const first:CatalogID; const second:CatalogID):Boolean;
 function NotDigit(const test:Char):Boolean;
+function MSortList(delim:Char):TStringList;
 
 const
   TwoWordIDS:array[0..0] of String = ('Gaia');
@@ -102,7 +103,7 @@ begin
   if AnsiIndexStr(cattag,TwoWordIDS) >= 0 then begin
     qposb := PosSetEx(' +-',source,qpos+1);
     if qposb < (qpos+2) then Exit;
-    cattag += source[qpos] + Trim(Copy(source,qposb-qpos-1));
+    cattag += source[qpos] + Trim(Copy(source,qpos+1,qposb - (qpos+1)));
     qpos := qposb;
   end;
   // some catalog tag modifications
@@ -189,6 +190,17 @@ begin
     Result := Trim(buf2) + ' ' + Trim(inv);
   end
   else Result := inv;
+end;
+//-----------------------------------------------------------
+function StarNames.GetCatalog(index:Integer):string;
+var cid:CatalogID;
+begin
+  Assert(index>=0);
+  if (index >= CatalogCount) then Result:=''
+  else begin
+    cid := catalogs.Items[index] as CatalogID;
+    Result := cid.raw;
+  end;
 end;
 //------------------------------------
 function StarNames.gcatc():Integer;
@@ -303,6 +315,28 @@ begin
   Result := False;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+procedure StarNames.TransferCatalogs(target:StarNames; const comp:string);
+var cmax,cindex:Integer;
+    ctag:string;
+    currid,newid:CatalogID;
+begin
+  if NoCatalogs or (target = nil) then Exit;
+  if target.catalogs = nil then target.catalogs := TFPHashObjectList.Create();
+  cmax := CatalogCount - 1;
+  for cindex := 0 to cmax do begin
+    ctag := catalogs.NameOfIndex(cindex);
+    currid := catalogs.Items[cindex] as CatalogID;
+    if target.HasCat(ctag) then target.DelCat(ctag);
+    newid := currid.MakeCopy();
+    if comp <> '' then begin
+      newid.comp := comp;
+      newid.raw := ctag + ' ' + newid.id + ' ' + comp;
+    end;
+    target.catalogs.Add(ctag,newid);
+  end;
+end;
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* managing the catalog list *)
 //-----------------------------------------------------------
 function StarNames.SetCat(inval:string):Boolean;
@@ -382,10 +416,18 @@ begin
   Result := True;
 end;
 //----------------------------------------------------------
-function StarNames.DelByIndex(index:Integer):Boolean;
+function StarNames.DeleteThis(value:string):Boolean;
+var tempid:CatalogID;
+    tag:string;
+    index:Integer;
 begin
   Result := False;
-  if (index<0) or (index>=CatalogCount) then Exit;
+  if NoCatalogs then Exit;
+  tempid := CatalogID.Create;
+  if not tempid.InitFull(value,tag) then Exit;
+  tempid.Free;
+  index := catalogs.FindIndexOf(tag);
+  if (index < 0) then Exit;
   catalogs.Delete(index);
   Result := True;
 end;
@@ -450,29 +492,7 @@ begin
     Result := True;
   end;
 end;
-//-----------------------------------------------------------
-function StarNames.GetPartsByIndex(const dex:Integer; out ctag:string; out idpart:string):Boolean;
-var tempid:CatalogID;
-begin
-  Result := False;
-  if (dex < 0) or (dex >= CatalogCount) then Exit;
-  ctag := catalogs.NameOfIndex(dex);
-  tempid := catalogs.Items[dex] as CatalogID;
-  idpart := tempid.id;
-  if (tempid.comp <> '') then idpart += ' ' + tempid.comp;
-  Result := True;
-end;
-//-----------------------------------------------------------
-function StarNames.GetCatalog(index:Integer):string;
-var cid:CatalogID;
-begin
-  Assert(index>=0);
-  if (index >= CatalogCount) then Result:=''
-  else begin
-    cid := catalogs.Items[index] as CatalogID;
-    Result := cid.raw;
-  end;
-end;
+
 //-----------------------------------------------------------
 // returns certain catalogs
 function StarNames.GetDefaultCatalog:string;
@@ -541,6 +561,7 @@ begin
   if NoCatalogs then Result := nil
   else begin
     outlist := TStringList.Create;
+    outlist.Sorted := True;
     cmax := CatalogCount - 1;
     for cdex := 0 to cmax do begin
       cid := catalogs.Items[cdex] as CatalogID;
@@ -558,9 +579,7 @@ var catdex:Integer;
 begin
   Result := nil;
   if NoCatalogs then Exit;
-  Result := TStringList.Create;
-  Result.StrictDelimiter := True;
-  Result.Delimiter := ',';
+  Result := MSortList(',');
   // looping over the catalogs to see if they are system cats...
   for catdex := (catalogs.Count -1) downto 0 do begin
     tag := catalogs.NameOfIndex(catdex);
@@ -582,6 +601,7 @@ function StarNames.ToIOString:string;
 var buf1:string;
     cdex,cmax:Integer;
     cid:CatalogID;
+    xlist:TStringList;
 begin
   // proper name and variable name
   Result := proper_name + ';' +  var_designation + ';';
@@ -589,17 +609,16 @@ begin
   Str(bayer_sup,buf1);
   Result := Result + Trim(buf1) + ';';
   // we now convert catalog names to csv
-  buf1 := '';
+  xlist := MSortList(',');
   if not NoCatalogs then begin
-    cid := catalogs.Items[0] as CatalogID;
-    buf1 := cid.raw;
     cmax := CatalogCount - 1;
-    for cdex := 1 to cmax do begin
+    for cdex := 0 to cmax do begin
       cid := catalogs.Items[cdex] as CatalogID;
-      buf1 += ',' + cid.raw;
+      xlist.Add(cid.raw);
     end;
   end;
-  Result := Result + buf1;
+  Result := Result + xlist.DelimitedText;
+  xlist.Free;;
 end;
 //-----------------------------------------------------------
 (* conversion from string, here, we allow exceptions! *)
@@ -635,46 +654,50 @@ begin
 end;
 //-----------------------------------------------------------
 function StarNames.ListOfCats:string;
-var buf1:string;
-    I,CC:Integer;
+var I,cmax:Integer;
     cid:CatalogID;
+    xlist:TStringList;
 begin
-  buf1 := '';
   if not NoCatalogs then begin
-    CC := catalogs.Count;
-    cid := catalogs.Items[0] as CatalogID;
-    buf1:= cid.raw;
-    for I := 1 to CC - 1 do begin
+    xlist := MSortList(';');
+    cmax := CatalogCount-1;
+    for I := 0 to cmax do begin
       cid := catalogs.Items[I] as CatalogID;
-      buf1 += ';' + cid.raw;
+      xlist.Add(cid.raw);
     end;
-  end;
-  Result := buf1;
+    Result := xlist.DelimitedText;
+    xlist.Free;
+  end else Result := '';
 end;
 //------------------------------------------------
 function StarNames.LimitedListofCats(maxlen:Integer):string;
-var runlen,curlen:Integer;
+var runlen,curlen,usec:Integer;
     prefdex,prefmax:Integer;
+    olist:TStringList;
     curcat:string;
+    cid:CatalogID;
 begin
   (* since the result has a maximum list, we use an array of preferred catalog
   ids to pick the most important catalogs... *)
-  runlen := 0;
-  prefmax := High(prefcats);
   Result := '';
+  if NoCatalogs then Exit;
+  runlen := 0;
+  usec := 0;
+  prefmax := High(prefcats);
+  olist := MSortList(';');
   // looping over the cats
   for prefdex := 0 to prefmax do begin
-    curcat := GetCat(prefcats[prefdex]);
-    curlen := Length(curcat);
-    if curlen = 0 then Continue;
-    if (curlen+runlen+1) > maxlen then Break;
-    Result += curcat + ';';
-    runlen += curlen + 1;
+    cid := catalogs.Find(prefcats[prefdex]) as CatalogID;
+    if cid = nil then Continue;
+    if (Length(cid.raw)+runlen+1) > maxlen then Break;
+    olist.Add(cid.raw);
+    runlen += Length(cid.raw)+1;
+    Inc(usec);
+    if usec = CatalogCount then Break;
   end;
   // afterwards, get rid of any slashes
-  Result := AnsiReplaceStr(Result,'/','-');
-  // if there is a trailing semicolon, get rid of it.
-  if AnsiEndsStr(';',Result) then Result := AnsiLeftStr(Result,runlen-1);
+  Result := AnsiReplaceStr(olist.DelimitedText,'/','-');
+  olist.Free;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* done *)
@@ -701,6 +724,14 @@ begin
   if IsDigit(test) then Exit;
   if (test = '.') or (test = '+') or (test = '-') then Exit;
   Result := True;
+end;
+//-------------------------------------------------
+function MSortList(delim:Char):TStringList;
+begin
+  Result := TStringList.Create;
+  Result.StrictDelimiter := True;
+  Result.Delimiter := delim;
+  Result.Sorted := True;
 end;
 
 //***************************************************************************

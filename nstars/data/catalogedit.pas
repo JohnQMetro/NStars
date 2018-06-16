@@ -120,10 +120,13 @@ end;
 
 procedure TCatalogIDEditFrame.RemCatBtnClick(Sender: TObject);
 var dindex,icount,i:Integer;
+    itemstr:string;
 begin
   // getting and deleting the item
   dindex := CatIDListBox.ItemIndex;
-  NamePointer.DelByIndex(dindex);
+  if (dindex < 0) then Exit;
+  itemstr := CatIDListBox.Items[dindex];
+  NamePointer.DeleteThis(itemstr);
   // removing from the list box, annoyingly, DeleteSelected is not fpc compatible
   if CatIDListBox.SelCount > 0 then begin
      for i:=CatIDListBox.Items.Count - 1 downto 0 do begin
@@ -237,7 +240,8 @@ end;
 //-------------------------------------------------
 function TCatalogIDEditFrame.GetModifiedCurrentCatalog:string;
 var dindex:Integer;
-    s1,s2,s3:string;
+    cparsed:CatalogID;
+    tag:string;
 begin
   // no result cases
   Result := '';
@@ -245,11 +249,14 @@ begin
   dindex := CatIDListBox.ItemIndex;
   if dindex < 0 then Exit;
   // we get the catalog strings
-  NamePointer.GetPartsByIndex(dindex,s1,s3);
+  cparsed := CatalogID.Create;
+  cparsed.InitFull(CatIDListBox.Items[dindex],tag);
   // we check the pairs
-  NameExpand(s1);
+  NameExpand(tag);
   // finishing the name
-  Result := s1 + ' ' + s3;
+  Result := tag + ' ' + cparsed.id;
+  if (cparsed.comp <> '') then Result += ' ' + cparsed.comp;
+  cparsed.Free;
 end;
 
 end.

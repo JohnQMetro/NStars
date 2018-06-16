@@ -338,11 +338,7 @@ begin
       nameset.proper_name += name_left.proper_name;
     end;
     // catalog ids...
-    ccount := name_left.CatalogCount;
-    for cindex := 0 to (ccount-1) do begin
-      ccat := name_left.GetCatalog(cindex);
-      nameset.SetCat(ccat);
-    end;
+    name_left.TransferCatalogs(nameset,'');
     // clearing the names for 0
     new_components[0].ClearNames;
   end;
@@ -1202,10 +1198,7 @@ begin
       // nameset
       if nameset<>nil then begin
         cnames := cstar.MakeOrGetNames();
-        for catdex := 0 to (nameset.CatalogCount-1) do begin
-          curcat := nameset.GetCatalog(catdex) + ' ' + cstar.Component;
-          cnames.SetCat(curcat);
-        end;
+        nameset.TransferCatalogs(cnames,cstar.Component);
       end;
       // putting the component in the output list
       Result.Add(cstar);

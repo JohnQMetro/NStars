@@ -202,7 +202,7 @@ begin
   end
   else if ctag = 'Gaia' then begin
     // gaia idents have two words
-    if AnsiStartsStr('DR1',iddata) then ctag := 'GaiaD R1'
+    if AnsiStartsStr('DR1',iddata) then ctag := 'Gaia DR1'
     else if AnsiStartsStr('DR2',iddata) then ctag := 'Gaia DR2'
     else if AnsiStartsStr('DR3',iddata) then ctag := 'Gaia DR3'  // forthcoming
     else Result := False;

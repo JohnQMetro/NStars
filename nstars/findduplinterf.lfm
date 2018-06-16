@@ -7,7 +7,7 @@ object FindCatDuplForm: TFindCatDuplForm
   ClientHeight = 164
   ClientWidth = 400
   OnActivate = FormActivate
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.8.2.0'
   object SystemCountLabel: TLabel
     Left = 16
     Height = 15
@@ -29,6 +29,7 @@ object FindCatDuplForm: TFindCatDuplForm
     Height = 20
     Top = 64
     Width = 368
+    Smooth = True
     TabOrder = 0
   end
   object ProgressLabel: TLabel

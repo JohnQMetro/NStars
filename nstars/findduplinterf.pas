@@ -147,16 +147,26 @@ end;
 //---------------------------------------------------------
 function TFindCatDuplForm.DoMultipleSystems:Boolean;
 var finalmsg:string;
+    qcount:Integer;
 begin
   // looping over the systems
+  qcount := 0;
   while sysindex <= (syscount-2) do begin
     DoCurrentSystem;
-    SystemProgressBar.Position := sysdone;
-    UpdateProgressLabel;
+    Inc(qcount);
+    if qcount = 10 then begin
+      SystemProgressBar.Position := sysdone;
+      UpdateProgressLabel;
+      qcount := 0;
+    end;
     Inc(sysindex);
     application.processmessages;
     if ispaused then Break;
     if docancel then Exit;
+  end;
+  if (qcount <> 0) then begin
+    SystemProgressBar.Position := sysdone;
+    UpdateProgressLabel;
   end;
   // we may or may not be done after the loop
   Flush(outfile);
