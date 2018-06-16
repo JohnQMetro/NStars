@@ -139,6 +139,7 @@ StarSystem = class (StarBase)
     function NoMassBrownDwarf:Boolean;
     function BadCompLetter:Boolean;
     function DifferingEpochs:Boolean;
+    function InternalCatDups:Boolean;
     (* clusters *)
     function InCluster(inclus:string):Boolean;
     function ClusterCount:Integer;
@@ -1982,6 +1983,35 @@ begin
     if cloc.Epoch <> mepoch then Exit; // A true mismatch!
   end;
   // if we get here, no mismatch found
+  Result := False;
+end;
+//------------------------------------------------
+(* Looks for internal duplicates in catalog names *)
+function StarSystem.InternalCatDups:Boolean;
+var name1,name2:StarNames;
+    cdexo,cdexi,cmax:Integer;
+begin
+  Result := False;
+  if GetCompC = 1 then Exit;
+  cmax := GetCompC -1;
+  Result := True;
+  // looping over using the system level
+  if nameset <> nil then begin
+    for cdexo := 0 to cmax do begin
+      name2 := new_components[cdexo].GetNames;
+      if nameset.AnyCatEquiv(name2) then Exit;
+    end;
+  end;
+  // components vs component
+  for cdexo := 0 to (cmax-1) do begin
+    name1 := new_components[cdexo].GetNames;
+    if name1 = nil then Continue;
+    for cdexi := (cdexo+1) to cmax do begin
+      name2 := new_components[cdexi].GetNames;
+      if name1.AnyCatEquiv(name2) then Exit;
+    end;
+  end;
+  // if we get here, no internal match found
   Result := False;
 end;
 

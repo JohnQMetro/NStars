@@ -94,6 +94,7 @@ StarList = class
     procedure BadCompLet();
     procedure HasNonGaiaDR2Pllx();
     procedure DifferingEpochs();
+    procedure InternalCatalogDuplicates();
     // additional misc methods
     function FindViaSimbad(insim:SimbadData; out where:Integer):Integer;
     function FindFromCatList(inlist:TStringList; out where:Integer):Integer;
@@ -1029,6 +1030,22 @@ begin
   // copying over
   for I := 0 to maincount - 1 do begin
     if System_List[I].DifferingEpochs then begin
+      Inc(fcount);
+      SetLength(Filtered_List,fcount);
+      Filtered_List[fcount-1] := System_List[I];
+    end;
+  end;
+  // setting the pointers
+  SetAfterFilter;
+end;
+//----------------------------------------------------------
+procedure StarList.InternalCatalogDuplicates();
+var I:Integer;
+begin
+  ClearFiltered;
+  // copying over
+  for I := 0 to maincount - 1 do begin
+    if System_List[I].InternalCatDups() then begin
       Inc(fcount);
       SetLength(Filtered_List,fcount);
       Filtered_List[fcount-1] := System_List[I];

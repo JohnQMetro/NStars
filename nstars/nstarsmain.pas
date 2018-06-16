@@ -42,6 +42,7 @@ type
     GaiaDR2MagMI: TMenuItem;
     EstJHKGaia2MI: TMenuItem;
     DiffEpochMI: TMenuItem;
+    IntDupMI: TMenuItem;
     NonDr2PlxMI: TMenuItem;
     ShowJ2000posMI: TMenuItem;
     SwapStarMI: TMenuItem;
@@ -234,6 +235,7 @@ type
     procedure ImportTGASLeftMIClick(Sender: TObject);
     procedure IndepLocationCBChange(Sender: TObject);
     procedure InsertStarMIClick(Sender: TObject);
+    procedure IntDupMIClick(Sender: TObject);
     procedure ListofStarSystemsDrawItem(Control: TWinControl; Index: Integer; Rect: TRect; State: TOwnerDrawState);
     (* menu item actions *)
     procedure ListOfStarSystemsClick(Sender: TObject);
@@ -451,6 +453,14 @@ begin
   // reloading star data
   LoadAllStarData;
   RemoveStar1.Enabled := True;
+end;
+
+procedure TNStarsMainForm.IntDupMIClick(Sender: TObject);
+begin
+  UncheckFilters;
+  IntDupMI.Checked := True;
+  primaryl.InternalCatalogDuplicates();
+  if current.sys <> nil then  ChangeSystem;
 end;
 
 procedure TNStarsMainForm.AddBDMIClick(Sender: TObject);
@@ -1829,6 +1839,7 @@ begin
   HasProbMI.Checked := False;
   NonDr2PlxMI.Checked := False;
   DiffEpochMI.Checked := False;
+  IntDupMI.Checked := False;
 end;
 //------------------------------------------------------------
 (* uses the current catalog name with some modifications as the

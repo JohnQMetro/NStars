@@ -1368,6 +1368,10 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Differing Epochs'
         OnClick = DiffEpochMIClick
       end
+      object IntDupMI: TMenuItem
+        Caption = 'Internal ID Duplicates'
+        OnClick = IntDupMIClick
+      end
       object N7: TMenuItem
         Caption = '-'
       end

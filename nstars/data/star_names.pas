@@ -75,7 +75,7 @@ StarNames = class
 end;
 
 // helpers
-function ComponentsKindaMatch(const first:CatalogID; const second:CatalogID):Boolean;
+function ComponentsKindaMatch(const tag:string; const first:CatalogID; const second:CatalogID):Boolean;
 function NotDigit(const test:Char):Boolean;
 function MSortList(delim:Char):TStringList;
 
@@ -159,7 +159,7 @@ begin
   end;
   id := xrest;
   // producing 'raw' (like source, but with a space between id and component)
-  raw := cattag + source[qpos] + id;
+  raw := cattag + ' ' + id;
   if comp <> '' then raw += ' ' + comp;
   Result := True;
 end;
@@ -280,7 +280,7 @@ begin
       if (foundcat = nil) then Exit;
       if (foundcat.id <> tempcat.id) then Exit;
       // handling the components ads extra complication
-      Result := ComponentsKindaMatch(tempcat,foundcat);
+      Result := ComponentsKindaMatch(cattag,tempcat,foundcat);
     finally
       tempcat.Free;
     end;
@@ -309,7 +309,7 @@ begin
     if (targid = nil) then Continue;
     if (targid.id <> currid.id) then Continue;
     // if we get this far, there is still the component matching issue
-    if ComponentsKindaMatch(currid,targid) then Exit;
+    if ComponentsKindaMatch(currtag,currid,targid) then Exit;
   end;
   // if we get here, nothing has been found...
   Result := False;
@@ -708,8 +708,15 @@ begin
 end;
 //==============================================================
 // handling the components adds extra complication
-function ComponentsKindaMatch(const first:CatalogID; const second:CatalogID):Boolean;
+function ComponentsKindaMatch(const tag:string; const first:CatalogID; const second:CatalogID):Boolean;
 begin
+  Result := False;
+  // special case: LHS 'a'
+  if (tag ='LHS') then begin
+    if (first.comp = '') and (second.comp = 'a') then Exit;
+    if (first.comp = 'a') and (second.comp = '') then Exit;
+  end;
+  // more regular cases...
   Result := True;
   if (first.comp = '') or (second.comp = '') then Exit;
   if first.comp = second.comp then Exit;
