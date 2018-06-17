@@ -5,7 +5,6 @@ object StarLocatFrame: TStarLocatFrame
   Width = 208
   ClientHeight = 168
   ClientWidth = 208
-  LCLVersion = '1.6.0.4'
   OnClick = FrameClick
   TabOrder = 0
   DesignLeft = 619
@@ -18,6 +17,7 @@ object StarLocatFrame: TStarLocatFrame
     Caption = 'Star Location'
     ClientHeight = 147
     ClientWidth = 200
+    PopupMenu = SmallLocatMenu
     TabOrder = 0
     OnClick = StarLocatGBClick
     object EpochLabel: TLabel
@@ -156,6 +156,31 @@ object StarLocatFrame: TStarLocatFrame
       ItemHeight = 15
       Style = csDropDownList
       TabOrder = 4
+    end
+  end
+  object SmallLocatMenu: TPopupMenu
+    OnPopup = SmallLocatMenuPopup
+    left = 12
+    top = 24
+    object EnterDegPosMI: TMenuItem
+      Caption = 'Enter Position in Degrees...'
+      OnClick = EnterDegPosMIClick
+    end
+    object EnterPllxSourceMI: TMenuItem
+      Caption = 'Enter Parallax Source...'
+      OnClick = EnterPllxSourceMIClick
+    end
+    object EnterMPCompMI: TMenuItem
+      Caption = 'Enter Proper Motion...'
+      OnClick = EnterMPCompMIClick
+    end
+    object ShowPllSrcMI: TMenuItem
+      Caption = 'Show Parallax Source...'
+      OnClick = ShowPllSrcMIClick
+    end
+    object ShowPMMi: TMenuItem
+      Caption = 'Show Proper Motion...'
+      OnClick = ShowPMMiClick
     end
   end
 end

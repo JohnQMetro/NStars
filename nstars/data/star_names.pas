@@ -179,7 +179,7 @@ begin
   Result := CatalogID.Create;
   Result.comp := comp;
   Result.id := id;
-  Result.raw := id;
+  Result.raw := raw;
 end;
 //=====================================================================
 
@@ -220,7 +220,7 @@ begin
   Result := False;
   if (bayer_sup<>0) or (proper_name<>'') then Exit;
   if (var_designation<>'') then Exit;
-  if NoCatalogs then Exit;
+  if CatalogCount > 0 then Exit;
   Result := True;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

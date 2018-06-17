@@ -941,8 +941,12 @@ var I,constell:Integer;
 begin
   Result := False;
   if id = 1 then Exit;
-  // looking through the star names
   constell := constellation;
+  // we look thru the nameset of the system
+  where := 0;
+  Result := nameset.Search(infind,constell);
+  if Result then Exit;
+  // looking through the star names
   for I := 0 to MaxCInd do begin
     if not new_components[I].HasNames then Continue;
     TC := new_components[I].GetNames;
@@ -950,10 +954,6 @@ begin
     where := I+1;
     if Result then Exit;
   end;
-  where := 0;
-  // we look thru the nameset of the system
-  Result := nameset.Search(infind,constell);
-  if Result then Exit;
   // system name and extra names
   Result := (System_name=infind);
   if Result then Exit;

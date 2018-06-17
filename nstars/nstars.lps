@@ -19,25 +19,22 @@
         <ComponentName Value="NStarsMainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="458"/>
-        <CursorPos X="11" Y="461"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="580"/>
+        <CursorPos Y="581"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="collecdata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="87"/>
         <CursorPos X="43" Y="97"/>
         <UsageCount Value="201"/>
         <Bookmarks Count="1">
           <Item0 Y="149" ID="2"/>
         </Bookmarks>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -90,21 +87,13 @@
       <Unit8>
         <Filename Value="import\simbad.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="180"/>
         <CursorPos X="56" Y="205"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
-        <Filename Value="data\namedata.pas"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="26" Y="15"/>
-        <UsageCount Value="201"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit9>
-      <Unit10>
         <Filename Value="data\unitdata.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -112,8 +101,8 @@
         <CursorPos X="9" Y="87"/>
         <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit10>
-      <Unit11>
+      </Unit9>
+      <Unit10>
         <Filename Value="data\constellation.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -121,18 +110,16 @@
         <CursorPos X="6"/>
         <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit11>
-      <Unit12>
+      </Unit10>
+      <Unit11>
         <Filename Value="data\stardata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
-        <TopLine Value="1987"/>
-        <CursorPos X="32" Y="2006"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="84" Y="1045"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit12>
-      <Unit13>
+      </Unit11>
+      <Unit12>
         <Filename Value="import\isdbutils.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -141,8 +128,8 @@
         <CursorPos X="-1" Y="-1"/>
         <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit13>
-      <Unit14>
+      </Unit12>
+      <Unit13>
         <Filename Value="data\newstar.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="NewStar"/>
@@ -151,32 +138,30 @@
         <CursorPos X="7" Y="15"/>
         <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit14>
-      <Unit15>
+      </Unit13>
+      <Unit14>
         <Filename Value="data\stardatabase.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarDataBase"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="208"/>
+        <TopLine Value="160"/>
         <CursorPos X="38" Y="221"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit15>
-      <Unit16>
+      </Unit14>
+      <Unit15>
         <Filename Value="data\catalogedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CatalogIDEditFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="234"/>
         <CursorPos X="40" Y="252"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit16>
-      <Unit17>
+      </Unit15>
+      <Unit16>
         <Filename Value="data\starextraedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="StarExtraDataFrame"/>
@@ -187,32 +172,34 @@
         <CursorPos Y="281"/>
         <UsageCount Value="212"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit17>
-      <Unit18>
+      </Unit16>
+      <Unit17>
         <Filename Value="data\stardataedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CoreStarDataFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="306"/>
         <CursorPos X="20" Y="306"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit18>
-      <Unit19>
+      </Unit17>
+      <Unit18>
         <Filename Value="data\starlocatedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="StarLocatFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="35" Y="9"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="100"/>
+        <CursorPos X="30" Y="117"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit19>
-      <Unit20>
+      </Unit18>
+      <Unit19>
         <Filename Value="import\newimports.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="newImports"/>
@@ -221,8 +208,8 @@
         <CursorPos X="21" Y="1275"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit20>
-      <Unit21>
+      </Unit19>
+      <Unit20>
         <Filename Value="data\starext2.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarExt2"/>
@@ -231,8 +218,8 @@
         <CursorPos X="40" Y="177"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit21>
-      <Unit22>
+      </Unit20>
+      <Unit21>
         <Filename Value="data\starext2edit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="StarExtras2Frame"/>
@@ -243,8 +230,8 @@
         <CursorPos X="59" Y="873"/>
         <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit22>
-      <Unit23>
+      </Unit21>
+      <Unit22>
         <Filename Value="import\extraimports.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ExtraImports"/>
@@ -252,8 +239,8 @@
         <CursorPos X="76" Y="10"/>
         <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit23>
-      <Unit24>
+      </Unit22>
+      <Unit23>
         <Filename Value="stringparser.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StringParser"/>
@@ -262,23 +249,21 @@
         <CursorPos Y="14"/>
         <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit24>
-      <Unit25>
+      </Unit23>
+      <Unit24>
         <Filename Value="findduplinterf.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FindCatDuplForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FindDuplInterF"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="141"/>
         <CursorPos X="19" Y="157"/>
         <UsageCount Value="202"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit25>
-      <Unit26>
+      </Unit24>
+      <Unit25>
         <Filename Value="utilities.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Utilities"/>
@@ -287,8 +272,8 @@
         <CursorPos X="20" Y="18"/>
         <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit26>
-      <Unit27>
+      </Unit25>
+      <Unit26>
         <Filename Value="import\importdataform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ImportForm"/>
@@ -300,17 +285,17 @@
         <CursorPos X="19" Y="392"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit27>
-      <Unit28>
+      </Unit26>
+      <Unit27>
         <Filename Value="data\newlocation.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1457"/>
-        <CursorPos X="27" Y="1469"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="14"/>
         <UsageCount Value="202"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit28>
-      <Unit29>
+      </Unit27>
+      <Unit28>
         <Filename Value="data\mainlocatedit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainLocatEditFrame"/>
@@ -322,8 +307,8 @@
         <CursorPos X="11" Y="431"/>
         <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit29>
-      <Unit30>
+      </Unit28>
+      <Unit29>
         <Filename Value="ppmmatchform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PositionProperMotionMatchForm"/>
@@ -335,8 +320,8 @@
         <CursorPos X="5" Y="215"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit30>
-      <Unit31>
+      </Unit29>
+      <Unit30>
         <Filename Value="import\importvizier.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ImportVizier"/>
@@ -345,8 +330,8 @@
         <CursorPos X="10" Y="468"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit31>
-      <Unit32>
+      </Unit30>
+      <Unit31>
         <Filename Value="utilities2.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Utilities2"/>
@@ -355,8 +340,8 @@
         <CursorPos X="12" Y="14"/>
         <UsageCount Value="202"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit32>
-      <Unit33>
+      </Unit31>
+      <Unit32>
         <Filename Value="import\export_form.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ExportForm"/>
@@ -367,16 +352,16 @@
         <CursorPos Y="141"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit33>
-      <Unit34>
+      </Unit32>
+      <Unit33>
         <Filename Value="guessstype.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="6"/>
         <UsageCount Value="210"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit34>
-      <Unit35>
+      </Unit33>
+      <Unit34>
         <Filename Value="stardata\starconstants.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -384,8 +369,8 @@
         <CursorPos X="27" Y="85"/>
         <UsageCount Value="207"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit35>
-      <Unit36>
+      </Unit34>
+      <Unit35>
         <Filename Value="stardata\estbasics.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EstBasics"/>
@@ -394,8 +379,8 @@
         <CursorPos X="10" Y="58"/>
         <UsageCount Value="205"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit36>
-      <Unit37>
+      </Unit35>
+      <Unit36>
         <Filename Value="stardata\whitedwarf.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="WhiteDwarf"/>
@@ -404,8 +389,8 @@
         <CursorPos X="11" Y="873"/>
         <UsageCount Value="204"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit37>
-      <Unit38>
+      </Unit36>
+      <Unit37>
         <Filename Value="stardata\teffbcv.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TEffBCv"/>
@@ -413,8 +398,8 @@
         <CursorPos X="12" Y="370"/>
         <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit38>
-      <Unit39>
+      </Unit37>
+      <Unit38>
         <Filename Value="stardata\sptfluxest.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -425,8 +410,8 @@
           <Item0 Y="560"/>
         </Bookmarks>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit39>
-      <Unit40>
+      </Unit38>
+      <Unit39>
         <Filename Value="stardata\estutilsextra.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EstUtilsExtra"/>
@@ -434,8 +419,8 @@
         <CursorPos X="47" Y="656"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit40>
-      <Unit41>
+      </Unit39>
+      <Unit40>
         <Filename Value="stardata\starestimator.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarEstimator"/>
@@ -448,8 +433,8 @@
           <Item1 X="5" Y="1265" ID="1"/>
         </Bookmarks>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit41>
-      <Unit42>
+      </Unit40>
+      <Unit41>
         <Filename Value="stardata\fluxtransform.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -457,8 +442,8 @@
         <CursorPos X="10" Y="1143"/>
         <UsageCount Value="204"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit42>
-      <Unit43>
+      </Unit41>
+      <Unit42>
         <Filename Value="import\newimports3.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="newImports3"/>
@@ -466,8 +451,8 @@
         <CursorPos X="42" Y="7"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit43>
-      <Unit44>
+      </Unit42>
+      <Unit43>
         <Filename Value="import\newimports2.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="newImports2"/>
@@ -476,8 +461,8 @@
         <CursorPos X="30" Y="235"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit44>
-      <Unit45>
+      </Unit43>
+      <Unit44>
         <Filename Value="gaia\tgas.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -485,8 +470,8 @@
         <CursorPos X="48" Y="624"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit45>
-      <Unit46>
+      </Unit44>
+      <Unit45>
         <Filename Value="gaia\tgas_import.pas"/>
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
@@ -494,8 +479,8 @@
         <CursorPos X="14" Y="47"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit46>
-      <Unit47>
+      </Unit45>
+      <Unit46>
         <Filename Value="gaia\gaiadr2base.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
@@ -503,8 +488,8 @@
         <CursorPos X="7" Y="402"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit47>
-      <Unit48>
+      </Unit46>
+      <Unit47>
         <Filename Value="gaia\gaiadr2match.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="GaiaDR2Picker"/>
@@ -514,26 +499,25 @@
         <CursorPos X="22" Y="10"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit48>
-      <Unit49>
+      </Unit47>
+      <Unit48>
         <Filename Value="gaia\gaiadr2holder.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="22"/>
         <CursorPos X="84" Y="375"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit49>
-      <Unit50>
+      </Unit48>
+      <Unit49>
         <Filename Value="gaia\dr2iothreads.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="69" Y="8"/>
         <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit50>
-      <Unit51>
+      </Unit49>
+      <Unit50>
         <Filename Value="gaia\dr2loadstore.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="GaiaDR2LoadStoreForm"/>
@@ -544,8 +528,8 @@
         <CursorPos X="31" Y="88"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit51>
-      <Unit52>
+      </Unit50>
+      <Unit51>
         <Filename Value="gaia\dr2sourceload.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="GaiaDR2LSourceForm"/>
@@ -556,8 +540,8 @@
         <CursorPos X="21" Y="197"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit52>
-      <Unit53>
+      </Unit51>
+      <Unit52>
         <Filename Value="gaia\gaiamagsui.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="GaiaMagsFrame"/>
@@ -566,37 +550,36 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="161"/>
         <CursorPos X="26" Y="182"/>
-        <UsageCount Value="199"/>
+        <UsageCount Value="200"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit52>
+      <Unit53>
+        <Filename Value="gaia\dr2matchthread.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="91" Y="12"/>
+        <UsageCount Value="191"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit53>
       <Unit54>
-        <Filename Value="gaia\dr2matchthread.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
-        <CursorPos X="91" Y="12"/>
-        <UsageCount Value="187"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit54>
-      <Unit55>
         <Filename Value="startproxy.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="590"/>
         <CursorPos X="60" Y="605"/>
-        <UsageCount Value="182"/>
+        <UsageCount Value="186"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit55>
-      <Unit56>
+      </Unit54>
+      <Unit55>
         <Filename Value="gaia\dr2addnew.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="151"/>
         <CursorPos X="50" Y="163"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="160"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit56>
-      <Unit57>
+      </Unit55>
+      <Unit56>
         <Filename Value="gaia\gaiadr2add.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="GaiaDR2AddForm"/>
@@ -605,36 +588,42 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="181"/>
         <CursorPos X="32" Y="133"/>
-        <UsageCount Value="146"/>
+        <UsageCount Value="150"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit57>
-      <Unit58>
+      </Unit56>
+      <Unit57>
         <Filename Value="gaia\gaiadr2types.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="10"/>
         <CursorPos X="48" Y="14"/>
-        <UsageCount Value="100"/>
+        <UsageCount Value="104"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit58>
-      <Unit59>
+      </Unit57>
+      <Unit58>
         <Filename Value="data\locatmanip.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="LocatManip"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="7"/>
         <CursorPos Y="28"/>
-        <UsageCount Value="75"/>
+        <UsageCount Value="79"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit58>
+      <Unit59>
+        <Filename Value="data\star_names.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="166"/>
+        <CursorPos X="20" Y="182"/>
+        <UsageCount Value="62"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
-        <Filename Value="data\star_names.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
-        <TopLine Value="278"/>
-        <CursorPos X="37" Y="312"/>
-        <UsageCount Value="58"/>
-        <Loaded Value="True"/>
+        <Filename Value="data\namedata.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="26" Y="15"/>
+        <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit60>
       <Unit61>
@@ -799,127 +788,59 @@
         <UsageCount Value="8"/>
       </Unit79>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="66" Column="20" TopLine="51"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="9" Column="42"/>
       </Position1>
       <Position2>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="686" Column="54" TopLine="649"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="92" Column="6" TopLine="90"/>
       </Position2>
       <Position3>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="657" Column="25" TopLine="635"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="103" Column="8" TopLine="101"/>
       </Position3>
       <Position4>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="684" Column="14" TopLine="616"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="104" Column="8" TopLine="102"/>
       </Position4>
       <Position5>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="62" Column="8" TopLine="54"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="90" Column="9" TopLine="88"/>
       </Position5>
       <Position6>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="55" Column="38" TopLine="39"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="122" Column="11" TopLine="107"/>
       </Position6>
       <Position7>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="485" Column="9" TopLine="472"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="9" Column="64"/>
       </Position7>
       <Position8>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="63" Column="13" TopLine="47"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="118" Column="31" TopLine="102"/>
       </Position8>
       <Position9>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="486" Column="5" TopLine="463"/>
+        <Filename Value="data\newlocation.pas"/>
+        <Caret Line="91" Column="50" TopLine="81"/>
       </Position9>
       <Position10>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="55" Column="18" TopLine="39"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="103" Column="44" TopLine="86"/>
       </Position10>
       <Position11>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="49" Column="20" TopLine="45"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="102" Column="62" TopLine="89"/>
       </Position11>
       <Position12>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="321" Column="46" TopLine="307"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="158" Column="52" TopLine="109"/>
       </Position12>
       <Position13>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="315" Column="50" TopLine="302"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="164" Column="59" TopLine="149"/>
       </Position13>
-      <Position14>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="325" Column="9" TopLine="305"/>
-      </Position14>
-      <Position15>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="50" Column="67" TopLine="39"/>
-      </Position15>
-      <Position16>
-        <Filename Value="data\stardata.pas"/>
-        <Caret Line="341" Column="42" TopLine="329"/>
-      </Position16>
-      <Position17>
-        <Filename Value="data\stardata.pas"/>
-        <Caret Line="1201" Column="58" TopLine="1190"/>
-      </Position17>
-      <Position18>
-        <Filename Value="data\catalogedit.pas"/>
-        <Caret Line="129" Column="33" TopLine="129"/>
-      </Position18>
-      <Position19>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="717" Column="47" TopLine="702"/>
-      </Position19>
-      <Position20>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="78" Column="49" TopLine="67"/>
-      </Position20>
-      <Position21>
-        <Filename Value="data\star_names.pas"/>
-        <Caret Line="283" Column="45" TopLine="258"/>
-      </Position21>
-      <Position22>
-        <Filename Value="data\stardata.pas"/>
-        <Caret Line="141" Column="17" TopLine="129"/>
-      </Position22>
-      <Position23>
-        <Filename Value="data\stardata.pas"/>
-        <Caret Line="2015" Column="3" TopLine="1992"/>
-      </Position23>
-      <Position24>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="1826" Column="45" TopLine="1814"/>
-      </Position24>
-      <Position25>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="1833" Column="45" TopLine="1821"/>
-      </Position25>
-      <Position26>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="460" Column="8" TopLine="443"/>
-      </Position26>
-      <Position27>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="569" TopLine="568"/>
-      </Position27>
-      <Position28>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="158" Column="19" TopLine="146"/>
-      </Position28>
-      <Position29>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="380" Column="24" TopLine="361"/>
-      </Position29>
-      <Position30>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="1842" Column="20" TopLine="1824"/>
-      </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
