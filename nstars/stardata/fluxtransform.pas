@@ -1143,23 +1143,29 @@ end;
 function GaiaToVRI_2M(Gmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 var gmj:Real;
     interm:Real;
-const coffv:array[0..3] of Real = ( 35.34, -30.245, 8.6621, -0.78355 );
-      coffr:array[0..3] of Real =  ( 11.947, -10.706, 3.1073, -0.28321 );
-      coffi:array[0..2] of Real = ( -0.97998, 1.3248, -0.17 );
+const coffv1:array[0..2] of Real = ( 0.084193, -0.084446, 0.17371 );
+      coffv2:array[0..3] of Real = ( 35.34, -30.245, 8.6621, -0.78355 );
+      coffr1:array[0..2] of Real = ( -1.1743, 0.49163, -0.018049 );
+      coffr2:array[0..3] of Real =  ( 11.947, -10.706, 3.1073, -0.28321 );
+      coffi1:array[0..2] of Real = ( -0.89387, 1.2845, -0.16599 );
+      coffi2:array[0..2] of Real = ( -0.97998, 1.3248, -0.17 );
 begin
   Result := False;
   if (Gmag > 90) or (Jmag > 90) then Exit;
   // conveniently, the color bounds are the same for all results
-  if not MakeColorCheck(Gmag,Jmag,3.001,4.777,gmj) then Exit;
+  if not MakeColorCheck(Gmag,Jmag,2.016,4.777,gmj) then Exit;
   // V
-  interm := PolEval(gmj,coffv,4);
+  if gmj < 3.1 then interm := PolEval(gmj,coffv1,3)
+  else interm := PolEval(gmj,coffv2,4);
   Vest := CurrToReal(Gmag) + interm;
   // Rc
-  interm := PolEval(gmj,coffr,4);
+  if gmj < 3.1 then interm := PolEval(gmj,coffr1,3)
+  else interm := PolEval(gmj,coffr2,4);
   Rcest := Gmag + RealToCurr(interm);
   Rcest := RoundCurrency(Rcest,False);
   // Ic
-  interm := PolEval(gmj,coffi,3);
+  if gmj < 3.1 then interm := PolEval(gmj,coffi1,3)
+  else interm := PolEval(gmj,coffi2,3);
   Icest := Gmag - RealToCurr(interm);
   Icest := RoundCurrency(Icest,False);
   // done

@@ -191,7 +191,6 @@
         <ComponentName Value="StarLocatFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="100"/>
         <CursorPos X="30" Y="117"/>
         <UsageCount Value="201"/>
@@ -289,7 +288,7 @@
       <Unit27>
         <Filename Value="data\newlocation.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <CursorPos X="14"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
@@ -437,10 +436,12 @@
       <Unit41>
         <Filename Value="stardata\fluxtransform.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="64"/>
-        <CursorPos X="10" Y="1143"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="1107"/>
+        <CursorPos X="36" Y="1163"/>
         <UsageCount Value="204"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
       <Unit42>
@@ -558,7 +559,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="91" Y="12"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="192"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit53>
       <Unit54>
@@ -567,7 +568,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="590"/>
         <CursorPos X="60" Y="605"/>
-        <UsageCount Value="186"/>
+        <UsageCount Value="187"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit54>
       <Unit55>
@@ -576,7 +577,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="151"/>
         <CursorPos X="50" Y="163"/>
-        <UsageCount Value="160"/>
+        <UsageCount Value="161"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit55>
       <Unit56>
@@ -588,7 +589,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="181"/>
         <CursorPos X="32" Y="133"/>
-        <UsageCount Value="150"/>
+        <UsageCount Value="151"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit56>
       <Unit57>
@@ -597,7 +598,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="10"/>
         <CursorPos X="48" Y="14"/>
-        <UsageCount Value="104"/>
+        <UsageCount Value="105"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit57>
       <Unit58>
@@ -607,7 +608,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="7"/>
         <CursorPos Y="28"/>
-        <UsageCount Value="79"/>
+        <UsageCount Value="80"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit58>
       <Unit59>
@@ -616,7 +617,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="166"/>
         <CursorPos X="20" Y="182"/>
-        <UsageCount Value="62"/>
+        <UsageCount Value="63"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
@@ -788,7 +789,7 @@
         <UsageCount Value="8"/>
       </Unit79>
     </Units>
-    <JumpHistory Count="13" HistoryIndex="12">
+    <JumpHistory Count="14" HistoryIndex="13">
       <Position1>
         <Filename Value="data\starlocatedit.pas"/>
         <Caret Line="9" Column="42"/>
@@ -841,6 +842,10 @@
         <Filename Value="data\starlocatedit.pas"/>
         <Caret Line="164" Column="59" TopLine="149"/>
       </Position13>
+      <Position14>
+        <Filename Value="stardata\fluxtransform.pas"/>
+        <Caret Line="1164" Column="40" TopLine="1082"/>
+      </Position14>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
