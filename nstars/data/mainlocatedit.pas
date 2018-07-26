@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls, MaskEdit, Graphics,
-  Dialogs,
-  newlocation,Utilities2;
+  Dialogs, Menus,
+  newlocation, df_strings, Utilities2;
 
 type
 
@@ -18,8 +18,10 @@ type
     BL2: TLabel;
     BL3: TLabel;
     BL4: TLabel;
+    DecPosEnterMI: TMenuItem;
     OldPllxEdit: TEdit;
     OldPllxLabel: TLabel;
+    MainLocatPopupMenu: TPopupMenu;
     RadialVEdit: TEdit;
     RadialVLabel: TLabel;
     ParSrcLabel: TLabel;
@@ -43,6 +45,7 @@ type
     procedure AngleEditKeyPress(Sender: TObject; var Key: char);
     procedure DecEditExit(Sender: TObject);
     procedure DecEditKeyPress(Sender: TObject; var Key: char);
+    procedure DecPosEnterMIClick(Sender: TObject);
     procedure FrameExit(Sender: TObject);
     procedure LocationBoxExit(Sender: TObject);
     procedure OldPllxEditExit(Sender: TObject);
@@ -117,6 +120,25 @@ begin
   if (pressdex = 0) and (not (Key in [#8, '+','-'])) then Key := #0;
   if ((pressdex = 4) or (pressdex = 7)) and (not (Key in [#8, '0'..'5'])) then Key := #0;
 
+end;
+
+procedure TMainLocatEditFrame.DecPosEnterMIClick(Sender: TObject);
+var datax,data1,data2:string;   rok:Boolean;
+    pmra,pmdec,pmmag,pmang:Real;
+    eptype:EpochType;
+const entmsg = 'Enter RA and Dec (in degrees, separated by a space) below:';
+begin
+  if LocData <> nil then begin
+    datax := InputBox('Position Entry',entmsg,'');
+    rok := ExtractLocParts(datax,data1,data2);
+    if rok then begin
+      eptype := LocData.Epoch;
+      rok := LocData.SetPositionDDeg(eptype,data1,data2);
+      if rok then LoadLocation();
+    end;
+    if rok then ShowMessage('Position set.')
+    else ShowMessage('Position not set!');
+  end;
 end;
 
 procedure TMainLocatEditFrame.FrameExit(Sender: TObject);

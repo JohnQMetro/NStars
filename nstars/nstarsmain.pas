@@ -43,6 +43,8 @@ type
     EstJHKGaia2MI: TMenuItem;
     DiffEpochMI: TMenuItem;
     IntDupMI: TMenuItem;
+    HiIntDistFMI: TMenuItem;
+    GVmagDiffFMI: TMenuItem;
     NonDr2PlxMI: TMenuItem;
     ShowJ2000posMI: TMenuItem;
     SwapStarMI: TMenuItem;
@@ -227,7 +229,9 @@ type
     procedure GotoBM_1MIClick(Sender: TObject);
     procedure GotoBM_2MIClick(Sender: TObject);
     procedure GuessSpectraMIClick(Sender: TObject);
+    procedure GVmagDiffFMIClick(Sender: TObject);
     procedure HasProbMIClick(Sender: TObject);
+    procedure HiIntDistFMIClick(Sender: TObject);
     procedure ImpGaiaDR2MIClick(Sender: TObject);
     procedure Import1Click(Sender: TObject);
     procedure ImportFrSN35MIClick(Sender: TObject);
@@ -847,12 +851,56 @@ begin
   end;
 end;
 
+procedure TNStarsMainForm.GVmagDiffFMIClick(Sender: TObject);
+const prompt1='Enter the min difference between the V mag and the Gaia estimated V mag';
+      prompt2='The value entered is not valid.';
+var vdstring:string;
+    realvalue:Real;
+    sc:Integer;
+begin
+  // getting the data
+  vdstring:=InputBox('V diff Filter Data Entry', prompt1, '0.2');
+  vdstring := Trim(vdstring);
+  Val(vdstring,realvalue,sc);
+  if (sc=0) and (realvalue>0) then begin
+    UncheckFilters;
+    GVmagDiffFMI.Checked := True;
+    primaryl.VDiffFromGaia(realvalue);
+    ChangeSystem;
+  end
+  else begin
+    ShowMessage(prompt2);
+  end;
+end;
+
 procedure TNStarsMainForm.HasProbMIClick(Sender: TObject);
 begin
   UncheckFilters;
   HasProbMI.Checked := True;
   primaryl.HasProblems;
   if current.sys <> nil then  ChangeSystem;
+end;
+
+procedure TNStarsMainForm.HiIntDistFMIClick(Sender: TObject);
+const prompt1='Enter the minimum internal distance between system components (in LY).';
+      prompt2='The value entered is not valid.';
+var idstring:string;
+    realvalue:Real;
+    sc:Integer;
+begin
+  // getting the data
+  idstring:=InputBox('Distance Data Entry', prompt1, '0.2');
+  idstring := Trim(idstring);
+  Val(idstring,realvalue,sc);
+  if (sc=0) and (realvalue>0) then begin
+    UncheckFilters;
+    HiIntDistFMI.Checked := True;
+    primaryl.LargeInternalDistance(realvalue);
+    ChangeSystem;
+  end
+  else begin
+    ShowMessage(prompt2);
+  end;
 end;
 
 procedure TNStarsMainForm.ImpGaiaDR2MIClick(Sender: TObject);
@@ -1840,6 +1888,8 @@ begin
   NonDr2PlxMI.Checked := False;
   DiffEpochMI.Checked := False;
   IntDupMI.Checked := False;
+  HiIntDistFMI.Checked := False;
+  GVmagDiffFMI.Checked := False;
 end;
 //------------------------------------------------------------
 (* uses the current catalog name with some modifications as the

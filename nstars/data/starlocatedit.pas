@@ -123,14 +123,14 @@ begin
 end;
 
 procedure TStarLocatFrame.EnterDegPosMIClick(Sender: TObject);
-var data1,data2:string;   rok:Boolean;
+var datax,data1,data2:string;   rok:Boolean;
     pmra,pmdec,pmmag,pmang:Real;
     eptype:EpochType;
 const entmsg = 'Enter RA and Dec (in degrees, separated by a space) below:';
 begin
   if LocationShown <> nil then begin
-    data2 := Trim(InputBox('Position Entry',entmsg,''));
-    rok := ExtractFirstWord(data2,data1);
+    datax := InputBox('Position Entry',entmsg,'');
+    rok := ExtractLocParts(datax,data1,data2);
     if rok then begin
       eptype := LocationShown.Epoch;
       rok := LocationShown.SetPositionDDeg(eptype,data1,data2);

@@ -1698,6 +1698,11 @@ begin
   buffer := inlist[11];
   FreeAndNil(inlist);
   if (not StrToReal(buffer,radialv)) then Exit;
+  (* Setting Gaia DR2 uncertain... *)
+  if (source = 'Gaia DR2') then begin
+    if (parallax_err <= 0.9) then uncertain := False
+    else if (parallax_err > 0.25) then uncertain := True;
+  end;
   // done
   Result := True;
 end;

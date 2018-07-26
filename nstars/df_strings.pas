@@ -183,6 +183,11 @@ function StrToCurrBoth(insrc1,insrc2:string; out xresult1,xresult2:Currency):Boo
 (* this should not be the pain that it is! *)
 function StringToLatin1(inval:string):RawByteString;
 
+(* Helper for getting location from input. just splits with spaces, and returns
+the position parts. if there are more than 2 parts, it assumes odd-index parts
+are errors and ignores them. *)
+function ExtractLocParts(const input:string; out rapart:string; out decpart:string):Boolean;
+
 
 
 implementation
@@ -1486,6 +1491,24 @@ begin
   WideCharToMultiByte(28591, 0, PWideChar(ws), Length(ws), PAnsiChar(latin1), len, nil, nil);
   Result := latin1;
 end;
-
+//--------------------------------------------------------------
+(* Helper for getting location from input. just splits with spaces, and returns
+the position parts. if there are more than 2 parts, it assumes odd-index parts
+are errors and ignores them. *)
+function ExtractLocParts(const input:string; out rapart:string; out decpart:string):Boolean;
+var sdat:string;
+    olist:TStringList;
+begin
+  Result := False;
+  sdat := Trim(input);
+  olist := SplitWithSpaces(sdat,2);
+  if olist = nil then Exit;
+  rapart := olist[0];
+  if (olist.Count > 2) then decpart := olist[2]
+  else decpart := olist[1];
+  olist.Free;;
+  Result := True;
+end;
+//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 end.
  

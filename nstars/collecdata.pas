@@ -95,6 +95,8 @@ StarList = class
     procedure HasNonGaiaDR2Pllx();
     procedure DifferingEpochs();
     procedure InternalCatalogDuplicates();
+    procedure LargeInternalDistance(const maxDist:Real);
+    procedure VDiffFromGaia(const maxDiff:Real);
     // additional misc methods
     function FindViaSimbad(insim:SimbadData; out where:Integer):Integer;
     function FindFromCatList(inlist:TStringList; out where:Integer):Integer;
@@ -1046,6 +1048,38 @@ begin
   // copying over
   for I := 0 to maincount - 1 do begin
     if System_List[I].InternalCatDups() then begin
+      Inc(fcount);
+      SetLength(Filtered_List,fcount);
+      Filtered_List[fcount-1] := System_List[I];
+    end;
+  end;
+  // setting the pointers
+  SetAfterFilter;
+end;
+//--------------------------------------------
+procedure StarList.LargeInternalDistance(const maxDist:Real);
+var I:Integer;
+begin
+  ClearFiltered;
+  // copying over
+  for I := 0 to maincount - 1 do begin
+    if System_List[I].InternalDistanceMoreThan(maxDist) then begin
+      Inc(fcount);
+      SetLength(Filtered_List,fcount);
+      Filtered_List[fcount-1] := System_List[I];
+    end;
+  end;
+  // setting the pointers
+  SetAfterFilter;
+end;
+//--------------------------------------------
+procedure StarList.VDiffFromGaia(const maxDiff:Real);
+var I:Integer;
+begin
+  ClearFiltered;
+  // copying over
+  for I := 0 to maincount - 1 do begin
+    if System_List[I].GaiaVCheck(maxDiff) then begin
       Inc(fcount);
       SetLength(Filtered_List,fcount);
       Filtered_List[fcount-1] := System_List[I];

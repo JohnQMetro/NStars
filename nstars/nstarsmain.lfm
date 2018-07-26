@@ -1372,6 +1372,14 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Internal ID Duplicates'
         OnClick = IntDupMIClick
       end
+      object HiIntDistFMI: TMenuItem
+        Caption = 'Large Internal Distance...'
+        OnClick = HiIntDistFMIClick
+      end
+      object GVmagDiffFMI: TMenuItem
+        Caption = 'Gaia V disagrees...'
+        OnClick = GVmagDiffFMIClick
+      end
       object N7: TMenuItem
         Caption = '-'
       end

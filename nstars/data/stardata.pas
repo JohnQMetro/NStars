@@ -6,7 +6,7 @@ interface
 
 uses SysUtils, Classes, df_strings, StrUtils,
  StarDataBase, newlocation, star_names (* namedata *), unitdata, simbad, sptfluxest,
- NewStar, tgas, constellation, StarEstimator, StarExt2, gaiadr2base,
+ NewStar, tgas, constellation, StarEstimator, StarExt2, gaiadr2base, fluxtransform,
  utilities2;
 
 type
@@ -140,6 +140,8 @@ StarSystem = class (StarBase)
     function BadCompLetter:Boolean;
     function DifferingEpochs:Boolean;
     function InternalCatDups:Boolean;
+    function InternalDistanceMoreThan(const MaxDist:Real):Boolean;
+    function GaiaVCheck(const MaxDiff:Real):Boolean;
     (* clusters *)
     function InCluster(inclus:string):Boolean;
     function ClusterCount:Integer;
@@ -2014,7 +2016,73 @@ begin
   // if we get here, no internal match found
   Result := False;
 end;
-
+//--------------------------------------------------
+(* Calculates distances in LY between the components of the system, and returns
+true if any of them are more than MaxDist. *)
+function StarSystem.InternalDistanceMoreThan(const MaxDist:Real):Boolean;
+var sloc,sloc2:Location;
+    stardex_o,stardex_i:Integer;
+    calcdist:Real;
+begin
+  Result := False;
+  if HasOneLocation then Exit; // quick false case.
+  // we first calculate and check distances between the system location and secondaries.
+  Result := True;
+  for stardex_o := 1 to MaxCInd do begin
+    sloc := new_components[stardex_o].GetLocation();
+    if sloc <> nil then begin
+      calcdist := the_location.GetDistanceFrom(sloc,-1);
+      if calcdist > MaxDist then Exit;
+    end;
+  end;
+  // if we have more than 2 components, we check between them as well
+  if GetCompC > 2 then begin
+    for stardex_o := 1 to (MaxCInd-1) do begin
+      sloc := new_components[stardex_o].GetLocation();
+      if (sloc = nil) then Continue;
+      for stardex_i := stardex_o to MaxCInd do begin
+        sloc2 := new_components[stardex_i].GetLocation();
+        if (sloc2 = nil) then Continue;
+        calcdist := sloc.GetDistanceFrom(sloc2,-1);
+        if calcdist > MaxDist then Exit;
+      end;
+    end;
+  end;
+  // done, if we get here, then no inner distance is more than MaxDist
+  Result := False;
+end;
+//-----------------------------------------------------
+(* Tries to calculate a Gaia derived V, and returns true if the difference
+between it and the recorded V is more than MaxDiff. *)
+function StarSystem.GaiaVCheck(const MaxDiff:Real):Boolean;
+var stardex:Integer;
+    cdr2:GaiaDR2Mags;
+    vmagest,vdiff:Real;
+    rdum,idum:Currency;
+    tres:Boolean;
+    cstar:StarInfo;
+begin
+  Result := True;
+  for stardex := 0 to MaxCInd do begin
+    cdr2 := new_components[stardex].dr2mags;
+    // checks to see if we can try and calculate V
+    if cdr2 = nil then Continue;
+    if (cdr2.G >= 90) then Continue;
+    if (not cdr2.ValidBPmRP) then Continue;
+    if new_components[stardex].isBrownDwarf then Continue;
+    (* Here, we try and calcuate a v mag. Simpler than the one used by the
+    menu transforms *)
+    if cdr2.BPminRP < 2 then tres := Gaia2ToVRI(cdr2.G,cdr2.BPminRP,vmagest,rdum,idum)
+    else tres := Gaia2ToVRI_MyWay(cdr2.G,cdr2.BP,cdr2.RP,vmagest,rdum,idum);
+    // if tres is false, skip
+    if (not tres) then Continue;
+    // comparing
+    cstar := new_components[stardex] as StarInfo;
+    vdiff := Abs(vmagest - cstar.VisualMagnitude);
+    if (vdiff > MaxDiff) then Exit;
+  end;
+  Result := False;
+end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* clusters *)
 //----------------------------------------------------

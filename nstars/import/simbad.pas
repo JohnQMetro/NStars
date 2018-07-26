@@ -236,6 +236,7 @@ begin
     else if ctag = 'BAG' then ctag := 'Balega'
     else if ctag = 'TOK' then ctag := 'Tok'
     else if ctag = 'WG' then ctag := 'Wg'
+    // else if ctag = 'SHJ' then ctag := 'HJ'
     else if (ctag<>'H') and (ctag<>'HJ') and (ctag<>'I') and
     (ctag <> 'LDS') then Result := False;
   end
@@ -882,7 +883,10 @@ begin
   end;
   johnson_R := False;  johnson_I := False;  denisi := False;
   while ExtractFlux(xparser,fluxchar,fvalue,ferror,fluxsrc) do begin
-    AssignFlux(fluxchar,fvalue,ferror);
+    (* 'G' is *not* from DR2, but DR1. since Simbad now includes DR2 and ignores
+    the distinction, we have to take into account. *)
+    if (fluxchar <> 'G') then AssignFlux(fluxchar,fvalue,ferror)
+    else if (fluxsrc<>'2018yCat.1345....0G') then AssignFlux('G',fvalue,ferror);
     // checking for sources that likely need to be adjusted...
     if (fluxchar = 'B') then BcatB := (fluxsrc='2003AJ....125..984M');
     if (fluxchar = 'R') then begin

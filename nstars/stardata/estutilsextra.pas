@@ -21,6 +21,7 @@ function BoyajianMKLuminosityVmK(const vmk:Real; const infeh:Currency; out Lum:R
 function BoyajianMKTEffVmK(const vmk:Real; const infeh:Currency; out TEffout:Real):Boolean;
 function RedDwarfMassFit(const Mv_in:Real; out mass_est:Real):Boolean;
 function RedDwarfMassFitK(const Mk_in:Real; out mass_est:Real):Boolean;
+function RedDwarfMassFitMann(const Mk_in:Real; out mass_est:Real):Boolean;
 // Subdwarf estimates
 function LateESubdwarfSpT2TEff(const sptin:Real; out Teff_est:Real):Boolean;
 // Alonso TEff
@@ -269,6 +270,22 @@ Result := False;
   modmag := Mk_in - X0;
   mass_est := PolEval(modmag,coff,5);
 end;
+//----------------------------------------------------------------
+(* From 'How to Constrain your M-Dwarf II (Mann+ 2018). Mk_in is absolute Ks magnitude *)
+function RedDwarfMassFitMann(const Mk_in:Real; out mass_est:Real):Boolean;
+var modmag,logmass:Real;
+const coff:array[0..5] of Real = (-0.64661,-0.21246,-2.6534e-3,7.9485e-3,3.6899e-4,-1.9226e-4);
+begin
+  // boundaries (The paper has a 'safe' range of 4.5 to 10.5)
+  Result := False;
+  if (Mk_in > 11) or (Mk_in < 4) then Exit;
+  // polynomial fir for the log mass
+  modmag := Mk_in - 7.5;
+  logmass := PolEval(modmag,coff,6);
+  mass_est := exp10(logmass);
+  Result := True;
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (**)
 function LateESubdwarfSpT2TEff(const sptin:Real; out Teff_est:Real):Boolean;

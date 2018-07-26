@@ -1356,8 +1356,15 @@ begin
       bxmag := BolLumToAbsBolMag(bollum);
       Result += Trim(FloatToStrF(bxmag,ffFixed,6,3)) + ',';
       if AbsVisMag < 90 then Result += Trim(FloatToStrF(bxmag-AbsVisMag,ffFixed,6,3));
-    end else Result += ',';
-  end else Result += ',';
+      Result += ',';
+    end else Result += ',,';
+  end else Result += ',,';
+  // extra mass estimate from Mann+ 2018
+  if AbsKMag < 90 then begin
+    if RedDwarfMassFitMann(AbsKMag,massx) then begin
+      Result += Trim(FloatToStrF(massx,ffFixed,5,3)) + ',';
+    end;
+  end;
 
 end;
 //---------------------------------------------------
@@ -2072,7 +2079,7 @@ const head1 = 'ID,SpT,LClass,V Mag,K Mag,TEff A,Teff B,Bol Mag 1,BcV 1,Fe/H,Radi
       headD = 'HB B-V TEff,HB V-K TEff,HB V-K BCv,HB V-J BCv,Huang B-V TEff,';
       headE = 'Huang V-K TEff,Torres Mass 1,Torres Mass 2,';
       head_gen = headA + headB + headC + headD + headE;
-      head_m = 'C Teff,Teff Diff 2,EPD 2,C BCv,BCv Diff,% BCv Diff,CKB,% BCv Diff 2,CJB';
+      head_m = 'C Teff,Teff Diff 2,EPD 2,C BCv,BCv Diff,% BCv Diff,CKB,% BCv Diff 2,CJB,Mann Mass';
       head_wd = 'Z Mass 1,BCv,Blackbody Radius,ZMass 2';
       head_g = 'Alonso TEff,Alonso BCv,TEff EPD,HB V-K TEff,HB V-J TEff,Huang B-V TEff,Huang V-H TEff,';
       headx = 'BB BoMag,BB BCv,';
