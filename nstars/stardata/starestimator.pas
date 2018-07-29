@@ -1092,12 +1092,18 @@ end;
 (* using new equations  *)
 function EstimationParser.DwarfBolLumToMass(out mass_est:Real):Boolean;
 var loglum:Real;
+    okval:Boolean;
 begin
   Result := False;
   // if lclass <>lDwarf then Exit;
   if bollum <= 0 then Exit;
   Result := True;
   loglum := log10(bollum);
+  // using some non-purely-luminosity based methods...
+  okval := False;
+  if (efftempB > 50) then okval := MoyaEtAlMass(efftempB,bollum,feh,mass_est)
+  else if (efftempA > 50) then okval := MoyaEtAlMass(efftempA,bollum,feh,mass_est);
+  if okval then Exit;
   (* from Wikipedia, might end up being used by ultracool stars not covered by the
   Red Dwarf mass estimate methods *)
   if bollum < 0.0087 then mass_est := power(bollum/0.23,1/2.3)
@@ -1495,6 +1501,11 @@ begin
   else if efftempA > 0 then TorresEtAlMass(efftempA,feh,logg,masse1);
   if cteffk > 50 then TorresEtAlMass(cteffk,feh,logg,masse2);
   Result += DualMagToStr(masse1,masse2);
+  if efftempB > 0 then MoyaEtAlMass(efftempB,bollum,feh,masse1)
+  else if efftempA > 0 then MoyaEtAlMass(efftempA,bollum,feh,masse1);
+  if cteffk > 50 then MoyaEtAlMass(cteffk,bollum,feh,masse2);
+  Result += DualMagToStr(masse1,masse2);
+
 
 end;
 //--------------------------------------------------------
@@ -1749,8 +1760,9 @@ begin
   // dwarves and subdwarves (low metallicity)
   else if Ord(lclass) >= Ord(lDwarf) then begin
     if dwarfm then begin
-      Result := RedDwarfMass(xmassest);
-      if not Result then Result := DwarfBolLumToMass(xmassest);
+      Result := RedDwarfMassFitMann(absKMag,xmassest);
+      if (not Result) then Result := RedDwarfMass(xmassest);
+      if (not Result) then Result := DwarfBolLumToMass(xmassest);
     end
     else Result := DwarfBolLumToMass(xmassest);
   end;
@@ -2077,9 +2089,10 @@ const head1 = 'ID,SpT,LClass,V Mag,K Mag,TEff A,Teff B,Bol Mag 1,BcV 1,Fe/H,Radi
       headB = 'Cas V-K BCv,Al B-V TEff,Al V-K TEff,Al V-K BCv,Boy B-V Teff,';
       headC = 'Boy MK TEff,PM V-K TEff,PM V-J Teff,PM V-K BCv,PM V-J BCv,';
       headD = 'HB B-V TEff,HB V-K TEff,HB V-K BCv,HB V-J BCv,Huang B-V TEff,';
-      headE = 'Huang V-K TEff,Torres Mass 1,Torres Mass 2,';
+      headE = 'Huang V-K TEff,Torres Mass 1,Torres Mass 2,Moya Mass,';
       head_gen = headA + headB + headC + headD + headE;
-      head_m = 'C Teff,Teff Diff 2,EPD 2,C BCv,BCv Diff,% BCv Diff,CKB,% BCv Diff 2,CJB,Mann Mass';
+      head_m = 'C Teff,Teff Diff 2,EPD 2,C BCv,BCv Diff,% BCv Diff,CKB,% BCv Diff 2,CJB';
+      head_m2 = 'Casa TEff, Casa EPD,Byj TEff,Byj EPD, DupK Bmag, Dup BCv, DupH Bmag, Dup BC,Mann Mass';
       head_wd = 'Z Mass 1,BCv,Blackbody Radius,ZMass 2';
       head_g = 'Alonso TEff,Alonso BCv,TEff EPD,HB V-K TEff,HB V-J TEff,Huang B-V TEff,Huang V-H TEff,';
       headx = 'BB BoMag,BB BCv,';
@@ -2095,7 +2108,7 @@ begin
   // m dwarf (and late k as well)
   AssignFile(examinfile_m,'estdata_m.csv');
   Rewrite(examinfile_m);
-  Writeln(examinfile_m,head1 + ',' + head_m);
+  Writeln(examinfile_m,head1 + ',' + head_m + ',' + head_m2);
   // white dwarfs
   AssignFile(examinfile_d,'estdata_d.csv');
   Rewrite(examinfile_d);

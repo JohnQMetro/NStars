@@ -52,6 +52,7 @@ function HuangEtAl_GiantTEffEstBV(const BmVin:Real; const fehin:Currency; out TE
 // additional mass estimation methods
 function TorresEtAlMass(const TEff:Real; const feh,logg:Currency; out mass:Real):Boolean;
 function GafeiraEtAlMass(const Lum,Age:Real; const feh:Currency; out mass:Real):Boolean;
+function MoyaEtAlMass(TEff,Lum:Real; FeH:Currency; out mass:Real):Boolean;
 
 const
 (*For late-cool subdwarfs classified using the Reid-Gizis-Lépine-Shara scheme,
@@ -668,7 +669,7 @@ lack of Fe/H estimations and use of Flower BCv. *)
 function TorresEtAlMass(const TEff:Real; const feh,logg:Currency; out mass:Real):Boolean;
 var xval,interm1,interm2,fehr,loggr:Real;
 const coff_teff:array[0..3] of Real = (1.5689,1.3787,0.4243,1.139);
-      coff_logg:array[0..2] of Real = (0,-0.1425,0.01969);
+      coff_logg:array[0..3] of Real = (0,0,-0.1425,0.01969);
       feh_coff = 0.1010;
 begin
   // reject conditions...
@@ -684,8 +685,8 @@ begin
   xval := log10(TEff) - 4.1;
   // computing...
   interm1 := PolEval(xval,coff_teff,4) + feh_coff*fehr;
-  interm2 := PolEval(loggr,coff_logg,3);
-  mass := interm1 + interm2;
+  interm2 := PolEval(loggr,coff_logg,4);
+  mass := exp10(interm1 + interm2);
   // done
   Result := True;
 end;
@@ -730,6 +731,32 @@ begin
   // finishing...
   mass := exp10(lmass);
   Result := True;
+end;
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(* Mass estimations from 'Empirical relations for the accurate estimation of
+stellar masses and radii' (Moya, Zuccarino, Chaplin, Davies: 2018) *)
+function MoyaEtAlMass(TEff,Lum:Real; FeH:Currency; out mass:Real):Boolean;
+var logl,intmres:Real;
+    usefeh:Boolean;
+begin
+  Result := False;
+  // rejects
+  if (Teff < 4780) or (Teff > 10990) then Exit;
+  logl := log10(Lum);
+  if (logl < -0.717) or (logl > 2.010) then Exit;
+  // testing if we use the fe/h based equation
+  usefeh := (FeH < 0.7) and (logl <= 1.363) or (TEff <= 9000 );
+  // calculating the result
+  if usefeh then begin
+    FeH := AdjFeh(FeH,-0.92,0.38);
+    intmres := -0.316 + 2.289e-4*TEff + 0.0388*Lum + 0.131*FeH;
+  end else begin
+    intmres := -0.119 + 2.14e-5*TEff + 0.1837*logl;
+    intmres := exp10(intmres);
+  end;
+  // done
+  Result := True;
+  mass := intmres;
 end;
 //==============================================================================
 begin
