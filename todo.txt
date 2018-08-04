@@ -1,7 +1,7 @@
 TODO for NSTARS
 ----------------------------
 delete selected system and everything after
-Enable/Disable menu items depending on selection (Partly done)
+Enable/Disable menu items depending on selection (Mostly done)
 Figure out how to handle hot Brown Dwarfs and ultracool L stars
 Better Mass estimates for hot stars.
 Get More accurate Bolo/TEff estimates for Hot Stars (PARTLY DONE)
@@ -11,11 +11,7 @@ Find a way to estimate Metallicity from Photometry.
 TEffs, colors, and BCv for late K and M subdwarfs.
 Check for oddities (ongoing)
 Add extra photometry?
-Finish Gaia DR2 import routines (ONGOING)
-Fetch 2MASS photometry from VizieR
-Fix APASS-derived Rc (PARTLY DONE)
-Implemenet to BP RP to VRI polynomials from Gaia DR2 paper.
-Better mass estimates in general.
+Better mass estimates in general. (MOSTLY DONE)
 Update mass estimates for Subgiants
 Try to get better info/estimates for low mass white dwarfs.
 Add ability to export parts of the list to a separate list.

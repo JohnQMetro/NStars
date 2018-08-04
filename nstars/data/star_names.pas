@@ -477,7 +477,7 @@ function StarNames.HasCat(const tag:string):Boolean;
 begin
   if catalogs = nil then Result := False
   else if NoCatalogs then Result := False
-  else Result := (catalogs.FindIndexOf(tag) > 0);
+  else Result := (catalogs.FindIndexOf(tag) >= 0);
 end;
 //-----------------------------------------------------------
 function StarNames.GetCatValue(const cc:string; out value:string):Boolean;

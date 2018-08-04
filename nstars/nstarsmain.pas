@@ -2290,9 +2290,10 @@ end;
 
 procedure TNStarsMainForm.NonDr2PlxMIClick(Sender: TObject);
 begin
+  // I've changed the purpose of this menu item, without renaming it
   UncheckFilters;
   NonDr2PlxMI.Checked := True;
-  primaryl.HasNonGaiaDR2Pllx();
+  primaryl.MissingGaiaDR2id();
   if current.sys <> nil then  ChangeSystem;
 end;
 

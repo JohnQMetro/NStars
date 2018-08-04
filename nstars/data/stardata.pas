@@ -125,6 +125,7 @@ StarSystem = class (StarBase)
     function ApplyGaiaObject(stardex:Integer; inobj:GaiaDR2Star; conditional:Boolean):Boolean;
     function ApplyGaiaNameMags(stardex:Integer; inobj:GaiaDR2Star):Boolean;
     function ContainsNonDR2Parallax():Boolean;
+    function MissingDR2id():Boolean;
     function StarSummaryWhat(stardex:Integer):string;
     function StarSummaryIDPos(stardex:Integer):string;
     (* filters *)
@@ -1774,6 +1775,8 @@ function StarSystem.ContainsNonDR2Parallax():Boolean;
 var cindex:Integer;
     cloc:Location;
 begin
+  Result := False;
+  if id = 1 then Exit;
   Result := True;
   if the_location.source <> GAIA2_TAG then Exit;
   // looping
@@ -1786,6 +1789,52 @@ begin
     end;
   end;
   // get here, all DR2!
+  Result := False;
+end;
+//----------------------------------------------
+function StarSystem.MissingDR2id():Boolean;
+var cindex:Integer;
+    cname:StarNames;
+    cstar:StarInfo;
+    stype:string;
+begin
+  Result := False;
+  if id = 1 then Exit;
+  // not missing because we have it
+  if nameset.HasCat('Gaia DR2') then Exit;
+  if (GetCompC = 1) then begin
+    // not missing because cool brown dwarfs are too dim (as expected) for Gaia
+    stype := new_components[0].SpectralClass;
+    if StrStartswAny(stype,['T','Y','sdT','esdT','usdT']) then Exit;
+    if (not new_components[0].isBrownDwarf) then begin
+      // not missing because the star is too bright
+      cstar := new_components[0] as StarInfo;
+      if cstar.VisualMagnitude < 3 then Exit;
+    end;
+    // missing
+    Result := True;
+    Exit;
+  end
+  else begin
+    for cindex:= 0 to MaxCInd do begin
+      cname := new_components[cindex].GetNames;
+      if cname <> nil then begin
+        if cname.HasCat('Gaia DR2') then Continue;
+      end;
+      // not missing because cool brown dwarfs are too dim (as expected) for Gaia
+      stype := new_components[cindex].SpectralClass;
+      if StrStartswAny(stype,['T','Y','sdT','esdT','usdT']) then Continue;
+      if (not new_components[cindex].isBrownDwarf) then begin
+         // not missing because the star is too bright
+         cstar := new_components[cindex] as StarInfo;
+         if cstar.VisualMagnitude < 3 then Continue;
+      end;
+      // if we get here, then the Gaia DR2 designation is indeed 'missing'
+      Result := True;
+      Exit;
+    end;
+  end;
+  // done, if we get here, the result is false;
   Result := False;
 end;
 //----------------------------------------------

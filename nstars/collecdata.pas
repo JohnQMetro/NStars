@@ -93,6 +93,7 @@ StarList = class
     procedure MultiHip();
     procedure BadCompLet();
     procedure HasNonGaiaDR2Pllx();
+    procedure MissingGaiaDR2id();
     procedure DifferingEpochs();
     procedure InternalCatalogDuplicates();
     procedure LargeInternalDistance(const maxDist:Real);
@@ -1016,6 +1017,21 @@ begin
   // copying over
   for I := 0 to maincount - 1 do begin
     if System_List[I].ContainsNonDR2Parallax() then begin
+      Inc(fcount);
+      SetLength(Filtered_List,fcount);
+      Filtered_List[fcount-1] := System_List[I];
+    end;
+  end;
+  // setting the pointers
+  SetAfterFilter;
+end;
+procedure StarList.MissingGaiaDR2id();
+var I:Integer;
+begin
+  ClearFiltered;
+  // copying over
+  for I := 0 to maincount - 1 do begin
+    if System_List[I].MissingDR2id() then begin
       Inc(fcount);
       SetLength(Filtered_List,fcount);
       Filtered_List[fcount-1] := System_List[I];

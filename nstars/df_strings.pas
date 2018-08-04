@@ -146,6 +146,7 @@ procedure DeUnicode(var instr:string);
 (* an attempt to shorten multiple uses of AnsiContainsStr *)
 function StrContAny(const lookin:string; values:array of string):Boolean;
 function StrEndwAny(const lookin:string; values:array of string):Boolean;
+function StrStartswAny(const lookin:string; values:array of string):Boolean;
 function StrEqAny(const matcher:string; values:array of string):Boolean;
 
 (* shorten things *)
@@ -1244,6 +1245,17 @@ begin
   lhigh := High(values);
   for ldex := 0 to lhigh do begin
     if AnsiEndsStr(values[ldex],lookin) then Exit;
+  end;
+  Result := False;
+end;
+//-------------------------------------------------
+function StrStartswAny(const lookin:string; values:array of string):Boolean;
+var ldex,lhigh:Integer;
+begin
+  Result := True;
+  lhigh := High(values);
+  for ldex := 0 to lhigh do begin
+    if AnsiStartsStr(values[ldex],lookin) then Exit;
   end;
   Result := False;
 end;

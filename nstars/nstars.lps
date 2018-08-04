@@ -20,8 +20,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="1872"/>
-        <CursorPos X="24" Y="1892"/>
+        <TopLine Value="2291"/>
+        <CursorPos X="34" Y="2296"/>
         <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
@@ -29,11 +29,11 @@
         <Filename Value="collecdata.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="1056"/>
-        <CursorPos X="20" Y="1060"/>
+        <TopLine Value="1021"/>
+        <CursorPos X="36" Y="1034"/>
         <UsageCount Value="201"/>
         <Bookmarks Count="1">
-          <Item0 Y="151" ID="2"/>
+          <Item0 Y="152" ID="2"/>
         </Bookmarks>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
@@ -70,11 +70,10 @@
       <Unit6>
         <Filename Value="df_strings.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="1489"/>
-        <CursorPos Y="1509"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1245"/>
+        <CursorPos X="17" Y="1258"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
@@ -115,10 +114,11 @@
       <Unit11>
         <Filename Value="data\stardata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="2041"/>
-        <CursorPos X="36" Y="2082"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="1815"/>
+        <CursorPos X="19" Y="1838"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
@@ -205,7 +205,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="newImports"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="1254"/>
+        <TopLine Value="1287"/>
         <CursorPos X="21" Y="1275"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -303,12 +303,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="MainLocatEdit"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="121"/>
         <CursorPos Y="134"/>
         <UsageCount Value="203"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit28>
       <Unit29>
@@ -377,11 +375,10 @@
         <Filename Value="stardata\estbasics.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EstBasics"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="230"/>
         <CursorPos X="10" Y="58"/>
         <UsageCount Value="205"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit35>
       <Unit36>
@@ -419,19 +416,17 @@
         <Filename Value="stardata\estutilsextra.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EstUtilsExtra"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="34"/>
         <CursorPos X="22" Y="55"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
         <Filename Value="stardata\starestimator.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarEstimator"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="1093"/>
         <CursorPos X="5" Y="1106"/>
         <UsageCount Value="200"/>
@@ -439,7 +434,6 @@
           <Item0 X="23" Y="1525"/>
           <Item1 X="5" Y="1271" ID="1"/>
         </Bookmarks>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit40>
       <Unit41>
@@ -465,8 +459,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="newImports2"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="231"/>
-        <CursorPos X="30" Y="235"/>
+        <TopLine Value="211"/>
+        <CursorPos X="16" Y="220"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit43>
@@ -584,7 +578,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="151"/>
         <CursorPos X="50" Y="163"/>
-        <UsageCount Value="185"/>
+        <UsageCount Value="189"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit55>
       <Unit56>
@@ -596,7 +590,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="181"/>
         <CursorPos X="32" Y="133"/>
-        <UsageCount Value="175"/>
+        <UsageCount Value="179"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit56>
       <Unit57>
@@ -605,7 +599,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="10"/>
         <CursorPos X="48" Y="14"/>
-        <UsageCount Value="129"/>
+        <UsageCount Value="133"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit57>
       <Unit58>
@@ -615,16 +609,18 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="7"/>
         <CursorPos Y="28"/>
-        <UsageCount Value="104"/>
+        <UsageCount Value="108"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit58>
       <Unit59>
         <Filename Value="data\star_names.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="166"/>
-        <CursorPos X="20" Y="182"/>
-        <UsageCount Value="87"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="463"/>
+        <CursorPos X="47" Y="480"/>
+        <UsageCount Value="91"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
@@ -772,7 +768,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="2975"/>
         <CursorPos Y="2989"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit76>
       <Unit77>
         <Filename Value="..\..\..\B2JC\dr2iothreads.pas"/>
@@ -796,127 +792,27 @@
         <UsageCount Value="5"/>
       </Unit79>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="5" HistoryIndex="4">
       <Position1>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="133" Column="27" TopLine="126"/>
+        <Filename Value="data\starlocatedit.pas"/>
+        <Caret Line="133" Column="33" TopLine="121"/>
       </Position1>
       <Position2>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="124" Column="25" TopLine="108"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="127" Column="20" TopLine="117"/>
       </Position2>
       <Position3>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="2076" Column="16" TopLine="2068"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="1797" Column="19" TopLine="1789"/>
       </Position3>
       <Position4>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="2080" Column="51" TopLine="2068"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="1814" Column="15" TopLine="1806"/>
       </Position4>
       <Position5>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="8" Column="71"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="31" Column="20" TopLine="19"/>
       </Position5>
-      <Position6>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1419" Column="54" TopLine="1401"/>
-      </Position6>
-      <Position7>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="132" Column="56" TopLine="121"/>
-      </Position7>
-      <Position8>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="136" Column="54" TopLine="121"/>
-      </Position8>
-      <Position9>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1268" Column="67" TopLine="1247"/>
-      </Position9>
-      <Position10>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1277" Column="8" TopLine="1256"/>
-      </Position10>
-      <Position11>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1278" Column="37" TopLine="1257"/>
-      </Position11>
-      <Position12>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1500" Column="53" TopLine="1488"/>
-      </Position12>
-      <Position13>
-        <Filename Value="stardata\estutilsextra.pas"/>
-        <Caret Line="750" Column="33" TopLine="740"/>
-      </Position13>
-      <Position14>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="16" Column="35"/>
-      </Position14>
-      <Position15>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="13" Column="29"/>
-      </Position15>
-      <Position16>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="117" Column="12" TopLine="97"/>
-      </Position16>
-      <Position17>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1089" Column="8" TopLine="1068"/>
-      </Position17>
-      <Position18>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1102" Column="17" TopLine="1225"/>
-      </Position18>
-      <Position19>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1133" Column="26" TopLine="1120"/>
-      </Position19>
-      <Position20>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1144" Column="64" TopLine="1123"/>
-      </Position20>
-      <Position21>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1161" Column="25" TopLine="1140"/>
-      </Position21>
-      <Position22>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1281" Column="21" TopLine="1260"/>
-      </Position22>
-      <Position23>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1362" Column="16" TopLine="1342"/>
-      </Position23>
-      <Position24>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1398" Column="26" TopLine="1377"/>
-      </Position24>
-      <Position25>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1492" Column="10" TopLine="1472"/>
-      </Position25>
-      <Position26>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1718" Column="26" TopLine="1697"/>
-      </Position26>
-      <Position27>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1757" Column="44" TopLine="1737"/>
-      </Position27>
-      <Position28>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1742" Column="39" TopLine="1724"/>
-      </Position28>
-      <Position29>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="118" Column="26" TopLine="100"/>
-      </Position29>
-      <Position30>
-        <Filename Value="stardata\starestimator.pas"/>
-        <Caret Line="1102" Column="44" TopLine="1095"/>
-      </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>

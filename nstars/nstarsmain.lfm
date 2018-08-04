@@ -1361,7 +1361,7 @@ object NStarsMainForm: TNStarsMainForm
         OnClick = HasProbMIClick
       end
       object NonDr2PlxMI: TMenuItem
-        Caption = 'Has non-Gaia DR2 parallax'
+        Caption = 'Missing Gaia DR2 ID'
         OnClick = NonDr2PlxMIClick
       end
       object DiffEpochMI: TMenuItem
