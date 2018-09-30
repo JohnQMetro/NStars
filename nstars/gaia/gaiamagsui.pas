@@ -95,7 +95,7 @@ end;
 procedure TGaiaMagsFrame.RPEditKeyPress(Sender: TObject; var Key: char);
 var pressdex:Integer;
 begin
-  pressdex := BPEdit.SelStart;
+  pressdex := RPEdit.SelStart;
   if (pressdex = 0) and (not (Key in [#8, '+','-'])) then Key := #0;
 end;
 

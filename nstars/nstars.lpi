@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="60">
+    <Units Count="61">
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -352,6 +352,10 @@
         <Filename Value="data\star_names.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit59>
+      <Unit60>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit60>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -369,10 +373,7 @@
     </Parsing>
     <CodeGeneration>
       <Checks>
-        <IOChecks Value="True"/>
-        <RangeChecks Value="True"/>
         <OverflowChecks Value="True"/>
-        <StackChecks Value="True"/>
       </Checks>
       <Optimizations>
         <OptimizationLevel Value="2"/>

@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Dialogs, Controls, Forms, StrUtils,
   tgas, stardata, newlocation, star_names (* namedata*), NewStar, constellation, gaiadr2holder,
   simbad, guessstype, sptfluxest, fluxtransform, starext2, importvizier,
-  df_strings, Utilities, gaiadr2types;
+  df_strings, Utilities, gaiadr2types, utilities2, fluxgaia;
 
 type
 
@@ -25,7 +25,6 @@ StarProxy = class
     procedure ApplyTGASChange(newdata:TGASData);
     function ShowEst(Vest:Real; Best,Rcest,Icest:Currency; amsg:string):Boolean;
     function ShowEstJHK(Jest,Hest,Ksest:Currency; amsg:string):Boolean;
-    function GaiaTransHelper():Integer;
   public
     // system level information
     sys:StarSystem;
@@ -78,6 +77,7 @@ StarProxy = class
     function BPRP_To_VRI():Boolean;
     function GaiaDR2_To_JHK():Boolean;
     function PanStarrs_To_BVRI(indata:string):Boolean;
+    function VizierGaiaGet():Boolean;
 end;
 
 var
@@ -306,32 +306,6 @@ begin
     Result := True;
   end;
 end;
-//----------------------------------------------
-// 0 is default, 1 is red, 2 is blue, 3 is J only
-function StarProxy.GaiaTransHelper():Integer;
-var bedre:Real;
-begin
-  Result := 0;
-  // red and J
-  if (ccomponent.fluxtemp <> nil) and (ccomponent.fluxtemp.J_mag < 90) then begin
-    if (ccomponent.dr2mags.BP >= 90) then begin
-      if (ccomponent.dr2mags.RP >= 90) then Result := 3
-      else Result := 1
-    end
-    else begin
-      bedre := ccomponent.dr2mags.BPerr / ccomponent.dr2mags.RPerr;
-      if bedre > 5 then Result := 1
-    end;
-    if (Result <> 0) then Exit;
-  end;
-  // blue
-  if (ccomponent.dr2mags.RP >= 90) then Result := 2
-  else begin
-    bedre := ccomponent.dr2mags.BPerr / ccomponent.dr2mags.RPerr;
-    if (bedre < 0.5) and (ccomponent.dr2mags.RPerr > 0.01) then Result := 2
-  end;
-end;
-
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // public methods
 constructor StarProxy.Create;
@@ -1300,7 +1274,10 @@ begin
      Exit;
   end;
   // we have different methods depending on values...
-  cpick := GaiaTransHelper();
+  if ccomponent.fluxtemp = nil then Jin := 99.999
+  else Jin := ccomponent.fluxtemp.J_mag;
+  cpick := GaiaTransHelper(ccomponent.dr2mags,Jin);
+
   BPin := ccomponent.dr2mags.BP;
   RPin := ccomponent.dr2mags.RP;
   BPmRP := ccomponent.dr2mags.BPminRP;
@@ -1353,7 +1330,7 @@ begin
   BP := ccomponent.dr2mags.BP;
   RP := ccomponent.dr2mags.RP;
   Gin := ccomponent.dr2mags.G;
-  if not Gaia2To2MASS_MyWay(Gin,BP,RP,Jest,Hest,Ksest) then begin
+  if not GaiaTo_JHK_Wr(ccomponent.dr2mags,Jest,Hest,Ksest) then begin
     ShowMessage('Cannot estimate: Colors not within range!');
     Exit;
   end;
@@ -1382,6 +1359,81 @@ begin
     end;
   end
   else ShowMessage('Input not in expected format!');
+end;
+//----------------------------------------------------------
+function StarProxy.VizierGaiaGet():Boolean;
+var gname:string;
+    fok:Boolean;
+    downd:VizieRGaiaData;
+    outmsg:string;
+    rval:Word;
+    nloc:Location;
+begin
+  Result := False;
+  gname := '';
+  fok := (sys<>nil);
+  if fok then begin
+    if sys.GetCompC = 1 then begin
+      if sysn <> nil then sysn.GetCatValue('Gaia DR2',gname);
+    end else begin
+      if cstarn <> nil then cstarn.GetCatValue('Gaia DR2',gname);
+    end;
+    fok := (Length(gname)<>0);
+    if fok then begin
+      // finally, we can truly start here!
+      Screen.Cursor := crHourGlass;
+      downd := GetGaiaFromVizier(gname);
+      if (downd = nil) then begin
+        Screen.Cursor := crDefault;
+        ShowMessage('Unable to find valid Gaia DR2 results!');
+        if downd <> nil then downd.Free;
+      end else begin
+        // building the data message to display
+        outmsg := 'Found Gaia DR2 Results: ' + sLineBreak;
+        outmsg += downd.ToString() + sLineBreak;
+        outmsg += ' Do you want to use these values?';
+        Screen.Cursor := crDefault;
+        // showing that message
+        rval := mrNo;
+        if (downd.HasParallax) then begin
+          rval := QuestionDlg('Choose the Data',outmsg, mtCustom,
+                         [110,'Mags',120,'Mags and Pos',130,'Mags,Pos,Pllx',mrNo],'');
+        end else begin
+            rval := QuestionDlg('Choose the Data',outmsg, mtCustom,
+                         [110,'Mags',120,'Mags and Pos',mrNo],'');
+        end;
+
+        // using data
+        if rval <> mrNo then begin
+          ccomponent.dr2mags := downd.mags;
+          downd.mags := nil;
+          // setting the position
+          if (rval = 120) or (rval = 130) then begin
+            if (cstarl <> nil) then cstarl.SetPositionDDeg(zJ2015h,downd.ra_pos,downd.dec_pos)
+            else if (starindex = 1) then sysl.SetPositionDDeg(zJ2015h,downd.ra_pos,downd.dec_pos)
+            else begin
+              nloc := Location.Create(sysl,True);
+              nloc.SetPositionDDeg(zJ2015h,downd.ra_pos,downd.dec_pos);
+              ccomponent.InsertLocation(nloc);
+              cstarl := nloc;
+            end;
+          end;
+          // setting the parallax
+          if (rval = 130) then begin
+            if (cstarl <> nil) then nloc := cstarl
+            else nloc := sysl;
+            nloc.UpdateParallax(downd.pllx,downd.pllx_err);
+            nloc.source := GAIA2_TAG;
+            nloc.binarycopy := False;
+            if (not nloc.uncertain) then nloc.uncertain := (downd.pllx_err > 0.2);
+          end;
+          Result := True;
+        end;
+        FreeAndNil(downd);
+      end;
+    end;
+  end;
+  if not fok then ShowMessage('Object does not have Gaia DR2!');
 end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 begin

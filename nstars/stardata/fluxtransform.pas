@@ -18,8 +18,7 @@ function TychoToJohnson(const Bt,Vt:Real; out Bj,Vj:Real):Boolean;
 function TychoToFluxes(indata:string; out Vj:Real; out Bj:Currency):Boolean;
 procedure Johnson_to_Cousins(inV:Real; inR,inI:Currency; out Rc,Ic:Currency);
 function DENIStoCousinsI(const inDenisI:Currency):Currency;
-function Gaia2ToVRI(Gmag:Currency; BPmRP:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
-function Gaia2To2MASS(Gmag:Currency; BPmRP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
+
 (* SDSS related magnitude conversions *)
 procedure SDSS_gri2BVRI(g,r,i:Real; out Bj,Vj,Rc,Ic:Real);
 function SDSS_ugriz2BVRI(u,g,r,i,z:Real; out Bj,Vj,Rc,Ic:Real):Boolean;
@@ -51,12 +50,7 @@ function CMC15_ToBV(CMCr:Real; Gin,J,Ks:Currency; out Best:Currency; out Vest:Re
 (* More Estimation *)
 function URATJ_To_Ic(URATin,Jin:Currency; out Icest:Currency):Boolean;
 function UC2MG_To_Ic(UCACin,Gin,J:Currency; out Icest:Currency):Boolean;
-function Gaia2ToVRI_MyWay(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
-function Gaia2To2MASS_MyWay(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
-function Gaia2ToB(Gmag,BPmag,RPmag:Currency; out Best:Currency):Boolean;
-function GaiaToVRI_Red(Gmag,RPmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
-function GaiaToVRI_Blue(Gmag,BPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
-function GaiaToVRI_2M(Gmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+
 //******************************************************************************
 implementation
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -183,67 +177,7 @@ begin
   real_cousins := 1.04*real_denis-0.501;
   Result := RealToCurr(real_cousins);
 end;
-//----------------------------------------------------------------------
-(* From '﻿Gaia Data Release 2: Photometric content and validation' (Evans+ 2018)
-Does not work for M3.5 or redder. *)
-function Gaia2ToVRI(Gmag:Currency; BPmRP:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
-var bmr,interm:Real;
-const coffV:array[0..2] of Real = (-0.0176  ,-0.00686,-0.1732 );
-      coffR:array[0..2] of Real = (-0.003226, 0.3833 ,-0.1345 );
-      coffI:array[0..2] of Real = ( 0.02085 , 0.7419 ,-0.09631);
-begin
-  Result := False;
-  if (BPmRP >= 2.75) or (BPmRP <= -0.5) then Exit;
-  if Gmag > 90 then Exit;
-  // converting
-  bmr := CurrToReal(BPmRP);
-  interm := PolEval(bmr,coffV,3);
-  Vest := CurrToReal(Gmag) - interm;
-  interm := PolEval(bmr,coffR,3);
-  Rcest := CurrToReal(Gmag) - interm;
-  Rcest := RoundCurrency(Rcest,False);
-  interm := PolEval(bmr,coffI,3);
-  Icest := CurrToReal(Gmag) - interm;
-  Icest := RoundCurrency(Icest,False);
-  Result := True;
-end;
-//------------------------------------------------------------------
-(* This could be useful for binary components. For some reason, it also goes
-much more into the red than the VRI transformations:
-NOTE: however, it seems to give bad results for red dwarfs. avoid. *)
-function Gaia2To2MASS(Gmag:Currency; BPmRP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
-var bmr,gr,interm:Real;
-const coffKs:array[0..2] of Real = ( -0.1885 , 2.092 ,-0.1345 );
-      coffH:array[0..2] of Real  = ( -0.1621 , 1.628 ,-0.1328 );
-      coffJ:array[0..2] of Real  = ( -0.01883, 1.394 ,-0.07893);
-begin
-  Result := False;
-  if (BPmRP >= 5.5) or (BPmRP <= -0.5) then Exit;
-  if Gmag > 90 then Exit;
-  // converting
-  bmr := CurrToReal(BPmRP);
-  gr := CurrToReal(Gmag);
-  // J
-  interm := PolEval(bmr,coffJ,3);
-  Jest := gr - interm;
-  Jest := RoundCurrency(Jest,False);
-  // H
-  if (BPmRP < 5) and (BpmRP > 0.25) then begin
-    interm := PolEval(bmr,coffH,3);
-    Hest := gr - interm;
-    Hest := RoundCurrency(Hest,False);
-  end
-  else Hest := 99.999;
-  // Ks
-  if BpmRP > 0.25 then begin
-    interm := PolEval(bmr,coffKs,3);
-    Ksest := gr - interm;
-    Ksest := RoundCurrency(Ksest,False);
-  end
-  else Ksest := 99.999;
-  // done
-  Result := True;
-end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* SDSS related magnitude conversions *)
 //-------------------------------------------------------------
@@ -999,178 +933,6 @@ begin
   Result := True;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-(* DR2 to V Rc Ic, with my own fits. Uses photometry from SN 35 as the target,
-so covers Red Dwarfs, and goes to much redder BP-RP.  *)
-function Gaia2ToVRI_MyWay(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
-var bpmrp,gmrp:Real;
-    interm:Real;
-    colorx:RealArray;
-const coffv:array[0..5] of Real = ( -0.12021, 0.88909, 0.0062748, 0.059802, -0.99844, -0.060393 );
-      coffr:array[0..5] of Real = ( -1.0864, 0.62724, -0.020821, 0.033311, 0.096642, -0.42465 );
-      coffi:array[0..5] of Real = ( -0.81587, 0.49131, 0.020283, -0.47688, 1.6593, 0.22504 );
-begin
-  Result := False;
-  if (Gmag > 90) or (BPmag > 90) or (RPmag > 90) then Exit;
-  // conveniently, the color bounds are the same for all results
-  if not MakeColorCheck(BPmag,RPmag,1.771,5.197,bpmrp) then Exit;
-  if not MakeColorCheck(Gmag,RPmag,0.89,1.68,gmrp) then Exit;
-  // computing the vector
-  LoadMulti(bpmrp,gmrp,False,colorx);
-  // V
-  interm := dot2(coffv,colorx,6);
-  Vest := CurrToReal(Gmag) + interm;
-  // Rc
-  interm := dot2(coffr,colorx,6);
-  Rcest := Gmag + RealToCurr(interm);
-  Rcest := RoundCurrency(Rcest,False);
-  // Ic
-  interm := dot2(coffi,colorx,6);
-  Icest := Gmag - RealToCurr(interm);
-  Icest := RoundCurrency(Icest,False);
-  // done
-  Result := True;
-end;
-//--------------------------------------------------
-(* Since the Gaia provided transforms for JHKs seem to work badly, I've done my
-own, for BP-RP > 1 only. *)
-function Gaia2To2MASS_MyWay(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
-var bpmrp,gmrp:Real;
-    interm:Real;
-    colorx:RealArray;
-const coffj:array[0..5] of Real = ( -0.025999, 0.17069, -0.062699, 0.49271, 2.0394, -0.80351 );
-      coffh:array[0..4] of Real = ( -1.3427, 4.4554, -1.8405, 0.39909, -0.031809 );
-      coffk:array[0..4] of Real = ( -1.3698, 4.5444, -1.801, 0.38128, -0.029769 );
-begin
-  Result := False;
-  if (Gmag > 90) or (BPmag > 90) or (RPmag > 90) then Exit;
-  // conveniently, the color bounds are almost the same for all results
-  if not MakeColorCheck(BPmag,RPmag,0.99,5.197,bpmrp) then Exit;
-  if not MakeColorCheck(Gmag,RPmag,0.549,1.897,gmrp) then Exit;
-  // computing the vector
-  LoadMulti(bpmrp,gmrp,False,colorx);
-  // J
-  interm := dot2(coffj,colorx,6);
-  Jest := Gmag - RealToCurr(interm);
-  Jest := RoundCurrency(Jest,False);
-  // H
-  interm := PolEval(bpmrp,coffh,5);
-  Hest := Gmag - RealToCurr(interm);
-  Hest := RoundCurrency(Hest,False);
-  // Ks
-  interm := PolEval(bpmrp,coffk,5);
-  Ksest := Gmag - RealToCurr(interm);
-  Ksest := RoundCurrency(Ksest,False);
-  // done
-  Result := True;
-end;
-//-------------------------------------------------------------
-(* Rough transform to B for BP-RP > 1 using APASS B *)
-function Gaia2ToB(Gmag,BPmag,RPmag:Currency; out Best:Currency):Boolean;
-var bpmrp:Real;
-    interm:Real;
-const coffb:array[0..2] of Real = ( -0.42609, 1.6263, -0.16102 );
-begin
-  Result := False;
-  if (Gmag > 90) or (BPmag > 90) or (RPmag > 90) then Exit;
-  if not MakeColorCheck(BPmag,RPmag,0.99,3.83,bpmrp) then Exit;
-  // computing the results
-  interm := PolEval(bpmrp,coffb,3);
-  Best := Gmag + RealToCurr(interm);
-  Best := RoundCurrency(Best,False);
-  // done
-  Result := True;
-end;
-//-----------------------------------------------------------------
-(* It is stated that BP is inaccurate for very red stars. SN35 only goes to L2,
-but here is a function that avoids BP, and uses the 274 stars from SN35
-with the highest G-RP (> 1.25) and has V Rc Ic. Requires J. *)
-function GaiaToVRI_Red(Gmag,RPmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
-var gmrp,gmj:Real;
-    interm:Real;
-    colorx:RealArray;
-const coffv:array[0..5] of Real = ( 9.9991, -12.668, -9.8856, 11.96, -1.2334, -2.0537 );
-      coffr:array[0..5] of Real = ( 3.1156, -4.8787, -5.1848, 5.5582, -0.24206, -0.98861 );
-      coffi:array[0..5] of Real = ( -1.5454, 2.7611, -0.25001, -0.28776, 0.42253, -0.025289 );
-begin
-  Result := False;
-  if (Gmag > 90) or (Jmag > 90) or (RPmag > 90) then Exit;
-  // conveniently, the color bounds are the same for all results
-  if not MakeColorCheck(Gmag,RPmag,1.251,1.68,gmrp) then Exit;
-  if not MakeColorCheck(Gmag,Jmag,2.874,4.777,gmj) then Exit;
-  // computing the vector
-  LoadMulti(gmrp,gmj,False,colorx);
-  // V
-  interm := dot2(coffv,colorx,6);
-  Vest := CurrToReal(Gmag) + interm;
-  // Rc
-  interm := dot2(coffr,colorx,6);
-  Rcest := Gmag + RealToCurr(interm);
-  Rcest := RoundCurrency(Rcest,False);
-  // Ic
-  interm := dot2(coffi,colorx,6);
-  Icest := Gmag - RealToCurr(interm);
-  Icest := RoundCurrency(Icest,False);
-  // done
-  Result := True;
-end;
-//--------------------------------------------------------------------------
-function GaiaToVRI_Blue(Gmag,BPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
-var bpmg:Real;
-    interm:Real;
-const coffv:array[0..2] of Real = ( -0.2084, 0.92954, 0.022026 );
-      coffr:array[0..2] of Real = ( -0.69696, 0.55157, -0.026898 );
-      coffi:array[0..3] of Real = ( 0.005271, 1.6144, -0.53945, 0.05862 );
-begin
-  Result := False;
-  if (Gmag > 90) or (BPmag > 90) then Exit;
-  // conveniently, the color bounds are the same for all results
-  if not MakeColorCheck(BPmag,Gmag,0.867,3.61,bpmg) then Exit;
-  // V
-  interm := PolEval(bpmg,coffv,3);
-  Vest := CurrToReal(Gmag) + interm;
-  // Rc
-  interm := PolEval(bpmg,coffr,3);
-  Rcest := Gmag + RealToCurr(interm);
-  Rcest := RoundCurrency(Rcest,False);
-  // Ic
-  interm := PolEval(bpmg,coffi,4);
-  Icest := Gmag - RealToCurr(interm);
-  Icest := RoundCurrency(Icest,False);
-  // done
-  Result := True;
-end;
-//-----------------------------------------------------------------
-function GaiaToVRI_2M(Gmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
-var gmj:Real;
-    interm:Real;
-const coffv1:array[0..2] of Real = ( 0.084193, -0.084446, 0.17371 );
-      coffv2:array[0..3] of Real = ( 35.34, -30.245, 8.6621, -0.78355 );
-      coffr1:array[0..2] of Real = ( -1.1743, 0.49163, -0.018049 );
-      coffr2:array[0..3] of Real =  ( 11.947, -10.706, 3.1073, -0.28321 );
-      coffi1:array[0..2] of Real = ( -0.89387, 1.2845, -0.16599 );
-      coffi2:array[0..2] of Real = ( -0.97998, 1.3248, -0.17 );
-begin
-  Result := False;
-  if (Gmag > 90) or (Jmag > 90) then Exit;
-  // conveniently, the color bounds are the same for all results
-  if not MakeColorCheck(Gmag,Jmag,2.016,4.777,gmj) then Exit;
-  // V
-  if gmj < 3.1 then interm := PolEval(gmj,coffv1,3)
-  else interm := PolEval(gmj,coffv2,4);
-  Vest := CurrToReal(Gmag) + interm;
-  // Rc
-  if gmj < 3.1 then interm := PolEval(gmj,coffr1,3)
-  else interm := PolEval(gmj,coffr2,4);
-  Rcest := Gmag + RealToCurr(interm);
-  Rcest := RoundCurrency(Rcest,False);
-  // Ic
-  if gmj < 3.1 then interm := PolEval(gmj,coffi1,3)
-  else interm := PolEval(gmj,coffi2,3);
-  Icest := Gmag - RealToCurr(interm);
-  Icest := RoundCurrency(Icest,False);
-  // done
-  Result := True;
-end;
-//******************************************************************************
+
 end.
 

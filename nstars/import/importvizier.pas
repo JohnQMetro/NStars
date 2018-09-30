@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils,Synacode,
-  fluxtransform, StringParser, df_strings, Utilities;
+  fluxtransform, StringParser, df_strings, Utilities, gaiadr2base, strutils;
 
 type
 
@@ -80,13 +80,33 @@ VizieR2MASSData = class(VizieRDataBase)
     function AllBad():Boolean;
     function ToString():string;
 end;
+//-------------------------------------------------------------
+VizieRGaiaData = class(VizieRDataBase)
+  protected
+    function Next2String(out one:string; out two:string):Boolean;
+    function ghpllx():Boolean;
+  public
+    mags:GaiaDR2Mags;
+    ra_pos,dec_pos:string;
+    pllx,pllx_err:Real;
+    pmra,pmdec:string;
+
+    property HasParallax:Boolean read ghpllx;
+
+    constructor Create;
+    destructor Destroy;
+    function SetFromString(inraw:string):Boolean;
+    function ToString():string;
+end;
 //---------------------------------------------------------------
 const invmag:Currency = 99.999;
 //-------------------------------------------------------------
 function MakeVizAPASS_Params(targetname:string; radius:Real):string;
 function MakeViz2MASS_Post(targetstr:string):string;
+function MakeVizGaiaDR2_Post(targetstr:string):string;
 function GetFromVizier(targetname:string):APASSVizieRData;
 function Get2MASSFromVizier(targ2mass:string):VizieR2MASSData;
+function GetGaiaFromVizier(targ_gaia:string):VizieRGaiaData;
 
 implementation
 //================================================================
@@ -101,15 +121,25 @@ function VizieRDataBase.Qgetsnippet:string;
 begin  Result := zsnippet;    end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++
 function VizieRDataBase.NextTableCell(out tccont:string):Boolean;
-var bufstr:string;
+var bufstr,bufstr2:string;
+    pos1,pos2:Integer;
 begin
   Assert(xparser<>nil);
   Result := False;
   if not xparser.MovePast('<TD') then Exit;
   if not xparser.ExtractField('>','</TD>',bufstr,True) then Exit;
   Result := True;
-  if bufstr = '&nbsp;' then tccont := ''
-  else tccont := bufstr;
+  if bufstr = '&nbsp;' then bufstr := ''
+  else bufstr := bufstr;
+  // sometimes the cell contents are in a FONT tag...
+  if AnsiStartsStr('<FONT',bufstr) then begin
+    pos1 := AnsiPos('>',bufstr);
+    if (pos1 > 0) then begin
+      pos2 := PosEx('<',bufstr,pos1);
+      if (pos2 > 0) then bufstr := Copy(bufstr,pos1+1,pos2-(pos1+1));
+    end;
+  end;
+  tccont := Trim(bufstr);
 end;
 //--------------------------------------------
 function VizieRDataBase.StartParsing(const instr:string):Boolean;
@@ -390,6 +420,108 @@ begin
     Result += sLineBreak;
   end;
 end;
+//===========================================================================
+function VizieRGaiaData.Next2String(out one:string; out two:string):Boolean;
+var str1,str2:string;
+begin
+  Result := False;
+  // extracting
+  if not NextTableCell(str1) then Exit;
+  if not NextTableCell(str2) then Exit;
+  // // setting the results
+  one := str1;
+  two := str2;
+  Result := True;
+end;
+//--------------------------------
+function VizieRGaiaData.ghpllx():Boolean;
+begin
+  Result := (pllx > 0);
+end;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(*    J,Jerr:Currency;
+    H,Herr:Currency;
+    Ks,Kserr:Currency;  *)
+constructor VizieRGaiaData.Create;
+begin
+  inherited;
+  mags := nil;
+  pllx_err := 0;
+  pllx := -1;
+end;
+destructor VizieRGaiaData.Destroy;
+begin
+  FreeAndNil(mags);
+  inherited;
+end;
+
+//-------------------------------------------------------
+function VizieRGaiaData.SetFromString(inraw:string):Boolean;
+var str1,str2:string;
+    maglist:TStringList;
+begin
+  Result := False;
+  maglist := nil;
+  try
+    if not StartParsing(inraw) then Exit;
+    if not xparser.MovePast('Gaia DR2 (Gaia Collaboration, 2018)') then Exit;
+    // moving to the data row
+    if not xparser.MovePast('<TR class=''tuple-2''>') then Exit;
+    // ignoring the first field
+    if not xparser.MovePast('<TD') then Exit;
+    // RA and Dec
+    if not Next2String(ra_pos,dec_pos) then Exit;
+    // skipping the id
+    if not xparser.MovePast('<TD') then Exit;
+    // parallax
+    if not Next2String(str1,str2) then Exit;
+    if (str1 <> '') then begin
+      if (not StrToRealBoth(str1,str2,pllx,pllx_err)) then Exit;
+      pllx += 0.029;
+    end;
+    // proper motion
+    if (not next2String(pmra,pmdec)) then Exit;
+    if (pmra = '') and (pllx >= 0) then begin
+      pllx := -1;
+      pllx_err := 0;
+    end;
+    // magnitudes
+    maglist := TStringList.Create;
+    // G
+    if (not next2String(str1,str2)) then Exit;
+    maglist.Add(str1);
+    maglist.Add(str2);
+    // BP
+    if (not next2String(str1,str2)) then Exit;
+    maglist.Add(str1);
+    maglist.Add(str2);
+    // RP
+    if (not next2String(str1,str2)) then Exit;
+    maglist.Add(str1);
+    maglist.Add(str2);
+    // creating the mag object and converting the list
+    mags := GaiaDR2Mags.Create;
+    if (not mags.SetFromList(maglist,0)) then begin
+      mags.Free;   Exit;
+    end;
+  finally
+    maglist.Free;
+    FreeAndNil(xparser);
+  end;
+  // done
+  parsed := True;
+  Result := True;
+end;
+//--------------------------------------------------
+function VizieRGaiaData.ToString():string;
+begin
+  Result := mags.DisplayData() + sLineBreak;
+  Result += 'RA: ' + ra_pos + '  Dec: ' + dec_pos + sLineBreak;
+  if HasParallax then begin
+    Result += 'Pllx : ' + Trim(FloatToStrF(pllx,ffFixed,7,3)) + '±';
+    Result += Trim(FloatToStrF(pllx_err,ffFixed,5,3));
+  end;
+end;
 
 //===============================================================================
 function MakeVizAPASS_Params(targetname:string; radius:Real):string;
@@ -440,6 +572,36 @@ begin
   Result += '&%2F%2Fnoneucd1p=on&-file=.&-meta.ucd=2&-meta=1&-meta.foot=1&';
   Result += '-usenav=1&-bmark=POST';
 end;
+
+function MakeVizGaiaDR2_Post(targetstr:string):string;
+begin
+  Result := '-to=4&-from=-3&-this=-3&%2F%2Fsource=I%2F345%2Fgaia2&%2F%2Ftables';
+  Result += '=I%2F345%2Fgaia2&-out.max=50&%2F%2FCDSportal=http%3A%2F%2F';
+  Result += 'cdsportal.u-strasbg.fr%2FStoreVizierData.html&-out.form=HTML+Table';
+  Result += '&%2F%2Foutaddvalue=default&-oc.form=sexa&-nav=cat%3AI%2F345%26tab';
+  Result += '%3A%7BI%2F345%2Fgaia2%7D%26key%3Asource%3DI%2F345%2Fgaia2%26';
+  Result += 'HTTPPRM%3A%26&-c=&-c.eq=J2000&-c.r=++2&-c.u=arcmin&-c.geom=r&';
+  Result += '-source=I%2F345%2Fgaia2&-order=I&-out.orig=standard&DR2Name=&-out';
+  Result += '=RA_ICRS&RA_ICRS=&e_RA_ICRS=&-out=DE_ICRS&DE_ICRS=&e_DE_ICRS=';
+  Result += '&SolID=&-out=Source&Source=' + EncodeURLElement(targetstr);
+  Result += '&RandomI=&Epoch=&-out=Plx&Plx=&-out=e_Plx&e_Plx=&RPlx=&-out=pmRA';
+  Result += '&pmRA=&e_pmRA=&-out=pmDE&pmDE=&e_pmDE=&RADEcor=&RAPlxcor=';
+  Result += '&RApmRAcor=&RApmDEcor=&DEPlxcor=&DEpmRAcor=&DEpmDEcor=&PlxpmRAcor';
+  Result += '=&PlxpmDEcor=&pmRApmDEcor=&NAL=&NAC=&NgAL=&NbAL=&gofAL=&chi2AL';
+  Result += '=&epsi=&sepsi=&Solved=&APF=&WAL=&pscol=&e_pscol=&fvarpi=';
+  Result += '&MatchObsA=&Nper=&amax=&type=&MatchObs=&Dup=&o_Gmag=&FG=&e_FG=';
+  Result += '&RFG=&-out=Gmag&Gmag=&-out=e_Gmag&e_Gmag=&o_BPmag=&FBP=&e_FBP=';
+  Result += '&RFBP=&-out=BPmag&BPmag=&-out=e_BPmag&e_BPmag=&o_RPmag=&FRP=';
+  Result += '&e_FRP=&RFRP=&-out=RPmag&RPmag=&-out=e_RPmag&e_RPmag=';
+  Result += '&E%28BR%2FRP%29=&Mode=&BP-RP=&BP-G=&G-RP=&-out=RV&RV=&-out=e_RV';
+  Result += '&e_RV=&o_RV=&Tefftemp=&loggtemp=&%5BFe%2FH%5Dtemp=&Var=&GLON=';
+  Result += '&GLAT=&ELON=&ELAT=&fPriam=&Teff=&b_Teff=&B_Teff=&AG=&b_AG=&B_AG';
+  Result += '=&E%28BP-RP%29=&b_E%28BP-RP%29=&B_E%28BP-RP%29=&fFLAME=&Rad=&b_Rad';
+  Result += '=&B_Rad=&Lum=&b_Lum=&B_Lum=&RAJ2000=&e_RAJ2000=&DEJ2000';
+  Result += '=&e_DEJ2000=&%2F%2Fnoneucd1p=on&-file=.&-meta.ucd=2&-meta=1';
+  Result += '&-meta.foot=1&-usenav=1&-bmark=POST';
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++
 function GetFromVizier(targetname:string):APASSVizieRData;
 var params:string;
@@ -479,6 +641,23 @@ begin
   dok := GetByPOSTS(vizurl1,params,ctLatin1,downstring);
   if not dok then Exit;
   Result := VizieR2MASSData.Create;
+  dok := Result.SetFromString(downstring);
+  if not dok then FreeAndNil(Result);
+end;
+//-------------------------------------------------------------
+function GetGaiaFromVizier(targ_gaia:string):VizieRGaiaData;
+var params:string;
+    dok:Boolean;
+    downstring:string;
+    fsOut: TFileStream;
+const vizurl1 = 'http://vizier.u-strasbg.fr/viz-bin/VizieR-4';
+      vizurl2 = 'http://vizier.cfa.harvard.edu/viz-bin/VizieR-4';
+begin
+  Result := nil;
+  params := MakeVizGaiaDR2_Post(targ_gaia);
+  dok := GetByPOSTS(vizurl1,params,ctLatin1,downstring);
+  if not dok then Exit;
+  Result := VizieRGaiaData.Create;
   dok := Result.SetFromString(downstring);
   if not dok then FreeAndNil(Result);
 end;

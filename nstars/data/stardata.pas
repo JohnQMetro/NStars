@@ -7,7 +7,7 @@ interface
 uses SysUtils, Classes, df_strings, StrUtils,
  StarDataBase, newlocation, star_names (* namedata *), unitdata, simbad, sptfluxest,
  NewStar, tgas, constellation, StarEstimator, StarExt2, gaiadr2base, fluxtransform,
- utilities2;
+ utilities2, fluxgaia;
 
 type
 //----------------------------------------------------------
@@ -2110,23 +2110,23 @@ var stardex:Integer;
     rdum,idum:Currency;
     tres:Boolean;
     cstar:StarInfo;
+    Jin:Currency;
 begin
   Result := True;
   for stardex := 0 to MaxCInd do begin
     cdr2 := new_components[stardex].dr2mags;
     // checks to see if we can try and calculate V
     if cdr2 = nil then Continue;
-    if (cdr2.G >= 90) then Continue;
-    if (not cdr2.ValidBPmRP) then Continue;
     if new_components[stardex].isBrownDwarf then Continue;
-    (* Here, we try and calcuate a v mag. Simpler than the one used by the
-    menu transforms *)
-    if cdr2.BPminRP < 2 then tres := Gaia2ToVRI(cdr2.G,cdr2.BPminRP,vmagest,rdum,idum)
-    else tres := Gaia2ToVRI_MyWay(cdr2.G,cdr2.BP,cdr2.RP,vmagest,rdum,idum);
+    cstar := new_components[stardex] as StarInfo;
+    if (cstar.VisualMagnitude > 90) then Continue;
+    (* Here, we try and calcuate a v mag. using  menu transforms *)
+    if new_components[stardex].fluxtemp = nil then Jin := 99.999
+    else Jin := new_components[stardex].fluxtemp.J_mag;
+    tres := GaiaToV(cdr2,Jin,vmagest);
     // if tres is false, skip
     if (not tres) then Continue;
     // comparing
-    cstar := new_components[stardex] as StarInfo;
     vdiff := Abs(vmagest - cstar.VisualMagnitude);
     if (vdiff > MaxDiff) then Exit;
   end;

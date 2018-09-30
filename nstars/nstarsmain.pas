@@ -45,6 +45,7 @@ type
     IntDupMI: TMenuItem;
     HiIntDistFMI: TMenuItem;
     GVmagDiffFMI: TMenuItem;
+    GaiaMagGetMI: TMenuItem;
     NonDr2PlxMI: TMenuItem;
     ShowJ2000posMI: TMenuItem;
     SwapStarMI: TMenuItem;
@@ -225,6 +226,7 @@ type
     procedure FindRemTGASMIClick(Sender: TObject);
     procedure FluxEstSubMenuClick(Sender: TObject);
     procedure GaiaDR2MagMIClick(Sender: TObject);
+    procedure GaiaMagGetMIClick(Sender: TObject);
     procedure GetLoggMIClick(Sender: TObject);
     procedure GotoBM_1MIClick(Sender: TObject);
     procedure GotoBM_2MIClick(Sender: TObject);
@@ -817,6 +819,21 @@ begin
     if rok then begin
       // reloading after data has been set
       StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.GaiaMagGetMIClick(Sender: TObject);
+var gaiares:Boolean;
+  begin
+  if current <> nil then begin
+    gaiares := current.VizierGaiaGet();
+    if gaiares then begin
+      StarData1;
+      if (current.starindex <> 1) then begin
+        StarLocatFrame1.Enabled := True;
+        StarLocatFrame1.ChangeLocation(current.cstarl);
+      end else SystemLoad3;
     end;
   end;
 end;

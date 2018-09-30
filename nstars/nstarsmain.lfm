@@ -616,8 +616,8 @@ object NStarsMainForm: TNStarsMainForm
             Height = 240
             Top = 232
             Width = 584
-            ActivePage = FluxesTEffTab
-            TabIndex = 0
+            ActivePage = ExtraDataTab
+            TabIndex = 1
             TabOrder = 3
             object FluxesTEffTab: TTabSheet
               Caption = 'Fluxes and TEff'
@@ -669,7 +669,7 @@ object NStarsMainForm: TNStarsMainForm
                   end
                   inherited GaiaLabel: TLabel
                     Height = 13
-                    Width = 34
+                    Width = 40
                   end
                 end
                 inherited UseExtra2CB: TCheckBox
@@ -1087,6 +1087,10 @@ object NStarsMainForm: TNStarsMainForm
       object Viz2MassGetMI: TMenuItem
         Caption = 'VizieR 2Mass Fluxes...'
         OnClick = Viz2MassGetMIClick
+      end
+      object GaiaMagGetMI: TMenuItem
+        Caption = 'Gaia DR2 Fluxes...'
+        OnClick = GaiaMagGetMIClick
       end
       object MenuItem3: TMenuItem
         Caption = '-'
