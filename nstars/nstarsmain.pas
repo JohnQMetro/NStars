@@ -7,7 +7,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus, StrUtils, Types,
-  CheckLst, MaskEdit,
+  CheckLst, MaskEdit,LMessages,
   collecdata, startproxy, stardata, namedata, newlocation, unitdata, gnotes_form,
   cluster, clusteredit, tgas, simbad,
   NewStar, catalogedit, starextraedit, stardataedit, StarDataBase,
@@ -15,7 +15,7 @@ uses
   MainLocatEdit, df_strings, sptfluxest, PPMMatchForm, Utilities2, tgas_import,
   export_form, ExtraImports,
   dr2loadstore, dr2sourceload,gaiadr2holder,gaiamagsui, gaiadr2match,
-  gaiadr2add, star_names;
+  gaiadr2add, star_names, VizierID;
 
 type
 
@@ -28,7 +28,6 @@ type
     FluxEstSubMenu: TMenuItem;
     EstBVUATMI: TMenuItem;
     EstBVUCACMI: TMenuItem;
-    EstIUCACMI: TMenuItem;
     EstIURATMI: TMenuItem;
     EstBVCMCMI: TMenuItem;
     MenuItem10: TMenuItem;
@@ -36,27 +35,42 @@ type
     ImpGaiaDR2MI: TMenuItem;
     MenuItem11: TMenuItem;
     ExpGaiaDR2CSV: TMenuItem;
-    MenuItem12: TMenuItem;
-    FinDR2MatchMI: TMenuItem;
     AddUMGaiaDR2MI: TMenuItem;
-    GaiaDR2MagMI: TMenuItem;
-    EstJHKGaia2MI: TMenuItem;
     DiffEpochMI: TMenuItem;
     IntDupMI: TMenuItem;
     HiIntDistFMI: TMenuItem;
     GVmagDiffFMI: TMenuItem;
     GaiaMagGetMI: TMenuItem;
+    MenuItem12: TMenuItem;
+    EstJHKPSMI: TMenuItem;
+    MI_DR2_BVRI: TMenuItem;
+    MI_DR2_JHK: TMenuItem;
+    MI_DR2_GuessV: TMenuItem;
+    MI_EstUGaia: TMenuItem;
+    MI_FindDR2Match: TMenuItem;
+    MI_StartGaiaMatching: TMenuItem;
+    MI_BulkMatchTGAS: TMenuItem;
+    MI_TGAS_MID: TMenuItem;
+    MI_TGAS_ML: TMenuItem;
+    MI_TGAS_SM: TMenuItem;
+    MenuItem9: TMenuItem;
+    MI_FindConst: TMenuItem;
+    MI_SwapParallax: TMenuItem;
+    MI_EnterPM: TMenuItem;
+    MenuItem16: TMenuItem;
+    MI_ThetaRho: TMenuItem;
+    MI_PosPMMatch: TMenuItem;
+    MenuItem7: TMenuItem;
+    GetVizIDMI: TMenuItem;
+    MI_EnterParallax: TMenuItem;
+    PosMenu: TMenuItem;
     NonDr2PlxMI: TMenuItem;
     ShowJ2000posMI: TMenuItem;
     SwapStarMI: TMenuItem;
     MLDeleteSysMI: TMenuItem;
-    PanStarrEstMI: TMenuItem;
     MainListPopupMenu: TPopupMenu;
     Viz2MassGetMI: TMenuItem;
-    StarGaiaMatchMI: TMenuItem;
-    MISwapParallax: TMenuItem;
     ShowPosDegMI: TMenuItem;
-    PosSepSetMI: TMenuItem;
     PreMainSeqCB: TCheckBox;
     FluxesTEffTab: TTabSheet;
     HasPlanetsCB: TCheckBox;
@@ -75,8 +89,6 @@ type
     StarDataCoreFrame: TCoreStarDataFrame;
     FlareStarCB: TCheckBox;
     ChangeStarToBDMI: TMenuItem;
-    EnterPMPartsMI: TMenuItem;
-    FindRemTGASMI: TMenuItem;
     GuessSpectraMI: TMenuItem;
     BadSpectraMI: TMenuItem;
     LuminosityProbMI: TMenuItem;
@@ -92,14 +104,11 @@ type
     ComponentTabControl: TTabControl;
     ExtraDataTab: TTabSheet;
     WriteEstimatorMI: TMenuItem;
-    TGASNameMatchMI: TMenuItem;
     ShowGalCoordMI: TMenuItem;
     TestVizDMI: TMenuItem;
     ShowUVWMI: TMenuItem;
-    ParallaxEntryMI: TMenuItem;
     MergeIntoMI: TMenuItem;
     SetMergeSrcMI: TMenuItem;
-    PPMMatchMI: TMenuItem;
     SimbadIDFluxMI: TMenuItem;
     SimbadDataFetch: TMenuItem;
     SimbURLCGID: TMenuItem;
@@ -122,7 +131,6 @@ type
     GotoBM_1MI: TMenuItem;
     GotoBM_2MI: TMenuItem;
     UnresBinaryMI: TMenuItem;
-    TGASBinarySecMatchMI: TMenuItem;
     StarToSysMI: TMenuItem;
     WrUnmCSVMI: TMenuItem;
     CatalogIDEditSystem: TCatalogIDEditFrame;
@@ -132,7 +140,6 @@ type
     SimbadIDLook: TMenuItem;
     SimbadLocLook: TMenuItem;
     SimpleTGASCSVexp: TMenuItem;
-    TGASFind: TMenuItem;
     SystemEditorBox: TGroupBox;
     MainMenu1: TMainMenu;
     File1: TMenuItem;
@@ -173,8 +180,6 @@ type
     AddISDBCatalogs1: TMenuItem;
     N3: TMenuItem;
     AddISDBCatalogNames1: TMenuItem;
-    FindConstellation1: TMenuItem;
-    N4: TMenuItem;
     FindbyName1: TMenuItem;
     N5: TMenuItem;
     FilterMain1: TMenuItem;
@@ -216,18 +221,16 @@ type
     procedure EnterPMPartsMIClick(Sender: TObject);
     procedure EstBVCMCMIClick(Sender: TObject);
     procedure EstBVUCACMIClick(Sender: TObject);
-    procedure EstIUCACMIClick(Sender: TObject);
-    procedure EstJHKGaia2MIClick(Sender: TObject);
+    procedure EstJHKPSMIClick(Sender: TObject);
+    // procedure EstIUCACMIClick(Sender: TObject);
     procedure ExpGaiaDR2CSVClick(Sender: TObject);
     procedure Export1Click(Sender: TObject);
     procedure ExportListMIClick(Sender: TObject);
     procedure FindIDMIClick(Sender: TObject);
-    procedure FinDR2MatchMIClick(Sender: TObject);
-    procedure FindRemTGASMIClick(Sender: TObject);
     procedure FluxEstSubMenuClick(Sender: TObject);
-    procedure GaiaDR2MagMIClick(Sender: TObject);
     procedure GaiaMagGetMIClick(Sender: TObject);
     procedure GetLoggMIClick(Sender: TObject);
+    procedure GetVizIDMIClick(Sender: TObject);
     procedure GotoBM_1MIClick(Sender: TObject);
     procedure GotoBM_2MIClick(Sender: TObject);
     procedure GuessSpectraMIClick(Sender: TObject);
@@ -256,6 +259,21 @@ type
     procedure MainListPopupMenuPopup(Sender: TObject);
     procedure MergeIntoMIClick(Sender: TObject);
     procedure MISwapParallaxClick(Sender: TObject);
+    procedure MI_BulkMatchTGASClick(Sender: TObject);
+    procedure MI_DR2_BVRIClick(Sender: TObject);
+    procedure MI_DR2_GuessVClick(Sender: TObject);
+    procedure MI_DR2_JHKClick(Sender: TObject);
+    procedure MI_EnterParallaxClick(Sender: TObject);
+    procedure MI_EnterPMClick(Sender: TObject);
+    procedure MI_FindConstClick(Sender: TObject);
+    procedure MI_FindDR2MatchClick(Sender: TObject);
+    procedure MI_PosPMMatchClick(Sender: TObject);
+    procedure MI_StartGaiaMatchingClick(Sender: TObject);
+    procedure MI_SwapParallaxClick(Sender: TObject);
+    procedure MI_TGAS_MIDClick(Sender: TObject);
+    procedure MI_TGAS_MLClick(Sender: TObject);
+    procedure MI_TGAS_SMClick(Sender: TObject);
+    procedure MI_ThetaRhoClick(Sender: TObject);
     procedure MLDeleteSysMIClick(Sender: TObject);
     procedure New1Click(Sender: TObject);
     procedure NonDr2PlxMIClick(Sender: TObject);
@@ -263,6 +281,7 @@ type
     procedure PanStarrEstMIClick(Sender: TObject);
     procedure ParallaxEntryMIClick(Sender: TObject);
     procedure PllxImportMIClick(Sender: TObject);
+    procedure PosMenuClick(Sender: TObject);
     procedure PosSepSetMIClick(Sender: TObject);
     procedure PPMMatchMIClick(Sender: TObject);
     procedure PreMainSeqCBChange(Sender: TObject);
@@ -287,7 +306,6 @@ type
     procedure Star1Click(Sender: TObject);
     procedure StarExtraDataFrame1Click(Sender: TObject);
     procedure StarExtraDataFrame1Exit(Sender: TObject);
-    procedure StarGaiaMatchMIClick(Sender: TObject);
     procedure StarLocatFrame1Exit(Sender: TObject);
     procedure StarToSysMIClick(Sender: TObject);
     procedure SwapStarMIClick(Sender: TObject);
@@ -355,10 +373,15 @@ type
     supstab:Boolean;
     parallax_source:string;
     x_popup_index:Integer;
+    fetchid_single:IDFetchThread;
     procedure StarParallaxChanged(Sender: TObject);
     procedure MainParallaxChange(Sender: TObject);
     procedure FluxTEffChange(Sender:TObject);
     function SimbadIDFetch(option:Integer):Boolean;
+    // ID Thread message handlers
+    procedure HandleIDStart(var Msg:TLMessage); message MSG_IDSTART;
+    procedure HandleIDFail(var Msg:TLMessage); message MSG_IDFAIL;
+    procedure HandleIDDone(var Msg:TLMessage); message MSG_IDDONE;
   public
     (* checking for mofocation and saving *)
     procedure StarModCheck(Sender: TObject);
@@ -414,6 +437,7 @@ begin
   //displaying
   if makebold then ListofStarSystems.Canvas.Font.Style := [fsBold]
   else ListofStarSystems.Canvas.Font.Style := [];
+  ListofStarSystems.Canvas.Font.Color := primaryl.ColorAtFilteredIndex(Index);
   ListofStarSystems.Canvas.FillRect(Rect);
   ListofStarSystems.Canvas.TextOut( Rect.Left + 8, Rect.Top, ListofStarSystems.Items[Index] );
 end;
@@ -568,7 +592,7 @@ begin
   ztabcount := ComponentTabControl.Tabs.Count;
   current.SetStar(ComponentTabControl.TabIndex+1);
   LoadAllStarData;
-  PosSepSetMI.Enabled := (ComponentTabControl.TabIndex > 0);
+  MI_ThetaRho.Enabled := (ComponentTabControl.TabIndex > 0);
   feok := (current.cstar <> nil);
   if feok then feok := (current.cstar.fluxtemp <> nil);
   FluxEstSubMenu.Enabled := feok;
@@ -631,7 +655,7 @@ begin
   if current.cstar <> nil then begin
     data := Trim(InputBox('Estimate BV from UCAC',entmsg,''));
     if Length(data)<>0 then begin
-       rok := current.UCAC4_ToBV_Helper(data);
+       rok := current.UCAC4_ToVRI_Helper(data);
     end;
     if rok then begin
       // reloading after data has been set
@@ -640,28 +664,16 @@ begin
   end;
 end;
 
-procedure TNStarsMainForm.EstIUCACMIClick(Sender: TObject);
+procedure TNStarsMainForm.EstJHKPSMIClick(Sender: TObject);
 var data:string;   rok:Boolean;
-const entmsg = 'Enter UCAC4 magnitude (and optionally G for better I results)' + sLineBreak +
-               'to estimate Rc and Ic magnitude (also uses 2MASS J).';
-begin
-  if current.cstar <> nil then begin
-    data := Trim(InputBox('Estimate RI from UCAC',entmsg,''));
-    if Length(data)<>0 then begin
-       rok := current.UCAC4_To_Ic(data);
-    end;
-    if rok then begin
-      // reloading after data has been set
-      StarData1;
-    end;
-  end;
-end;
-
-procedure TNStarsMainForm.EstJHKGaia2MIClick(Sender: TObject);
-var rok:Boolean;
+const entmsg = 'Enter Pan-Stars rp ip zp yp magnitudes, to estimate' + sLineBreak +
+               'JHKs using ip-yp, possibly with ip-zp or rp-yp.';
 begin
   if current.ccomponent <> nil then begin
-    rok := current.GaiaDR2_To_JHK();
+    data := Trim(InputBox('Estimate JHKs from Pan-STARRS',entmsg,''));
+    if Length(data)<>0 then begin
+       rok := current.PanStarrsJHK(data);
+    end;
     if rok then begin
       // reloading after data has been set
       StarData1;
@@ -731,96 +743,12 @@ begin
   end;
 end;
 
-procedure TNStarsMainForm.FinDR2MatchMIClick(Sender: TObject);
-var xres:Boolean;
-begin
-  if current <> nil then begin
-    xres := current.GaiaDR2ShowMatch(0.3);
-    if not xres then ShowMessage('Unable to try Gaia Match');
-  end;
-end;
-
 //---------------------------------------------------------------
-
-procedure TNStarsMainForm.FindRemTGASMIClick(Sender: TObject);
-var pllxok:Boolean;       sc,sstar_where:Integer;
-    pvalue:Real;          pstring:string;
-    curtgas:TGASData;      idtofind:string;
-const promptstr = 'Enter the minimum Parallax (in arcseconds).';
-begin
-  // getting the minimum parallax
-  pllxok := not (tgas_main = nil);
-  if pllxok then pllxok := (tgas_main.StarCount<>0);
-  if not pllxok then begin
-    ShowMessage('Nothing to check!');
-    Exit;
-  end;
-  // getting maximum distance info
-  pstring := Trim(InputBox('Parallax Entry',promptstr,''));
-  pllxok :=(Length(pstring)<>0);
-  if pllxok then begin
-    Val(pstring,pvalue,sc);
-    pllxok:= (sc=0);
-    if pllxok then pllxok :=(pvalue>0);
-  end;
-  // possible displaying an error message
-  if (not pllxok) then begin
-    ShowMessage('Invalid Parallax');
-    Exit;
-  end;
-  // make the remainder list
-  Screen.Cursor := crHourGlass;
-  pllxok := tgas_main.MakeUnmatched(pvalue);
-  Screen.Cursor := crDefault;
-  if (not pllxok) then begin
-    ShowMessage('No unmatched TGAS positions left!');
-    Exit;
-  end;
-  // looping over the unmatches tgas results...
-  Screen.Cursor := crHourGlass;
-  curtgas := tgas_main.NextUnmatched;
-  while (curtgas<>nil) do begin
-    // identifier to search for
-    idtofind := curtgas.GetHipparcos;
-    if Length(idtofind)<>0 then idtofind := 'Hip ' + idtofind
-    else idtofind := 'Tyc ' + curtgas.GetTycho2;
-    // searching
-    sc := primaryl.FindByString(idtofind,sstar_where);
-    if sc>=0 then begin
-      // a system with the id has been found, we move to it...
-      primaryl.ChangeSystem(sc);
-      ChangeSystem;
-      ListOfStarSystems.ItemIndex := sc;
-      // we next fire up tgas matching
-      Screen.Cursor := crDefault;
-      TGASFindClick(Self);
-      Screen.Cursor := crHourGlass;
-    end;
-    // next loop prep
-    curtgas := tgas_main.NextUnmatched
-  end;
-  Screen.Cursor := crDefault;
-  ShowMessage('All Done');
-end;
 
 procedure TNStarsMainForm.FluxEstSubMenuClick(Sender: TObject);
 var gaiaok:Boolean;
 begin
-  gaiaok := (current.ccomponent.dr2mags <> nil) and (current.ccomponent.dr2mags.G < 90);
-  GaiaDR2MagMI.Enabled := gaiaok;
-  EstJHKGaia2MI.Enabled := gaiaok and (current.ccomponent.dr2mags.ValidBPmRP);
-end;
 
-procedure TNStarsMainForm.GaiaDR2MagMIClick(Sender: TObject);
-var rok:Boolean;
-begin
-  if current.ccomponent <> nil then begin
-    rok := current.BPRP_To_VRI();
-    if rok then begin
-      // reloading after data has been set
-      StarData1;
-    end;
-  end;
 end;
 
 procedure TNStarsMainForm.GaiaMagGetMIClick(Sender: TObject);
@@ -841,6 +769,15 @@ end;
 procedure TNStarsMainForm.GetLoggMIClick(Sender: TObject);
 begin
   SimbadIDFetch(2);
+end;
+
+procedure TNStarsMainForm.GetVizIDMIClick(Sender: TObject);
+begin
+  if (current = nil) or (current.sys = nil) then Exit;
+  if (current.sys.GetId < 2) then Exit;
+  // going ahead
+  Screen.Cursor := crHourGlass;
+  fetchid_single := IDFetchThread.Create(False,current.sys,current.starindex,self.Handle);
 end;
 
 procedure TNStarsMainForm.GotoBM_1MIClick(Sender: TObject);
@@ -1149,7 +1086,40 @@ begin
     StarData1;
   end;
 end;
-
+//+++++++++++++++++++++++++++++++++++++++++++++++++++
+// ID Thread message handlers
+//----------------------------
+procedure TNStarsMainForm.HandleIDStart(var Msg:TLMessage);
+begin  (* Do nothing *)  end;
+//----------------------------
+procedure TNStarsMainForm.HandleIDFail(var Msg:TLMessage);
+var postr:PString;
+    outmsg:string;
+begin
+  postr := PString(Msg.wParam);
+  outmsg := postr^;
+  Screen.Cursor := crDefault;
+  ShowMessage(outmsg);
+  fetchid_single.Free;
+end;
+//----------------------------
+procedure TNStarsMainForm.HandleIDDone(var Msg:TLMessage);
+var postr:PString;
+    ids,outmsg:string;
+begin
+  postr := PString(Msg.wParam);
+  ids := postr^;
+  Screen.Cursor := crDefault;
+  if ids = '' then ShowMessage('No IDs found.')
+  else begin
+    outmsg := 'IDs added: ' + ids;
+    ShowMessage(outmsg);
+    StarFluxTEffFrame.ReloadObject;
+    StarCatIDFrame.Reload();
+    CatalogIDEditSystem.Reload();
+  end;
+  fetchid_single.Free;
+end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
 procedure TNStarsMainForm.StarModCheck(Sender: TObject);
 begin
@@ -1611,8 +1581,8 @@ begin
   AddBDMI.Enabled := currok;
   InsertStarMI.Enabled:= currok;
   AddISDBCatalogNames1.Enabled := currok;
-  if not currok then MISwapParallax.Enabled := False
-  else MISwapParallax.Enabled := (current.OldParallaxCount() > 0);
+  if not currok then MI_SwapParallax.Enabled := False
+  else MI_SwapParallax.Enabled := (current.OldParallaxCount() > 0);
 
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1781,13 +1751,13 @@ end;
 
 procedure TNStarsMainForm.UCAC4MagEstMIClick(Sender: TObject);
 var data:string;   rok:Boolean;
-const entmsg = 'Enter the UCAC4 Model Fit Magnitude to estimate B and V' +
-                      sLineBreak + '(also uses Ks, for KM dwarfs)';
+const entmsg = 'Enter the UCAC4 Model Fit Magnitude to estimate V, Rc, and Ic' +
+                      sLineBreak + '(also uses J, and perhaps G, for KM dwarfs)';
 begin
   if current.cstar <> nil then begin
-    data := Trim(InputBox('UCAC4 to BV',entmsg,''));
+    data := Trim(InputBox('UCAC4 to VRI',entmsg,''));
     if Length(data)<>0 then begin
-       rok := current.UCAC4_ToBV_Helper(data);
+       rok := current.UCAC4_ToVRI_Helper(data);
     end;
     if rok then begin
       // reloading after data has been set
@@ -1850,7 +1820,7 @@ begin
   // do we only have one star? the certian items are not needed
   if current.sys.GetCompC=1 then begin
     RemoveStar1.Enabled := False;
-    PosSepSetMI.Enabled := False;
+    MI_ThetaRho.Enabled := False;
   end
   else begin
     RemoveStar1.Enabled := True;
@@ -2138,6 +2108,7 @@ begin
   tgas_main := TGASCollection.Create;
   firststartup := True;
   loadlist := True;
+  fetchid_single := nil;
 end;
 
 procedure TNStarsMainForm.LoadGaiaDR2CSVClick(Sender: TObject);
@@ -2255,21 +2226,259 @@ begin
   end;
 end;
 
+procedure TNStarsMainForm.MI_BulkMatchTGASClick(Sender: TObject);
+var pllxok:Boolean;       sc,sstar_where:Integer;
+    pvalue:Real;          pstring:string;
+    curtgas:TGASData;      idtofind:string;
+const promptstr = 'Enter the minimum Parallax (in arcseconds).';
+begin
+  // getting the minimum parallax
+  pllxok := not (tgas_main = nil);
+  if pllxok then pllxok := (tgas_main.StarCount<>0);
+  if not pllxok then begin
+    ShowMessage('Nothing to check!');
+    Exit;
+  end;
+  // getting maximum distance info
+  pstring := Trim(InputBox('Parallax Entry',promptstr,''));
+  pllxok :=(Length(pstring)<>0);
+  if pllxok then begin
+    Val(pstring,pvalue,sc);
+    pllxok:= (sc=0);
+    if pllxok then pllxok :=(pvalue>0);
+  end;
+  // possible displaying an error message
+  if (not pllxok) then begin
+    ShowMessage('Invalid Parallax');
+    Exit;
+  end;
+  // make the remainder list
+  Screen.Cursor := crHourGlass;
+  pllxok := tgas_main.MakeUnmatched(pvalue);
+  Screen.Cursor := crDefault;
+  if (not pllxok) then begin
+    ShowMessage('No unmatched TGAS positions left!');
+    Exit;
+  end;
+  // looping over the unmatches tgas results...
+  Screen.Cursor := crHourGlass;
+  curtgas := tgas_main.NextUnmatched;
+  while (curtgas<>nil) do begin
+    // identifier to search for
+    idtofind := curtgas.GetHipparcos;
+    if Length(idtofind)<>0 then idtofind := 'Hip ' + idtofind
+    else idtofind := 'Tyc ' + curtgas.GetTycho2;
+    // searching
+    sc := primaryl.FindByString(idtofind,sstar_where);
+    if sc>=0 then begin
+      // a system with the id has been found, we move to it...
+      primaryl.ChangeSystem(sc);
+      ChangeSystem;
+      ListOfStarSystems.ItemIndex := sc;
+      // we next fire up tgas matching
+      Screen.Cursor := crDefault;
+      TGASFindClick(Self);
+      Screen.Cursor := crHourGlass;
+    end;
+    // next loop prep
+    curtgas := tgas_main.NextUnmatched
+  end;
+  Screen.Cursor := crDefault;
+  ShowMessage('All Done');
+end;
+
+procedure TNStarsMainForm.MI_DR2_BVRIClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.BPRP_To_VRI();
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.MI_DR2_GuessVClick(Sender: TObject);
+begin
+  if (current <> nil) and (current.sys.GetId > 1) then begin
+    if current.GuessVFromG() Then begin
+      StarData1;
+    end;
+  end;
+end;
+
+
+procedure TNStarsMainForm.MI_DR2_JHKClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.GaiaDR2_To_JHK();
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.MI_EnterParallaxClick(Sender: TObject);
+  var data1:string;   rok:Boolean;
+  const entmsg = 'Enter the Parallax Source, Parallax, and Parallax error, below:';
+begin
+  if current.sysl <> nil then begin
+    data1 := Trim(InputBox('Parallax Entry',entmsg,parallax_source));
+    if Length(data1) <> 0 then begin
+      rok := current.sysl.SetParallaxPasted(data1,parallax_source);
+      if rok then begin
+        SystemLoad3;
+        ShowMessage('Parallax set!');
+      end
+      else begin
+        ShowMessage('Cannot set parallax with this input!');
+      end;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.MI_EnterPMClick(Sender: TObject);
+var data1,data2:string;   rok:Boolean;
+    pmra,pmdec,pmmag,pmang:Real;
+const entmsg = 'Enter RA and Dec Proper Motions components (in'+#13#10
+  +'milli-arcsec, separated by a space) below:';
+begin
+  if current.sysl <> nil then begin
+    data2 := Trim(InputBox('PM Entry',entmsg,''));
+    rok := ExtractFirstWord(data2,data1);
+    if rok then begin
+      rok := StrToRealBoth(data1,data2,pmra,pmdec);
+      if rok then begin
+        ProperMotionConvert(pmdec,pmra,pmmag,pmang);
+        rok := current.sysl.SetProperMotion(pmmag,pmang);
+      end;
+      if rok then SystemLoad3;
+    end;
+    if rok then ShowMessage('Proper Motion set.')
+    else ShowMessage('Proper Motion not set!');
+  end;
+end;
+
+procedure TNStarsMainForm.MI_FindConstClick(Sender: TObject);
+var cres:Integer;
+    qval,msg:string;
+    rval:Word;
+begin
+  cres := current.LocateConst;
+  if cres<>-1 then begin
+    qval := constellations[(cres-1)*3];
+    msg := 'The consteallation found is ' + qval + '.'#13#10;
+    msg := msg + 'Do we change the constellation to this?';
+    rval := MessageDlg(msg, mtConfirmation,[mbYes, mbNo],0);
+    if rval=mrYes then begin
+      current.sys.constellation := cres;
+      SystemLoad1;
+    end;
+  end
+  else begin
+    ShowMessage('Error: cannot find constellation!');
+  end;
+end;
+
+procedure TNStarsMainForm.MI_FindDR2MatchClick(Sender: TObject);
+var xres:Boolean;
+begin
+  if current <> nil then begin
+    xres := current.GaiaDR2ShowMatch(0.3);
+    if not xres then ShowMessage('Unable to try Gaia Match');
+  end;
+end;
+
+procedure TNStarsMainForm.MI_PosPMMatchClick(Sender: TObject);
+begin
+  if PositionProperMotionMatchForm<>nil then FreeAndNil(PositionProperMotionMatchForm);
+  PositionProperMotionMatchForm := TPositionProperMotionMatchForm.Create(Self);
+  PositionProperMotionMatchForm.Show();
+end;
+
+procedure TNStarsMainForm.MI_StartGaiaMatchingClick(Sender: TObject);
+var xindex:Integer;
+begin
+  if (primaryl = nil) then Exit;
+  if (DR2Data <> nil) and (primaryl.GetCount > 1) then begin
+    xindex := primaryl.GetIndex;
+    if xindex = 0 then xindex := 1;
+    sysstart := xindex;
+    if GaiaDR2Picker = nil then GaiaDR2Picker := TGaiaDR2Picker.Create(Self);
+    GaiaDR2Picker.Show;
+  end;
+end;
+
+procedure TNStarsMainForm.MI_SwapParallaxClick(Sender: TObject);
+var xres:Boolean;
+begin
+  if current = nil then Exit;
+  xres := current.OldParallaxSwap();
+  if xres then begin
+    MainLocatEditFrame1.Reload;
+  end;
+end;
+
+procedure TNStarsMainForm.MI_TGAS_MIDClick(Sender: TObject);
+var tgasr:Boolean;
+begin
+  if current <> nil then begin
+    tgasr := current.ShowTGASMatches(False);
+    if tgasr then begin
+      SystemLoad3;
+      SystemLoad4;
+      NewLocChangeCheck;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.MI_TGAS_MLClick(Sender: TObject);
+var tgasr:Boolean;
+begin
+  if current <> nil then begin
+    tgasr := current.ShowTGASMatches(True);
+    if tgasr then begin
+      SystemLoad3;
+      SystemLoad4;
+      NewLocChangeCheck;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.MI_TGAS_SMClick(Sender: TObject);
+var tgasr:Boolean;
+begin
+  if current <> nil then begin
+    tgasr := current.TGASStarMatch;
+    if tgasr then begin
+      NewLocChangeCheck;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.MI_ThetaRhoClick(Sender: TObject);
+var cxResult:Boolean;
+begin
+    if current <> nil then begin
+       cxResult := current.PosAngLocationSet();
+       if cxResult then NewLocChangeCheck();
+    end;
+end;
+
 procedure TNStarsMainForm.MLDeleteSysMIClick(Sender: TObject);
 var delete_index,current_index:Integer;
     new_sindex:Integer;
-    xstarsys:StarSystem;
 begin
   Screen.Cursor := crHourGlass;
   delete_index := x_popup_index;
   current_index := ListOfStarSystems.ItemIndex;
   if (current_index = delete_index) then begin
     primaryl.DeleteCurrentSystem;
-    xstarsys := nil;
   end
-  else begin
-    xstarsys := primaryl.RemoveSystem(delete_index);
-  end;
+  else primaryl.RemoveSystem(delete_index);
   primaryl.LoadHereAndAfter(delete_index);
   // changing the index if need be...
   if current_index >= delete_index then begin
@@ -2315,22 +2524,11 @@ begin
 end;
 
 procedure TNStarsMainForm.ools1Click(Sender: TObject);
-var tgas_okay, notsol, notbd:Boolean;
+var notsol, notbd,gaiaok:Boolean;
 begin
   // validation
-  FinDR2MatchMI.Enabled := (DR2Data <> nil) and (DR2Data.StarCount > 0);
-  StarGaiaMatchMI.Enabled := (DR2Data <> nil) and (DR2Data.StarCount > 0);
-  tgas_okay := (tgas_main <> nil) and (tgas_main.StarCount > 0);
-  TGASFind.Enabled := tgas_okay;
-  TGASNameMatchMI.Enabled := tgas_okay;
-  TGASBinarySecMatchMI.Enabled := tgas_okay;
-  FindRemTGASMI.Enabled := tgas_okay;
-  PosSepSetMI.Enabled:= (current <> nil) and (current.starindex > 1);
+
   notsol := (current <> nil) and (current.sys <> nil) and (current.sys.GetId() > 1 );
-  MISwapParallax.Enabled := (current <> nil) and (current.sysl <> nil) and (current.sysl.oldparallax <> '');
-  ParallaxEntryMI.Enabled := notsol;
-  EnterPMPartsMI.Enabled := notsol;
-  FindConstellation1.Enabled := notsol;
   SimbadLocLook.Enabled := notsol;
   SimbadIDLook.Enabled := notsol;
   notbd := notsol and (current.ccomponent <> nil) and (not current.ccomponent.isBrownDwarf);
@@ -2338,6 +2536,8 @@ begin
   SDSSMagEntryMI.Enabled:= notsol;
   Tycho2MagMI.Enabled := notbd;
   FluxEstSubMenu.Enabled:= notbd;
+  gaiaok := notsol and (current.ccomponent.dr2mags <> nil) and (current.ccomponent.dr2mags.G < 90);
+  MI_EstUGaia.Enabled := gaiaok;
 end;
 
 procedure TNStarsMainForm.PanStarrEstMIClick(Sender: TObject);
@@ -2382,6 +2582,24 @@ begin
   FreeAndNil(ImportForm);
   ImportForm := TImportForm.Create(Self);
   ImportForm.Show;
+end;
+
+procedure TNStarsMainForm.PosMenuClick(Sender: TObject);
+var notsol,tgas_okay:Boolean;
+begin
+  MI_ThetaRho.Enabled:= (current <> nil) and (current.starindex > 1);
+  notsol := (current <> nil) and (current.sys <> nil) and (current.sys.GetId() > 1 );
+  MI_SwapParallax.Enabled := (current <> nil) and (current.sysl <> nil) and (current.sysl.oldparallax <> '');
+  MI_EnterParallax.Enabled := notsol;
+  MI_EnterPM.Enabled := notsol;
+  MI_FindConst.Enabled := notsol;
+  tgas_okay := (tgas_main <> nil) and (tgas_main.StarCount > 0);
+  MI_TGAS_MID.Enabled := tgas_okay;
+  MI_TGAS_ML.Enabled := tgas_okay;
+  MI_TGAS_SM.Enabled := tgas_okay;
+  MI_BulkMatchTGAS.Enabled := tgas_okay;
+  MI_FindDR2Match.Enabled := (DR2Data <> nil) and (DR2Data.StarCount > 0);
+  MI_StartGaiaMatching.Enabled := (DR2Data <> nil) and (DR2Data.StarCount > 0);
 end;
 
 procedure TNStarsMainForm.PosSepSetMIClick(Sender: TObject);
@@ -2736,19 +2954,6 @@ end;
 procedure TNStarsMainForm.StarExtraDataFrame1Exit(Sender: TObject);
 begin
   StarExtraDataFrame1.SaveValues(True);
-end;
-
-procedure TNStarsMainForm.StarGaiaMatchMIClick(Sender: TObject);
-var xindex:Integer;
-begin
-  if (primaryl = nil) then Exit;
-  if (DR2Data <> nil) and (primaryl.GetCount > 1) then begin
-    xindex := primaryl.GetIndex;
-    if xindex = 0 then xindex := 1;
-    sysstart := xindex;
-    if GaiaDR2Picker = nil then GaiaDR2Picker := TGaiaDR2Picker.Create(Self);
-    GaiaDR2Picker.Show;
-  end;
 end;
 
 procedure TNStarsMainForm.StarLocatFrame1Exit(Sender: TObject);

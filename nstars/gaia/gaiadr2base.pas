@@ -905,7 +905,7 @@ end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function GaiaDR2Star.GaiaID():string;
 begin
-  Result := 'GaiaDR2 ' + IntToStr(gaia_id);
+  Result := 'Gaia DR2 ' + IntToStr(gaia_id);
 end;
 //----------------------------------------------------
 function GaiaDR2Star.ToSemiString():string;

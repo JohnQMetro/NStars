@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="61">
+    <Units Count="64">
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -356,6 +356,20 @@
         <Filename Value="gaia\fluxgaia.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit60>
+      <Unit61>
+        <Filename Value="gaia\gaiaset.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit61>
+      <Unit62>
+        <Filename Value="import\vizierpost.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="VizierPOST"/>
+      </Unit62>
+      <Unit63>
+        <Filename Value="import\vizierid.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="VizierID"/>
+      </Unit63>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

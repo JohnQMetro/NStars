@@ -70,14 +70,15 @@ StarProxy = class
     function VizierAPASSGet(simbadalso:Boolean):Boolean;
     function Vizier2MASSGet():Boolean;
     function URAT_ToBV(indata:string):Boolean;
-    function UCAC4_ToBV_Helper(indata:string):Boolean;
+    function UCAC4_ToVRI_Helper(indata:string):Boolean;
     function CMC_ToBV(indata:string):Boolean;
     function URAT_To_Ic(indata:string):Boolean;
-    function UCAC4_To_Ic(indata:string):Boolean;
     function BPRP_To_VRI():Boolean;
     function GaiaDR2_To_JHK():Boolean;
     function PanStarrs_To_BVRI(indata:string):Boolean;
     function VizierGaiaGet():Boolean;
+    function GuessVFromG():Boolean;
+    function PanStarrsJHK(indata:string):Boolean;
 end;
 
 var
@@ -1174,22 +1175,31 @@ begin
   else ShowMessage('Unable to parse the input');
 end;
 //----------------------------------------------------------
-function StarProxy.UCAC4_ToBV_Helper(indata:string):Boolean;
+function StarProxy.UCAC4_ToVRI_Helper(indata:string):Boolean;
 var params:RealArray;
-    gval,Best:Currency;
+    RcEst,IcEst:Currency;
+    g1val,g2val:Currency;
     Vest:Real;
-const amsg = 'estimated from UCAC4/G1';
+    qmsg:string;
+const amsg = 'estimated from UCAC4+J';
 begin
   Result := False;
   if SplitWithSpacesToReal(indata,1,params) then begin
     // setting gval
-    if Length(params) >= 2 then gval := params[1]
-    else gval := cstar.fluxtemp.gaia_mag;
+    g1val := 99.999;  g2val := 99.999;
+    if Length(params) >= 2 then g1val := params[1]
+    else begin
+      if cstar.dr2mags = nil then g1val := cstar.fluxtemp.gaia_mag
+      else g2val := cstar.dr2mags.G;
+    end;
+    // preparing the info message
+    if g2val < 90 then qmsg := amsg + '+G'
+    else if g1val < 90 then qmsg := amsg + '+G1'
+    else qmsg := amsg;
     // calling the transform function
-    if not UC2MG_To_BV(params[0],gval,cstar.fluxtemp.J_mag,cstar.fluxtemp.H_mag,
-       cstar.fluxtemp.K_mag,Best,Vest) then begin
-         ShowMessage('Cannot estimate, Color out of range!');
-       end else Result := ShowEst(Vest,Best,99,99,amsg);
+    if not UCAC4_to_VRI(params[0],cstar.fluxtemp.J_mag,g1val,g2val,Vest,RcEst,IcEst) then begin
+      ShowMessage('Cannot estimate, Color out of range!');
+    end else Result := ShowEst(Vest,99.999,RcEst,IcEst,qmsg)
   end
   else ShowMessage('Unable to parse the input');
 end;
@@ -1225,29 +1235,6 @@ begin
     if not URATJ_To_Ic(params[0],cstar.fluxtemp.J_mag,Icest) then begin
          ShowMessage('Cannot estimate, Color out of range!');
     end else Result := ShowEst(99,99,99,Icest,amsg);
-  end
-  else ShowMessage('Unable to parse the input');
-end;
-//--------------------------------------------
-function StarProxy.UCAC4_To_Ic(indata:string):Boolean;
-var params:RealArray;
-    gval,Icest,Rcest:Currency;
-    urc,uic:Boolean;
-const amsg = 'estimated from UCAC/G1+J.';
-begin
-  Result := False;
-  if SplitWithSpacesToReal(indata,1,params) then begin
-    // setting gval
-    if Length(params) >= 2 then gval := params[1]
-    else gval := cstar.fluxtemp.gaia_mag;
-    // calling the transform functions
-    Rcest := 99;
-    Icest := 99;
-    urc := UCAC_To_RcS(params[0],cstar.fluxtemp.J_mag,cstar.fluxtemp.H_mag,cstar.fluxtemp.K_mag, Rcest);
-    uic := UC2MG_To_Ic(params[0],gval,cstar.fluxtemp.J_mag,Icest);
-    if not (urc or uic)  then begin
-         ShowMessage('Cannot estimate, Color out of range!');
-    end else Result := ShowEst(99,99,RcEst,Icest,amsg);
   end
   else ShowMessage('Unable to parse the input');
 end;
@@ -1434,6 +1421,71 @@ begin
     end;
   end;
   if not fok then ShowMessage('Object does not have Gaia DR2!');
+end;
+//---------------------------------------------------------
+function StarProxy.GuessVFromG():Boolean;
+var Gin:Currency;
+    pllx,vmg,vcalc:Real;
+    msg:string;
+    rval:Word;
+    okay:Boolean;
+begin
+  Result := False;
+  // basic bad exit cases...
+  if cstar = nil then begin
+    ShowMessage('No Star to estimate!');
+    Exit;
+  end;
+  okay := ccomponent.dr2mags <> nil;
+  if okay then okay := (ccomponent.dr2mags.G < 90);
+  if not okay then begin
+     ShowMessage('Star does not have Gaia G');
+     Exit;
+  end;
+  // getting the magnitudes and the values...
+  Gin := ccomponent.dr2mags.G;
+  pllx := GetCurrentParallax();
+  if not EstVmG(Gin,pllx,vmg) then begin
+    ShowMessage('Cannot estimate: G not within range!');
+    Exit;
+  end;
+  vcalc := vmg + CurrToReal(Gin);
+  // asking to use them
+  msg := 'V guess is: ' + Trim(FloatToStrF(vcalc,ffFixed,6,3)) + sLineBreak;
+  msg += 'Do you want to use this value?';
+
+  rval := mrNo;
+  rval := MessageDlg(msg, mtConfirmation,[mbYes, mbNo],0);
+  if (rval = mrYes) then begin
+    cstar.SetVisualMagnitude(vcalc);
+    sys.UpdateEstimates;
+    Result := True;
+  end;
+end;
+//----------------------------------------------------------
+function StarProxy.PanStarrsJHK(indata:string):Boolean;
+var params:RealArray;
+    Jest,Hest,Kest:Currency;
+    Gx:Currency;
+const amsg = 'estimated from Pan-STARRS.';
+begin
+  Result := False;
+  // basic bad exit cases...
+  if ccomponent = nil then begin
+    ShowMessage('Nothing to estimate!');
+    Exit;
+  end;
+  if not PS1_StrToVals(indata,params) then begin
+    ShowMessage('Cannot estimate, magnitudes missing or too bright.');
+    Exit;
+  end;
+  if ccomponent.dr2mags = nil then Gx := 99.999
+    else Gx := ccomponent.dr2mags.G;
+  if not PS1_iyToJHK(params,Gx,Jest,Hest,Kest) then begin
+    ShowMessage('Cannot estimate, Colors out of range!');
+    Exit;
+  end;
+  Result := ShowEstJHK(Jest,Hest,Kest,amsg);
 end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 begin

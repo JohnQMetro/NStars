@@ -187,11 +187,16 @@ end;
 //-----------------------------------------
 procedure TGaiaMagsFrame.LoadBPRPLabel();
 var odisp:string;
+    gmrp:Currency;
 begin
   if issun then odisp := 'BP−RP: 0.809'
   else if curmag = nil then odisp := ''
   else if not curmag.ValidBPmRP then odisp := ''
-  else odisp := 'BP−RP: ' + Trim(CurrToStrF(curmag.BPminRP,ffFixed,3));
+  else begin
+    odisp := 'BP−RP: ' + Trim(CurrToStrF(curmag.BPminRP,ffFixed,3));
+    gmrp := curmag.G - curmag.RP;
+    odisp += ' , G-RP: ' + Trim(CurrToStrF(gmrp,ffFixed,3));
+  end;
   GaiaColorLabel.Caption := odisp;
 end;
 //-----------------------------------------

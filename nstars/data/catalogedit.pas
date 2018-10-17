@@ -45,6 +45,7 @@ type
     { public declarations }
     constructor Create(AOwner: TComponent) ; override;
     procedure ChangeObject(NewObject:StarBase);
+    procedure Reload();
     procedure SetSystem(is_system:Boolean; NewAddBtnHandler:TNotifyEvent);
     function AddCatalogNamesExternal(inlist:string; isdb:Boolean):Boolean;
     property CurrentCatalog:string read GetCC;
@@ -206,6 +207,24 @@ begin
     end
     else NamePointer := nil;
   end;
+end;
+//-------------------------------------------------
+procedure TCatalogIDEditFrame.Reload();
+var outvalue:TStringList;
+begin
+  if StarPointer = nil then Exit;
+  CatIDListBox.Clear;
+  NamePointer := StarPointer.GetNames;
+  // various no catalog cases
+  CatAddBtn.Enabled := (NamePointer <> nil);
+  if (NamePointer = nil) or (NamePointer.NoCatalogs) then begin
+    UseCatBtn.Enabled := False;
+    RemCatBtn.Enabled := False;
+    Exit;
+  end;
+  // loading as normal
+  outvalue := NamePointer.GetList;
+  CatIDListBox.Items.Text := outvalue.Text;
 end;
 //-------------------------------------------------
 function TCatalogIDEditFrame.AddCatalogNamesExternal(inlist:string;  isdb:Boolean):Boolean;

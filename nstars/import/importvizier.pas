@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils,Synacode,
-  fluxtransform, StringParser, df_strings, Utilities, gaiadr2base, strutils;
+  fluxtransform, StringParser, df_strings, Utilities, gaiadr2base, strutils,
+  VizierPOST;
 
 type
 
@@ -15,11 +16,13 @@ VizieRDataBase = class
     xparser:StringParsing;
     parsed:Boolean;
     zsnippet:string;
+    rowtoggle:Boolean;
 
     // property methods
     function Qparsed:Boolean;
     function Qgetsnippet:string;
     // private methods
+    function StripTags(const data:string):string;
     function NextTableCell(out tccont:string):Boolean;
     function StartParsing(const instr:string):Boolean;
 
@@ -27,6 +30,16 @@ VizieRDataBase = class
     // properties
     property IsParsed:Boolean read Qparsed;
     property Snippet:string read Qgetsnippet;
+    // parser helper methods
+    function Start(const title:string; const source:string):Boolean;
+    function SkipCells(const skipc:Word):Boolean;
+    function NextCellStr(out scont:string):Boolean;
+    function NextCellInt(const fallback:Integer; out icont:Integer):Boolean;
+    function NextCellFloat(const fallback:Real; out fcont:Real):Boolean;
+    function Next2CellsStr(out str1:string; out str2:string):Boolean;
+    function Next2CellsFloatR(out float1:Real; out float2:Real):Boolean;
+    function Next2CellsMag(out mag1:Real; out mag2:Real):Boolean;
+    function HasAnotherRow():Boolean;
     // external methods
     constructor Create;
     destructor Destroy; override;
@@ -94,16 +107,13 @@ VizieRGaiaData = class(VizieRDataBase)
     property HasParallax:Boolean read ghpllx;
 
     constructor Create;
-    destructor Destroy;
+    destructor Destroy; override;
     function SetFromString(inraw:string):Boolean;
     function ToString():string;
 end;
 //---------------------------------------------------------------
 const invmag:Currency = 99.999;
 //-------------------------------------------------------------
-function MakeVizAPASS_Params(targetname:string; radius:Real):string;
-function MakeViz2MASS_Post(targetstr:string):string;
-function MakeVizGaiaDR2_Post(targetstr:string):string;
 function GetFromVizier(targetname:string):APASSVizieRData;
 function Get2MASSFromVizier(targ2mass:string):VizieR2MASSData;
 function GetGaiaFromVizier(targ_gaia:string):VizieRGaiaData;
@@ -120,6 +130,22 @@ begin  Result := parsed;    end;
 function VizieRDataBase.Qgetsnippet:string;
 begin  Result := zsnippet;    end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++
+function VizieRDataBase.StripTags(const data:string):string;
+var xchar:Char;
+    cindex,clen:Integer;
+    copy:Boolean;
+begin
+  Result := '';
+  clen := Length(data);
+  copy := True;
+  for cindex := 1 to clen do begin
+    xchar := data[cindex];
+    if xchar = '<' then copy := False
+    else if xchar = '>' then copy := True
+    else if copy then Result += xchar;
+  end;
+end;
+//-----------------------------------------------------------
 function VizieRDataBase.NextTableCell(out tccont:string):Boolean;
 var bufstr,bufstr2:string;
     pos1,pos2:Integer;
@@ -129,17 +155,10 @@ begin
   if not xparser.MovePast('<TD') then Exit;
   if not xparser.ExtractField('>','</TD>',bufstr,True) then Exit;
   Result := True;
-  if bufstr = '&nbsp;' then bufstr := ''
-  else bufstr := bufstr;
-  // sometimes the cell contents are in a FONT tag...
-  if AnsiStartsStr('<FONT',bufstr) then begin
-    pos1 := AnsiPos('>',bufstr);
-    if (pos1 > 0) then begin
-      pos2 := PosEx('<',bufstr,pos1);
-      if (pos2 > 0) then bufstr := Copy(bufstr,pos1+1,pos2-(pos1+1));
-    end;
-  end;
-  tccont := Trim(bufstr);
+  // sometimes the cell contents have FONT tags
+  if Length(bufstr) > 0 then bufstr := Trim(StripTags(bufstr));
+  if bufstr = '&nbsp;' then tccont := ''
+  else tccont := bufstr;
 end;
 //--------------------------------------------
 function VizieRDataBase.StartParsing(const instr:string):Boolean;
@@ -154,9 +173,105 @@ end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++
 // external methods
 //------------------------
+// parser helper methods
+function VizieRDataBase.Start(const title:string; const source:string):Boolean;
+begin
+  Result := False;
+  if not StartParsing(source) then Exit;
+  if not xparser.MovePast(title) then Exit;
+  if not xparser.MovePast('<TR class=''tuple-2''>') then Exit;
+  Result := True;
+end;
+//------------------------
+function VizieRDataBase.SkipCells(const skipc:Word):Boolean;
+begin
+  Result := False;
+  if (xparser = nil) then Exit;
+  if (skipc = 0) then Exit;
+  if (skipc = 1) then begin
+    if not xparser.MovePast('<TD') then Exit;
+  end else if (skipc = 2) then begin
+    if not xparser.MovePastTwice('<TD') then Exit;
+  end else begin
+    if not xparser.MovePastNTimes('<TD',skipc) then Exit;
+  end;
+  Result := True;
+end;
+//------------------------
+function VizieRDataBase.NextCellStr(out scont:string):Boolean;
+begin  Result := NextTableCell(scont);  end;
+//------------------------
+function VizieRDataBase.NextCellInt(const fallback:Integer; out icont:Integer):Boolean;
+var tdata:string;
+begin
+  Result := NextTableCell(tdata);
+  if not Result then Exit;
+  if not TryStrToInt(tdata,icont) then icont := fallback;
+end;
+//------------------------
+function VizieRDataBase.NextCellFloat(const fallback:Real; out fcont:Real):Boolean;
+var tdata:string;
+begin
+  Result := NextTableCell(tdata);
+  if not Result then Exit;
+  if not TryStrToFloat(tdata,fcont) then fcont := fallback;
+end;
+//------------------------
+function VizieRDataBase.Next2CellsStr(out str1:string; out str2:string):Boolean;
+var tdata1,tdata2:string;
+begin
+  Result := NextTableCell(tdata1);
+  if not Result then Exit;
+  Result := NextTableCell(tdata2);
+  if Result then begin
+    str1 := tdata1;
+    str2 := tdata2;
+  end;
+end;
+//------------------------
+function VizieRDataBase.Next2CellsFloatR(out float1:Real; out float2:Real):Boolean;
+var tdata1,tdata2:string;
+    fres1,fres2:Real;
+begin
+  Result := NextTableCell(tdata1);
+  if not Result then Exit;
+  Result := NextTableCell(tdata2);
+  if Result then begin
+    Result := False;
+    if not TryStrToFloat(tdata1,fres1) then Exit;
+    if not TryStrToFloat(tdata2,fres2) then Exit;
+    Result := True;
+    float1 := fres1;
+    float2 := fres2;
+  end;
+end;
+//------------------------
+function VizieRDataBase.Next2CellsMag(out mag1:Real; out mag2:Real):Boolean;
+var tdata1,tdata2:string;
+begin
+  Result := NextTableCell(tdata1);
+  if not Result then Exit;
+  Result := NextTableCell(tdata2);
+  if Result then begin
+    if not TryStrToFloat(tdata1,mag1) then mag1 := 99.999;
+    if not TryStrToFloat(tdata2,mag2) then mag2 := 99.999;
+  end;
+end;
+//------------------------
+function VizieRDataBase.HasAnotherRow():Boolean;
+begin
+  Result := False;
+  if (xparser = nil) then Exit;
+  if rowtoggle then Result := xparser.MovePast('<TR class=''tuple-1''>')
+  else Result := xparser.MovePast('<TR class=''tuple-2''>');
+  rowtoggle := not rowtoggle;
+end;
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++
 constructor VizieRDataBase.Create;
 begin
   xparser := nil;   parsed := False;
+  rowtoggle := False;
 end;
 //--------------------------
 destructor VizieRDataBase.Destroy;
@@ -164,7 +279,6 @@ begin
   inherited;
   if xparser<>nil then FreeAndNil(xparser);
 end;
-
 //===============================================================
 function APASSVizieRData.Qhapass:Boolean;
 begin  Result := apass;    end;
@@ -216,8 +330,9 @@ begin
   Assert(xparser<>nil);
   // moving past the header
   if not xparser.MovePast('AAVSO Photometric All Sky Survey') then Exit;
+  rowtoggle := False;
   // moving to the data row
-  while xparser.MovePast('<TR class=''tuple-2''>') do begin
+  while HasAnotherRow() do begin
     // skipping the 11 fields we do not use
     if not xparser.MovePastNTimes('<TD',12) then Continue;
     // getting V Magnitude
@@ -524,83 +639,7 @@ begin
 end;
 
 //===============================================================================
-function MakeVizAPASS_Params(targetname:string; radius:Real):string;
-begin
-  Result := '-to=4&-from=-3&-this=-3&%2F%2F';
-  Result += 'source=II%2F336%2Fapass9&%2F%2Ftables=II%2F336%2F';
-  Result += 'apass9&-out.max=50&%2F%2FCDSportal=http%3A%2F%2F';
-  Result += 'cdsportal.u-strasbg.fr%2FStoreVizierData.html&-out.form=';
-  Result += 'HTML+Table&-out.add=_r&-out.add=_RAJ%2C_DEJ&%2F%2F';
-  Result += 'outaddvalue=default&-sort=_r&-oc.form=sexa&-nav=';
-  Result += 'cat%3AII%2F336%26tab%3A%7BII%2F336%2Fapass9%7D%26key%3A';
-  Result += 'source%3DII%2F336%2Fapass9%26HTTPPRM%3A%26-out.max%3D50%26';
-  Result += '-out.form%3DHTML+Table%26-out.add%3D_r%26-out.add%3D_RAJ%2C_DEJ';
-  Result += '%26-sort%3D_r%26-oc.form%3Dsexa%26&-c=';
-  Result += EncodeURLElement(targetname) + '&-c.eq=J2000&-c.r=';
-  Result += Trim(FloatToStrF(radius,ffFixed,4,2)) + '&-c.u=arcmin&-c.geom=';
-  Result += 'r&-source=II%2F336%2Fapass9&-order=I&-out.orig=standard&-out=';
-  Result += 'recno&recno=&-out=RAJ2000&RAJ2000=&-out=DEJ2000&DEJ2000=';
-  Result += '&e_RAJ2000=&e_DEJ2000=&-out=Field&Field=&-out=nobs&nobs=&-out=';
-  Result += 'mobs&mobs=&-out=B-V&B-V=&-out=e_B-V&e_B-V=&-out=Vmag&Vmag=';
-  Result += '&-out=e_Vmag&e_Vmag=&u_e_Vmag=&-out=Bmag&Bmag=&-out=e_Bmag';
-  Result += '&e_Bmag=&u_e_Bmag=&-out=g%27mag&g%27mag=&-out=e_g%27mag&e_g%27';
-  Result += 'mag=&u_e_g%27mag=&-out=r%27mag&r%27mag=&-out=e_r%27mag&e_r%27';
-  Result += 'mag=&u_e_r%27mag=&-out=i%27mag&i%27mag=&-out=e_i%27mag&e_i%27';
-  Result += 'mag=&u_e_i%27mag=&%2F%2Fnoneucd1p=on&-file=.&-meta.ucd=2&-meta=';
-  Result += '1&-meta.foot=1&-usenav=1&-bmark=POST';
-end;
 
-function MakeViz2MASS_Post(targetstr:string):string;
-begin
-  Result := '-to=4&-from=-2&-this=-2&%2F%2Fsource=II%2F246&%2F%2Ftables';
-  Result += '=II%2F246%2Fout&-out.max=50&%2F%2FCDSportal=http%3A%2F%2F';
-  Result += 'cdsportal.u-strasbg.fr%2FStoreVizierData.html&-out.form';
-  Result += '=HTML+Table&%2F%2Foutaddvalue=default&-oc.form=sexa&-nav=';
-  Result += 'cat%3AII%2F246%26tab%3A%7BII%2F246%2Fout%7D%26key%3Asource';
-  Result += '%3DII%2F246%26HTTPPRM%3A%26&-c=&-c.eq=J2000&-c.r=++2&-c.u=arcmin';
-  Result += '&-c.geom=r&-source=II%2F246%2Fout&-order=I&-out.orig=standard&-out';
-  Result += '=RAJ2000&RAJ2000=&-out=DEJ2000&DEJ2000=&errMaj=&errMin=&errPA=&';
-  Result += '-out=2MASS&2MASS=' + EncodeURLElement(targetstr) + '&-out=Jmag&';
-  Result += 'Jmag=&Jcmsig=&-out=e_Jmag&e_Jmag=&Jsnr=&-out=Hmag&Hmag=&Hcmsig=&';
-  Result += '-out=e_Hmag&e_Hmag=&Hsnr=&-out=Kmag&Kmag=&Kcmsig=&-out=e_Kmag&';
-  Result += 'e_Kmag=&Ksnr=&-out=Qflg&Qflg=&Rflg=&Bflg=&-out=Cflg&Cflg=&Ndet=';
-  Result += '&prox=&pxPA=&pxCntr=&-out=Xflg&Xflg=&-out=Aflg&Aflg=&Cntr=&Hemis=';
-  Result += '&Date=&Scan=&GLON=&GLAT=&Xscan=&JD=&Jpsfchi=&Hpsfchi=&Kpsfchi=';
-  Result += '&Jstdap=&e_Jstdap=&Hstdap=&e_Hstdap=&Kstdap=&e_Kstdap=&edgeNS=';
-  Result += '&edgeEW=&edge=&dup=&use=&opt=&Dopt=&PAopt=&Bmag=&Rmag=&Nopt=';
-  Result += '&extKey=&scanKey=&coaddKey=&coadd=&-ignore=Opt%3D*&Opt=Opt';
-  Result += '&%2F%2Fnoneucd1p=on&-file=.&-meta.ucd=2&-meta=1&-meta.foot=1&';
-  Result += '-usenav=1&-bmark=POST';
-end;
-
-function MakeVizGaiaDR2_Post(targetstr:string):string;
-begin
-  Result := '-to=4&-from=-3&-this=-3&%2F%2Fsource=I%2F345%2Fgaia2&%2F%2Ftables';
-  Result += '=I%2F345%2Fgaia2&-out.max=50&%2F%2FCDSportal=http%3A%2F%2F';
-  Result += 'cdsportal.u-strasbg.fr%2FStoreVizierData.html&-out.form=HTML+Table';
-  Result += '&%2F%2Foutaddvalue=default&-oc.form=sexa&-nav=cat%3AI%2F345%26tab';
-  Result += '%3A%7BI%2F345%2Fgaia2%7D%26key%3Asource%3DI%2F345%2Fgaia2%26';
-  Result += 'HTTPPRM%3A%26&-c=&-c.eq=J2000&-c.r=++2&-c.u=arcmin&-c.geom=r&';
-  Result += '-source=I%2F345%2Fgaia2&-order=I&-out.orig=standard&DR2Name=&-out';
-  Result += '=RA_ICRS&RA_ICRS=&e_RA_ICRS=&-out=DE_ICRS&DE_ICRS=&e_DE_ICRS=';
-  Result += '&SolID=&-out=Source&Source=' + EncodeURLElement(targetstr);
-  Result += '&RandomI=&Epoch=&-out=Plx&Plx=&-out=e_Plx&e_Plx=&RPlx=&-out=pmRA';
-  Result += '&pmRA=&e_pmRA=&-out=pmDE&pmDE=&e_pmDE=&RADEcor=&RAPlxcor=';
-  Result += '&RApmRAcor=&RApmDEcor=&DEPlxcor=&DEpmRAcor=&DEpmDEcor=&PlxpmRAcor';
-  Result += '=&PlxpmDEcor=&pmRApmDEcor=&NAL=&NAC=&NgAL=&NbAL=&gofAL=&chi2AL';
-  Result += '=&epsi=&sepsi=&Solved=&APF=&WAL=&pscol=&e_pscol=&fvarpi=';
-  Result += '&MatchObsA=&Nper=&amax=&type=&MatchObs=&Dup=&o_Gmag=&FG=&e_FG=';
-  Result += '&RFG=&-out=Gmag&Gmag=&-out=e_Gmag&e_Gmag=&o_BPmag=&FBP=&e_FBP=';
-  Result += '&RFBP=&-out=BPmag&BPmag=&-out=e_BPmag&e_BPmag=&o_RPmag=&FRP=';
-  Result += '&e_FRP=&RFRP=&-out=RPmag&RPmag=&-out=e_RPmag&e_RPmag=';
-  Result += '&E%28BR%2FRP%29=&Mode=&BP-RP=&BP-G=&G-RP=&-out=RV&RV=&-out=e_RV';
-  Result += '&e_RV=&o_RV=&Tefftemp=&loggtemp=&%5BFe%2FH%5Dtemp=&Var=&GLON=';
-  Result += '&GLAT=&ELON=&ELAT=&fPriam=&Teff=&b_Teff=&B_Teff=&AG=&b_AG=&B_AG';
-  Result += '=&E%28BP-RP%29=&b_E%28BP-RP%29=&B_E%28BP-RP%29=&fFLAME=&Rad=&b_Rad';
-  Result += '=&B_Rad=&Lum=&b_Lum=&B_Lum=&RAJ2000=&e_RAJ2000=&DEJ2000';
-  Result += '=&e_DEJ2000=&%2F%2Fnoneucd1p=on&-file=.&-meta.ucd=2&-meta=1';
-  Result += '&-meta.foot=1&-usenav=1&-bmark=POST';
-end;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++
 function GetFromVizier(targetname:string):APASSVizieRData;

@@ -5,7 +5,6 @@ object CatalogIDEditFrame: TCatalogIDEditFrame
   Width = 220
   ClientHeight = 216
   ClientWidth = 220
-  LCLVersion = '1.8.2.0'
   TabOrder = 0
   DesignLeft = 480
   DesignTop = 273

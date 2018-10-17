@@ -137,13 +137,14 @@ function MakeSimbadCoordLookupURL(const rastring,decstring:string; arcminp:Integ
 function MakeSimbadIdLookupURL(ident:string):string;
 function GetSimbadDataURL(inurl:string; out fetchfail:Boolean):SimbadData;
 
-const ok_catalogs:array[0..70] of string = ('BD','CD','CPD','Wolf','Ross','FK5',
+const ok_catalogs:array[0..71] of string = ('BD','CD','CPD','Wolf','Ross','FK5',
       'HD','HR','SAO','LHS','LFT','LTT','Vys','2MASS','DENIS','Luhman','Lal',
       'ADS','LDS','AC','Lac','LP','Gmb','L','SO','SCR','LPM','Kr','WISE',
       'PPM','Zkh','Sm','WDS','G','Sa','NLTT','VVO','Ruiz','Wor','Heintz',
       'Struve','Bu','Tou','SIPS','WISEP','SDSS','VB','WD','LEHPM','WT','SIP',
       'BPM','LSPM','San','2MUCD','APMPM','BRI','AG','UCAC4','GSC','GD',
-      'KIC','Ton','ULAS','PM','WISEA','RAVE','RX','GSC2.3','1RXS','URAT1');
+      'KIC','Ton','ULAS','PM','WISEA','RAVE','RX','GSC2.3','1RXS','URAT1',
+      'UPM');
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 implementation
@@ -762,11 +763,11 @@ var xparser:StringParsing;
     buffer,buffer2:string;
     lchar:PChar;
     fluxchar:Char;
-    fvalue,ferror,dumflux:Currency;
+    fvalue,ferror,dumflux,g2mag:Currency;
     parentc,siblingc,childrenc:Integer;
     clindex,clhigh:Integer;
     fluxsrc:string;
-    johnson_R,johnson_I,denisi:Boolean;
+    johnson_R,johnson_I,denisi,dr2g:Boolean;
     BcatB,BCatR,BcatI,RUCAC:Boolean;
     checkx:Boolean;
 const extrps = '<INPUT TYPE="hidden" NAME="parents" ID="parents" VALUE="';
@@ -774,6 +775,8 @@ const extrps = '<INPUT TYPE="hidden" NAME="parents" ID="parents" VALUE="';
       extrss = '<INPUT TYPE="hidden" NAME="siblings" ID="siblings" VALUE="';
 begin
   Result := False;
+  dr2g := False;
+  g2mag := 99.999;
   xparser := StringParsing.Create(input,False);
   if (not xparser.MovePast('<TD VALIGN="TOP" id="basic_data"')) then begin
     xparser.Free;    Exit;
@@ -886,7 +889,11 @@ begin
     (* 'G' is *not* from DR2, but DR1. since Simbad now includes DR2 and ignores
     the distinction, we have to take into account. *)
     if (fluxchar <> 'G') then AssignFlux(fluxchar,fvalue,ferror)
-    else if (fluxsrc<>'2018yCat.1345....0G') then AssignFlux('G',fvalue,ferror);
+    else begin
+      dr2g := (fluxsrc = '2018yCat.1345....0G');
+      if not dr2g then AssignFlux('G',fvalue,ferror)
+      else g2mag := fvalue;
+    end;
     // checking for sources that likely need to be adjusted...
     if (fluxchar = 'B') then BcatB := (fluxsrc='2003AJ....125..984M');
     if (fluxchar = 'R') then begin
@@ -917,7 +924,7 @@ begin
   // B Catalog conversion for Infrared (unneeded if I is bright enough)
   if BcatI and (imag > 8.5) then USNO_I_Adjust(imag,jmag,hmag,kmag,imag);
   // UCAC fit Model Magnitude is not Rc
-  if RUCAC then UCAC_To_RcS(rmag,jmag,hmag,kmag,rmag);
+  if RUCAC and (rmag >= 10) then UCAC4_To_RcS(rmag,jmag,99.999,g2mag,rmag);
 
   // planets?
   hasplanet := xparser.MovePast('Substellar companion');

@@ -1,7 +1,7 @@
 object NStarsMainForm: TNStarsMainForm
-  Left = 281
+  Left = 342
   Height = 577
-  Top = 96
+  Top = 116
   Width = 851
   Caption = 'Nstars'
   ClientHeight = 557
@@ -1072,6 +1072,13 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Import Parallaxes...'
         OnClick = PllxImportMIClick
       end
+      object ImportFrSN35MI: TMenuItem
+        Caption = 'Import V Rc Ic from SN 35...'
+        OnClick = ImportFrSN35MIClick
+      end
+      object MenuItem7: TMenuItem
+        Caption = '-'
+      end
       object TestVizDMI: TMenuItem
         Caption = 'Vizier APASS Fluxes...'
         OnClick = TestVizDMIClick
@@ -1080,10 +1087,6 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'APASS Fluxes with Simbad...'
         OnClick = APASSwSimMIClick
       end
-      object ImportFrSN35MI: TMenuItem
-        Caption = 'Import V Rc Ic from SN 35...'
-        OnClick = ImportFrSN35MIClick
-      end
       object Viz2MassGetMI: TMenuItem
         Caption = 'VizieR 2Mass Fluxes...'
         OnClick = Viz2MassGetMIClick
@@ -1091,6 +1094,10 @@ object NStarsMainForm: TNStarsMainForm
       object GaiaMagGetMI: TMenuItem
         Caption = 'Gaia DR2 Fluxes...'
         OnClick = GaiaMagGetMIClick
+      end
+      object GetVizIDMI: TMenuItem
+        Caption = 'Get IDs from VizieR'
+        OnClick = GetVizIDMIClick
       end
       object MenuItem3: TMenuItem
         Caption = '-'
@@ -1187,29 +1194,9 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Sort by Distance'
         OnClick = SortbyDistance1Click
       end
-      object FindConstellation1: TMenuItem
-        Caption = 'Find Constellation...'
-        OnClick = FindConstellation1Click
-      end
       object GuessSpectraMI: TMenuItem
         Caption = 'Guess Spectra...'
         OnClick = GuessSpectraMIClick
-      end
-      object EnterPMPartsMI: TMenuItem
-        Caption = 'Enter Proper Motion...'
-        OnClick = EnterPMPartsMIClick
-      end
-      object ParallaxEntryMI: TMenuItem
-        Caption = 'Enter Parallax...'
-        OnClick = ParallaxEntryMIClick
-      end
-      object MISwapParallax: TMenuItem
-        Caption = 'Swap Parallax...'
-        OnClick = MISwapParallaxClick
-      end
-      object PosSepSetMI: TMenuItem
-        Caption = 'Set Position from Separation...'
-        OnClick = PosSepSetMIClick
       end
       object MenuItem1: TMenuItem
         Caption = '-'
@@ -1226,20 +1213,35 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Enter Tycho-2 Magnitudes...'
         OnClick = Tycho2MagMIClick
       end
-      object PanStarrEstMI: TMenuItem
-        Caption = 'Enter Pan-STARRS Magnitudes...'
-        OnClick = PanStarrEstMIClick
+      object MI_EstUGaia: TMenuItem
+        Caption = 'Estimate Mags using Gaia DR2'
+        object MI_DR2_BVRI: TMenuItem
+          Caption = 'Estimate BVRI...'
+          OnClick = MI_DR2_BVRIClick
+        end
+        object MI_DR2_JHK: TMenuItem
+          Caption = 'Estimate JHKs...'
+          OnClick = MI_DR2_JHKClick
+        end
+        object MI_DR2_GuessV: TMenuItem
+          Caption = 'Guess V using absolute G...'
+          OnClick = MI_DR2_GuessVClick
+        end
       end
       object FluxEstSubMenu: TMenuItem
-        Caption = 'Estimate Magnitudes...'
+        Caption = 'Estimate Magnitudes Misc...'
         OnClick = FluxEstSubMenuClick
+        object EstBVUCACMI: TMenuItem
+          Caption = 'Estimate VRI using UCAC...'
+          OnClick = EstBVUCACMIClick
+        end
+        object EstJHKPSMI: TMenuItem
+          Caption = 'Estimate JHK with PanSTARRS...'
+          OnClick = EstJHKPSMIClick
+        end
         object EstBVUATMI: TMenuItem
           Caption = 'Estimate BV using URAT...'
           OnClick = EstBVUATMIClick
-        end
-        object EstBVUCACMI: TMenuItem
-          Caption = 'Estimate BV using UCAC...'
-          OnClick = EstBVUCACMIClick
         end
         object EstBVCMCMI: TMenuItem
           Caption = 'Estimate BV using CMC r’...'
@@ -1249,54 +1251,12 @@ object NStarsMainForm: TNStarsMainForm
           Caption = 'Estimate Ic using URAT...'
           OnClick = EstIURATMIClick
         end
-        object EstIUCACMI: TMenuItem
-          Caption = 'Estimate RI using UCAC...'
-          OnClick = EstIUCACMIClick
-        end
-        object GaiaDR2MagMI: TMenuItem
-          Caption = 'Estimate BVRI from Gaia DR2...'
-          OnClick = GaiaDR2MagMIClick
-        end
-        object EstJHKGaia2MI: TMenuItem
-          Caption = 'Estimate JHKs from Gaia DR2...'
-          OnClick = EstJHKGaia2MIClick
-        end
       end
       object MenuItem4: TMenuItem
         Caption = '-'
       end
-      object TGASFind: TMenuItem
-        Caption = 'Lookup TGAS location Matches...'
-        OnClick = TGASFindClick
-      end
-      object TGASNameMatchMI: TMenuItem
-        Caption = 'Lookup TGAS Matches by ID...'
-        OnClick = TGASNameMatchMIClick
-      end
-      object TGASBinarySecMatchMI: TMenuItem
-        Caption = 'Lookup TGAS Non-Primary Match...'
-        OnClick = TGASBinarySecMatchMIClick
-      end
-      object FindRemTGASMI: TMenuItem
-        Caption = 'Find Remaining TGAS matches...'
-        OnClick = FindRemTGASMIClick
-      end
-      object MenuItem12: TMenuItem
-        Caption = '-'
-      end
-      object FinDR2MatchMI: TMenuItem
-        Caption = 'Find Gaia DR2 Match'
-        OnClick = FinDR2MatchMIClick
-      end
-      object StarGaiaMatchMI: TMenuItem
-        Caption = 'Start Gaia Matching...'
-        OnClick = StarGaiaMatchMIClick
-      end
-      object N4: TMenuItem
-        Caption = '-'
-      end
       object FindbyName1: TMenuItem
-        Caption = 'Find by Name...'
+        Caption = 'Find by Name/Catalog ...'
         OnClick = FindbyName1Click
       end
       object FindIDMI: TMenuItem
@@ -1311,10 +1271,6 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Look for Duplicate IDs...'
         OnClick = CatDupesScanMIClick
       end
-      object PPMMatchMI: TMenuItem
-        Caption = 'Look for Position/PM matches...'
-        OnClick = PPMMatchMIClick
-      end
       object N5: TMenuItem
         Caption = '-'
       end
@@ -1325,6 +1281,67 @@ object NStarsMainForm: TNStarsMainForm
       object SimbadIDLook: TMenuItem
         Caption = 'Simbad ID Browser Lookup...'
         OnClick = SimbadIDLookClick
+      end
+    end
+    object PosMenu: TMenuItem
+      Caption = 'Position'
+      OnClick = PosMenuClick
+      object MI_FindConst: TMenuItem
+        Caption = 'Find Constellation...'
+        OnClick = MI_FindConstClick
+      end
+      object MI_EnterParallax: TMenuItem
+        Caption = 'Enter Parallax...'
+        OnClick = MI_EnterParallaxClick
+      end
+      object MI_SwapParallax: TMenuItem
+        Caption = 'Swap Parallax...'
+        OnClick = MI_SwapParallaxClick
+      end
+      object MI_EnterPM: TMenuItem
+        Caption = 'Enter Proper Motion...'
+        OnClick = MI_EnterPMClick
+      end
+      object MI_ThetaRho: TMenuItem
+        Caption = 'Set Position from Separation...'
+        OnClick = MI_ThetaRhoClick
+      end
+      object MenuItem16: TMenuItem
+        Caption = '-'
+      end
+      object MI_PosPMMatch: TMenuItem
+        Caption = 'Look for CPM Pairs...'
+        OnClick = MI_PosPMMatchClick
+      end
+      object MenuItem9: TMenuItem
+        Caption = '-'
+      end
+      object MI_TGAS_MID: TMenuItem
+        Caption = 'Match with TGAS using ID...'
+        OnClick = MI_TGAS_MIDClick
+      end
+      object MI_TGAS_ML: TMenuItem
+        Caption = 'Math with TGAS using Location...'
+        OnClick = MI_TGAS_MLClick
+      end
+      object MI_TGAS_SM: TMenuItem
+        Caption = 'Match non-primary using TGAS...'
+        OnClick = MI_TGAS_SMClick
+      end
+      object MI_BulkMatchTGAS: TMenuItem
+        Caption = 'Match to TGAS for unmatched...'
+        OnClick = MI_BulkMatchTGASClick
+      end
+      object MenuItem12: TMenuItem
+        Caption = '-'
+      end
+      object MI_FindDR2Match: TMenuItem
+        Caption = 'Find Gaia DR2 Match'
+        OnClick = MI_FindDR2MatchClick
+      end
+      object MI_StartGaiaMatching: TMenuItem
+        Caption = 'Start Gaia Matching...'
+        OnClick = MI_StartGaiaMatchingClick
       end
     end
     object FilterMain1: TMenuItem

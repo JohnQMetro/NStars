@@ -4,7 +4,8 @@ interface
 //***************************************************************************
 (* Replacing the old StarName with a class that handles things faster *)
 uses
-  Classes, SysUtils, StrUtils, contnrs, character, Math, unitdata, df_strings;
+  Classes, SysUtils, StrUtils, contnrs, character, Math, unitdata, df_strings,
+   gaiaset;
 
 type
 
@@ -356,6 +357,7 @@ begin
   fdex := catalogs.FindIndexOf(cstr);
   if (fdex >= 0) then catalogs.Delete(fdex);
   catalogs.Add(cstr,tempid);
+  if cstr = 'Gaia DR2' then DR2_IDSet.Add(tempid.id);
 end;
 //----------------------------------------------------------
 function StarNames.SetMultipleCat(inval:string):Boolean;

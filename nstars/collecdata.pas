@@ -8,7 +8,7 @@ uses SysUtils, StdCtrls, Classes, StrUtils, Dialogs, Controls, Forms, FileUtil,
   stardata,startproxy, newlocation, star_names (* namedata *), constellation, sptfluxest, df_strings,
   cluster, tgas, simbad, NewStar, newImports, StarDataBase, ExtraImports,
   StarExt2,fluxtransform,ImportVizier,Utilities2,StarEstimator, guessstype,
-  gaiadr2holder;
+  gaiadr2holder, Graphics;
 
 type
 
@@ -58,6 +58,7 @@ StarList = class
     function ReLinkCluster(inclus:ClusterData):Integer;
     function BoldAtIndex(theIndex:Integer):Boolean;
     function BoldAtFilteredIndex(theIndex:Integer):Boolean;
+    function ColorAtFilteredIndex(theIndex:Integer):TColor;
     // stuff implemented for mass nstars parallax setting
     function GetIndex:Integer;
     function GetCount:Integer;
@@ -438,6 +439,32 @@ begin
   if theIndex > (fcount-1) then Exit;
   prefNameType := Filtered_List[theIndex].preferred;
   if (prefNameType > 0) and (prefNameType < 4) then Result := True;
+end;
+//---------------------------------------------
+function StarList.ColorAtFilteredIndex(theIndex:Integer):TColor;
+var fpst:string;
+begin
+  Result := clBlack;
+  if theIndex > (fcount-1) then Exit;
+  fpst := Filtered_List[theIndex].GetNewStar(1).SpectralClass;
+  // M Type
+  if StrStartswAny(fpst,['M','sdM','esdM','usdM']) then Result := $3C14DC
+  // K type
+  else if StrStartswAny(fpst,['K','sdK']) then Result := $008CFF
+  // L type
+  else if StrStartswAny(fpst,['L','sdL','esdL','usdL']) then Result := $2D52A0
+  // G type
+  else if StrStartswAny(fpst,['G','sdG']) or (theIndex = 0) then Result := $00D7FF
+  // T Type
+  else if StrStartswAny(fpst,['T','sdT','esdT']) then Result := $D670DA
+  // F type
+  else if StrStartswAny(fpst,['F','sdF']) then Result := $6BB7BD
+  // A type
+  else if StrStartswAny(fpst,['A','sdA']) then Result := $ED9564
+  // Blue
+  else if StrStartswAny(fpst,['O','B','W','sdO','sdB']) then Result := $E16941
+  // carbon stars
+  else if StrStartswAny(fpst,['C','dC','gC','R','N','S','MC','MS','dS']) then Result := $2222B2;
 end;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

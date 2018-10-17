@@ -10,7 +10,7 @@ star list. *)
 uses
   Classes, SysUtils, LCLIntf, LMessages, Math, DAMath,
   gaiadr2base, gaiadr2holder, stardata, collecdata, newlocation, namedata,
-  NewStar, ImportVizier, simbad, StarExt2;
+  NewStar, ImportVizier, simbad, StarExt2, gaiaset;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 type
 
@@ -190,10 +190,19 @@ var autoadd:Boolean;
     simdat:SimbadData;
     tmassd:VizieR2MASSData;
     dotmass:Boolean;
+    testid:string;
 begin
   // quick ignore checks
   if baseparams.ignoreRejects and curobj.permaReject then Exit;
   if curobj.astrometry.parallax < baseparams.minpllx then Exit;
+  (* Due to a previous error, many 'unmatched' objects are actually matched. We
+  get around this by checking if the id is in a string set that has all DR2 ids
+  that are currently in the list of stars *)
+  testid := IntToStr(curobj.gaia_id);
+  if DR2_IDSet.Contains(testid) then begin
+    curobj.matched := True;
+    Exit;
+  end;
   // auto reject testing
   if baseparams.ignoreRejects then begin
     if CheckForAutoReject() then begin

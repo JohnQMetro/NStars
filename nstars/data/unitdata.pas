@@ -7,7 +7,7 @@ interface
 uses StrUtils;
 
 type
-  TSysCat = array[0..29] of string;
+  TSysCat = array[0..31] of string;
 
 const
   constellations:array[0..263] of string = ('Andromeda','Andromedae','And',
@@ -86,7 +86,8 @@ const
 
   const sys_cats:TSysCat = ('Gl','GJ','ADS','WDS','BD','HD','CD','CPD','Struve',
        'Vys','Bu','Kpr','LDS','Luhman','Sm','Wo','I','HJ','Wor', 'LSPM','H',
-       'Kr','Tok','Balega','O.Struve','Stein','Tok','Rob', 'Scholz', 'Balega');
+       'Kr','Tok','Balega','O.Struve','Stein','Tok','Rob', 'Scholz', 'Balega',
+       'UPM','PM');
 
 type
 
