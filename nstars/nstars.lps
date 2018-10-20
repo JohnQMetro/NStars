@@ -19,8 +19,8 @@
         <ComponentName Value="NStarsMainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="659"/>
-        <CursorPos X="30" Y="670"/>
+        <TopLine Value="2387"/>
+        <CursorPos X="11" Y="2403"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -439,10 +439,9 @@
       <Unit41>
         <Filename Value="stardata\fluxtransform.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="829"/>
-        <CursorPos Y="840"/>
+        <TopLine Value="840"/>
+        <CursorPos X="7" Y="361"/>
         <UsageCount Value="204"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -569,8 +568,8 @@
         <Filename Value="startproxy.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="1465"/>
-        <CursorPos X="38" Y="1483"/>
+        <TopLine Value="1506"/>
+        <CursorPos Y="1515"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -627,10 +626,11 @@
       <Unit60>
         <Filename Value="gaia\fluxgaia.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="466"/>
-        <CursorPos X="3" Y="470"/>
-        <UsageCount Value="117"/>
+        <TopLine Value="642"/>
+        <CursorPos Y="629"/>
+        <UsageCount Value="123"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit60>
@@ -640,7 +640,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="49"/>
         <CursorPos Y="60"/>
-        <UsageCount Value="88"/>
+        <UsageCount Value="94"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit61>
       <Unit62>
@@ -650,7 +650,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="149"/>
         <CursorPos Y="154"/>
-        <UsageCount Value="85"/>
+        <UsageCount Value="91"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit62>
       <Unit63>
@@ -660,7 +660,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="7"/>
         <CursorPos Y="247"/>
-        <UsageCount Value="80"/>
+        <UsageCount Value="86"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit63>
       <Unit64>
@@ -834,124 +834,124 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="53" Column="72" TopLine="43"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="286" Column="66" TopLine="274"/>
       </Position1>
       <Position2>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="657" Column="23" TopLine="646"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="43" Column="16" TopLine="28"/>
       </Position2>
       <Position3>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="656" Column="23" TopLine="645"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="655" Column="52" TopLine="640"/>
       </Position3>
       <Position4>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="664" Column="34" TopLine="660"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="81" Column="22" TopLine="72"/>
       </Position4>
       <Position5>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="665" Column="42" TopLine="660"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1525" Column="52" TopLine="1509"/>
       </Position5>
       <Position6>
         <Filename Value="nstarsmain.pas"/>
-        <Caret Line="223" Column="8" TopLine="212"/>
+        <Caret Line="670" Column="30" TopLine="659"/>
       </Position6>
       <Position7>
         <Filename Value="nstarsmain.pas"/>
-        <Caret Line="680" Column="8" TopLine="663"/>
+        <Caret Line="671" Column="30" TopLine="660"/>
       </Position7>
       <Position8>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="35" Column="14" TopLine="25"/>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="673" Column="30" TopLine="662"/>
       </Position8>
       <Position9>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="430" TopLine="412"/>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="2401" Column="13" TopLine="2399"/>
       </Position9>
       <Position10>
         <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2527" Column="22" TopLine="2519"/>
+        <Caret Line="2406" Column="10" TopLine="2404"/>
       </Position10>
       <Position11>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="419" Column="25" TopLine="412"/>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="2295" TopLine="2294"/>
       </Position11>
       <Position12>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="425" TopLine="412"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1522" Column="18" TopLine="1503"/>
       </Position12>
       <Position13>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="450" Column="51" TopLine="436"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="26" Column="19" TopLine="17"/>
       </Position13>
       <Position14>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="51" Column="14" TopLine="37"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="626" TopLine="610"/>
       </Position14>
       <Position15>
-        <Filename Value="df_strings.pas"/>
-        <Caret Line="132" Column="21" TopLine="121"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="624" TopLine="610"/>
       </Position15>
       <Position16>
-        <Filename Value="df_strings.pas"/>
-        <Caret Line="1149" Column="3" TopLine="1146"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="629" TopLine="613"/>
       </Position16>
       <Position17>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="818" Column="25" TopLine="801"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="46" Column="69" TopLine="31"/>
       </Position17>
       <Position18>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="759" Column="57" TopLine="748"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="633" Column="69" TopLine="616"/>
       </Position18>
       <Position19>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="749" Column="35" TopLine="742"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="624" TopLine="617"/>
       </Position19>
       <Position20>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="811" Column="43" TopLine="800"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="626" TopLine="617"/>
       </Position20>
       <Position21>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="879" Column="18" TopLine="827"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="627" TopLine="617"/>
       </Position21>
       <Position22>
-        <Filename Value="df_strings.pas"/>
-        <Caret Line="126" Column="27" TopLine="120"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="629" TopLine="617"/>
       </Position22>
       <Position23>
-        <Filename Value="df_strings.pas"/>
-        <Caret Line="133" Column="31" TopLine="120"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1515" TopLine="1504"/>
       </Position23>
       <Position24>
         <Filename Value="startproxy.pas"/>
-        <Caret Line="80" Column="19" TopLine="60"/>
+        <Caret Line="213" TopLine="202"/>
       </Position24>
       <Position25>
-        <Filename Value="startproxy.pas"/>
-        <Caret Line="77" Column="19" TopLine="66"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="624" TopLine="617"/>
       </Position25>
       <Position26>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2527" Column="22" TopLine="2519"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="626" Column="29" TopLine="642"/>
       </Position26>
       <Position27>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2535" Column="22" TopLine="2527"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="624" TopLine="613"/>
       </Position27>
       <Position28>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="670" Column="5" TopLine="661"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="626" TopLine="613"/>
       </Position28>
       <Position29>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="658" Column="49" TopLine="650"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="627" TopLine="613"/>
       </Position29>
       <Position30>
-        <Filename Value="stardata\fluxtransform.pas"/>
-        <Caret Line="843" TopLine="841"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="629" TopLine="613"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

@@ -344,20 +344,19 @@ end;
 // takes g' r' i' insput (Real) and produces B V Rc Ic output
 procedure Pgri_to_BVRI(gp,rp,ip:Real; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency);
 var g,r,i:Real;
+    gmik:Boolean;
     gmr,gmi,interm:Real;
     dottarg:RealArray;
-const rcoff:array[0..6] of Real = ( -13.722, 33.573, -25.457, 6.6358, -0.36157, 0.32489, 0.10848 );
+const rcoff:array[0..2] of Real = ( 0.69278, 0.0011081, 0.07592 );
 begin
   g := gp + 0.060*( (gp-rp) - 0.53 );
   r := rp + 0.035*( (rp-ip) - 0.21 );
   i := ip + 0.041*( (rp-ip) - 0.21 );
   SDSS_gri2BVRI_c(g,r,i,Bj,Vj,Rc,Ic);
   (* Estimated Rc is rather dim for M dwarfs, so I have derived an alternate fit... *)
-  gmr := gp - rp;
-  gmi := gp - ip;
-  if (gmr >= 0.746) and (gmr <= 1.631) and (gmi >= 1.034) and (gmi <= 4.418) then begin
-    LoadMulti(gmr,gmi,True,dottarg);
-    interm := dot2(rcoff,dottarg,7);
+  gmik := MakeColorCheck(gp,ip,1.741,4.418,gmi);
+  if gmik and MakeColorCheck(gp,rp,1.082,1.631,gmr) then begin
+    interm := PolEval(gmi,rcoff,3) + 0.47729*gmr;
     Rc := gp - interm;
   end;
 end;

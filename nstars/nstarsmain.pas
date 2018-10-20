@@ -43,6 +43,8 @@ type
     GaiaMagGetMI: TMenuItem;
     MenuItem12: TMenuItem;
     EstJHKPSMI: TMenuItem;
+    MI_GG1_A: TMenuItem;
+    MI_GG1_B: TMenuItem;
     MI_DR2_BVRI: TMenuItem;
     MI_DR2_JHK: TMenuItem;
     MI_DR2_GuessV: TMenuItem;
@@ -267,6 +269,8 @@ type
     procedure MI_EnterPMClick(Sender: TObject);
     procedure MI_FindConstClick(Sender: TObject);
     procedure MI_FindDR2MatchClick(Sender: TObject);
+    procedure MI_GG1_AClick(Sender: TObject);
+    procedure MI_GG1_BClick(Sender: TObject);
     procedure MI_PosPMMatchClick(Sender: TObject);
     procedure MI_StartGaiaMatchingClick(Sender: TObject);
     procedure MI_SwapParallaxClick(Sender: TObject);
@@ -2389,6 +2393,30 @@ begin
   if current <> nil then begin
     xres := current.GaiaDR2ShowMatch(0.3);
     if not xres then ShowMessage('Unable to try Gaia Match');
+  end;
+end;
+
+procedure TNStarsMainForm.MI_GG1_AClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.GG1_VRI(False);
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.MI_GG1_BClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.GG1_VRI(True);
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
   end;
 end;
 

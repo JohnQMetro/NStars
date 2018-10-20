@@ -1,5 +1,5 @@
 object NStarsMainForm: TNStarsMainForm
-  Left = 342
+  Left = 354
   Height = 577
   Top = 116
   Width = 851
@@ -1226,6 +1226,14 @@ object NStarsMainForm: TNStarsMainForm
         object MI_DR2_GuessV: TMenuItem
           Caption = 'Guess V using absolute G...'
           OnClick = MI_DR2_GuessVClick
+        end
+        object MI_GG1_A: TMenuItem
+          Caption = 'Estimate VRI using G and G1...'
+          OnClick = MI_GG1_AClick
+        end
+        object MI_GG1_B: TMenuItem
+          Caption = 'Estimate VRI using G,RP, and G1...'
+          OnClick = MI_GG1_BClick
         end
       end
       object FluxEstSubMenu: TMenuItem

@@ -79,6 +79,7 @@ StarProxy = class
     function VizierGaiaGet():Boolean;
     function GuessVFromG():Boolean;
     function PanStarrsJHK(indata:string):Boolean;
+    function GG1_VRI(useRP:Boolean):Boolean;
 end;
 
 var
@@ -1296,7 +1297,7 @@ end;
 //--------------------------------------------------------
 function StarProxy.GaiaDR2_To_JHK():Boolean;
 var okay:Boolean;
-    BP,RP,Gin,Jest,Hest,Ksest:Currency;
+    Jest,Hest,Ksest:Currency;
     msgdata:string;
 const amsg = 'estimated from Gaia DR2 magnitudes.';
 begin
@@ -1314,9 +1315,6 @@ begin
      Exit;
   end;
   // getting the magnitudes and the values...
-  BP := ccomponent.dr2mags.BP;
-  RP := ccomponent.dr2mags.RP;
-  Gin := ccomponent.dr2mags.G;
   if not GaiaTo_JHK_Wr(ccomponent.dr2mags,Jest,Hest,Ksest) then begin
     ShowMessage('Cannot estimate: Colors not within range!');
     Exit;
@@ -1486,6 +1484,42 @@ begin
     Exit;
   end;
   Result := ShowEstJHK(Jest,Hest,Kest,amsg);
+end;
+//--------------------------------------------------
+function StarProxy.GG1_VRI(useRP:Boolean):Boolean;
+var okay:Boolean;
+    G,G1,RP:Currency;
+    Vest:Real;
+    RcEst,IcEst:Currency;
+    qmsg:string;
+const amsg = 'Estimated used G+G1';
+begin
+  Result := False;
+  // checking if we have the magnitudes
+  okay := (ccomponent <> nil) and (ccomponent.dr2mags <> nil);
+  okay := okay and (ccomponent.fluxtemp <> nil) and (ccomponent.fluxtemp.gaia_mag < 90);
+  G := ccomponent.dr2mags.G;
+  okay := okay and (G < 90);
+  if useRP then begin
+    RP := ccomponent.dr2mags.RP;
+    okay := okay and (RP < 90);
+  end;
+  if not okay then begin
+    ShowMessage('Cannot estimate, missing magnitudes.');
+    Exit;
+  end;
+  // calling the methods
+  G1 := ccomponent.fluxtemp.gaia_mag;
+  if not useRP then okay := Gaia12_To_VRI(G1,G,Vest,RcEst,IcEst)
+  else okay := Gaia12RP_To_VRI(G1,G,RP,Vest,RcEst,IcEst);
+  if not okay then begin
+    ShowMessage('Cannot estimate, Colours out of bounds.');
+    Exit;
+  end;
+  // showing the results
+  if useRP then qmsg := amsg + '+RP.'
+  else qmsg := amsg + '.';
+  Result := ShowEst(Vest,99.9999,Rcest,Icest,qmsg);
 end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 begin

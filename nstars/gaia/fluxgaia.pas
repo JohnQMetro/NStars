@@ -41,6 +41,9 @@ function Gaia2To2MASS_MyWay2(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Curr
 function Gaia2To2MASS_BadG(BP,RP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function Gaia2To2MASS_BadB(Gin,RP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function Gaia2To2MASS_NoRP(Gin,BP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
+(* G - G1 *)
+function Gaia12_To_VRI(G1in,Gin:Currency; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
+function Gaia12RP_To_VRI(G1in,Gin,RPin:Currency; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
 
 implementation
 //*******************************************************************************
@@ -281,29 +284,26 @@ G-J, which works better than using 2MASS alone. *)
 function GaiaToVRI_2M(Gmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 var gmj:Real;
     interm:Real;
-const coffv1:array[0..2] of Real = ( 0.084193, -0.084446, 0.17371 );
-      coffv2:array[0..3] of Real = ( 35.34, -30.245, 8.6621, -0.78355 );
-      coffr1:array[0..2] of Real = ( -1.1743, 0.49163, -0.018049 );
-      coffr2:array[0..3] of Real =  ( 11.947, -10.706, 3.1073, -0.28321 );
-      coffi1:array[0..2] of Real = ( -0.89387, 1.2845, -0.16599 );
-      coffi2:array[0..2] of Real = ( -0.97998, 1.3248, -0.17 );
+const coffv1:array[0..3] of Real = ( 2.2906, -2.2367, 0.8365, -0.063055 );
+      coffr1:array[0..2] of Real = ( -0.86072, 0.22667, 0.036967 );
+      coffi1:array[0..2] of Real = ( -0.8565, 1.2568, -0.16092 );
 begin
   Result := False;
   if (Gmag > 90) or (Jmag > 90) then Exit;
+  if not MakeColorCheck(Gmag,Jmag,1.438,5,gmj) then Exit;
+
   // conveniently, the color bounds are the same for all results
-  if not MakeColorCheck(Gmag,Jmag,2.016,4.777,gmj) then Exit;
+  //if not MakeColorCheck(Gmag,Jmag,2.016,4.777,gmj) then Exit;
   // V
-  if gmj < 3.1 then interm := PolEval(gmj,coffv1,3)
-  else interm := PolEval(gmj,coffv2,4);
+  if gmj < 4.6 then interm := PolEval(gmj,coffv1,4)
+  else interm := -3.3107 + 1.3601*gmj;
   Vest := CurrToReal(Gmag) + interm;
   // Rc
-  if gmj < 3.1 then interm := PolEval(gmj,coffr1,3)
-  else interm := PolEval(gmj,coffr2,4);
+  interm := PolEval(gmj,coffr1,3);
   Rcest := Gmag + RealToCurr(interm);
   Rcest := RoundCurrency(Rcest,False);
   // Ic
-  if gmj < 3.1 then interm := PolEval(gmj,coffi1,3)
-  else interm := PolEval(gmj,coffi2,3);
+  interm := PolEval(gmj,coffi1,3);
   Icest := Gmag - RealToCurr(interm);
   Icest := RoundCurrency(Icest,False);
   // done
@@ -599,7 +599,63 @@ begin
   // done
   Result := True;
 end;
-
+//============================================================================
+(* G - G1 *)
+function Gaia12_To_VRI(G1in,Gin:Currency; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
+var interm,gmg1:Real;
+const coffv1:array[0..2] of Real =  ( 1.3896, -10.968, 50.277 );
+      coffv2:array[0..2] of Real =  ( 0.14014, -1.175, 46.894 );
+      coffr1:array[0..2] of Real =  ( -0.17201, -1.5349, 13.429 );
+      coffr2:array[0..3] of Real =  ( -0.10507, -1.0079, -43.004, 382.31 );
+      coffi2:array[0..3] of Real =  ( -0.54679, 5.8682, -231.26, 1253.3 );
+begin
+  Result := False;
+  if not MakeColorCheck(Gin,G1in,-0.041,0.25,gmg1) then Exit;
+  // V
+  if gmg1 >= 0.1 then interm := PolEval(gmg1,coffv1,3)
+  else interm := PolEval(gmg1,coffv2,3);
+  Vest := CurrToReal(Gin) + interm;
+  // Rc
+  if gmg1 >= 0.1 then interm := PolEval(gmg1,coffr1,3)
+  else interm := PolEval(gmg1,coffr2,4);
+  RcEst := CurrToReal(Gin) + interm;
+  RcEst := RoundCurrency(RcEst,False);
+  // Ic
+  if gmg1 >= 0.1 then interm := -0.72648 - 3.3531*gmg1
+  else interm := PolEval(gmg1,coffi2,4);
+  IcEst := CurrToReal(Gin) + interm;
+  IcEst := RoundCurrency(IcEst,False);
+  // done
+  Result := True;
+end;
+(* Using RP as well. Because G-G1 might not be accurate enough, and perhaps RP
+is only somewhat messed up, enough to improve things? *)
+function Gaia12RP_To_VRI(G1in,Gin,RPin:Currency; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
+var interm,gmg1,gmrp:Real;
+begin
+  Result := False;
+  if not MakeColorCheck(Gin,G1in,0.096,0.25,gmg1) then Exit;
+  if not MakeColorCheck(Gin,RPin,0.883,1.653,gmrp) then Exit;
+  // V
+  interm := -2.2852 - 3.0947*gmg1 + 3.5268*gmrp;
+  Vest := CurrToReal(Gin) + interm;
+  // Rc
+  if (gmrp < 0.89) then RcEst := 99.999
+  else begin
+    interm := -1.5365 - 1.1512*gmg1 + 1.5628*gmrp;
+    RcEst := CurrToReal(Gin) + interm;
+    RcEst := RoundCurrency(RcEst,False);
+  end;
+  // Ic
+  if (gmrp > 1.62) then IcEst := 99.999
+  else begin
+    interm := 0.17452 + 0.60946*gmg1 + 0.93149*gmrp;
+    IcEst := CurrToReal(Gin) - interm;
+    IcEst := RoundCurrency(IcEst,False);
+  end;
+  // done
+  Result := True;
+end;
 
 
 
