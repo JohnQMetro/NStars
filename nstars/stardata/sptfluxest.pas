@@ -49,7 +49,7 @@ const
   );
   KsMMagn:array[0..19] of Currency = (5.22,5.36,5.67,5.85,6.06,6.27,6.54,7.19,
                 7.55,7.93,8.36,9.01,9.32,9.47,9.76,9.97,10.11,10.22,10.3,10.45);
-  KsLMagn:array[0..5] of Currency = (10.55,10.8,10.9,11.3,11.4,11.82);
+  KsLMagn:array[0..9] of Currency = (10.55,10.8,10.9,11.3,11.4,11.82,12.27,12.62,12.7,12.74);
 
   // J Magnitudes
   JO95Mag:Currency = -3.35;
@@ -62,7 +62,7 @@ const
   );
   JMMagn:array[0..19] of Currency = (6.04,6.19,6.51,6.69,6.89,7.01,7.40,8.02,
               8.39,8.79,9.25,9.93,10.28,10.47,10.76,10.68,11.23,11.45,11.53,11.78);
-  JLMagn:array[0..5] of Currency = (11.84,12.14,12.34,12.93,13.17,13.60);
+  JLMagn:array[0..6] of Currency = (11.84,12.14,12.34,12.93,13.17,13.60,13.99);
 
   (* V-I. Newer (Sept 2017) values from Mamajek now always increase, without
   the earlier dip around M9 which made lookup ambiguous for ultracool dwarfs. *)
@@ -192,7 +192,7 @@ var
   // Ks Magnitude arrays
   MKsBright:array[2..6] of array[0..9] of Currency;
   MKsRedDwarf:array[0..20] of Currency;
-  MKsL:array[0..5] of Currency;
+  MKsL:array[0..9] of Currency;
 
   // V-I arrays
   VminIBright:array[2..6] of array[0..9] of Currency;
@@ -735,7 +735,7 @@ begin
   if KtKs then inval -= KtoKs;
   // initial stuff
   Result := False;
-  if inval >= MksL[5] then Exit;
+  if inval >= MksL[9] then Exit;
   if inval < MKsBright[2][0] then Exit;
   foundx := False;
   resspec := '';
@@ -743,7 +743,7 @@ begin
   // searching the L Array
   if inval >= MKsL[0] then begin
     // searching the loop
-    for mindex := 0 to 4 do begin // we only go up to L4
+    for mindex := 0 to 8 do begin // we only go up to L8
       if (MKsL[mindex]<=inval) and (inval<MKsL[mindex+1]) then begin
         foundx := True;
         Break;

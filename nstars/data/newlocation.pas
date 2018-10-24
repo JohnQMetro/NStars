@@ -151,6 +151,7 @@ Location = class
     function GetUVWVelocities(lefthanded:Boolean; out uv,vv,wv:Real):Boolean;
     function GetUVWString(lefthanded:Boolean):string;
     procedure MakeGetJ2015p5Pos(out radeg:Real; out decdeg:Real);
+    procedure MakeGetJ2000Pos(out radeg:Real; out decdeg:Real);
     function MakeJ2000pos():string;
 
     // importing data from special sources
@@ -1460,15 +1461,9 @@ begin
   else CalcShifts(timeoffset,startra,startdec,radeg,decdeg);
 end;
 //----------------------------------------------------
-function Location.MakeJ2000pos():string;
-var startra,startdec,timeoffset:Real;
-    radeg,decdeg:Real;
-    xhours:NsHours;
-    dec90:NsDeg;
-    ra_mins,dec_min:Ns60int;
-    ra_secs,dec_secs:Real;
-    is_south:Boolean;
-    rastr,decstr:string;
+procedure Location.MakeGetJ2000Pos(out radeg:Real; out decdeg:Real);
+var startra,startdec:Real;
+    timeoffset:Real;
 begin
   timeoffset := PosShiftHelper(True,startra,startdec);
   // in this case, it is already done...
@@ -1477,6 +1472,19 @@ begin
     decdeg := startdec;
   end
   else CalcShifts(timeoffset,startra,startdec,radeg,decdeg);
+end;
+
+//----------------------------------------------------
+function Location.MakeJ2000pos():string;
+var radeg,decdeg:Real;
+    xhours:NsHours;
+    dec90:NsDeg;
+    ra_mins,dec_min:Ns60int;
+    ra_secs,dec_secs:Real;
+    is_south:Boolean;
+    rastr,decstr:string;
+begin
+  MakeGetJ2000Pos(radeg,decdeg);
   // producing string output
   DecRA_To_HMS(radeg,xhours,ra_mins,ra_secs);
   DecDec_To_DMS(decdeg,is_south,dec90,dec_min,dec_secs);

@@ -21,6 +21,7 @@ FetchIDWrapper = class
   public
     ucac4_do,gaia1_do,denis_do:Boolean; // do we try to fetch this id?
     tmass_id:string;  // 2MASS id (used for UCAC4 and DENIS)
+    raJ2,decJ2:Real;
     J,H,Ks:Currency;  // UCAC4 tables include cross-matched 2MASS mags
     Je,Ke:Currency;   // estimates for DENIS J and K
     Gmin,Gmax:Real;  // range of Gaia DR1 G mag
@@ -138,13 +139,12 @@ function FetchIDWrapper.InitFromObject(ccomp:NewStarBase; names:StarNames; inloc
 var has2mass,hasgaia2:Boolean;
 begin
   Result := False;
-  if (ccomp = nil) or (names = nil) then Exit;
+  if (ccomp = nil) or (names = nil) or (inlocation = nil) then Exit;
   // checking for exiting ids
   ucac4_do := not names.HasCat('UCAC4');
   gaia1_do := not names.HasCat('Gaia DR1');
   denis_do := not names.HasCat('DENIS');
   if (denis_do) then denis_do := (inlocation.GetDecimalDeclination < 2.2);
-  if (gaia1_do) then gaia1_do := (inlocation <> nil);
   if (not ucac4_do) and (not gaia1_do) and (not denis_do) then Exit;
   // checking for what we need for UCAC4 and DENIS
   if ucac4_do or denis_do then begin
@@ -152,6 +152,7 @@ begin
       if denis_do then begin
         Je := J;  Ke := Ks;
       end;
+      inlocation.MakeGetJ2000Pos(raJ2,decJ2);
     end else begin
       ucac4_do := False;
       denis_do := False;
@@ -314,7 +315,7 @@ begin
   fiw := currentInfo;
   // UCAC4
   if fiw.ucac4_do then begin
-    postdata := MakeUCAC4_Post(fiw.tmass_id,fiw.J,fiw.H,fiw.Ks);
+    postdata := MakeUCAC4_Post(fiw.raJ2,fiw.decJ2,fiw.J,fiw.H,fiw.Ks);
     dok := GetByPOSTS(vizurl2,postdata,ctLatin1,downloaded);
     if dok then begin
       ostring := ParseUCAC4(downloaded);
@@ -326,7 +327,7 @@ begin
   end;
   // DENIS
   if fiw.denis_do then begin
-    postdata := MakeDENIS_Post(fiw.tmass_id,20,fiw.Je,fiw.Ke);
+    postdata := MakeDENIS_Post(fiw.raJ2,fiw.decJ2,20,fiw.Je,fiw.Ke);
     dok := GetByPOSTS(vizurl2,postdata,ctLatin1,downloaded);
     if dok then begin
       ostring := ParseDENIS(downloaded);

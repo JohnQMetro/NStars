@@ -22,9 +22,10 @@ function MakeVizAPASS_Params(targetname:string; radius:Real):string;
 function MakeViz2MASS_Post(targetstr:string):string;
 function MakeVizGaiaDR2_Post(targetstr:string):string;
 // For getting identifiers
-function MakeUCAC4_Post(const tmass:string; J,H,Ks:Currency):string;
+function Pos2String(const rapos,decpos:Real):string;
+function MakeUCAC4_Post(const j2ra,j2dex:Real; J,H,Ks:Currency):string;
 function MakeGaiaDR1_Post(const gra,gdex:Real; const gbright,gdim:Real):string;
-function MakeDENIS_Post(const tmass:string; const asec:Word; Je,Ke:Real):string;
+function MakeDENIS_Post(const j2ra,j2dex:Real; const asec:Word; Je,Ke:Real):string;
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 implementation
@@ -69,6 +70,12 @@ begin
   Result += '&extKey=&scanKey=&coaddKey=&coadd=&-ignore=Opt%3D*&Opt=Opt';
   Result += POSTPART3;
 end;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function Pos2String(const rapos,decpos:Real):string;
+begin
+  Result := Trim(FloatToStrF(rapos,ffFixed,10,6)) + ' ';
+  Result := EncodeURLElement(Result + Trim(FloatToStrF(decpos,ffFixed,9,5)));
+end;
 
 function MakeVizGaiaDR2_Post(targetstr:string):string;
 begin
@@ -100,9 +107,11 @@ begin
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* Used to find a UCAC4 id using 2MASS info *)
-function MakeUCAC4_Post(const tmass:string; J,H,Ks:Currency):string;
+function MakeUCAC4_Post(const j2ra,j2dex:Real; J,H,Ks:Currency):string;
 var pos_string:string;
 begin
+  pos_string := Pos2String(j2ra,j2dex);
+
   Result := '-to=4&-from=-2&-this=-2&%2F%2Fsource=ucac4&%2F%2Ftables=';
   Result += 'I%2F322A%2Fout' + POSTPART1 + 'cat%3AI%2F322A%26tab%3A%7BI';
   Result += '%2F322A%2Fout%7D%26key%3Asource%3Ducac4%26HTTPPRM%3A%26%26%26';
@@ -110,7 +119,7 @@ begin
   Result += '-out.add%3D_RAJ%2C_DEJ%26-sort%3D_r%26-order%3DI%26-oc.form%3D';
   Result += 'sexa%26-meta.foot%3D1%26-meta%3D1%26-meta.ucd%3D2%26-c.eq%3D';
   Result += 'J2000%26-c.r%3D++2%26-c.u%3Darcmin%26-c.geom%3Dr%26-usenav';
-  Result += '%3D1%26-bmark%3DPOST%26&-c=' + EncodeURLElement(tmass);
+  Result += '%3D1%26-bmark%3DPOST%26&-c=' + pos_string;
   Result += '&-c.eq=J2000&-c.r=++30&-c.u=arcsec&-c.geom=r&-source=I%2F322A';
   Result += '%2Fout&-order=I&-out.orig=standard&-out=UCAC4&UCAC4=';
   Result += '&-out=RAJ2000&RAJ2000=&e_RAJ2000=&-out=DEJ2000&DEJ2000=';
@@ -129,8 +138,7 @@ end;
 function MakeGaiaDR1_Post(const gra,gdex:Real; const gbright,gdim:Real):string;
 var pos_string,mag_string:string;
 begin
-  pos_string := Trim(FloatToStrF(gra,ffFixed,10,6)) + ' ';
-  pos_string := EncodeURLElement(pos_string + Trim(FloatToStrF(gdex,ffFixed,9,5)));
+  pos_string := Pos2String(gra,gdex);
   mag_string := Trim(FloatToStrF(gbright,ffFixed,5,2)) + ' .. ';
   mag_string := EncodeURLElement(mag_string + Trim(FloatToStrF(gdim,ffFixed,5,2)));
 
@@ -151,9 +159,10 @@ begin
   Result += '&ELON=&ELAT=' + POSTPART3;
 end;
 //-----------------------------------------
-function MakeDENIS_Post(const tmass:string; const asec:Word; Je,Ke:Real):string;
+function MakeDENIS_Post(const j2ra,j2dex:Real; const asec:Word; Je,Ke:Real):string;
 var jmin,jmax,kmin,kmax:Real;
     jrange,krange:string;
+    pos_string:string;
 begin
   jmin := Je - 0.35;  jmax := Je + 0.35;
   kmin := Ke - 0.35;  kmax := Ke + 0.35;
@@ -161,11 +170,13 @@ begin
   jrange := EncodeURLElement(jrange + Trim(FloatToStrF(jmax,ffFixed,6,2)));
   krange := Trim(FloatToStrF(kmin,ffFixed,6,2)) + ' .. ';
   krange := EncodeURLElement(krange + Trim(FloatToStrF(kmax,ffFixed,6,2)));
+
+  pos_string := Pos2String(j2ra,j2dex);
   // building the post
   Result := '-to=4&-from=-3&-this=-3&%2F%2Fsource=B%2Fdenis&%2F%2Ftables=B%2F';
   Result += 'denis%2Fdenis' + POSTPART1 + 'cat%3AB%2Fdenis%26tab%3A%7BB%2F';
   Result += 'denis%2Fdenis%7D%26key%3Asource%3DB%2Fdenis' + POSTPARTX;
-  Result += EncodeURLElement(tmass) + '&-c.eq=J2000&-c.r=' + IntToStr(asec);
+  Result += pos_string + '&-c.eq=J2000&-c.r=' + IntToStr(asec);
   Result += '&-c.u=arcsec&-c.geom=r&-source=B%2Fdenis%2Fdenis&-order=I';
   Result += '&-out.orig=standard&Image=&Strip=&-out=RAJ2000&RAJ2000=';
   Result += '&-out=DEJ2000&DEJ2000=&-out=Imag&Imag=&-out=e_Imag&e_Imag=';
