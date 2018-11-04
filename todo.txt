@@ -1,7 +1,6 @@
 TODO for NSTARS
 ----------------------------
 delete selected system and everything after
-Enable/Disable menu items depending on selection (Mostly done)
 Figure out how to handle hot Brown Dwarfs and ultracool L stars
 Better Mass estimates for hot stars.
 Get More accurate Bolo/TEff estimates for Hot Stars (PARTLY DONE)
@@ -12,7 +11,8 @@ TEffs, colors, and BCv for late K and M subdwarfs.
 Check for oddities (ongoing)
 Add extra photometry?
 Better mass estimates in general. (MOSTLY DONE)
-Update mass estimates for Subgiants
+Update mass estimates for Subgiants (MOSTLY DONE)
 Try to get better info/estimates for low mass white dwarfs.
 Add ability to export parts of the list to a separate list.
+Check for Pllx errors and Gaia companions.
 

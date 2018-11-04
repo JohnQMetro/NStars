@@ -25,10 +25,10 @@ function SDSS_ugriz2BVRI(u,g,r,i,z:Real; out Bj,Vj,Rc,Ic:Real):Boolean;
 procedure SDSS_gri2BVRI_c(g,r,i:Real; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency);
 function SDSS_ugriz2BVRI_c(u,g,r,i,z:Real; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency):Boolean;
 procedure SDSSpAB_to_SDSS(up,gp,rp,ip,zp:Real; out u,g,r,i,z:Real);
-function APASS_to_Fluxes(indata:string; out VBinc:Boolean; out Vj,Vje,Vest:Real;
+function APASS_to_Fluxes(indata:string; J:Currency; out VBinc:Boolean; out Vj,Vje,Vest:Real;
                                         out Bj,Bje,Best,Rc,Ic:Currency):Boolean;
 function SDSS_to_Fluxes(indata:string; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency):Boolean;
-procedure Pgri_to_BVRI(gp,rp,ip:Real; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency);
+procedure Pgri_to_BVRI(gp,rp,ip:Real; J:Currency; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency);
 function PanSTARRSgri_to_BVRI(gp,rp,ip:Real; out Bj,Vj,Rc,Ic:Real):Boolean;
 (* UCAC4 fits *)
 function UCAC4_To_VRI(UCACin,J,G1,G2:Currency; out Vest:Real; out RcEst:Currency; out IcEst:Currency):Boolean;
@@ -251,7 +251,7 @@ end;
 //----------------------------------------------------------
 (* Takes [BV]gri magnitudes from the APASS catalog (cut and pasted from VizieR
 as a single string), and converts them to numeric values *)
-function APASS_to_Fluxes(indata:string; out VBinc:Boolean; out Vj,Vje,Vest:Real;
+function APASS_to_Fluxes(indata:string; J:Currency; out VBinc:Boolean; out Vj,Vje,Vest:Real;
                                         out Bj,Bje,Best,Rc,Ic:Currency):Boolean;
 var maglist:RealArray;
     mllen:Integer;
@@ -278,7 +278,7 @@ begin
     bc := maglist[2];    berr := maglist[3];
   end;
   // now, we convert SDSS gri to estimates for V,B,Rc, and Ic
-  Pgri_to_BVRI(gc,rcs,ics,Best,Vest,Rc,Ic);
+  Pgri_to_BVRI(gc,rcs,ics,J,Best,Vest,Rc,Ic);
   // also, adding non-converted V,B (if available)
   if VBInc then begin
     Vj := vc;
@@ -342,10 +342,10 @@ begin
 end;
 //-------------------------------------------------------------------------
 // takes g' r' i' insput (Real) and produces B V Rc Ic output
-procedure Pgri_to_BVRI(gp,rp,ip:Real; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency);
+procedure Pgri_to_BVRI(gp,rp,ip:Real; J:Currency; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency);
 var g,r,i:Real;
     gmik:Boolean;
-    gmr,gmi,interm:Real;
+    gmr,gmi,gmj,interm:Real;
     dottarg:RealArray;
 const rcoff:array[0..2] of Real = ( 0.69278, 0.0011081, 0.07592 );
 begin
@@ -359,6 +359,14 @@ begin
     interm := PolEval(gmi,rcoff,3) + 0.47729*gmr;
     Rc := gp - interm;
   end;
+  (* Ic as well? *)
+  if gmik then begin
+    if MakeColorCheck(gp,J,3.472,7.668,gmj) then begin
+      interm := 0.1803 + 0.28922*gmi + 0.50176*gmj;
+    end else interm := 0.29588 + 1.1297*gmi;
+    Ic := gp - interm;
+  end;
+
 end;
 //-----------------------------------------------------------
 (* From 'Transformation of Pan-STARRS1 gri to Stetson BVRI magnitudes. Photometry
@@ -421,7 +429,7 @@ begin
   // computing source color
   ucmj := CurrToReal(UCACin) - CurrToReal(J);
   if (ucmj < 2.23) or (ucmj > 6.745) then Exit;
-  // uses accurate Rc for 705 stars (SN 35,38)
+  // uses accurate V for 705 stars (SN 35,38,NOFS)
   if MakeColorCheck(G2,J,1.937,3.687,gmj)  and (ucmj < 5.616) then begin
     resval := -0.54203+ 0.3778*ucmj + 1.1322*gmj;
   end else if MakeColorCheck(G1,J,1.833,3.22,gmj)  and (ucmj < 5.178) then begin

@@ -87,7 +87,7 @@ begin
      buffer1 := Trim(Copy(linein,234+soff,7));
      if StrToReal(buffer1,ipv) then begin
         // only here can we convert g' r' i' to BVRcIc
-        Pgri_to_BVRI(gpv,rpv,ipv,btemp,vtemp,impres.Rmag,impres.Imag);
+        Pgri_to_BVRI(gpv,rpv,ipv,99.999,btemp,vtemp,impres.Rmag,impres.Imag);
         if impres.Vmag > 99 then impres.Vmag := vtemp;
         if impres.Bmag > 99 then impres.Bmag := btemp;
      end;

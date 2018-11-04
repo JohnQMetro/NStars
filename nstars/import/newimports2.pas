@@ -781,7 +781,7 @@ begin
     buffer1 := Trim(Copy(linein,107,6));
     if StrToReal(buffer1,xi) then begin
       // now, we convert APASS gri to estimates for V,B,Rc, and Ic
-      Pgri_to_BVRI(xg,xr,xi ,Best,Vest,impres.Rmag,impres.Imag);
+      Pgri_to_BVRI(xg,xr,xi,99.999 ,Best,Vest,impres.Rmag,impres.Imag);
       if (impres.Bmag > 90) and (Best < 90) then impres.Bmag := Best;
       if (impres.Vmag > 90) and (Vest < 90) then impres.Vmag := Vest;
     end;
@@ -1047,7 +1047,7 @@ begin
   // converting g r i to Rc and Ic
   if (rtemp1>0) and (rtemp2>0) and (rtemp3>0) then begin
     // now, we convert SDSS gri to estimates for V,B,Rc, and Ic
-    Pgri_to_BVRI(rtemp1,rtemp2,rtemp3,Best,Vest,impres.Rmag,impres.Imag);
+    Pgri_to_BVRI(rtemp1,rtemp2,rtemp3,99.999,Best,Vest,impres.Rmag,impres.Imag);
     if impres.Bmag > 90 then impres.Bmag := Best;
   end;
   // spectral type...     kinda crude
@@ -1184,7 +1184,7 @@ begin
   if StrToRealBoth(slist[35],slist[36],rtemp1,rtemp2) then begin
     if StrToReal(slist[37],rtemp3) then begin
        // now, we convert SDSS gri to estimates for V,B,Rc, and Ic
-       Pgri_to_BVRI(rtemp1,rtemp2,rtemp3,Best,Vest,impres.Rmag,impres.Imag);
+       Pgri_to_BVRI(rtemp1,rtemp2,rtemp3,99.999,Best,Vest,impres.Rmag,impres.Imag);
        if impres.Bmag > 90 then impres.Bmag := Best;
        if impres.Vmag > 90 then impres.Vmag := Vest;
     end;

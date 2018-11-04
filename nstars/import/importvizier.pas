@@ -62,7 +62,7 @@ APASSVizieRData = class(VizieRDataBase)
     // private method
     procedure APASSReset;
     procedure NewAPASSRow;
-    function SetFromAPASS():Boolean;
+    function SetFromAPASS(const J:Currency):Boolean;
 
   public
     // properties
@@ -70,7 +70,7 @@ APASSVizieRData = class(VizieRDataBase)
     property APASSDone:Boolean read Qhapass;
     // external methods
     constructor Create;
-    function SetFromString(inraw:string):Boolean;
+    function SetFromString(inraw:string; const J:Currency):Boolean;
     function GetAPASS_String(aindex:Integer; out resval:string):Boolean;
     // APASS access methods
     function GetAPASS_V(const index:Integer; out targ:Real):Boolean;
@@ -114,7 +114,7 @@ end;
 //---------------------------------------------------------------
 const invmag:Currency = 99.999;
 //-------------------------------------------------------------
-function GetFromVizier(targetname:string):APASSVizieRData;
+function GetFromVizier(targetname:string; const J:Currency):APASSVizieRData;
 function Get2MASSFromVizier(targ2mass:string):VizieR2MASSData;
 function GetGaiaFromVizier(targ_gaia:string):VizieRGaiaData;
 
@@ -318,7 +318,7 @@ begin
 end;
 //---------------------------------------------
 // private method
-function APASSVizieRData.SetFromAPASS():Boolean;
+function APASSVizieRData.SetFromAPASS(const J:Currency):Boolean;
 var vmag,vemag,bmag,bemag,gmag,rmag,imag:string;
     havegri,haveall,convok,vbinc:Boolean;
     convertstr:string;
@@ -364,7 +364,7 @@ begin
           convertstr += bmag + ' ' + bemag + ' ';
         end;
         convertstr += gmag + ' 0 ' + rmag + ' 0 ' + imag + ' 0';
-        convok := APASS_to_Fluxes(convertstr,vbinc,apass_v[mdex],apass_ve[mdex],
+        convok := APASS_to_Fluxes(convertstr,J,vbinc,apass_v[mdex],apass_ve[mdex],
               vest,apass_b[mdex],apass_be[mdex],best,apass_rc[mdex],apass_ic[mdex]);
         // post conversion finishing
         if not vbinc then begin
@@ -392,13 +392,13 @@ begin
   apass := False;
 end;
 //--------------------------
-function APASSVizieRData.SetFromString(inraw:string):Boolean;
+function APASSVizieRData.SetFromString(inraw:string; const J:Currency):Boolean;
 begin
   // initial setup
   Result := False;
   if not StartParsing(inraw) then Exit;
   APASSReset;
-  Result := SetFromAPASS();
+  Result := SetFromAPASS(J);
 end;
 //-----------------------------
 function APASSVizieRData.GetAPASS_String(aindex:Integer; out resval:string):Boolean;
@@ -642,7 +642,7 @@ end;
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++
-function GetFromVizier(targetname:string):APASSVizieRData;
+function GetFromVizier(targetname:string; const J:Currency):APASSVizieRData;
 var params:string;
     dok:Boolean;
     downstring:string;
@@ -662,7 +662,7 @@ begin
   *)
   // parsing
   Result := APASSVizieRData.Create;
-  dok := Result.SetFromString(downstring);
+  dok := Result.SetFromString(downstring,J);
   if not dok then FreeAndNil(Result);
 end;
 //-------------------------------------------------------------

@@ -864,13 +864,16 @@ var usingVB:Boolean;
     out_B,out_Be,out_Best:Currency;
     out_V,out_Ve,out_Vest:Real;
     out_Rc,out_Ic:Currency;
+    Jx:Currency;
     msgdata:string;
     rval:Word;
 const amsg = 'BVRI converted/used from APASS.';
 begin
   Result := False;
   Assert(cstar<>nil);
-  if not APASS_to_Fluxes(indata,usingVB,out_V,out_Ve,out_Vest,out_B,out_Be,
+  if cstar.fluxtemp = nil then Jx := 99.999
+  else Jx := cstar.fluxtemp.J_mag;
+  if not APASS_to_Fluxes(indata,Jx,usingVB,out_V,out_Ve,out_Vest,out_B,out_Be,
                                     out_Best,out_Rc,out_Ic) then begin
     ShowMessage('Unable to parse or convert the input!');
     Exit;
@@ -1029,6 +1032,7 @@ var gname:string;
     downsim:SimbadData;
     outdex,outmax:Integer;
     outmsg,buffer,simburl:string;
+    Jx:Currency;
     rval:Word;
     vmago:Real;
     fetchfail:Boolean;
@@ -1046,11 +1050,13 @@ begin
     if fok then begin
       // finally, we can truly start here!
       Screen.Cursor := crHourGlass;
+      if ccomponent.fluxtemp = nil then Jx := 99.999
+      else Jx := ccomponent.fluxtemp.J_mag;
       if simbadalso then begin
         simburl := MakeSimbadIdLookupURL(gname);
         downsim := GetSimbadDataURL(simburl,fetchfail);
       end else downsim := nil;
-      downd := GetFromVizier(gname);
+      downd := GetFromVizier(gname,Jx);
       if downd = nil then begin
         Screen.Cursor := crDefault;
         ShowMessage('Unable to find valid APASS results!')
