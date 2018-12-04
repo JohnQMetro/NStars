@@ -43,6 +43,7 @@ type
     GaiaMagGetMI: TMenuItem;
     MenuItem12: TMenuItem;
     EstJHKPSMI: TMenuItem;
+    MI_DATeff: TMenuItem;
     MI_GG1_A: TMenuItem;
     MI_GG1_B: TMenuItem;
     MI_DR2_BVRI: TMenuItem;
@@ -262,6 +263,7 @@ type
     procedure MergeIntoMIClick(Sender: TObject);
     procedure MISwapParallaxClick(Sender: TObject);
     procedure MI_BulkMatchTGASClick(Sender: TObject);
+    procedure MI_DATeffClick(Sender: TObject);
     procedure MI_DR2_BVRIClick(Sender: TObject);
     procedure MI_DR2_GuessVClick(Sender: TObject);
     procedure MI_DR2_JHKClick(Sender: TObject);
@@ -2289,6 +2291,18 @@ begin
   end;
   Screen.Cursor := crDefault;
   ShowMessage('All Done');
+end;
+
+procedure TNStarsMainForm.MI_DATeffClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.DA_GaiaTEff();
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
 end;
 
 procedure TNStarsMainForm.MI_DR2_BVRIClick(Sender: TObject);

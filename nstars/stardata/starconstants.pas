@@ -217,8 +217,8 @@ begin
   for findex := 0 to 18 do begin
     if doalt then begin
       if uselog then tempdiff := log10(MTempTableAlt[findex])-(MTempTableAlt[findex+1])
-      else tempdiff := MTempTableAlt[findex]-MTempTableAlt[findex+1];
-      bcvdiff := MBCorAlt[findex]-MBCorAlt[findex+1];
+      else tempdiff := MTempTableAlt[findex]-MTempTableAlt[findex+1];   // +
+      bcvdiff := MBCorAlt[findex]-MBCorAlt[findex+1];                   // +
     end else begin
       if uselog then tempdiff := log10(MTempTableM[findex])-log10(MTempTableM[findex+1])
       else tempdiff := MTempTableM[findex]-MTempTableM[findex+1];
@@ -242,8 +242,8 @@ begin
     pos1 := 7;
     for tempdex := 19 downto 0 do begin
       if Teffin <= GetMTemp(tempdex) then Break;
-      pos2 := tempdex;
     end;
+    pos2 := tempdex;
   end
   // finding where to look, O thru K dwarfs
   else begin
@@ -276,21 +276,21 @@ begin
     // M Dwarf Case
     if fpos1 = 7 then begin
         // getting the temp (or log(temp)) difference
-        if uselog then teffdiff := log10(Teffin) - log10(GetMTemp(fpos2))
-        else teffdiff := Teffin - GetMTemp(fpos2);
+        if uselog then teffdiff := log10(GetMTemp(fpos2)) - log10(Teffin)
+        else teffdiff := GetMTemp(fpos2) - Teffin;
         // calculating the new BCv
         bcdiff := teffdiff*MBCv_Slopes[fpos2];
-        if altMSeq then estBcV := MBCorAlt[fpos2] + bcdiff
-        else estBcV := MBCorM[fpos2] + bcdiff;
+        if altMSeq then estBcV := MBCorAlt[fpos2] - bcdiff
+        else estBcV := MBCorM[fpos2] - bcdiff;
     end
     // B to K dwarf case
     else begin
       // getting the temp (or log(temp)) difference
-      if uselog then teffdiff := log10(Teffin) - log10(TempTable[fpos1][fpos2])
-      else teffdiff := Teffin - TempTable[fpos1][fpos2];
+      if uselog then teffdiff := log10(TempTable[fpos1][fpos2])- log10(Teffin)
+      else teffdiff := TempTable[fpos1][fpos2] - Teffin;
       // calculating the new BCv
       bcdiff := teffdiff*BCv_Slopes[fpos1][fpos2];
-      estBcV := BCorTable[fpos1][fpos2] + bcdiff
+      estBcV := BCorTable[fpos1][fpos2] - bcdiff
     end;
     // done
     Result := True;

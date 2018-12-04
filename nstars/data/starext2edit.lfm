@@ -7,8 +7,8 @@ object StarExtras2Frame: TStarExtras2Frame
   ClientWidth = 582
   OnClick = FrameClick
   TabOrder = 0
-  DesignLeft = 283
-  DesignTop = 120
+  DesignLeft = 370
+  DesignTop = 356
   object FluxGroup: TGroupBox
     Left = 4
     Height = 132

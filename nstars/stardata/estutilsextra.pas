@@ -275,7 +275,8 @@ end;
 (* From 'How to Constrain your M-Dwarf II (Mann+ 2018). Mk_in is absolute Ks magnitude *)
 function RedDwarfMassFitMann(const Mk_in:Real; out mass_est:Real):Boolean;
 var modmag,logmass:Real;
-const coff:array[0..5] of Real = (-0.64661,-0.21246,-2.6534e-3,7.9485e-3,3.6899e-4,-1.9226e-4);
+// const coff:array[0..5] of Real = (-0.64661,-0.21246,-2.6534e-3,7.9485e-3,3.6899e-4,-1.9226e-4);
+const coff:array[0..5] of Real = (-0.642,-0.208,-8.43e-4,7.87e-3,1.42e-4,-2.13e-4);
 begin
   // boundaries (The paper has a 'safe' range of 4.5 to 10.5)
   Result := False;

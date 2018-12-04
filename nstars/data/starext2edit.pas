@@ -443,29 +443,23 @@ begin
         cval := data_pointer.BminusV(vxmag); // B-V
         if (Length(cval)<>0) and (Length(Result)<>0) then Result += ', ';
         Result += cval;
+        (*
         cval := ' ' + data_pointer.VminusR(vxmag); // V-R
         if (Length(cval)<>0) and (Length(Result)<>0) then Result += ', ';
         Result += cval;
-        (*
+        *)
         cval := ' ' + data_pointer.VminusI(vxmag);
         if (Length(cval)<>0) and (Length(Result)<>0) then Result += ', ';
         Result += cval;
-        *)
         cval := ' ' + data_pointer.VminusK(vxmag); // V-K
         if (Length(cval)<>0) and (Length(Result)<>0) then Result += ', ';
         Result += cval;
       end;
     end;
     // all stars and brown dwarfs can have RIJHK
-    cval := ' ' + data_pointer.RminusI; // R-I
+    cval := ' ' + data_pointer.IminusK;
     if (Length(cval)<>0) and (Length(Result)<>0) then Result += ', ';
     Result += cval;
-    // I'll allow this for brown dwarfs only (for stars, not enough room)
-    if bdwarf then begin
-      cval := ' ' + data_pointer.IminusK;
-      if (Length(cval)<>0) and (Length(Result)<>0) then Result += ', ';
-      Result += cval;
-    end;
     // all stars and brown dwarfs
     cval := ' ' + data_pointer.JminusH; // J-H
     if (Length(cval)<>0) and (Length(Result)<>0) then Result += ', ';

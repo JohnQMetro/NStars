@@ -6,7 +6,7 @@ unit WhiteDwarf;
 interface
 
 uses
-  Classes, SysUtils, DAMath, EstBasics, df_strings;
+  Classes, SysUtils, DAMath, EstBasics, df_strings,utilities;
 //********************************************************************
 const
 (* used for white dwarf mass estimation *)
@@ -25,7 +25,7 @@ Holberg & Bergeron (2006, AJ, 132, 1221), Kowalski & Saumon (2006, ApJ, 651,
 L137), Tremblay et al. (2011, ApJ, 730, 128), and Bergeron et al. (2011, ApJ,
 737, 28).
 - This data is used to estimate BCv and Thermal Bloat from TEff and log g. *)
-  WDBoloEntry = class
+WDBoloEntry = class
   protected
     radius,zradius:Real;
     procedure CalculateRadius();
@@ -101,6 +101,8 @@ procedure FillInWhiteDwarfArray;
 function WhiteDwarfRadiusToMassLookup(const inradius:Real; out massest:Real):Boolean;
 function FillZhamiMassToRadiusArray():Integer;
 function ZhamiLookup(inmass:Real; out foundrad:Real):Boolean;
+// TEff estimates for White Dwarfs
+function EstDATEff_DR2(const BPmRP:Currency; out TEff_est:Integer):Boolean;
 // extra tests
 procedure MakeWDMassRadiusCSV();
 //********************************************************************
@@ -987,6 +989,28 @@ begin
   lindex := Round(inmass);
   foundrad := zhami_mass_radius[lindex];
   Result := True;
+end;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// TEff estimates for White Dwarfs
+(* Fitted in 2 parts using poly trend line in Libre Office, data from
+Gentile Fusillo+ 2018 (https://arxiv.org/abs/1807.03315) *)
+function EstDATEff_DR2(const BPmRP:Currency; out TEff_est:Integer):Boolean;
+var bprpr,interm:Real;
+    tempint:Int64;
+const hot_coff:array[0..5] of Real = (1.179e4,-1.631e4,2.583e4,-3.77e4,3.428e4,-1.265e4);
+      cool_coff:array[0..3] of Real = (1.031e4,-8774,5139,-1401);
+begin
+  Result := False;
+  // bounds
+  if (BPmRP < -0.455) or (BPmRP > 1.64) then Exit;
+  // the ranges of the 2 equation overlap. I'll set the division at 0.87
+  bprpr := CurrToReal(BPmRP);
+  if (bprpr < 0.87) then interm := PolEval(bprpr,hot_coff,6)
+  else interm := PolEval(bprpr,cool_coff,4);
+  // rounding
+  Result := True;
+  tempint := round(interm/50);
+  TEff_est := tempint*50;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // testing White Dwarf radius to mass stuff

@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Dialogs, Controls, Forms, StrUtils,
   tgas, stardata, newlocation, star_names (* namedata*), NewStar, constellation, gaiadr2holder,
   simbad, guessstype, sptfluxest, fluxtransform, starext2, importvizier,
-  df_strings, Utilities, gaiadr2types, utilities2, fluxgaia;
+  df_strings, Utilities, gaiadr2types, utilities2, fluxgaia, WhiteDwarf;
 
 type
 
@@ -80,6 +80,7 @@ StarProxy = class
     function GuessVFromG():Boolean;
     function PanStarrsJHK(indata:string):Boolean;
     function GG1_VRI(useRP:Boolean):Boolean;
+    function DA_GaiaTEff():Boolean;
 end;
 
 var
@@ -1526,6 +1527,39 @@ begin
   if useRP then qmsg := amsg + '+RP.'
   else qmsg := amsg + '.';
   Result := ShowEst(Vest,99.9999,Rcest,Icest,qmsg);
+end;
+//-----------------------------------------------------------
+function StarProxy.DA_GaiaTEff():Boolean;
+var bpmrp:Currency;  teff:Integer;
+    okay:Boolean;
+    rval:Word;       msg:string;
+begin
+  Result := False;
+  // checking if we have the magnitudes
+  okay := (ccomponent <> nil) and (ccomponent.dr2mags <> nil);
+  okay := okay and ccomponent.dr2mags.ValidBPmRP;
+  if not okay then begin
+    ShowMessage('Cannot estimate, missing magnitudes.');
+    Exit;
+  end;
+  // computing TEff estimate
+  bpmrp := ccomponent.dr2mags.BPminRP;
+  okay := EstDATEff_DR2(bpmrp,teff);
+  if not okay then begin
+    ShowMessage('Cannot estimate, Colours out of bounds.');
+    Exit;
+  end;
+  // showing the TEff and asking if we use it...
+  msg := 'TEff guess is: ' + IntToStr(teff) + 'K' + sLineBreak;
+  msg += 'Do you want to use this value?';
+  rval := mrNo;
+  rval := MessageDlg(msg, mtConfirmation,[mbYes, mbNo],0);
+  if (rval = mrYes) then begin
+    if ccomponent.fluxtemp = nil then ccomponent.fluxtemp := StarFluxPlus.Create;
+    ccomponent.fluxtemp.EffectiveTemp := teff;
+    sys.UpdateEstimates;
+    Result := True;
+  end;
 end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 begin
