@@ -8,9 +8,11 @@
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos Y="20"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="3"/>
+        <CursorPos X="20" Y="14"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
@@ -20,8 +22,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="6"/>
-        <TopLine Value="2289"/>
-        <CursorPos X="34" Y="2300"/>
+        <TopLine Value="2526"/>
+        <CursorPos X="5" Y="2538"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -117,10 +119,11 @@
       <Unit11>
         <Filename Value="data\stardata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1799"/>
-        <CursorPos X="8" Y="1808"/>
+        <EditorIndex Value="7"/>
+        <TopLine Value="2516"/>
+        <CursorPos X="31" Y="2536"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
@@ -170,12 +173,10 @@
         <ComponentName Value="StarExtraDataFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="252"/>
         <CursorPos Y="281"/>
         <UsageCount Value="212"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -216,11 +217,10 @@
         <Filename Value="data\starext2.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarExt2"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="911"/>
         <CursorPos X="27" Y="155"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
@@ -229,11 +229,10 @@
         <ComponentName Value="StarExtras2Frame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="436"/>
         <CursorPos X="11" Y="450"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
@@ -360,21 +359,20 @@
       <Unit33>
         <Filename Value="guessstype.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="293"/>
-        <CursorPos Y="305"/>
+        <EditorIndex Value="9"/>
+        <TopLine Value="75"/>
+        <CursorPos Y="72"/>
         <UsageCount Value="210"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
       <Unit34>
         <Filename Value="stardata\starconstants.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="275"/>
         <CursorPos Y="282"/>
         <UsageCount Value="207"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit34>
       <Unit35>
@@ -391,29 +389,27 @@
         <Filename Value="stardata\whitedwarf.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="WhiteDwarf"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="94"/>
         <CursorPos X="10" Y="105"/>
         <UsageCount Value="204"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit36>
       <Unit37>
         <Filename Value="stardata\teffbcv.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TEffBCv"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="373"/>
         <CursorPos X="3" Y="379"/>
         <UsageCount Value="203"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit37>
       <Unit38>
         <Filename Value="stardata\sptfluxest.pas"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="994"/>
-        <CursorPos X="5" Y="994"/>
+        <TopLine Value="1117"/>
+        <CursorPos X="3" Y="1036"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
           <Item0 Y="560"/>
@@ -425,34 +421,33 @@
         <Filename Value="stardata\estutilsextra.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EstUtilsExtra"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="4"/>
         <CursorPos X="73" Y="277"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
         <Filename Value="stardata\starestimator.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarEstimator"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="769"/>
         <CursorPos Y="800"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
           <Item0 X="5" Y="1271" ID="1"/>
         </Bookmarks>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit40>
       <Unit41>
         <Filename Value="stardata\fluxtransform.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="247"/>
-        <CursorPos X="29" Y="281"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="76"/>
+        <CursorPos Y="79"/>
         <UsageCount Value="204"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
       <Unit42>
@@ -525,9 +520,11 @@
       <Unit49>
         <Filename Value="gaia\dr2iothreads.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="69" Y="8"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="57"/>
+        <CursorPos X="5" Y="14"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit49>
       <Unit50>
@@ -547,10 +544,11 @@
         <ComponentName Value="GaiaDR2LSourceForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="176"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="4"/>
         <CursorPos X="21" Y="197"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit51>
       <Unit52>
@@ -577,9 +575,9 @@
       <Unit54>
         <Filename Value="startproxy.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="1524"/>
-        <CursorPos X="20" Y="1532"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="1510"/>
+        <CursorPos X="53" Y="1528"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -627,20 +625,21 @@
       <Unit59>
         <Filename Value="data\star_names.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="10"/>
         <CursorPos X="40" Y="86"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
         <Filename Value="gaia\fluxgaia.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="641"/>
-        <CursorPos Y="629"/>
-        <UsageCount Value="138"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="614"/>
+        <CursorPos X="28" Y="635"/>
+        <UsageCount Value="143"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit60>
       <Unit61>
@@ -649,7 +648,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="49"/>
         <CursorPos Y="60"/>
-        <UsageCount Value="109"/>
+        <UsageCount Value="114"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit61>
       <Unit62>
@@ -659,7 +658,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="6"/>
         <CursorPos X="47" Y="28"/>
-        <UsageCount Value="106"/>
+        <UsageCount Value="111"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit62>
       <Unit63>
@@ -669,7 +668,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="308"/>
         <CursorPos X="50" Y="330"/>
-        <UsageCount Value="101"/>
+        <UsageCount Value="106"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit63>
       <Unit64>
@@ -843,129 +842,129 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="279" TopLine="268"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="692" Column="7" TopLine="675"/>
       </Position1>
       <Position2>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="280" TopLine="268"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="689" Column="40" TopLine="671"/>
       </Position2>
       <Position3>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="296" TopLine="277"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="723" Column="39" TopLine="708"/>
       </Position3>
       <Position4>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="271" TopLine="259"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="39" Column="17" TopLine="28"/>
       </Position4>
       <Position5>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="279" TopLine="269"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="427" Column="10" TopLine="417"/>
       </Position5>
       <Position6>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="280" TopLine="269"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="30" Column="19" TopLine="19"/>
       </Position6>
       <Position7>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="282" TopLine="269"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1326" TopLine="1311"/>
       </Position7>
       <Position8>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="296" TopLine="285"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1297" TopLine="1286"/>
       </Position8>
       <Position9>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="271" TopLine="259"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1332" TopLine="1321"/>
       </Position9>
       <Position10>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="279" TopLine="259"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1297" Column="16" TopLine="1286"/>
       </Position10>
       <Position11>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="280" TopLine="260"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="49" Column="16" TopLine="36"/>
       </Position11>
       <Position12>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="282" TopLine="262"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="38" Column="16" TopLine="28"/>
       </Position12>
       <Position13>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="296" TopLine="285"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="425" TopLine="411"/>
       </Position13>
       <Position14>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="271" TopLine="259"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1332" TopLine="1321"/>
       </Position14>
       <Position15>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="279" TopLine="269"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1324" Column="36" TopLine="1321"/>
       </Position15>
       <Position16>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="280" TopLine="269"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1332" TopLine="1321"/>
       </Position16>
       <Position17>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="282" TopLine="269"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="424" TopLine="411"/>
       </Position17>
       <Position18>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="296" TopLine="285"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="425" TopLine="411"/>
       </Position18>
       <Position19>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="271" TopLine="259"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="711" TopLine="699"/>
       </Position19>
       <Position20>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="279" TopLine="259"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1277" TopLine="1266"/>
       </Position20>
       <Position21>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="280" TopLine="260"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="690" Column="16" TopLine="676"/>
       </Position21>
       <Position22>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="244" Column="25" TopLine="229"/>
+        <Filename Value="nstars.lpr"/>
+        <Caret Line="14" Column="20" TopLine="3"/>
       </Position22>
       <Position23>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="115" Column="10" TopLine="103"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="1808" Column="8" TopLine="1799"/>
       </Position23>
       <Position24>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="279" Column="63" TopLine="270"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2359" Column="36" TopLine="2351"/>
       </Position24>
       <Position25>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="119" Column="16" TopLine="108"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="2362" Column="36" TopLine="2351"/>
       </Position25>
       <Position26>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="115" Column="16" TopLine="103"/>
+        <Filename Value="stardata\sptfluxest.pas"/>
+        <Caret Line="165" Column="15" TopLine="149"/>
       </Position26>
       <Position27>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="283" TopLine="266"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="43" Column="19" TopLine="31"/>
       </Position27>
       <Position28>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="285" TopLine="274"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="644" Column="5" TopLine="629"/>
       </Position28>
       <Position29>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="283" TopLine="274"/>
+        <Filename Value="gaia\fluxgaia.pas"/>
+        <Caret Line="635" Column="28" TopLine="630"/>
       </Position29>
       <Position30>
-        <Filename Value="stardata\starconstants.pas"/>
-        <Caret Line="233" Column="10" TopLine="228"/>
+        <Filename Value="startproxy.pas"/>
+        <Caret Line="1528" Column="53" TopLine="1510"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="9">
+    <BreakPoints Count="6">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -984,51 +983,30 @@
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="guessstype.pas"/>
-        <Line Value="63"/>
+        <Source Value="startproxy.pas"/>
+        <Line Value="1277"/>
       </Item3>
       <Item4>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="guessstype.pas"/>
-        <Line Value="66"/>
+        <Source Value="gaia\fluxgaia.pas"/>
+        <Line Value="721"/>
       </Item4>
       <Item5>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="guessstype.pas"/>
-        <Line Value="67"/>
+        <Source Value="gaia\fluxgaia.pas"/>
+        <Line Value="424"/>
       </Item5>
       <Item6>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="guessstype.pas"/>
-        <Line Value="69"/>
+        <Source Value="gaia\fluxgaia.pas"/>
+        <Line Value="425"/>
       </Item6>
-      <Item7>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="guessstype.pas"/>
-        <Line Value="68"/>
-      </Item7>
-      <Item8>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="guessstype.pas"/>
-        <Line Value="71"/>
-      </Item8>
-      <Item9>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="guessstype.pas"/>
-        <Line Value="72"/>
-      </Item9>
     </BreakPoints>
     <Watches Count="2">
       <Item1>

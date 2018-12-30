@@ -35,15 +35,18 @@ function GaiaToV(dr2mags:GaiaDR2Mags; Jmag:Currency; out Vest:Real):Boolean;
 (* My own transform to B *)
 function Gaia2ToB(Gmag,BPmag,RPmag:Currency; out Best:Currency):Boolean;
 (* My own tranforms to J H K *)
-function GaiaTo_JHK_Wr(dr2mags:GaiaDR2Mags; out Jest,Hest,Ksest:Currency):Boolean;
+function GaiaTo_JHK_Wr(dr2mags:GaiaDR2Mags; useWD:Boolean; out Jest,Hest,Ksest:Currency):Boolean;
 function Gaia2To2MASS_MyWay(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function Gaia2To2MASS_MyWay2(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function Gaia2To2MASS_BadG(BP,RP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function Gaia2To2MASS_BadB(Gin,RP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function Gaia2To2MASS_NoRP(Gin,BP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 (* G - G1 *)
-function Gaia12_To_VRI(G1in,Gin:Currency; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
+function Gaia12_To_VRI(G1in,Gin:Currency; wd:Boolean; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
 function Gaia12RP_To_VRI(G1in,Gin,RPin:Currency; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
+(* White Dwarf specific transforms *)
+function WD_GaiaToVRI(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+function WD_GaiaToJHK(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 
 implementation
 //*******************************************************************************
@@ -408,7 +411,7 @@ end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* General get JHK from Gaia mags. Picks one of the JHKs functions below based
 on the G,BP,RP availability and error size *)
-function GaiaTo_JHK_Wr(dr2mags:GaiaDR2Mags; out Jest,Hest,Ksest:Currency):Boolean;
+function GaiaTo_JHK_Wr(dr2mags:GaiaDR2Mags; useWD:Boolean; out Jest,Hest,Ksest:Currency):Boolean;
 var gc,bc,rc:byte;
     gtest:Boolean;
 begin
@@ -417,6 +420,13 @@ begin
   gc := CheckErr(dr2mags.G,dr2mags.Gerr);
   bc := CheckErr(dr2mags.BP,dr2mags.BPerr);
   rc := CheckErr(dr2mags.RP,dr2mags.RPerr);
+  // wd
+  if (useWD) then begin
+    if (gc > 1) or (bc > 1) or (rc > 1) then Exit;
+    Result := WD_GaiaToJHK(dr2mags.G,dr2mags.BP,dr2mags.RP,Jest,Hest,Ksest);
+    Exit;
+  end;
+
   // we chose functions for J H Ks using gc, bc, and rc
   // in some cases, do not event try
   if (bc > 1) and (rc > 1) then Exit;
@@ -601,28 +611,38 @@ begin
 end;
 //============================================================================
 (* G - G1 *)
-function Gaia12_To_VRI(G1in,Gin:Currency; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
+function Gaia12_To_VRI(G1in,Gin:Currency; wd:Boolean; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
 var interm,gmg1:Real;
 const coffv1:array[0..2] of Real =  ( 1.3896, -10.968, 50.277 );
       coffv2:array[0..2] of Real =  ( 0.14014, -1.175, 46.894 );
       coffr1:array[0..2] of Real =  ( -0.17201, -1.5349, 13.429 );
       coffr2:array[0..3] of Real =  ( -0.10507, -1.0079, -43.004, 382.31 );
       coffi2:array[0..3] of Real =  ( -0.54679, 5.8682, -231.26, 1253.3 );
+      coffi3:array[0..2] of Real =  ( -0.032324, 11.14, -21.293 );
 begin
   Result := False;
   if not MakeColorCheck(Gin,G1in,-0.041,0.25,gmg1) then Exit;
   // V
-  if gmg1 >= 0.1 then interm := PolEval(gmg1,coffv1,3)
-  else interm := PolEval(gmg1,coffv2,3);
+  if wd then interm := -0.042052 + 2.2887*gmg1
+  else begin
+    if gmg1 >= 0.1 then interm := PolEval(gmg1,coffv1,3)
+    else interm := PolEval(gmg1,coffv2,3);
+  end;
   Vest := CurrToReal(Gin) + interm;
   // Rc
-  if gmg1 >= 0.1 then interm := PolEval(gmg1,coffr1,3)
-  else interm := PolEval(gmg1,coffr2,4);
+  if wd then interm := -0.01754 + 4.4352*gmg1
+  else begin
+    if gmg1 >= 0.1 then interm := PolEval(gmg1,coffr1,3)
+    else interm := PolEval(gmg1,coffr2,4);
+  end;
   RcEst := CurrToReal(Gin) + interm;
   RcEst := RoundCurrency(RcEst,False);
   // Ic
-  if gmg1 >= 0.1 then interm := -0.72648 - 3.3531*gmg1
-  else interm := PolEval(gmg1,coffi2,4);
+  if wd then interm := PolEval(gmg1,coffi3,3)
+  else begin
+    if gmg1 >= 0.1 then interm := -0.72648 - 3.3531*gmg1
+    else interm := PolEval(gmg1,coffi2,4);
+  end;
   IcEst := CurrToReal(Gin) + interm;
   IcEst := RoundCurrency(IcEst,False);
   // done
@@ -656,7 +676,69 @@ begin
   // done
   Result := True;
 end;
-
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(* White Dwarf specific transforms *)
+//---------------------------------------
+function WD_GaiaToVRI(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+var interm,bpmg,bpmrp:Real;
+    ok1,ok2:Boolean;
+const coff_vp:array[0..2] of Real = (-0.072114,0.82726,0.26221);
+      coff_ip:array[0..2] of Real = (-0.051756,-0.8131,0.17353);
+begin
+  Result := False;
+  ok1 := MakeColorCheck(BPmag,Gmag,-0.254,0.732,bpmg);
+  ok2 := MakeColorCheck(BPmag,RPmag,-0.555,1.552,bpmrp);
+  if not (ok1 and ok2) then Exit;
+  // V
+  interm := PolEval(bpmrp,coff_vp,3) - 1.9711*bpmg;
+  Vest := CurrToReal(Gmag) + interm;
+  Result := True;
+  // Rc and Ic are based on less data and are less accurate
+  RcEst := 99.999;
+  IcEst := 99.999;
+  if (bpmrp >= -0.376) then begin
+    if (bpmg >= -0.179) then begin
+       interm := -0.04924 - 1.8723*bpmg + 0.47084*bpmg*bpmrp +0.38608*bpmrp;
+       RcEst := CurrToReal(Gmag) + interm;
+       RcEst := RoundCurrency(RcEst,False);
+    end;
+    // Ic is especially inaccurate (std err 0.087, max err 0.6!)
+    interm := PolEval(bpmrp,coff_ip,3);
+    IcEst := CurrToReal(Gmag) + interm;
+    IcEst := RoundCurrency(IcEst,False);
+  end;
+end;
+//--------------------------------------
+// J H K needs a custom transform more, but accuracies are relativly poor...
+function WD_GaiaToJHK(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
+var interm,bpmrp,gmrp:Real;
+const coff_jp:array[0..3] of Real = (-0.063243,1.3532 , 0.054762,-0.16766);
+      coff_hp:array[0..3] of Real = (-0.12813 ,0.22817, 0.29664 ,-0.28919);
+      coff_kp:array[0..2] of Real = (-0.12973 ,2.9173 ,-0.32451);
+begin
+  Result := False;
+  // J mag
+  if not MakeColorCheck(BPmag,RPmag,-0.555,1.594,bpmrp) then Exit;
+  interm := PolEval(bpmrp,coff_jp,4);
+  Jest := Gmag - RealToCurr(interm);
+  Jest := RoundCurrency(Jest,False);
+  Result := True;
+  // H mag and Ks mag
+  Hest := 99.999;
+  Ksest := 99.999;
+  if not MakeColorCheck(Gmag,RPmag,-0.301,1.128,gmrp) then Exit;
+  // H mag
+  if bpmrp <= 1.552 then begin
+    interm := PolEval(bpmrp,coff_hp,4) + 2.2561*gmrp;
+    Hest := Gmag - RealToCurr(interm);
+    Hest := RoundCurrency(Hest,False);
+  end;
+  // Ks mag
+  if (gmrp < -0.235) or (gmrp > 0.889) then Exit;
+  interm := PolEval(gmrp,coff_kp,3);
+  Ksest := Gmag - RealToCurr(interm);
+  Ksest := RoundCurrency(Ksest,False);
+end;
 
 
 //******************************************************************************

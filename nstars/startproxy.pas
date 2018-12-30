@@ -1248,7 +1248,7 @@ begin
 end;
 //-------------------------------------------
 function StarProxy.BPRP_To_VRI():Boolean;
-var okay,dored:Boolean;
+var okay,dored,isWD:Boolean;
     cpick:Integer;
     Gin,BPmRP, BPin,RPin,Jin:Currency;
     Best,Rcest,Icest:Currency;
@@ -1268,27 +1268,33 @@ begin
      ShowMessage('Object does not have enough Gaia Magnitudes!');
      Exit;
   end;
-  // we have different methods depending on values...
-  if ccomponent.fluxtemp = nil then Jin := 99.999
-  else Jin := ccomponent.fluxtemp.J_mag;
-  cpick := GaiaTransHelper(ccomponent.dr2mags,Jin);
-
   BPin := ccomponent.dr2mags.BP;
   RPin := ccomponent.dr2mags.RP;
-  BPmRP := ccomponent.dr2mags.BPminRP;
   Gin := ccomponent.dr2mags.G;
-  okay := False;
-  // red
-  if cpick = 1 then begin
-    Jin := ccomponent.fluxtemp.J_mag;
-    okay := GaiaToVRI_Red(Gin,RPin,Jin,Vest,Rcest,Icest);
-  end else if cpick = 2 then begin
-    okay := GaiaToVRI_Blue(Gin,BPin,Vest,Rcest,Icest);
-  end else if cpick = 3 then begin
-    Jin := ccomponent.fluxtemp.J_mag;
-    okay := GaiaToVRI_2M(Gin,Jin,Vest,Rcest,Icest);
+  // special white dwarf specific method
+  isWD := AnsiStartsStr('D',ccomponent.SpectralClass);
+  if isWD then begin
+    okay := WD_GaiaToVRI(Gin,Bpin,RPin,Vest,Rcest,Icest);
+  end
+  else begin
+    // we have different methods depending on values...
+    if ccomponent.fluxtemp = nil then Jin := 99.999
+    else Jin := ccomponent.fluxtemp.J_mag;
+    cpick := GaiaTransHelper(ccomponent.dr2mags,Jin);
+    BPmRP := ccomponent.dr2mags.BPminRP;
+    okay := False;
+    // red
+    if cpick = 1 then begin
+      Jin := ccomponent.fluxtemp.J_mag;
+      okay := GaiaToVRI_Red(Gin,RPin,Jin,Vest,Rcest,Icest);
+    end else if cpick = 2 then begin
+      okay := GaiaToVRI_Blue(Gin,BPin,Vest,Rcest,Icest);
+    end else if cpick = 3 then begin
+      Jin := ccomponent.fluxtemp.J_mag;
+      okay := GaiaToVRI_2M(Gin,Jin,Vest,Rcest,Icest);
+    end;
   end;
-  if not okay then begin
+  if (not okay) and (not isWD) then begin
      // for red stars, I'll use my own transform...
      if BPmRP > 2 then okay := Gaia2ToVRI_MyWay(Gin,BPin,RPin,Vest,Rcest,Icest)
      else okay := Gaia2ToVRI(Gin,BPmRP,Vest,Rcest,Icest);
@@ -1303,7 +1309,7 @@ begin
 end;
 //--------------------------------------------------------
 function StarProxy.GaiaDR2_To_JHK():Boolean;
-var okay:Boolean;
+var okay,isWD:Boolean;
     Jest,Hest,Ksest:Currency;
     msgdata:string;
 const amsg = 'estimated from Gaia DR2 magnitudes.';
@@ -1322,7 +1328,8 @@ begin
      Exit;
   end;
   // getting the magnitudes and the values...
-  if not GaiaTo_JHK_Wr(ccomponent.dr2mags,Jest,Hest,Ksest) then begin
+  isWD := AnsiStartsStr('D',ccomponent.SpectralClass);
+  if not GaiaTo_JHK_Wr(ccomponent.dr2mags,isWD,Jest,Hest,Ksest) then begin
     ShowMessage('Cannot estimate: Colors not within range!');
     Exit;
   end;
@@ -1494,7 +1501,7 @@ begin
 end;
 //--------------------------------------------------
 function StarProxy.GG1_VRI(useRP:Boolean):Boolean;
-var okay:Boolean;
+var okay,iswd:Boolean;
     G,G1,RP:Currency;
     Vest:Real;
     RcEst,IcEst:Currency;
@@ -1517,7 +1524,8 @@ begin
   end;
   // calling the methods
   G1 := ccomponent.fluxtemp.gaia_mag;
-  if not useRP then okay := Gaia12_To_VRI(G1,G,Vest,RcEst,IcEst)
+  iswd := AnsiStartsStr('D',ccomponent.SpectralClass);
+  if not useRP then okay := Gaia12_To_VRI(G1,G,iswd,Vest,RcEst,IcEst)
   else okay := Gaia12RP_To_VRI(G1,G,RP,Vest,RcEst,IcEst);
   if not okay then begin
     ShowMessage('Cannot estimate, Colours out of bounds.');
