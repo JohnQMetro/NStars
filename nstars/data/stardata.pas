@@ -1925,7 +1925,8 @@ is >= maxcname, often a sign we need to get more catnames *)
 function StarSystem.NotEnoughCats(maxcname:Integer):Boolean;
 var I:Integer;
 begin
-  I:= nameset.CatalogCount;
+  if nameset = nil then I := 0
+  else I:= nameset.CatalogCount;
   Result := (I<=maxcname);
 end;
 //---------------------------------------------------------
@@ -2107,7 +2108,6 @@ function StarSystem.GaiaVCheck(const MaxDiff:Real):Boolean;
 var stardex:Integer;
     cdr2:GaiaDR2Mags;
     vmagest,vdiff:Real;
-    rdum,idum:Currency;
     tres:Boolean;
     cstar:StarInfo;
     Jin:Currency;

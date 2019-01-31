@@ -15,7 +15,7 @@ uses
   MainLocatEdit, df_strings, sptfluxest, PPMMatchForm, Utilities2, tgas_import,
   export_form, ExtraImports,
   dr2loadstore, dr2sourceload,gaiadr2holder,gaiamagsui, gaiadr2match,
-  gaiadr2add, star_names, VizierID;
+  gaiadr2add, star_names, VizierID, nltt_match;
 
 type
 
@@ -43,6 +43,7 @@ type
     GaiaMagGetMI: TMenuItem;
     MenuItem12: TMenuItem;
     EstJHKPSMI: TMenuItem;
+    MI_NLTTMatcher: TMenuItem;
     MI_DATeff: TMenuItem;
     MI_GG1_A: TMenuItem;
     MI_GG1_B: TMenuItem;
@@ -273,6 +274,7 @@ type
     procedure MI_FindDR2MatchClick(Sender: TObject);
     procedure MI_GG1_AClick(Sender: TObject);
     procedure MI_GG1_BClick(Sender: TObject);
+    procedure MI_NLTTMatcherClick(Sender: TObject);
     procedure MI_PosPMMatchClick(Sender: TObject);
     procedure MI_StartGaiaMatchingClick(Sender: TObject);
     procedure MI_SwapParallaxClick(Sender: TObject);
@@ -2432,6 +2434,40 @@ begin
       StarData1;
     end;
   end;
+end;
+
+procedure TNStarsMainForm.MI_NLTTMatcherClick(Sender: TObject);
+var filterbak,resx:string;
+    inputsource:TFileName;
+    entries:Integer;
+begin
+  filterbak := OpenStarList.Filter;
+  OpenStarList.Filter := CSVFILTER;
+  if OpenStarList.Execute then begin
+    inputsource := OpenStarList.FileName;
+    // create and load object
+    Screen.Cursor := crHourGlass;
+    OpenStarList.Filter := filterbak;
+    nltt_matcher := NLTT_CrossMatch.Create;
+    entries := nltt_matcher.LoadFromFile(inputsource);
+    if (entries = 0) then begin
+      FreeAndNil(nltt_matcher);
+      Screen.Cursor := crDefault;
+      ShowMessage('Import Failed to load any entries!');
+      Exit;
+    end;
+    // do the matching
+    nltt_matcher.DoMatching();
+    resx := nltt_matcher.MakeCountsMessage();
+    Screen.Cursor := crDefault;
+    ShowMessage(resx);
+    // write to file
+    Screen.Cursor := crHourGlass;
+    nltt_matcher.WriteToFile(True,25);
+    FreeAndNil(nltt_matcher);
+    Screen.Cursor := crDefault;
+    ShowMessage('Written to file.')
+  end
 end;
 
 procedure TNStarsMainForm.MI_PosPMMatchClick(Sender: TObject);

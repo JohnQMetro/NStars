@@ -1,5 +1,5 @@
 object NStarsMainForm: TNStarsMainForm
-  Left = 354
+  Left = 368
   Height = 577
   Top = 116
   Width = 851
@@ -29,8 +29,8 @@ object NStarsMainForm: TNStarsMainForm
       Height = 514
       Top = 2
       Width = 628
-      ActivePage = SystemNames
-      TabIndex = 0
+      ActivePage = ComponentTab
+      TabIndex = 1
       TabOrder = 0
       OnChange = SystemEditPageSetChange
       object SystemNames: TTabSheet
@@ -529,21 +529,9 @@ object NStarsMainForm: TNStarsMainForm
               EditLabel.Height = 13
               EditLabel.Top = 0
             end
-            inherited VMagLabel: TLabel
-              Height = 13
-              Width = 54
-            end
-            inherited ArityPicker: TComboBox
-              Height = 21
-              ItemHeight = 13
-            end
             inherited LuminosityDisplay: TLabel
               Height = 13
               Width = 84
-            end
-            inherited VariableTypeCB: TComboBox
-              Height = 21
-              ItemHeight = 13
             end
             inherited StarNoteEdit: TMemo
               Lines.Strings = (
@@ -552,17 +540,9 @@ object NStarsMainForm: TNStarsMainForm
                 '3'
               )
             end
-            inherited ArityLabel: TLabel
-              Height = 13
-              Width = 71
-            end
             inherited CompLabel: TLabel
               Height = 13
               Width = 31
-            end
-            inherited VarTypeLabel: TLabel
-              Height = 13
-              Width = 65
             end
             inherited RadiusLabel: TLabel
               Height = 13
@@ -571,13 +551,6 @@ object NStarsMainForm: TNStarsMainForm
             inherited NotesLabel: TLabel
               Height = 13
               Width = 32
-            end
-            inherited BDMassLabel: TLabel
-              Height = 13
-              Width = 84
-            end
-            inherited BdmePM: TLabel
-              Height = 13
             end
             inherited MassEstLabel: TLabel
               Height = 13
@@ -593,6 +566,62 @@ object NStarsMainForm: TNStarsMainForm
             inherited TEffLabel: TLabel
               Height = 13
               Width = 45
+            end
+            inherited StarPanel: TPanel
+              inherited VMagLabel: TLabel
+                Height = 13
+                Width = 54
+              end
+              inherited ArityPicker: TComboBox
+                Height = 21
+                ItemHeight = 13
+              end
+              inherited VariableTypeCB: TComboBox
+                Height = 21
+                ItemHeight = 13
+              end
+              inherited ArityLabel: TLabel
+                Height = 13
+                Width = 71
+              end
+              inherited VarTypeLabel: TLabel
+                Height = 13
+                Width = 65
+              end
+            end
+            inherited BrownDwarfPanel: TPanel
+              inherited BDMassLabel: TLabel
+                Height = 13
+                Width = 84
+              end
+              inherited BdmePM: TLabel
+                Height = 13
+              end
+            end
+            inherited WhiteDwarfPanel: TPanel
+              inherited WDVMagLabel: TLabel
+                Height = 13
+                Width = 54
+              end
+              inherited CBPulsating: TCheckBox
+                Width = 63
+              end
+              inherited AtmosPicker: TComboBox
+                Height = 21
+                ItemHeight = 13
+              end
+              inherited LbAtmos: TLabel
+                Height = 13
+                Width = 23
+              end
+              inherited WDArityLabel: TLabel
+                Height = 13
+                Width = 71
+              end
+              inherited WDArityPicker: TComboBox
+                Height = 21
+                ItemHeight = 13
+              end
             end
           end
           inline StarCatIDFrame: TCatalogIDEditFrame
@@ -1282,6 +1311,10 @@ object NStarsMainForm: TNStarsMainForm
       object CatDupesScanMI: TMenuItem
         Caption = 'Look for Duplicate IDs...'
         OnClick = CatDupesScanMIClick
+      end
+      object MI_NLTTMatcher: TMenuItem
+        Caption = 'NLTT Match...'
+        OnClick = MI_NLTTMatcherClick
       end
       object N5: TMenuItem
         Caption = '-'

@@ -75,15 +75,31 @@ StarNames = class
     destructor Destroy; override;
 end;
 
+(* Temporary structure, used to assign NLTT identifiers quickly *)
+GaiaNameMap = class
+  protected
+    hlist:TFPHashObjectList;
+  public
+    constructor Create(const capacity:Integer);
+    destructor Destroy;
+    function Contains(const dr2id:string):Boolean;
+    function Add(const dr2id:string; catname_set:StarNames):Boolean;
+    function Remove(const dr2id:string):Boolean;
+    function NLTTSet(const dr2id:string; const nltt_id:string; extra_id:string):Boolean;
+end;
+//--------------------------------------------------------------
 // helpers
 function ComponentsKindaMatch(const tag:string; const first:CatalogID; const second:CatalogID):Boolean;
 function NotDigit(const test:Char):Boolean;
 function MSortList(delim:Char):TStringList;
-
+//-------------------------------------------------------------
 const
   TwoWordIDS:array[0..0] of String = ('Gaia');
-  JCats:array[0..10] of String = ('2MASS','WDS','APMPM','DENIS','SCR','UPM',
-          'SIPS','SDSS','WISE','WISEA','PM');
+  JCats:array[0..11] of String = ('2MASS','WDS','APMPM','DENIS','SCR','UPM',
+          'SIPS','SDSS','WISE','WISEA','PM','SSSPM');
+
+var
+    gaiamap:GaiaNameMap;
 //***************************************************************************
 implementation
 //=========================================================================
@@ -357,7 +373,10 @@ begin
   fdex := catalogs.FindIndexOf(cstr);
   if (fdex >= 0) then catalogs.Delete(fdex);
   catalogs.Add(cstr,tempid);
-  if cstr = 'Gaia DR2' then DR2_IDSet.Add(tempid.id);
+  if cstr = 'Gaia DR2' then begin
+    DR2_IDSet.Add(tempid.id);
+    gaiamap.Add(tempid.id,Self);
+  end;
 end;
 //----------------------------------------------------------
 function StarNames.SetMultipleCat(inval:string):Boolean;
@@ -708,6 +727,54 @@ begin
   catalogs.Free;
   inherited;
 end;
+//==============================================================================
+constructor GaiaNameMap.Create(const capacity:Integer);
+begin
+  hlist := TFPHashObjectList.Create(False);
+  hlist.Capacity:= capacity;
+end;
+//-----------------------------------
+destructor GaiaNameMap.Destroy;
+begin
+  hlist.Clear;
+  hlist.Free;
+end;
+//+++++++++++++++++++++++++++++++++++++++++++++++
+function GaiaNameMap.Contains(const dr2id:string):Boolean;
+begin
+  Result := (hlist.FindIndexOf(dr2id) >= 0);
+end;
+//---------------------------------------
+function GaiaNameMap.Add(const dr2id:string; catname_set:StarNames):Boolean;
+begin
+  Result := False;
+  if Contains(dr2id) then Exit;
+  hlist.Add(dr2id,catname_set);
+  Result := True;
+end;
+//----------------------------------------
+function GaiaNameMap.Remove(const dr2id:string):Boolean;
+var iindex:Integer;
+begin
+  Result := False;
+  iindex := hlist.FindIndexOf(dr2id);
+  if (iindex < 0) then Exit;
+  hlist.Delete(iindex);
+  Result := True;
+end;
+//----------------------------------------
+function GaiaNameMap.NLTTSet(const dr2id:string; const nltt_id:string; extra_id:string):Boolean;
+var iindex:Integer;
+    name_ptr:StarNames;
+begin
+  Result := False;
+  iindex := hlist.FindIndexOf(dr2id);
+  if (iindex < 0) then Exit;
+  name_ptr := (hlist.Items[iindex] as StarNames);
+  name_ptr.SetCat('NLTT ' + nltt_id);
+  if extra_id <> '' then name_ptr.SetCat(extra_id);
+  Result := True;
+end;
 //==============================================================
 // handling the components adds extra complication
 function ComponentsKindaMatch(const tag:string; const first:CatalogID; const second:CatalogID):Boolean;
@@ -744,5 +811,7 @@ begin
 end;
 
 //***************************************************************************
+begin
+  gaiamap := GaiaNameMap.Create(15000);
 end.
 

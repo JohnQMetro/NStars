@@ -100,6 +100,9 @@ ArityType =(SINGLE, POSSIBLY_DOUBLE, SPECTROCOPIC_BINARY, OTHER_BINARY,
 
 TVtypeIndex = 0..(length(vtype)-1);
 
+// white dwarf atmosphere type (WD_D means unspecified)
+WDAtmosEnum = (WD_D,WD_H,WD_He);
+
 function NameExpand(var namein:string):Boolean;
 
 implementation

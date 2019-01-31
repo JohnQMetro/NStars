@@ -9,6 +9,16 @@ uses
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 type
 
+(* Enum to label Gaia Mag quality *)
+GMagQ = (
+      GQ_OK, // all mags good, can use G, BP-RP
+      GQ_BP, // RP is bad, use BP-G if available
+      GQ_RP, // BP is bad, use G-RP if available
+      GQ_G,  // BP and RP bad, but G is okay
+      GQ_BR, // G is bad, but BP and RP are okay
+      GQ_X // other (including all mags bad)
+);
+
 (* Holds G, BP, and RP magnitudes, and objects of this class will be attached to
 stars directly as well as being used in the GaiaDR2Star class. *)
 GaiaDR2Mags = class
@@ -16,6 +26,7 @@ GaiaDR2Mags = class
     const defbad:Currency = 99.999;
     function StrToMag(inval:string; var target:Currency):Boolean;
     function StrToMagE(inval:string; var target:Currency):Boolean;
+    procedure SetQuality();
     function GtoStr:string;
     function BPtoStr:string;
     function RPtoStr:string;
@@ -24,6 +35,7 @@ GaiaDR2Mags = class
   public
     G,BP,RP:Currency; // the core data. note that DR2 G is not the same as DR1 G
     Gerr,BPerr,RPerr:Currency;
+    qual:GMagQ;
     // constants
     const Header = 'G;G err;BP;BP err;RP;RPerr';
     const fieldcount = 6;
@@ -48,6 +60,9 @@ GaiaDR2Mags = class
     procedure ClearG();
     procedure ClearBP();
     procedure ClearRP();
+    procedure SetG_C(Gin,GinE:Currency);
+    procedure SetBP_C(BPin,BPinE:Currency);
+    procedure SetRP_C(RPin,RPinE:Currency);
     // outputting data
     function ToSemiString():string;
     function MakeCopy():GaiaDR2Mags;
@@ -201,6 +216,29 @@ begin
   if inval = '' then target := 0
   else Result := Str2Curr(inval,target);
 end;
+//--------------------------------------------------------
+procedure GaiaDR2Mags.SetQuality();
+var gok1,gok2,bok1,bok2,rok1,rok2:Boolean;
+begin
+    (* GQ_OK, GQ_BP, GQ_RP, GQ_G, GQ_BR, GQ_X *)
+  // reducings things to booleans
+  gok1 := (G < 90) and (Gerr < 0.01);
+  gok2 := (G < 90) and (Gerr < 0.02);
+  bok1 := (BP < 90) and (BPerr < 0.01);
+  bok2 := (BP < 90) and (BPerr < 0.02);
+  rok1 := (RP < 90) and (RPerr < 0.01);
+  rok2 := (RP < 90) and (RPerr < 0.02);
+  // setting the 'good quality pick'
+  if gok1 and bok1 and rok1 then qual := GQ_OK
+  else if gok1 and rok1 then qual := GQ_RP
+  else if gok1 and bok1 then qual := GQ_BP
+  else if rok1 and bok1 then qual := GQ_BR
+  // fallback, only G is good
+  else if gok1 and rok2 and ((RPerr < BPerr) or (BP >= 90)) then qual := GQ_RP
+  else if gok1 and bok2 and ((BPerr < RPerr) or (RP >= 90))  then qual := GQ_BP
+  else if gok1 then qual := GQ_G
+  else qual := GQ_X;
+end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function GaiaDR2Mags.GtoStr:string;
 begin
@@ -231,6 +269,7 @@ constructor GaiaDR2Mags.Create(); overload;
 begin
   G := defbad;  BP := defbad;   RP := defbad;
   Gerr := 0;   BPerr := 0;   RPerr := 0;
+  qual := GQ_X;
 end;
 //--------------------------------------------------
 constructor GaiaDR2Mags.Create(Gstr:string; BPstr:string; RPstr:string); overload;
@@ -239,11 +278,13 @@ begin
   if (not StrToMag(BPstr,BP)) then Fail;
   if (not StrToMag(RPstr,RP)) then Fail;
   Gerr := 0;   BPerr := 0;   RPerr := 0;
+  SetQuality();
 end;
 //--------------------------------------------------
 constructor GaiaDR2Mags.Create(source:TStringList; startdex:Integer); overload;
 begin
-  if (not SetFromList(source,startdex)) then Fail;
+  if (not SetFromList(source,startdex)) then Fail
+  else SetQuality();
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // setting data
@@ -254,6 +295,7 @@ begin
   Result := False;
   if (not StrToMag(source,temp_g)) then Exit;
   G := temp_g;  Result := True;
+  SetQuality();
 end;
 //-------------------------
 function GaiaDR2Mags.SetBP(source:string):Boolean;
@@ -262,6 +304,7 @@ begin
   Result := False;
   if (not StrToMag(source,temp_bp)) then Exit;
   BP := temp_bp;  Result := True;
+  SetQuality();
 end;
 //-------------------------
 function GaiaDR2Mags.SetRP(source:string):Boolean;
@@ -270,6 +313,7 @@ begin
   Result := False;
   if (not StrToMag(source,temp_rp)) then Exit;
   RP := temp_rp;  Result := True;
+  SetQuality();
 end;
 //-------------------------
 function GaiaDR2Mags.SetFromList(source:TStringList; startdex:Integer):Boolean;
@@ -293,6 +337,7 @@ begin
   BPerr := temp_bpe;
   RP := temp_rp;
   RPerr := temp_rpe;
+  SetQuality();
   Result := True;
 end;
 //-----------------------------------------------------------------
@@ -345,17 +390,48 @@ begin
     rpfe := -1;
   end;
   // done
+  SetQuality();
   Result := True;
 end;
 //-----------------------------
 procedure GaiaDR2Mags.ClearG();
-begin  G := 99.999;  Gerr := 0;  end;
+begin
+  G := 99.999;  Gerr := 0;
+  SetQuality();
+end;
 //-----------------------------
 procedure GaiaDR2Mags.ClearBP();
-begin  BP := 99.999;  BPerr := 0;  end;
+begin
+  BP := 99.999;  BPerr := 0;
+  SetQuality();
+end;
 //-----------------------------
 procedure GaiaDR2Mags.ClearRP();
-begin  RP := 99.999;  RPerr := 0;  end;
+begin
+  RP := 99.999;  RPerr := 0;
+  SetQuality();
+end;
+//-----------------------------
+procedure GaiaDR2Mags.SetG_C(Gin,GinE:Currency);
+begin
+  G := Gin;
+  Gerr := GinE;
+  SetQuality();
+end;
+//-----------------------------
+procedure GaiaDR2Mags.SetBP_C(BPin,BPinE:Currency);
+begin
+  BP := BPin;
+  BPerr := BPinE;
+  SetQuality();
+end;
+//-----------------------------
+procedure GaiaDR2Mags.SetRP_C(RPin,RPinE:Currency);
+begin
+  RP := RPin;
+  RPerr := RPinE;
+  SetQuality();
+end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // outputting data
 function GaiaDR2Mags.ToSemiString():string;
@@ -371,6 +447,7 @@ begin
   Result.G := G;  Result.Gerr := Gerr;
   Result.BP := BP;  Result.BPerr := BPerr;
   Result.RP := RP;  Result.RPerr := RPerr;
+  Result.qual := qual;
 end;
 //----------------------------------------
 function GaiaDR2Mags.DisplayData():string;

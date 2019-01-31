@@ -19,9 +19,12 @@ const
       15.126,15.62,15.874,16.016,16.328,16.474);
 
 (* Misc Utilities *)
+(*
 function CheckErr(const mval:Currency; const verr:Currency):byte;
 function GaiaTransHelper(const gmags:GaiaDR2Mags; const Jmag:Currency):Integer;
+*)
 function EstVmG(const Gmag:Currency; const pllx:Real; out Vmgest:Real):Boolean;
+function UseGmJ(dr2mags:GaiaDR2Mags; Jin:Currency):Boolean;
 (* Published transforms *)
 function Gaia2ToVRI(Gmag:Currency; BPmRP:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 function Gaia2To2MASS(Gmag:Currency; BPmRP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
@@ -31,6 +34,7 @@ function Gaia2ToVRI_MyWay(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Ic
 function GaiaToVRI_Red(Gmag,RPmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 function GaiaToVRI_Blue(Gmag,BPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 function GaiaToVRI_2M(Gmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+function GaiaToVRI_Gen(dr2mags:GaiaDR2Mags; Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 function GaiaToV(dr2mags:GaiaDR2Mags; Jmag:Currency; out Vest:Real):Boolean;
 (* My own transform to B *)
 function Gaia2ToB(Gmag,BPmag,RPmag:Currency; out Best:Currency):Boolean;
@@ -47,10 +51,13 @@ function Gaia12RP_To_VRI(G1in,Gin,RPin:Currency; out Vest:Real; out RcEst,IcEst:
 (* White Dwarf specific transforms *)
 function WD_GaiaToVRI(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 function WD_GaiaToJHK(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
+function WD_GaiaToJHK_badB(Gmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
+function WD_GaiaToJHK_badR(Gmag,BPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 
 implementation
 //*******************************************************************************
 (* Misc Utilities *)
+(*
 // accuracy est: 0 precise, 1 off, 2 awful, 3 unavailable
 function CheckErr(const mval:Currency; const verr:Currency):byte;
 begin
@@ -82,7 +89,7 @@ begin
     bedre := gmags.BPerr / gmags.RPerr;
     if (bedre < 0.5) and (gmags.RPerr > 0.01) then Result := 2
   end;
-end;
+end;  *)
 //-------------------------------------------------------
 (* Estimates V-G using absolute G alone, using Mamajek's tables. accuracy??
  K7 to M9.5 kinda. *)
@@ -107,6 +114,19 @@ begin
   // computing the final V-G values
   Vmgest := vmgspt[ldex] + delta_absg*delta_vmg;
   Result := True;
+end;
+//----------------------------------------------------------------
+// checks if using G-J is okay
+function UseGmJ(dr2mags:GaiaDR2Mags; Jin:Currency):Boolean;
+begin
+  Result := False;
+  if Jin > 90 then Exit;
+  if dr2mags.qual = GQ_OK then Exit;
+  Result := True;
+  if dr2mags.qual = GQ_G then Exit;
+  if (dr2mags.qual = GQ_BP) and (dr2mags.BPerr >= 0.01) then Exit;
+  if (dr2mags.qual = GQ_RP) and (dr2mags.RPerr >= 0.01) then Exit;
+  Result := False;
 end;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -195,9 +215,6 @@ so covers Red Dwarfs, and goes to much redder BP-RP.  *)
 function Gaia2ToVRI_MyWay(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 var bpmrp,gmrp:Real;
     interm:Real;
-(* const coffv:array[0..5] of Real = ( -0.12021, 0.88909, 0.0062748, 0.059802, -0.99844, -0.060393 );
-      coffr:array[0..5] of Real = ( -1.0864, 0.62724, -0.020821, 0.033311, 0.096642, -0.42465 );
-      coffi:array[0..5] of Real = ( -0.81587, 0.49131, 0.020283, -0.47688, 1.6593, 0.22504 ); *)
 begin
   Result := False;
   if (Gmag > 90) or (BPmag > 90) or (RPmag > 90) then Exit;
@@ -225,31 +242,40 @@ using G-J as well. Uses stars from SN 35, 38, and NOFS. *)
 function GaiaToVRI_Red(Gmag,RPmag,Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 var gmrp,gmj:Real;
     interm:Real;
-    mcc:Boolean;
+    mccx,mcc:Boolean;
 const coffv:array[0..3] of Real = ( -0.42039, 2.9996, -4.0081, 2.2436 );
+      coffvq:array[0..2] of Real = ( 0.1897, -0.67226, 1.304 );
       coffr1:array[0..2] of Real = ( 0.64862, -4.1054, 2.5421);
       coffr2:array[0..2] of Real = ( 0.43012, -2.0044, 1.4374 );
+      coffrq:array[0..2] of Real = ( 0.49807, -2.1211, 1.4469 );
       coffi2:array[0..3] of Real = ( 1.1209, -2.8342, 4.4989, -1.6017 );
+      coffiq:array[0..2] of Real = ( 0.2981, 0.1931, 0.74255 );
 begin
   Result := False;
   if (Gmag > 90) or (RPmag > 90) then Exit;
   // conveniently, the color bounds are the same for all results
-  if not MakeColorCheck(Gmag,RPmag,0.89,1.65,gmrp) then Exit;
+  gmrp := 99.999;
+  mccx := MakeColorCheck(Gmag,RPmag,0.89,1.65,gmrp);
+  if (not mccx) and ((gmrp > 90) or (gmrp < 0.299)) then Exit;
   // V
-  if gmrp <= 1.45 then interm := PolEval(gmrp,coffv,4)
+  if (not mccx) then interm := PolEval(gmrp,coffvq,3)
+  else if gmrp <= 1.45 then interm := PolEval(gmrp,coffv,4)
   else interm := -6.8916 + 6.4052*gmrp;
   Vest := CurrToReal(Gmag) + interm;
   // Rc
-  mcc := MakeColorCheck(Gmag,Jmag,1.45,4.84,gmj);
-  if mcc then begin
-    interm := PolEval(gmrp,coffr1,3) - 0.4461*gmrp*gmj + 0.78221*gmj;
-  end else interm := PolEval(gmrp,coffr2,3);
+  if (not mccx) then interm := PolEval(gmrp,coffrq,3)
+  else begin
+    mcc := MakeColorCheck(Gmag,Jmag,1.45,4.84,gmj);
+    if mcc then begin
+      interm := PolEval(gmrp,coffr1,3) - 0.4461*gmrp*gmj + 0.78221*gmj;
+    end else interm := PolEval(gmrp,coffr2,3);
+  end;
   Rcest := Gmag + RealToCurr(interm);
   Rcest := RoundCurrency(Rcest,False);
   // Ic
-  if mcc then begin
-    interm := -1.1455 + 2.3309*gmrp - 0.38216*gmrp*gmj +0.38185*gmj;
-  end else interm := PolEval(gmrp,coffi2,4);
+  if (not mccx) then interm := PolEval(gmrp,coffiq,3)
+  else if mcc then interm := -1.1455 + 2.3309*gmrp - 0.38216*gmrp*gmj +0.38185*gmj
+  else interm := PolEval(gmrp,coffi2,4);
   Icest := Gmag - RealToCurr(interm);
   Icest := RoundCurrency(Icest,False);
   // done
@@ -296,7 +322,6 @@ begin
   if not MakeColorCheck(Gmag,Jmag,1.438,5,gmj) then Exit;
 
   // conveniently, the color bounds are the same for all results
-  //if not MakeColorCheck(Gmag,Jmag,2.016,4.777,gmj) then Exit;
   // V
   if gmj < 4.6 then interm := PolEval(gmj,coffv1,4)
   else interm := -3.3107 + 1.3601*gmj;
@@ -312,81 +337,121 @@ begin
   // done
   Result := True;
 end;
+//---------------------------------------------------------------------------
+(* General Gaia mags to VRI for stars (not white dwarfs) *)
+function GaiaToVRI_Gen(dr2mags:GaiaDR2Mags; Jmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+var BPmRP:Currency;
+    interm:Real;
+const coffr:array[0..2] of Real = (-0.79679,0.9198,-0.057604 );
+begin
+  Result := False;
+  if dr2mags = nil then Exit;
+  BPmRP := dr2mags.BPminRP;
+  // all 3 mags
+  if (dr2mags.qual = GQ_OK) then begin
+    if BPmRP >= 1.9 then begin
+      Result := Gaia2ToVRI_MyWay(dr2mags.G,dr2mags.BP,dr2mags.RP,Vest,Rcest,Icest);
+    end
+    else begin
+      Result := Gaia2ToVRI(dr2mags.G,BPmRP,Vest,Rcest,Icest);
+    end;
+  end
+  // G-J based
+  else if UseGmJ(dr2mags,Jmag) then begin
+    Result := GaiaToVRI_2M(dr2mags.G,Jmag,Vest,Rcest,Icest);
+  end
+  // BP - G based
+  else if (dr2mags.qual = GQ_BP) then begin
+    Result := GaiaToVRI_Blue(dr2mags.G,dr2mags.BP,Vest,Rcest,Icest);
+  end
+  // G-RP
+  else if (dr2mags.qual = GQ_RP) then begin
+    Result := GaiaToVRI_Red(dr2mags.G,dr2mags.RP,Jmag,Vest,Rcest,Icest);
+  end
+  // no G, BP-RP only
+  else if (dr2mags.qual = GQ_BR) then begin
+    Result := Gaia2ToVI_Jao(dr2mags.BP,dr2mags.RP,Vest,Icest);
+    if Result then begin
+      if (BPmRP > 1.8) then begin
+        interm := PolEval(CurrToReal(BPmRP),coffr,3);
+        Rcest := dr2mags.RP + RealToCurr(interm);
+        Rcest := RoundCurrency(Rcest,False);
+      end;
+    end;
+  end;
+end;
+
 //-------------------------------------------------------------
 (* Uses all of the different methods, but only for computing V *)
 function GaiaToV(dr2mags:GaiaDR2Mags; Jmag:Currency; out Vest:Real):Boolean;
 var okay:Boolean;
-    cpick:Integer;
-    Gin,BPmRP, BPin,RPin:Currency;
-    colorx:RealArray;
+    BPmRP:Currency;
     gmrp,gmj,bpmg,bmr,interm:Real;
-const coffv_r:array[0..5] of Real = ( 9.9991, -12.668, -9.8856, 11.96, -1.2334, -2.0537 );
-      coffv_b:array[0..2] of Real = ( -0.2084, 0.92954, 0.022026 );
-      coffvj1:array[0..2] of Real = ( 0.084193, -0.084446, 0.17371 );
-      coffvj2:array[0..3] of Real = ( 35.34, -30.245, 8.6621, -0.78355 );
-      coffvx:array[0..5] of Real = ( -0.12021, 0.88909, 0.0062748, 0.059802, -0.99844, -0.060393 );
-      coffVy:array[0..2] of Real = (-0.0176 ,-0.00686,-0.1732 );
+const coffV1:array[0..2] of Real = (-0.0176  ,-0.00686,-0.1732 );
+      coffvj:array[0..3] of Real = ( 2.2906, -2.2367, 0.8365, -0.063055 );
+      coffvr:array[0..3] of Real = ( -0.42039, 2.9996, -4.0081, 2.2436 );
 begin
   Result := False;
   // basic bad exit cases...
   if dr2mags = nil then Exit;
-  if dr2mags.G >= 90 then Exit;
-  // we have different methods depending on values...
-  cpick := GaiaTransHelper(dr2mags,Jmag);
-  BPin := dr2mags.BP;
-  RPin := dr2mags.RP;
+  // we use the newly implemented 'Quality' value to pick the equation to use
   BPmRP := dr2mags.BPminRP;
-  Gin := dr2mags.G;
   okay := False;
-
-  // red and j
-  if cpick = 1 then begin
-    if MakeColorCheck(Gin,RPin,1.251,1.68,gmrp) then begin
-      if MakeColorCheck(Gin,Jmag,2.874,4.777,gmj) then begin
-        LoadMulti(gmrp,gmj,False,colorx);
-        interm := dot2(coffv_r,colorx,6);
-        Vest := CurrToReal(Gin) + interm;
-        okay := True;
-      end;
-    end;
-  // blue
-  end else if cpick = 2 then begin
-    if MakeColorCheck(BPin,Gin,0.867,3.61,bpmg) then begin
-      interm := PolEval(bpmg,coffv_b,3);
-      Vest := CurrToReal(Gin) + interm;
-      okay := True;
-    end;
-  // g and j
-  end else if cpick = 3 then begin
-    if MakeColorCheck(Gin,Jmag,2.016,4.777,gmj) then begin
-      if gmj < 3.1 then interm := PolEval(gmj,coffvj1,3)
-      else interm := PolEval(gmj,coffvj2,4);
-      Vest := CurrToReal(Gin) + interm;
-      okay := True;
-    end;
-  end;
-  // using G and BP-RP
-  if not okay then begin
-    if (Gin > 90) or (BPin > 90) or (RPin > 90) then Exit;
-    // the 'my way' BP-RP and G-RP
+  // all 3 mags
+  if dr2mags.qual = GQ_OK then begin
     if (BPmRP > 2) then begin
-      if MakeColorCheck(BPin,RPin,1.771,5.197,bmr) then begin
-        if MakeColorCheck(Gin,RPin,0.89,1.68,gmrp) then begin
-          LoadMulti(bmr,gmrp,False,colorx);
-          interm := dot2(coffvx,colorx,6);
-          Vest := CurrToReal(Gin) + interm;
+      if MakeColorCheck(dr2mags.BP,dr2mags.RP,1.771,5.197,bmr) then begin
+        if not MakeColorCheck(dr2mags.G,dr2mags.RP,0.89,1.59,gmrp) then begin
+          interm := -0.22933 + 1.0173*bmr - 1.067*gmrp;
+
           okay := True;
         end;
       end;
-    // the version provided my Gaia: use for less red stars
-    end else begin
-      if (BPmRP >= 2.75) or (BPmRP <= -0.5) then Exit;
-      // converting
-      bmr := CurrToReal(BPmRP);
-      interm := PolEval(bmr,coffVy,3);
-      Vest := CurrToReal(Gin) - interm;
+    end;
+    if not okay and (BPmRP >= -0.5 )then begin
+      interm := PolEval(CurrToReal(BPmRP),coffV1,3);
+      Vest := CurrToReal(dr2mags.G) + interm;
       okay := True;
     end;
+  end
+  // G-J
+  else if UseGmJ(dr2mags,Jmag) then begin
+    if MakeColorCheck(dr2mags.G,Jmag,1.438,4.6,gmj) then begin
+      // the G-J to V-G color-color plot shows a break around G-J ~ 4.6
+      if gmj < 4.6 then interm := PolEval(gmj,coffvj,4)
+      else interm := -3.3107 + 1.3601*gmj;
+      Vest := CurrToReal(dr2mags.G) + interm;
+      okay := True;
+    end;
+  end
+  // BP-G only
+  else if dr2mags.qual =  GQ_BP then begin
+    if MakeColorCheck(dr2mags.BP,dr2mags.G,0.814,3.61,bpmg) then begin
+      interm := -0.26726 + 1.0042*bpmg;
+      Vest := CurrToReal(dr2mags.G) + interm;
+      okay := True;
+    end;
+  end
+  // G-RP only
+  else if dr2mags.qual = GQ_RP then begin
+    if MakeColorCheck(dr2mags.G,dr2mags.RP,0.89,1.65,gmrp) then begin
+      if gmrp <= 1.45 then interm := PolEval(gmrp,coffvr,4)
+      else interm := -6.8916 + 6.4052*gmrp;
+      Vest := CurrToReal(dr2mags.G) + interm;
+      okay := True;
+    end;
+  end
+  // BP and RP, no G
+  else if dr2mags.qual = GQ_BR then begin
+    if (BPmRP >= 1) and (BPmRP <= 4) then begin
+      // color in range, proceeding...
+      Vest := CurrToReal(dr2mags.BP) - (0.2022 + 0.02489*CurrToReal(BPmRP));
+      okay := True;
+    end;
+  end;
+  // finishing off
+  if okay and (dr2mags.qual <> GQ_BR) then begin
+    Vest := CurrToReal(dr2mags.G) + interm;
   end;
   Result := okay;
 end;
@@ -410,47 +475,44 @@ begin
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* General get JHK from Gaia mags. Picks one of the JHKs functions below based
-on the G,BP,RP availability and error size *)
+on the G,BP,RP availability and quality
+GQ_OK, GQ_BP, GQ_RP, GQ_G, GQ_BR, GQ_X *)
 function GaiaTo_JHK_Wr(dr2mags:GaiaDR2Mags; useWD:Boolean; out Jest,Hest,Ksest:Currency):Boolean;
-var gc,bc,rc:byte;
-    gtest:Boolean;
 begin
   Result := False;
   if (dr2mags = nil) then Exit;
-  gc := CheckErr(dr2mags.G,dr2mags.Gerr);
-  bc := CheckErr(dr2mags.BP,dr2mags.BPerr);
-  rc := CheckErr(dr2mags.RP,dr2mags.RPerr);
-  // wd
+  // White Dwarf specific
   if (useWD) then begin
-    if (gc > 1) or (bc > 1) or (rc > 1) then Exit;
-    Result := WD_GaiaToJHK(dr2mags.G,dr2mags.BP,dr2mags.RP,Jest,Hest,Ksest);
+    if (dr2mags.qual = GQ_OK) then begin
+      Result := WD_GaiaToJHK(dr2mags.G,dr2mags.BP,dr2mags.RP,Jest,Hest,Ksest);
+    end else if (dr2mags.qual = GQ_RP) then begin
+      Result := WD_GaiaToJHK_badB(dr2mags.G,dr2mags.RP,Jest,Hest,Ksest);
+    end else if (dr2mags.qual = GQ_BP) then begin
+      Result := WD_GaiaToJHK_badR(dr2mags.G,dr2mags.BP,Jest,Hest,Ksest);
+    end;
     Exit;
   end;
 
-  // we chose functions for J H Ks using gc, bc, and rc
-  // in some cases, do not event try
-  if (bc > 1) and (rc > 1) then Exit;
-  // G bad, but BP and RP are good
-  gtest := (gc > 0) and (bc = 0) and (rc = 0);
-  gtest := gtest or ((gc = 3) and (bc < 2) and (rc < 2));
-  if gtest then begin
-    Result := Gaia2To2MASS_BadG(dr2mags.BP,dr2mags.RP,Jest,Hest,Ksest);
-    Exit;
-  end;
-  // G and RP is good, but BP is not good
-  gtest := (bc > 0) and (rc < 2) and (gc < 2);
-  gtest := gtest and (((dr2mags.BPerr / dr2mags.RPerr) > 4) and (gc < 2));
-  if gtest then begin
+  // we chose functions for J H Ks using quality
+  // using G-RP
+  if dr2mags.qual = GQ_RP then begin
     Result := Gaia2To2MASS_BadB(dr2mags.G,dr2mags.RP,Jest,Hest,Ksest);
     if (Result) then Exit;
+  end
+  else if dr2mags.qual = GQ_BP then begin
+    Result := Gaia2To2MASS_NoRP(dr2mags.G,dr2mags.BP,Jest,Hest,Ksest);
+    if Result then Exit;
+  end
+  else if dr2mags.qual = GQ_BR then begin
+    Result := Gaia2To2MASS_BadG(dr2mags.BP,dr2mags.RP,Jest,Hest,Ksest);
+    if Result then Exit;
+  end
+  else if dr2mags.qual = GQ_OK then begin
+    Result := Gaia2To2MASS_MyWay2(dr2mags.G,dr2mags.BP, dr2mags.RP,Jest,Hest,Ksest);
+    if not Result then begin
+      Result := Gaia2To2MASS(dr2mags.G,dr2mags.BPminRP,Jest,Hest,Ksest);
+    end;
   end;
-  // default 'myway'
-  Result := Gaia2To2MASS_MyWay2(dr2mags.G,dr2mags.BP, dr2mags.RP,Jest,Hest,Ksest);
-  if Result then Exit;
-  Result := Gaia2To2MASS_NoRP(dr2mags.G,dr2mags.BP,Jest,Hest,Ksest);
-  if Result then Exit;
-  // dr2 provided
-  Result := Gaia2To2MASS(dr2mags.G,dr2mags.BPminRP,Jest,Hest,Ksest);
 end;
 
 //-------------------------------------------------------------------------
@@ -459,11 +521,6 @@ own, for BP-RP > 0.8 only. *)
 function Gaia2To2MASS_MyWay(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 var bpmrp,gmrp:Real;
     interm:Real;
-    colorx:RealArray;
-(*
-const coffj:array[0..5] of Real = ( -0.025999, 0.17069, -0.062699, 0.49271, 2.0394, -0.80351 );
-      coffh:array[0..4] of Real = ( -1.3427, 4.4554, -1.8405, 0.39909, -0.031809 );
-      coffk:array[0..4] of Real = ( -1.3698, 4.5444, -1.801, 0.38128, -0.029769 ); *)
 const coffj1:array[0..2] of Real = ( -0.33535, 0.56945, -0.049115);
       coffj2:array[0..3] of Real = ( 0, 2.5949, -1.6955, 0.77989 );
       coffhx:array[0..4] of Real = ( -1.1191, 4.1699, -2.1679, 0.43246, -0.033342);
@@ -736,6 +793,62 @@ begin
   // Ks mag
   if (gmrp < -0.235) or (gmrp > 0.889) then Exit;
   interm := PolEval(gmrp,coff_kp,3);
+  Ksest := Gmag - RealToCurr(interm);
+  Ksest := RoundCurrency(Ksest,False);
+end;
+//-------------------------------------------------------------------
+// G-RP specific for J H K
+function WD_GaiaToJHK_badB(Gmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
+var interm,gmrp:Real;
+const coff_hp:array[0..3] of Real = ( -0.14084, 2.5682, 1.15, -1.6628 );
+      coff_kp:array[0..2] of Real = ( -0.13398, 2.8898, -0.18748 );
+begin
+  Result := False;
+  // J mag
+  if not MakeColorCheck(Gmag,RPmag,-0.301,0.848,gmrp) then Exit;
+  interm := -0.10634 + 2.1701*gmrp;
+  Jest := Gmag - RealToCurr(interm);
+  Jest := RoundCurrency(Jest,False);
+  Result := True;
+  // H mag and Ks mag
+  Hest := 99.999;
+  Ksest := 99.999;
+  // H
+  if gmrp > 0.82 then Exit;
+  interm := PolEval(gmrp,coff_hp,4);
+  Hest := Gmag - RealToCurr(interm);
+  Hest := RoundCurrency(Hest,False);
+  // Ks
+  if (gmrp < -0.235) or (gmrp > 0.797) then Exit;
+  interm := PolEval(gmrp,coff_kp,3);
+  Ksest := Gmag - RealToCurr(interm);
+  Ksest := RoundCurrency(Ksest,False);
+end;
+//-------------------------------------------------------------
+// BP-G specific for J H K
+function WD_GaiaToJHK_badR(Gmag,BPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
+var interm,bpmg:Real;
+const coff_jp:array[0..2] of Real = ( 0.040726, 3.5978, -2.0329 );
+      coff_hp:array[0..2] of Real =  ( 0.056297, 4.472, -2.8638 );
+      coff_kp:array[0..4] of Real = ( -0.012161, 5.0443, 0.96868, -17.026, 15.804 );
+begin
+  Result := False;
+  // J mag
+  if not MakeColorCheck(BPmag,Gmag,-0.254,0.776,bpmg) then Exit;
+  interm := PolEval(bpmg,coff_jp,3);
+  Jest := Gmag - RealToCurr(interm);
+  Jest := RoundCurrency(Jest,False);
+  Result := True;
+  // H mag and Ks mag
+  Hest := 99.999;
+  Ksest := 99.999;
+  // H
+  if bpmg > 0.732 then Exit;
+  interm := PolEval(bpmg,coff_hp,3);
+  Hest := Gmag - RealToCurr(interm);
+  Hest := RoundCurrency(Hest,False);
+  // Ks
+  interm := PolEval(bpmg,coff_kp,3);
   Ksest := Gmag - RealToCurr(interm);
   Ksest := RoundCurrency(Ksest,False);
 end;

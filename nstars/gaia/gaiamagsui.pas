@@ -240,8 +240,7 @@ begin
       curmag := starobj.dr2mags;
     end;
     // saving g
-    curmag.G := convg;
-    curmag.Gerr:= convge;
+    curmag.SetG_C(convg,convge);
   end;
   Result := True;
 end;
@@ -269,8 +268,7 @@ begin
       curmag := starobj.dr2mags;
     end;
     // saving bp
-    curmag.BP := convbp;
-    curmag.BPerr:= convbpe;
+    curmag.SetBP_C(convbp,convbpe);
   end;
   Result := True;
 end;
@@ -297,9 +295,8 @@ begin
       starobj.dr2mags := GaiaDR2Mags.Create();
       curmag := starobj.dr2mags;
     end;
-    // saving g
-    curmag.RP := convrp;
-    curmag.RPerr:= convrpe;
+    // saving rp
+    curmag.SetRP_C(convrp,convrpe);
   end;
   Result := True;
 end;

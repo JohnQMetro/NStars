@@ -7,38 +7,53 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls, ExtCtrls, MaskEdit,
   StrUtils, Dialogs,
-  NewStar, star_names (* namedata *), newlocation, unitdata;
+  NewStar, star_names, newlocation, unitdata, df_strings;
 
 type
+
+CSD_FrameType = (CSD_STAR, CSD_BD, CSD_WD);
 
   { TCoreStarDataFrame }
 
   TCoreStarDataFrame = class(TFrame)
-    ArityPicker: TComboBox;
     ArityLabel: TLabel;
+    WDArityLabel: TLabel;
+    ArityPicker: TComboBox;
+    WDArityPicker: TComboBox;
     BayerBox: TMaskEdit;
-    CompLabel: TLabel;
     BDMassLabel: TLabel;
     BDMassMEdit: TMaskEdit;
     BdmePM: TLabel;
     BDMuncEdit: TMaskEdit;
+    CBPulsating: TCheckBox;
+    AtmosPicker: TComboBox;
+    CompLabel: TLabel;
     BLumLabel: TLabel;
+    BrownDwarfPanel: TPanel;
+    LbAtmos: TLabel;
+    WDVisMagEdit: TMaskEdit;
+    WDVMagLabel: TLabel;
+    WhiteDwarfPanel: TPanel;
+    StarPanel: TPanel;
     TEffLabel: TLabel;
     SecMagEdit: TMaskEdit;
     MassEstLabel: TLabel;
     RadiusLabel: TLabel;
     NotesLabel: TLabel;
-    VarTypeLabel: TLabel;
     StarNoteEdit: TMemo;
-    VariableTypeCB: TComboBox;
     ComponentPicker: TComboBox;
     LuminosityDisplay: TLabel;
-    VMagLabel: TLabel;
+    VariableTypeCB: TComboBox;
+    VarTypeLabel: TLabel;
     VisualMagEdit: TMaskEdit;
+    VMagLabel: TLabel;
     VStarDesigEdit: TLabeledEdit;
     SpectralClassEdit: TLabeledEdit;
     TypeLabel: TLabel;
+
     procedure ArityPickerChange(Sender: TObject);
+    procedure AtmosPickerChange(Sender: TObject);
+    procedure AtmosPickerExit(Sender: TObject);
     function GetParallax:Real;
     procedure LoadEstimates;
     procedure SecMagEditExit(Sender: TObject);
@@ -47,6 +62,8 @@ type
     procedure VisualMagEditExit(Sender: TObject);
     procedure VisualMagEditKeyPress(Sender: TObject; var Key: char);
     procedure VStarDesigEditExit(Sender: TObject);
+    procedure WDVisMagEditExit(Sender: TObject);
+    procedure WDVisMagEditKeyPress(Sender: TObject; var Key: char);
   private
     { private declarations }
     edited_item:NewStarBase;
@@ -54,26 +71,31 @@ type
     star_item:StarInfo;
     toplocation:Location;
     sunMode:Boolean;
+    panelMode:CSD_FrameType;
     // methods
-    procedure ShowOrHideStarWidgets(showw:Boolean);
-    procedure ShowOrHideBDwarfWidgets(showw:Boolean);
+    procedure ChangePanelType(newType:CSD_FrameType);
+    procedure LabelShow(vis:Boolean);
     function LoadCommonData:Boolean;
     procedure SetSTypeLabel;
-    function LoadStarData:Boolean;
-    function LoadBrownDwarfData:Boolean;
+    function LoadStarData():Boolean;
+    function LoadBrownDwarfData():Boolean;
+    function LoadWhiteDwarfData():Boolean;
     function SaveCommonData:Boolean;
     function SaveNameStuff:Boolean;
     function SaveSecondaryMag(showmsg:Boolean):Boolean;
-    function SaveStarData:Boolean;
-    function SaveBrownDwarfData:Boolean;
+    function SaveStarData():Boolean;
+    function SaveWhiteDwarfData():Boolean;
+    function SaveBrownDwarfData():Boolean;
     procedure ClearCommonData;
     procedure ClearStarData;
-    procedure ChangeMode(tostar:Boolean);
+    // procedure ChangeMode(tostar:Boolean);
     procedure DisableStarData(dodisable:Boolean);
     procedure MakeNil;
+    procedure ArityTweak(ccount:Word);
 
   public
     { public declarations }
+    constructor Create(AOwner: TComponent) ; override;
     procedure SetupComboBoxes;
     procedure SaveData;
     function ChangeStar(item:NewStarBase; parentloc:Location; icount:Integer):Boolean;
@@ -100,6 +122,21 @@ procedure TCoreStarDataFrame.ArityPickerChange(Sender: TObject);
 begin
   SecMagEdit.Enabled := ArityPicker.ItemIndex >= Ord(SPECTROCOPIC_BINARY);
 end;
+
+procedure TCoreStarDataFrame.AtmosPickerChange(Sender: TObject);
+var pllx:Real;
+begin
+  pllx := GetParallax;
+  star_item.wda:= WDAtmosEnum(AtmosPicker.ItemIndex);
+  star_item.InitializeEstimation(pllx);
+  LoadEstimates;
+end;
+
+procedure TCoreStarDataFrame.AtmosPickerExit(Sender: TObject);
+begin
+
+end;
+
 //------------------------------------
 procedure TCoreStarDataFrame.LoadEstimates;
 var lumstr:string;     radstr:string;
@@ -184,32 +221,69 @@ begin
   SaveNameStuff;
 end;
 
-procedure TCoreStarDataFrame.ShowOrHideStarWidgets(showw:Boolean);
+procedure TCoreStarDataFrame.WDVisMagEditExit(Sender: TObject);
+var string1:string;     pllx:Real;
 begin
-  VariableTypeCB.Visible := showw;
-  ArityPicker.Visible := showw;
-  VMagLabel.Visible := showw;
-  VisualMagEdit.Visible := showw;
-  VStarDesigEdit.Visible := showw;
-  ArityLabel.Visible := showw;
-  LuminosityDisplay.Visible := showw;
-  BayerBox.Visible := showw;
-  VarTypeLabel.Visible := showw;
-  RadiusLabel.Visible := showw;
-  MassEstLabel.Visible := showw;
-  BLumLabel.Visible := showw;
-  SecMagEdit.Visible := showw;
-  TEffLabel.Visible := showw;
-end;
-//-------------------------------
-procedure TCoreStarDataFrame.ShowOrHideBDwarfWidgets(showw:Boolean);
-begin
-  BDMassLabel.Visible := showw;
-  BDMassMEdit.Visible := showw;
-  BdmePM.Visible := showw;
-  BDMuncEdit.Visible := showw;
+  // visual magnitude
+  string1 := Trim(WDVisMagEdit.Text);
+  if (string1 <> '+99.999') then begin
+    star_item.SetVisualMagnitudeStr(string1);
+  end;
+  WDVisMagEdit.Modified := False;
+  pllx := GetParallax;
+  if (star_item.estimator = nil) then star_item.InitializeEstimation(pllx)
+  else star_item.NonSpectraChange(pllx);
+  LoadEstimates;
 end;
 
+procedure TCoreStarDataFrame.WDVisMagEditKeyPress(Sender: TObject; var Key: char );
+var pressdex:Integer;
+begin
+  pressdex := WDVisMagEdit.SelStart;
+  if (pressdex = 0) and (not (Key in [#8, '+','-'])) then Key := #0;
+end;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+procedure TCoreStarDataFrame.ChangePanelType(newType:CSD_FrameType);
+begin
+  if newType = panelMode then Exit;
+  // change to star
+  if newType = CSD_STAR then begin
+      BrownDwarfPanel.Visible := False;
+      WhiteDwarfPanel.Visible := False;
+      StarPanel.Visible := True;
+      SecMagEdit.Visible := True;
+      BayerBox.Visible := True;
+      LabelShow(True);
+  end
+  // change to brown dwarf
+  else if newType = CSD_BD then begin
+      BrownDwarfPanel.Visible := True;
+      WhiteDwarfPanel.Visible := False;
+      StarPanel.Visible := False;
+      SecMagEdit.Visible := False;
+      BayerBox.Visible := False;
+      LabelShow(False);
+  end
+  // change to white dwarf
+  else begin
+      BrownDwarfPanel.Visible := False;
+      WhiteDwarfPanel.Visible := True;
+      StarPanel.Visible := False;
+      SecMagEdit.Visible := True;
+      BayerBox.Visible := False;
+      LabelShow(True);
+  end;
+  panelMode := newType;
+end;
+//------------------------------
+procedure TCoreStarDataFrame.LabelShow(vis:Boolean);
+begin
+  LuminosityDisplay.Visible := vis;
+  RadiusLabel.Visible := vis;
+  MassEstLabel.Visible := vis;
+  BLumLabel.Visible := vis;
+  TEffLabel.Visible := vis;
+end;
 //-------------------------------
 function TCoreStarDataFrame.LoadCommonData:Boolean;
 begin
@@ -231,7 +305,7 @@ begin
   end;
 end;
 //-------------------------------
-function TCoreStarDataFrame.LoadStarData:Boolean;
+function TCoreStarDataFrame.LoadStarData():Boolean;
 var sname:StarNames;
     lumstr:string;
 begin
@@ -257,6 +331,7 @@ begin
   LoadEstimates;
   // secondary magnitude
   SecMagEdit.Text := star_item.SecondaryMagnitudeStr;
+  lumstr := star_item.SecondaryMagnitudeStr;
   // arity
   ArityPicker.ItemIndex := Ord(star_item.Arity);
   SecMagEdit.Enabled := ArityPicker.ItemIndex >= Ord(SPECTROCOPIC_BINARY);
@@ -266,7 +341,7 @@ begin
   Result := True;
 end;
 //-------------------------------
-function TCoreStarDataFrame.LoadBrownDwarfData:Boolean;
+function TCoreStarDataFrame.LoadBrownDwarfData():Boolean;
 begin
   Result := False;
   if bdwarf_item = nil then Exit;
@@ -274,17 +349,66 @@ begin
   BDMuncEdit.Text := bdwarf_item.MassUncertainty;
   Result := True;
 end;
+//--------------------------------
+function TCoreStarDataFrame.LoadWhiteDwarfData():Boolean;
+var sname:StarNames;
+    lumstr:string;
+begin
+  Result := False;
+  if star_item = nil then Exit;
+  // name related stuff
+  if star_item.HasNames then begin
+    sname := star_item.GetNames;
+    VStarDesigEdit.Text:= sname.var_designation;
+  end
+  else VStarDesigEdit.Text := '';
+  // visual magnitude
+  if star_item.ValidVisualMagnitude then begin
+     lumstr := star_item.VisualMagnitudeString;
+     WDVisMagEdit.Text := lumstr;
+  end
+  else WDVisMagEdit.Text := '+99.999';
+  LoadEstimates;
+  // atmosphere type
+  AtmosPicker.ItemIndex := Ord(star_item.wda);
+  // arity
+  if star_item.Arity = SINGLE then WDArityPicker.ItemIndex := 0
+  else if star_item.Arity = POSSIBLY_DOUBLE then WDArityPicker.ItemIndex := 1
+  else WDArityPicker.ItemIndex := 2;
+
+  // secondary magnitude
+  if WDArityPicker.ItemIndex = 2 then begin
+     SecMagEdit.Enabled := True;
+     SecMagEdit.Text := star_item.SecondaryMagnitudeStr;
+  end else begin
+     SecMagEdit.Text := '99.9';
+     SecMagEdit.Enabled := False;
+  end;
+
+  // variable status
+  CBPulsating.Checked := (star_item.VariableType <> NOT_VARIABLE);
+  // done
+  Result := True;
+end;
 
 //-------------------------------
 procedure TCoreStarDataFrame.SaveSpectralClass;
+var qtype:CSD_FrameType;
 begin
   if edited_item <> nil then begin
     edited_item.SpectralClass:= SpectralClassEdit.Text;
     SpectralClassEdit.Modified := False;
     SetSTypeLabel;
+    // possible switch type....
     if star_item <> nil then begin
-      star_item.InitializeEstimation(GetParallax);
-      LoadEstimates;
+        if StrStartswAny(star_item.SpectralClass,['D','?D','??D']) then qtype := CSD_WD
+        else qtype := CSD_STAR;
+        if (qtype <> panelMode) then begin
+           ChangePanelType(qtype);
+           ReloadData();
+        end;
+        star_item.InitializeEstimation(GetParallax);
+        LoadEstimates;
     end;
   end;
 end;
@@ -302,22 +426,21 @@ begin
 end;
 //-------------------------------
 function TCoreStarDataFrame.SaveNameStuff:Boolean;
-var string1,string2:string;    sc,bint:Integer;
-    sname:StarNames;
+var sname:StarNames;
+    bdes:LongInt;
+    vdesig,rawbay:string;
 begin
   Result := False;
   if star_item = nil then Exit;
-  // name related stuff
-  string1 := Trim(VStarDesigEdit.Text);
-  string2 := Trim(BayerBox.Text);
-  if (Length(string1)<>0) or (Length(string2)<>0) then begin
+  // gathering the name data
+  vdesig := Trim(VStarDesigEdit.Text);
+  if panelMode = CSD_WD then rawbay := ''
+  else rawbay := Trim(BayerBox.Text);
+  if (Length(vdesig)<>0) or (Length(rawbay)<>0) then begin
     sname := star_item.MakeOrGetNames;
-    sname.var_designation := string1;
-    if Length(string2)<>0 then begin
-      Val(string2,bint,sc);
-      if sc<>0 then Exit;
-      if bint <> 0 then sname.bayer_sup := bint;
-    end;
+    sname.var_designation := vdesig;
+    if not TryStrToInt(rawbay,bdes) then sname.bayer_sup := 0
+    else sname.bayer_sup := bdes;
   end
   else if star_item.HasNames then begin
     sname := star_item.GetNames;
@@ -334,6 +457,7 @@ var xdata:string;
 begin
   Result := False;
   if star_item = nil then Exit;
+  if ArityPicker.ItemIndex < Ord(SPECTROCOPIC_BINARY) then Exit;
   xdata := SecMagEdit.Text;
   savok := star_item.SetSecondaryMagnitudeStr(xdata);
   if (not savok) and showmsg then begin
@@ -344,10 +468,11 @@ begin
   Result := savok;
 end;
 //-------------------------------
-function TCoreStarDataFrame.SaveStarData:Boolean;
+function TCoreStarDataFrame.SaveStarData():Boolean;
 var string1:string;
     pllx:Real;
     sok:Boolean;
+    vtpick:VariableTypeEnum;
 begin
   Result := False;
   if star_item = nil then Exit;
@@ -362,14 +487,47 @@ begin
   // arity
   star_item.Arity := ArityType(ArityPicker.ItemIndex);
   // variable type
-  star_item.VariableType := VariableTypeEnum(VariableTypeCB.ItemIndex);
+  sok := IndexToVarT(VariableTypeCB.ItemIndex,vtpick);
+  if sok then star_item.VariableType := vtpick;
+  // secondary magnitude
+  SaveSecondaryMag(True);
+  // done
+  Result := True;
+end;
+//------------------------------
+function TCoreStarDataFrame.SaveWhiteDwarfData():Boolean;
+var string1:string;
+    pllx:Real;
+    sok:Boolean;
+    adex:Integer;
+begin
+  Result := False;
+  if star_item = nil then Exit;
+  if not SaveNameStuff then Exit;
+  // visual magnitude
+  string1 := Trim(WDVisMagEdit.Text);
+  if (string1 <> '+99.999') then begin
+    sok := star_item.SetVisualMagnitudeStr(string1);
+    pllx := GetParallax;
+    star_item.NonSpectraChange(pllx);
+  end;
+  // atmosphere
+  star_item.wda := WDAtmosEnum(AtmosPicker.ItemIndex);
+  // arity
+  adex := WDArityPicker.ItemIndex;
+  if adex = 1 then star_item.Arity := POSSIBLY_DOUBLE
+  else if adex = 2 then star_item.Arity := WHITE_DWARF_BINARY
+  else star_item.Arity := SINGLE;
+  // variable type
+  if CBPulsating.Checked then star_item.VariableType := ZZ_CETI
+  else star_item.VariableType := NOT_VARIABLE;
   // secondary magnitude
   SaveSecondaryMag(True);
   // done
   Result := True;
 end;
 //-------------------------------
-function TCoreStarDataFrame.SaveBrownDwarfData:Boolean;
+function TCoreStarDataFrame.SaveBrownDwarfData():Boolean;
 var str1,str2:string;
 begin
   Result := False;
@@ -394,19 +552,9 @@ begin
   ArityPicker.ItemIndex := 0;
   VariableTypeCB.ItemIndex := 0;
 end;
+
 //------------------------------------------------------
-procedure TCoreStarDataFrame.ChangeMode(tostar:Boolean);
-begin
-  if tostar then begin
-    ShowOrHideBDwarfWidgets(False);
-    ShowOrHideStarWidgets(True);
-  end
-  else begin
-    ShowOrHideStarWidgets(False);
-    ShowOrHideBDwarfWidgets(True);
-  end;
-end;
-//------------------------------------------------------
+// For nil or the Sun, both of which use CSD_STAR panel type
 procedure TCoreStarDataFrame.DisableStarData(dodisable:Boolean);
 begin
   VariableTypeCB.Enabled := not dodisable;
@@ -425,12 +573,43 @@ procedure TCoreStarDataFrame.MakeNil;
 begin
   edited_item := nil;
   ClearCommonData;
-  ChangeMode(True);
+  ChangePanelType(CSD_STAR);
+  // ChangeMode(True);
   star_item := nil;
   bdwarf_item := nil;
   toplocation := nil;
   ClearStarData;
   TypeLabel.Caption := 'Nothing';
+end;
+//-------------------------------------------------------
+// enables/disables some tems based on number of components (arity)
+procedure TCoreStarDataFrame.ArityTweak(ccount:Word);
+var sing:Boolean;
+begin
+    sing := (ccount = 1);
+    if sing then ComponentPicker.Enabled := False;
+    if sing and (panelMode <> CSD_BD) then begin
+        // if the system is single, use the system name panel instead
+        VStarDesigEdit.Enabled := False;
+        BayerBox.Enabled := False;
+    end else if (panelMode <> CSD_BD) then begin
+        // if the system is multiple, components can differ in these
+        VStarDesigEdit.Enabled := True;
+        BayerBox.Enabled := True;
+    end;
+end;
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+constructor TCoreStarDataFrame.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  panelMode := CSD_STAR;
+  StarPanel.Color := Self.Color;
+  BrownDwarfPanel.Color := Self.Color;
+  WhiteDwarfPanel.Color := Self.Color;
+  BrownDwarfPanel.Visible := False;
+  WhiteDwarfPanel.Visible := False;
+  StarPanel.Visible := True;
 end;
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -443,23 +622,25 @@ begin
     ArityPicker.Items.AddStrings(unitdata.ArityLabels);
   end;
   if VariableTypeCB.Items.Count = 0 then begin
-    VariableTypeCB.Items.AddStrings(VStarType);
+    VariableTypeCB.Items.AddStrings(VStarType2);
   end;
 end;
 //------------------------------------------------------
 procedure TCoreStarDataFrame.SaveData;
 begin
   if edited_item<>nil then begin
-     SaveCommonData;
-     if star_item <> nil then begin
-        SaveStarData;
-     end
-     else SaveBrownDwarfData;
+      SaveCommonData;
+      case panelMode of
+          CSD_STAR : SaveStarData();
+          CSD_BD   : SaveBrownDwarfData();
+          CSD_WD   : SaveWhiteDwarfData();
+      end;
   end;
 end;
 //------------------------------------------------------
 function TCoreStarDataFrame.ChangeStar(item:NewStarBase; parentloc:Location; icount:Integer):Boolean;
 var bd2:Boolean;
+    ntype:CSD_FrameType;
 begin
   Result := False;
   // SaveData;
@@ -469,9 +650,9 @@ begin
      MakeNil;
      DisableStarData(True);
   end
-  // loading a star/brown dwarf
+  // loading a star/white dwarf/brown dwarf
   else begin
-    // common to both stars and brown dwarves
+    // common loads
     if parentloc = nil then Exit;
     toplocation := parentloc;
     edited_item := item;
@@ -480,23 +661,22 @@ begin
     LoadCommonData;
     bdwarf_item := nil;
     star_item := nil;
-    // brown dwarf or star?
+    // brown dwarf or not?
     bd2 := edited_item.isBrownDwarf;
-    ChangeMode(not bd2);
     if bd2 then bdwarf_item := BrownDwarfInfo(item)
     else star_item := StarInfo(item);
-    if (not bd2) then LoadStarData
-    else LoadBrownDwarfData;
-    // finishing
-    if icount = 1 then ComponentPicker.Enabled := False;
-    if (icount = 1) and (not bd2) then begin
-      VStarDesigEdit.Enabled := False;
-      BayerBox.Enabled := False;
-    end
-    else if (not bd2) then begin
-      VStarDesigEdit.Enabled := True;
-      BayerBox.Enabled := True;
+    // loading based on type
+    if bd2 then ntype := CSD_BD
+    else if StrStartswAny(star_item.SpectralClass,['D','?D','??D']) then ntype := CSD_WD
+    else ntype := CSD_STAR;
+    ChangePanelType(ntype);
+    case ntype of
+        CSD_STAR : LoadStarData();
+        CSD_BD   : LoadBrownDwarfData();
+        CSD_WD   : LoadWhiteDwarfData();
     end;
+    // finishing
+    ArityTweak(icount);
   end;
   Result := True;
 end;
@@ -519,14 +699,16 @@ end;
 
 //-------------------------------------
 function TCoreStarDataFrame.ReloadData:Boolean;
-var starmode:Boolean;
 begin
   Result := False;
   if (edited_item = nil) then Exit;
   LoadCommonData;
-  starmode := BayerBox.Visible;
-  if starmode then LoadStarData
-  else LoadBrownDwarfData;
+  case panelMode of
+      CSD_STAR : LoadStarData();
+      CSD_BD   : LoadBrownDwarfData();
+      CSD_WD   : LoadWhiteDwarfData();
+  end;
+  ArityTweak(edited_item.MinPartCount);
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // externally called handlers

@@ -3,7 +3,9 @@ unit gaiaset;
 {$mode delphi}
 
 (* String set for Gaia DR2 ids to get past that lingering error when I did my
-original Gaia DR2 matching (and forgot to mark the stars as matched) *)
+original Gaia DR2 matching (and forgot to mark the stars as matched):
+
+Added: Map for use in matching Gaia DR2 to NLTT *)
 
 interface
 

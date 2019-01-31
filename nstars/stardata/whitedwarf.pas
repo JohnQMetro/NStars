@@ -103,6 +103,7 @@ function FillZhamiMassToRadiusArray():Integer;
 function ZhamiLookup(inmass:Real; out foundrad:Real):Boolean;
 // TEff estimates for White Dwarfs
 function EstDATEff_DR2(const BPmRP:Currency; out TEff_est:Integer):Boolean;
+function EstDATEff_DR2r(G:Currency; RP:Currency; out TEff_est:Integer):Boolean;
 // extra tests
 procedure MakeWDMassRadiusCSV();
 //********************************************************************
@@ -1007,6 +1008,24 @@ begin
   bprpr := CurrToReal(BPmRP);
   if (bprpr < 0.87) then interm := PolEval(bprpr,hot_coff,6)
   else interm := PolEval(bprpr,cool_coff,4);
+  // rounding
+  Result := True;
+  tempint := round(interm/50);
+  TEff_est := tempint*50;
+end;
+//---------------------------------------------------------
+function EstDATEff_DR2r(G:Currency; RP:Currency; out TEff_est:Integer):Boolean;
+var gmrp,interm:Real;
+    tempint:Int64;
+const gmrp_coff:array[0..3] of Real = (1.248e4,-2.393e4,2.859e4,-1.461e4);
+begin
+  Result := False;
+  if (RP >= 90) or (G > 90) then Exit;
+  gmrp := G - RP;
+  // bounds
+  if (gmrp < 0.1) or (gmrp > 0.85) then Exit;
+  // the ranges of the 2 equation overlap. I'll set the division at 0.87
+  interm := PolEval(gmrp,gmrp_coff,4);
   // rounding
   Result := True;
   tempint := round(interm/50);

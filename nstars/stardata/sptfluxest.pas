@@ -998,14 +998,14 @@ const dspec1 = 'M5V??';
       dspec2 = 'M9V??';
 begin
   Result := EstimationParser.Create();
-  if ultradim then Result.SetBasic(MMagnitudes[18],dspec2,False)
-  else Result.SetBasic(MMagnitudes[10],dspec1,False);
+  if ultradim then Result.SetBasic(MMagnitudes[18],dspec2,False,WD_D)
+  else Result.SetBasic(MMagnitudes[10],dspec1,False,WD_D);
 end;
 //----------------------------------------
 function MakeGenericWD():EstimationParser;
 begin
   Result := EstimationParser.Create();
-  Result.SetBasic(13.44,'DA7??',False);
+  Result.SetBasic(13.44,'DA7??',False,WD_H);
 end;
 //----------------------------------------
 function OkStar(var instar:EstimationParser; out newstar:EstimationParser):Boolean;
@@ -1070,7 +1070,7 @@ begin
   newamag := VLumToAbsVMag(lumdiff);
   newstar := EstimationParser.Create();
   nsspec := outspec + '?';
-  newstar.SetBasic(newamag,nsspec,False);
+  newstar.SetBasic(newamag,nsspec,False,WD_D);
   Result := True;
 end;
 //-----------------------------------------------------------------
@@ -1097,7 +1097,7 @@ begin
   // otherwise, we finish things off
   else begin
     nsspec += '?';
-    newstar.SetBasic(sec_absmag,nsspec,False);
+    newstar.SetBasic(sec_absmag,nsspec,False,WD_D);
   end;
   //reducing the magnitude of the primary
   primary.SecondarySplit(secmag,secpllx,True);

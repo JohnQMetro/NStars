@@ -337,31 +337,60 @@ end;
 // other helper methods
 //---------------------------------
 procedure Location.MakeRAString;
-var buildr:string;
+var buildr,tsec:string;
+    minz,hrz:Word;
 begin
-  if ra_hours < 10 then buildr := '0';
-  buildr += IntToStr(ra_hours);
+  minz := ra_minutes;
+  hrz := ra_hours;
+  // handling seconds first, to account for rounding
+  tsec := FloatToStrF(ra_seconds,ffFixed,2,3);
+  if (tsec = '60.000') then begin
+    tsec := '00.000';
+    minz += 1;
+    if minz = 60 then begin
+      minz := 0;
+      hrz += 1;
+      if hrz = 24 then hrz := 0;
+    end;
+  end else if (ra_seconds < 10) then begin
+    tsec := '0' + tsec;
+  end;
+  // building the rest
+  if hrz < 10 then buildr := '0';
+  buildr += IntToStr(hrz);
   buildr += ' ';
-  if ra_minutes < 10 then buildr += '0';
-  buildr += IntToStr(ra_minutes);
-  buildr += ' ';
-  if ra_seconds < 10 then buildr += '0';
-  ra_hms := buildr + FloatToStrF(ra_seconds,ffFixed,2,3);
+  if minz< 10 then buildr += '0';
+  buildr += IntToStr(minz);
+  ra_hms := buildr + ' ' + tsec;
 end;
 //---------------------------------
 procedure Location.MakeDecString;
-var buildr:string;
+var buildr,tsec:string;
+    ndeg,namin:Word;
 begin
+  ndeg := dec_degrees;
+  namin := dec_arcmins;
+  // handling arcseconds first, because of rounding
+  tsec := FloatToStrF(dec_arcsecs,ffFixed,2,2);
+  if (tsec = '60.00') then begin
+    tsec := '00.00';
+    namin += 1;
+    if namin = 60 then begin
+      namin := 0;
+      ndeg += 1;
+    end;
+  end else if dec_arcsecs < 10 then begin
+    tsec := '0' + tsec;
+  end;
+  // starting the output string
   if southern then buildr := '-'
   else buildr := '+';
-  if dec_degrees < 10 then buildr += '0';
-  buildr += IntToStr(dec_degrees);
+  if ndeg < 10 then buildr += '0';
+  buildr += IntToStr(ndeg);
   buildr += ' ';
-  if dec_arcmins < 10 then buildr += '0';
-  buildr += IntToStr(dec_arcmins);
-  buildr += ' ';
-  if dec_arcsecs < 10 then buildr += '0';
-  dec_dms := buildr + FloatToStrF(dec_arcsecs,ffFixed,2,2);
+  if namin < 10 then buildr += '0';
+  buildr += IntToStr(namin);
+  dec_dms := buildr + ' ' + tsec;
 end;
 //---------------------------------
 function Location.RA_toDegrees:Real;

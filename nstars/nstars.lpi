@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="64">
+    <Units Count="65">
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -370,6 +370,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="VizierID"/>
       </Unit63>
+      <Unit64>
+        <Filename Value="data\nltt_match.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit64>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

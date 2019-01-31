@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils,StrUtils, DAMath, df_strings, fluxtransform,Utilities,
-  StarExt2,EstUtilsExtra,starconstants,EstBasics,TEffBCv,WhiteDwarf;
+  StarExt2,EstUtilsExtra,unitdata, starconstants,EstBasics,TEffBCv,WhiteDwarf;
 
 const
   late_let = 'KMLTY';
@@ -46,6 +46,7 @@ type
       stype:string;
       feh:Currency;
       logg:Currency;
+      wda:WDAtmosEnum;
       // backups
       bak_avmag,bak_akmag,bak_bmag,bak_jmag:Real;
       bak_stype:string;
@@ -168,10 +169,10 @@ type
       // constructors
       constructor Create();
       // functions to set the data
-      function SetBasic(const avm:Real; in_spectra:string; is_pms:Boolean):Boolean;
-      function SetSimple(const avm,pllx:Real; in_spectra:string; is_pms:Boolean):Boolean;
+      function SetBasic(const avm:Real; in_spectra:string; is_pms:Boolean; wdat:WDAtmosEnum):Boolean;
+      function SetSimple(const avm,pllx:Real; in_spectra:string; is_pms:Boolean; wdat:WDAtmosEnum):Boolean;
       function SetSimpleOther(const avm,pllx:Real):Boolean;
-      function SetAll(const avm,pllx:Real; in_spectra:string; is_pms:Boolean; other:StarFluxPlus):Boolean;
+      function SetAll(const avm,pllx:Real; in_spectra:string; is_pms:Boolean; wdat:WDAtmosEnum; other:StarFluxPlus):Boolean;
       function SetOther(const avm,pllx:Real; other:StarFluxPlus):Boolean;
 
       // calculation methods
@@ -890,7 +891,9 @@ begin
   // preparing for the call
   if logg < 0 then uselogg := deflogg
   else uselogg := logg;
-  ishydr := AnsiStartsStr('DA',stype);
+  if wda = WD_H then ishydr := True
+  else if wda = WD_He then ishydr := False
+  else ishydr := AnsiStartsStr('DA',stype) or AnsiStartsStr('DX',stype);
   // the call
   Result := wdbc.GetBCvBloat(ishydr,uselogg,efftempA,bvcor,wdbloat);
   if Result then bollum := AbsBolMagToBolLum(AbsVisMag + bvcor);
@@ -1546,10 +1549,11 @@ begin
   feh := invfeh;
   logg := invlogg;
   wdbloat := 1;
+  wda := WD_D;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++
 // spectra and absolute magnitude only
-function EstimationParser.SetBasic(const avm:Real; in_spectra:string; is_pms:Boolean):Boolean;
+function EstimationParser.SetBasic(const avm:Real; in_spectra:string; is_pms:Boolean; wdat:WDAtmosEnum):Boolean;
 var parsok:Boolean;
 begin
   // clearing the old
@@ -1558,6 +1562,7 @@ begin
   Result := False;
   // setting and parsing the spectra
   stype := in_spectra;
+  wda := wdat;
   parsok := MainParse(in_spectra,is_pms);
   if not parsok then Exit;
   // efftempA is based on the spectra
@@ -1573,18 +1578,18 @@ end;
 //--------------------------------------------------------
 (* a wrapper for SetBasic that converts avm (apparent visual magnitude) to
 absolute visual magnitude first (using pllx).  *)
-function EstimationParser.SetSimple(const avm,pllx:Real; in_spectra:string; is_pms:Boolean):Boolean;
+function EstimationParser.SetSimple(const avm,pllx:Real; in_spectra:string; is_pms:Boolean; wdat:WDAtmosEnum):Boolean;
 var absmag:Real;
 begin
   // checking for bad input
   Result := False;
   if pllx <= 0 then Exit;
   // bad avm
-  if avm >= 90 then Result := SetBasic(avm,in_spectra,is_pms)
+  if avm >= 90 then Result := SetBasic(avm,in_spectra,is_pms,wdat)
   else begin
     // magnitude correction values
     absmag := MakeAbsoluteMagnitude(avm,pllx);
-    Result := SetBasic(absmag,in_spectra,is_pms);
+    Result := SetBasic(absmag,in_spectra,is_pms,wdat);
   end;
 end;
 //--------------------------------------------------------
@@ -1605,7 +1610,7 @@ begin
 end;
 //--------------------------------------------------------
 // sets all inputs, calculates estimates
-function EstimationParser.SetAll(const avm,pllx:Real; in_spectra:string; is_pms:Boolean; other:StarFluxPlus):Boolean;
+function EstimationParser.SetAll(const avm,pllx:Real; in_spectra:string; is_pms:Boolean; wdat:WDAtmosEnum; other:StarFluxPlus):Boolean;
 var parsok:Boolean;
 begin
   // clearing the old
@@ -1616,6 +1621,7 @@ begin
   if pllx <= 0 then Exit;
   // setting and parsing the spectra
   stype := in_spectra;
+  wda := wdat;
   parsok := MainParse(in_spectra,is_pms);
   if not parsok then Exit;
   // efftempA is based on the spectra, unless it is manually entered...

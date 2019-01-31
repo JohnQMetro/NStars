@@ -5,11 +5,10 @@ program nstars;
 uses
   Forms, Interfaces,
   nstarsmain in 'nstarsmain.pas' {NstarsMainForm},
-  collecdata in 'collecdata.pas',
+  collecdata,
   sptfluxest in 'stardata/sptfluxest.pas',
   gnotes_form in 'gnotes_form.pas' {FileGlobalNotes},
-  df_strings in 'df_strings.pas',
-  cluster in 'cluster.pas',
+  df_strings, cluster, nltt_match,
   clusteredit in 'clusteredit.pas' {ClusterEditForm};
 
 {.$R *.res}

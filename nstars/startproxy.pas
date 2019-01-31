@@ -1280,27 +1280,10 @@ begin
     // we have different methods depending on values...
     if ccomponent.fluxtemp = nil then Jin := 99.999
     else Jin := ccomponent.fluxtemp.J_mag;
-    cpick := GaiaTransHelper(ccomponent.dr2mags,Jin);
-    BPmRP := ccomponent.dr2mags.BPminRP;
-    okay := False;
-    // red
-    if cpick = 1 then begin
-      Jin := ccomponent.fluxtemp.J_mag;
-      okay := GaiaToVRI_Red(Gin,RPin,Jin,Vest,Rcest,Icest);
-    end else if cpick = 2 then begin
-      okay := GaiaToVRI_Blue(Gin,BPin,Vest,Rcest,Icest);
-    end else if cpick = 3 then begin
-      Jin := ccomponent.fluxtemp.J_mag;
-      okay := GaiaToVRI_2M(Gin,Jin,Vest,Rcest,Icest);
-    end;
-  end;
-  if (not okay) and (not isWD) then begin
-     // for red stars, I'll use my own transform...
-     if BPmRP > 2 then okay := Gaia2ToVRI_MyWay(Gin,BPin,RPin,Vest,Rcest,Icest)
-     else okay := Gaia2ToVRI(Gin,BPmRP,Vest,Rcest,Icest);
+    okay := GaiaToVRI_Gen(ccomponent.dr2mags,Jin,Vest,Rcest,Icest);
   end;
   if not okay then begin
-    ShowMessage('Cannot estimate: Colors not within range!');
+    ShowMessage('Cannot estimate: Colors/Errors not within range!');
     Exit;
   end;
   // also, B
@@ -1541,6 +1524,7 @@ function StarProxy.DA_GaiaTEff():Boolean;
 var bpmrp:Currency;  teff:Integer;
     okay:Boolean;
     rval:Word;       msg:string;
+    bperr,divo:Real;
 begin
   Result := False;
   // checking if we have the magnitudes
@@ -1551,8 +1535,16 @@ begin
     Exit;
   end;
   // computing TEff estimate
-  bpmrp := ccomponent.dr2mags.BPminRP;
-  okay := EstDATEff_DR2(bpmrp,teff);
+  bperr := CurrToReal(ccomponent.dr2mags.BPerr);
+  divo := bperr / CurrToReal(ccomponent.dr2mags.RPerr);
+  okay := False;
+  if (bperr > 0.01) and (divo > 2.5) then begin
+    okay := EstDATEff_DR2r(ccomponent.dr2mags.G,ccomponent.dr2mags.RP,teff);
+  end;
+  if not okay then begin
+    bpmrp := ccomponent.dr2mags.BPminRP;
+    okay := EstDATEff_DR2(bpmrp,teff);
+  end;
   if not okay then begin
     ShowMessage('Cannot estimate, Colours out of bounds.');
     Exit;

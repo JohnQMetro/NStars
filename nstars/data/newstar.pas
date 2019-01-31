@@ -17,6 +17,8 @@ const ComponentStrings:array[0..21] of string = ('','A','B','C','D','AB','BC',
 
 const VStarType:array[0..6] of string = (' ','Variable','UV Ceti type',
           'BY Draconis type',  'Delta Scuti type', 'ZZ Ceti type','RS Can.Ven. type');
+const VStarType2:array[0..5] of string =(' ','Variable','UV Ceti type',
+          'BY Draconis type',  'Delta Scuti type','RS Can.Ven. type');
 const TypeLabels:array[0..7] of string = ('Unknown', 'Brown Dwarf', 'White Dwarf',
       'SubDwarf Star', 'Red Dwarf','Ordinary Star','SubGiant Star','Giant Star');
 
@@ -27,7 +29,6 @@ StarClass = ( UNKNOWN, BROWN_DWARF, WHITE_DWARF, SUBDWARF, RED_DWARF, MAIN_SEQUE
 
 VariableTypeEnum = ( NOT_VARIABLE, VARIABLE, UV_CETI, BY_DRACONIS, DETA_SCUTI,
                       ZZ_CETI, RS_CAN_VENAT);
-
 
 // base class for stars and brown dwarves
 NewStarBase = class(StarBase)
@@ -123,6 +124,7 @@ StarInfo = class(NewStarBase)
     VariableType:VariableTypeEnum;
     ExtraInfo:StarExtraData;
     premain:Boolean;
+    wda:WDAtmosEnum; // useful for white dwarfs only
     // special
     estimator:EstimationParser;
     // properties
@@ -157,8 +159,9 @@ ComponentList = TFPGObjectList<NewStarBase>;
 
 // function that properly loads a brown dwarf or a star from a file
 function LoadStarBase(var infile:TextFile):NewStarBase;
-
 function SplitComponent(compin:string; first:Boolean):string;
+
+function IndexToVarT(const inIndex:Integer; out vtype:VariableTypeEnum):Boolean;
 
 var half_mag:Real;
 
@@ -468,8 +471,11 @@ end;
 //------------------------------------------
 function StarInfo.GSecMagStr:string;
 begin
-  Result := Trim(FloatToStrF(secondary_mag,ffFixed,2,1));
-  if secondary_mag < 10 then Result := '0' + Result;
+  if secondary_mag > 99 then Result := '99.9'
+  else begin
+    Result := Trim(FloatToStrF(secondary_mag,ffFixed,2,1));
+    if secondary_mag < 10 then Result := '0' + Result;
+  end;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
 // constructor
@@ -484,6 +490,7 @@ begin
   dr2mags := nil;
   secondary_mag := 99.9;
   premain := False;
+  wda := WD_D;
 end;
 //-----------------------------
 destructor StarInfo.Destroy;
@@ -534,11 +541,11 @@ begin
   if estimator = nil then estimator := EstimationParser.Create();
   // two options, with extra data
   if fluxtemp <> nil then begin
-    Result := estimator.SetAll(visual_magnitude,parallax,spectraltype,premain,fluxtemp);
+    Result := estimator.SetAll(visual_magnitude,parallax,spectraltype,premain,wda,fluxtemp);
   end
   // and without extra data
   else begin
-    Result := estimator.SetSimple(visual_magnitude,parallax,spectraltype,premain);
+    Result := estimator.SetSimple(visual_magnitude,parallax,spectraltype,premain,wda);
   end;
 end;
 //--------------------------------
@@ -632,12 +639,14 @@ begin
   // no checking to see if outfile is okay
   outline := MakeOutputLineOne(False);
   Writeln(outfile,outline);
-  // star data includes magnitude, arity, pre-main seq, and perhaps secondary mag
+  // star data includes magnitude, arity, pre-main seq, secondary mag, and wd atmos type
   outline := VisualMagnitudeString + ';' + ArityLabels[Ord(Arity)] + ';';
   outline += Bool2Str(premain) + ';';
   outline += VStarType[Ord(VariableType)] + ';';
-  outline += Bool2Str(ExtraInfo <> nil);
-  if VSecMag then outline += ';' + FloatToStrF(secondary_mag,ffFixed,2,1);
+  outline += Bool2Str(ExtraInfo <> nil) + ';';
+  if VSecMag then outline += FloatToStrF(secondary_mag,ffFixed,3,1) + ';'
+  else outline += ';';
+  outline += IntToStr(Ord(wda));
   Writeln(outfile,outline);
   // notes
   Writeln(outfile,GetNotesFile);
@@ -658,7 +667,7 @@ end;
 //-------------------------
 function StarInfo.ReadRestFromTextFile(var infile:TextFile; out errmsg:string):Boolean;
 var cline:string;  line2:TStringList;
-    indx:Integer;
+    indx,wddex:Integer;
     xtest:Boolean;
 begin
   Result := False;
@@ -695,7 +704,21 @@ begin
   // do we have extra data
   if Str2BoolR(line2[4]) then ExtraInfo := StarExtraData.Create;
   // optional secondary magnitude
-  if (line2.Count >= 6) then StrToReal(line2[5],secondary_mag);
+  if (line2.Count >= 6) then begin
+    if not TryStrToFloat(line2[5],secondary_mag) then secondary_mag := 99.9
+    else begin
+        if Ord(Arity) < Ord(SPECTROCOPIC_BINARY) then secondary_mag := 99.9;
+    end;
+  end;
+  // white dwarf atmosphere type
+  if (line2.Count >= 7) then begin
+    if not TryStrToInt(line2[6],wddex) then wda := WD_D
+    else begin
+      if (wddex < 0) or (wddex > 2) then wda := WD_D
+      else wda := WDAtmosEnum(wddex);
+    end;
+  end
+  else wda := WD_D;
   line2.Free;
   // the notes
   Readln(infile,cline);
@@ -829,6 +852,18 @@ begin
     else Result := 'Ab';
   end
   else Assert(False);
+end;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(* For stars, we skip the ZZ_CETI variable type, so drop down list to enum
+is not a direct mapping anymore. *)
+function IndexToVarT(const inIndex:Integer; out vtype:VariableTypeEnum):Boolean;
+begin
+  Result := False;
+  if inIndex < 0 then Exit;
+  if inIndex > High(VStarType2) then Exit;
+  if inIndex < 5 then vtype := VariableTypeEnum(inIndex)
+  else vtype := VariableTypeEnum(inIndex+1);
+  Result := True;
 end;
 
 //=============================================================
