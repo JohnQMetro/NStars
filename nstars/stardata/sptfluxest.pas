@@ -8,8 +8,12 @@ uses
   Classes, SysUtils, DAMath, EstBasics, StarEstimator, Utilities, df_strings,
   starconstants, NewStar, unitdata;
 
+type
+TenArray = array[0..9] of Real;
+
 const
   scolors = 'OBAFGK';
+  scolors2 = scolors + 'M';
   KtoKs:Currency = 0.032;
 
   // V Magnitudes
@@ -89,7 +93,45 @@ const
   RedDwarfVmRc:array[0..12] of Currency = (0.889,0.924,0.959,0.978,1.001,1.041,
                           1.079,1.178,1.241,1.345,1.446,1.656,1.95);
   VmRcB95V:Currency = -0.017;
+//-------------------------------------------------------------------------
+// G Magnitudes
+  GB95Mag:Real= 0.82;
+  StarGMagnitudes:array[3..6] of TenArray = (
+    (* A *) ( 1.09, 1.32, 1.46, 1.52, 1.73, 1.81, 1.86, 2.03, 2.25, 2.26),
+    (* F *) ( 2.46, 2.73, 2.92, 3.01, 3.16, 3.32, 3.61, 3.77, 3.90, 4.04),
+    (* G *) ( 4.32, 4.37, 4.65, 4.72, 4.79, 4.83, 4.97, 5.02, 5.15, 5.34),
+    (* K *) ( 5.53, 5.63, 5.89, 6.26, 6.55, 6.95, 7.32, 7.58, 7.84, 8.00)
+  );
+  GMMagnitudes:array[0..19] of Real = ( 8.26, 8.46, 8.87, 9.12, 9.38, 9.68,
+        10.05, 10.9, 11.39, 12.02, 12.56, 13.5, 14.48, 14.32, 14.83, 15.33,
+        15.73, 16.05, 16.29, 16.33);
+  GLMagnitudes:array[0..8] of Real = ( 16.36, 16.83, 17.24, 17.76, 18.32,
+        18.86, 19.25, 19.3, 20 );
 
+  // BP-RP
+  B95BPmRP:Real = -0.087;
+  StarBPmRP:array[3..6] of TenArray = (
+    (* A *) (-0.037,0.011,0.068,0.096,0.166,0.194,0.208,0.263,0.32 ,0.327),
+    (* F *) ( 0.377,0.434,0.49 ,0.518,0.546,0.587,0.64 ,0.67 ,0.694,0.719),
+    (* G *) ( 0.782,0.803,0.823,0.832,0.841,0.85 ,0.869,0.88 ,0.9  ,0.95 ),
+    (* K *) ( 0.98 ,1.01 ,1.1  ,1.21 ,1.32 ,1.45 ,1.58 ,1.71 ,1.72 ,1.78 )
+  );
+  MBPmRP: array[0..18] of Real = (1.84,1.97,2.09,2.14,2.25,2.39,2.49,2.71,
+                     2.95,3.13,3.36,3.7,3.95,4.41,4.75,4.77,4.8,5.03,4.78);
+
+  // G−RP
+  B95GmRP:Real= -0.016;
+  StarGmRP:array[3..6] of TenArray = (
+    (* A *) (0.01 ,0.036,0.069,0.084,0.122,0.137,0.145,0.174,0.204,0.208),
+    (* F *) (0.23 ,0.252,0.279,0.293,0.307,0.329,0.356,0.372,0.385,0.399),
+    (* G *) (0.438,0.448,0.459,0.464,0.468,0.473,0.483,0.489,0.499,0.524),
+    (* K *) (0.56 ,0.56 ,0.62 ,0.66 ,0.700,0.740,0.790,0.870,0.880,0.9  )
+  );
+  MGmRP:array[0..19] of Real = (0.92,0.96,1.01,1.03,1.06,1.1,1.12,1.17,1.24,1.27,
+                     1.33,1.37,1.45,1.48,1.52,1.54,1.57,1.58,1.59,1.63);
+  LGmRP:array[0..3] of Real = (1.68,1.66,1.69,1.7);
+
+//-------------------------------------------------------------------------
 (* B-V for Pre-Main-Sequence Stars, from Peault and Mamajek 2013. *)
 PMSStarBmV:array[4..6] of array[0..9] of Currency = (
     (* F *) ( 0.28, 0.34, 0.38, 0.41, 0.43, 0.47, 0.50, 0.53, 0.55, 0.56),
@@ -200,6 +242,11 @@ var
   VminI_L:array[0..5] of Currency;
   PMS_VmIcBright:array[4..6] of array[0..9] of Currency;
   PMS_VmIcRedDwarf:array[0..5] of Currency;
+
+  // Gaia DR2 G Magnitude arrays
+  MGBright:array[3..6] of array[0..9] of Currency;
+  MGRedDwarf:array[0..20] of Currency;
+  MGL:array[0..8] of Currency;
 
   // V-Rc arrays
   VminRBright:array[3..6] of array[0..9] of Currency;
@@ -992,6 +1039,7 @@ begin
   // finishing off
   spectra += 'V';
 end;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function MakeGenericDwarf(ultradim:Boolean):EstimationParser;
 const dspec1 = 'M5V??';

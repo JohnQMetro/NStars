@@ -5,7 +5,8 @@ unit guessstype;
 interface
 
 uses
-  Classes, SysUtils, Utilities, sptfluxest, DAMath,StarExt2, StrUtils;
+  Classes, SysUtils, Utilities, sptfluxest, DAMath,StarExt2, StrUtils,
+  gaiadr2base, newlocation, fluxlookup;
 
 type
 (* type to bundle and streamline spectral type guessing stuff *)
@@ -15,14 +16,15 @@ SpecTypeGuesser = class
     vmag,avmag,ksmag:Real;
     akmag_min,akmag_max:Currency;
     bmv,bmv_min,bmv_max:Currency;
-    vmr:Currency;
+    vmr,bpmrp,gmrp:Currency;
     vmi,vmk,vmk_min,vmk_max:Currency;
     vmj:Real;
+    agmag:Currency;
     // typedata
     is_pms:Boolean;
     // results
-    r_magv,r_magk,r_bmv,r_vmr,r_vmi,r_vmj,r_vmk:string;
-    ok_magv,ok_magk,ok_bmv,ok_vmr,ok_vmi,ok_vmj,ok_vmk:Boolean;
+    r_magv,r_magk,r_magg,r_bmv,r_vmr,r_vmi,r_vmj,r_vmk,r_bpmrp,r_gmrp:string;
+    ok_magv,ok_magk,ok_magg,ok_bmv,ok_vmr,ok_vmi,ok_vmj,ok_vmk,ok_bpmrp,ok_gmrp:Boolean;
     has_rec,has_dist,has_dist2:Boolean;
     rec_stype,vmk_dist,vmk_dist2,jmk_note:string;
     // helper methods
@@ -47,7 +49,7 @@ SpecTypeGuesser = class
     property VmKDistance:string read GVmKDist;
     // public methods
     constructor Create;
-    function SetFluxes(pllx:Real; invmag:Real; fluxes:StarFluxPlus):Boolean;
+    function SetFluxes(pllx:Real; invmag:Real; fluxes:StarFluxPlus; gFlux:GaiaDR2Mags):Boolean;
     function MakeGuesses(const curspec:string; is_pms_in:Boolean):Boolean;
     function ProduceResult(const stype_pllx:string; const vmagdiff:Real):string;
 end;
@@ -76,8 +78,11 @@ begin
     end;
   end
   else ok_magk := False;
+  if agmag < 90 then begin
+    ok_magg := gmagLookup.FindSptC(agmag,r_magg);
+  end else ok_magg := False;
   // done
-  Result := ok_magv or ok_magk;
+  Result := ok_magv or ok_magk or ok_magg;
 end;
 //---------------------------------------------
 function SpecTypeGuesser.ColorSpectras:Integer;
@@ -101,6 +106,16 @@ begin
   if vmi < 90 then begin
     ok_vmi := VminILookup(vmi,r_vmi);
     if ok_vmi then Inc(Result);
+  end;
+  // BP-RP
+  if (bpmrp < 90) then begin
+    ok_bpmrp := bpmrpLookup.FindSptC(bpmrp,r_bpmrp);
+    if ok_bpmrp then Inc(Result);
+  end;
+  // G-RP
+  if (gmrp < 90) then begin
+    ok_gmrp := gmrpLookup.FindSptC(gmrp,r_gmrp);
+    if ok_gmrp then Inc(Result);
   end;
   // V-J
   if vmj < 90 then begin
@@ -209,16 +224,19 @@ begin
   Result := '';
   if (ok_magv) then Result += 'V Magnitude  : ' + r_magv + sLineBreak;
   if (ok_magk) then Result += 'Ks Magnitude : ' + r_magk + sLineBreak;
+  if (ok_magg) then Result += 'G Magnitude : ' + r_magg + sLineBreak;
 end;
 //-----------------------------------------------
 function SpecTypeGuesser.MakeColourResult:string;
 begin
   Result := '';
-  if (ok_vmk) then Result += 'V−K  : ' + r_vmk + sLineBreak;
-  if (ok_bmv) then Result += 'B−V  : ' + r_bmv + sLineBreak;
-  if (ok_vmr) then Result += 'V-Rc : ' + r_vmr + sLineBreak;
-  if (ok_vmi) then Result += 'V−Ic : ' + r_vmi + sLineBreak;
-  if (ok_vmj) then Result += 'V−J  : ' + r_vmj + sLineBreak;
+  if (ok_vmk)   then Result += 'V−K   : ' + r_vmk + sLineBreak;
+  if (ok_bmv)   then Result += 'B−V   : ' + r_bmv + sLineBreak;
+  if (ok_vmr)   then Result += 'V-Rc  : ' + r_vmr + sLineBreak;
+  if (ok_vmi)   then Result += 'V−Ic  : ' + r_vmi + sLineBreak;
+  if (ok_vmj)   then Result += 'V−J   : ' + r_vmj + sLineBreak;
+  if (ok_bpmrp) then Result += 'BP-RP : ' + r_bpmrp + sLineBreak;
+  if (ok_gmrp)  then Result += 'G-RP  : ' + r_gmrp + sLineBreak;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // property methods
@@ -239,15 +257,18 @@ begin
   bmv := 99;    bmv_min := 99;  bmv_max := 99;
   vmr := 99;    vmi := 99;      vmj := 99;
   vmk := 99;    vmk_min := 99;  vmk_max := 99;
+  agmag := 99;  bpmrp := 99;    gmrp := 99;
   ok_magv := False;     ok_magk := False;
   ok_bmv  := False;     ok_vmi  := False;
   ok_vmj  := False;     ok_vmk  := False;
   has_rec := False;     is_pms := False;
   has_dist := False;    has_dist2 := False;
+  ok_magg := False;     ok_bpmrp := False;
+  ok_gmrp := False;
 end;
 //---------------------------------
-function SpecTypeGuesser.SetFluxes(pllx:Real;  invmag:Real; fluxes:StarFluxPlus):Boolean;
-var absoffset:Real;
+function SpecTypeGuesser.SetFluxes(pllx:Real;  invmag:Real; fluxes:StarFluxPlus; gFlux:GaiaDR2Mags):Boolean;
+var absoffset,greal,absgr:Real;
     jmkval:Currency;
 const jmklim1:Currency = 0.85;
       jmklim2:Currency = 1.02;
@@ -265,6 +286,11 @@ begin
   if fluxes <> nil then begin
     fluxes.AbsoluteKMag(pllx,akmag_min,akmag_max);
   end;
+  if (gFlux <> nil) and (gFlux.G < 90) then begin
+    greal := CurrToReal(gFlux.G);
+    absgr := CalculateAbsMagnitude(greal,pllx);
+    agmag := RealToCurr(absgr);
+  end;
   // colors
   if (invmag < 90) and (fluxes<>nil) then begin
     if fluxes.Valid_BlueMagnitude then begin
@@ -279,8 +305,12 @@ begin
       vmk := RealToCurr(invmag) - fluxes.K_mag;
       fluxes.VminusKval(invmag,vmk_min,vmk_max);
     end;
-
   end;
+  if (gFlux <> nil) then begin
+    if (gFlux.ValidBPmRP) then bpmrp := gFlux.BPminRP;
+    if (gFlux.G < 90) then gmrp := gFlux.G - gFlux.RP;
+  end;
+
   // special J-K checking
   if (fluxes<>nil) then begin
     if fluxes.JminusKval(jmkval) then begin
@@ -292,8 +322,8 @@ begin
     end;
   end;
   // result (True if anything is okay)
-  Result := ((avmag < 90) or (akmag_min<90));
-  Result := Result or ((bmv<90) or (vmi<90) or (vmj<90) or (vmk<90));
+  Result := ((avmag < 90) or (akmag_min<90) or (agmag<90));
+  Result := Result or ((bmv<90) or (vmi<90) or (vmj<90) or (vmk<90) or (bpmrp<90) or (gmrp < 90));
 end;
 //---------------------------------
 function SpecTypeGuesser.MakeGuesses(const curspec:string; is_pms_in:Boolean):Boolean;

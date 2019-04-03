@@ -284,7 +284,7 @@ begin
   if AnsiContainsText(proper_name,infind) then Exit;
   // looking in the variable star info
   if var_designation<>'' then begin
-    buf := var_designation + ' ' + constellations[(conste-1)*3];
+    buf := var_designation + ' ' + constellations[(conste-1)*3 + 1];
     if AnsiContainsText(buf,infind) then Exit;
   end;
   // we look in the catalog names

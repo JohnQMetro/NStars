@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="65">
+    <Units Count="66">
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -374,6 +374,10 @@
         <Filename Value="data\nltt_match.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit64>
+      <Unit65>
+        <Filename Value="stardata\fluxlookup.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit65>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

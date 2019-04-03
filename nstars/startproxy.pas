@@ -814,7 +814,7 @@ begin
   Screen.Cursor := crHourGlass;
   styper := SpecTypeGuesser.Create;
   cpllx := GetCurrentParallax;
-  resok := styper.SetFluxes(cpllx,cstar.VisualMagnitude,cstar.fluxtemp);
+  resok := styper.SetFluxes(cpllx,cstar.VisualMagnitude,cstar.fluxtemp,cstar.dr2mags);
   if not resok then begin
     FreeAndNil(styper);
     Screen.Cursor := crDefault;
