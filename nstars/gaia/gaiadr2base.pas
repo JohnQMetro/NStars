@@ -23,15 +23,19 @@ GMagQ = (
 stars directly as well as being used in the GaiaDR2Star class. *)
 GaiaDR2Mags = class
   protected
+    ratio_exp,ratio_act:Real;
     const defbad:Currency = 99.999;
+
     function StrToMag(inval:string; var target:Currency):Boolean;
     function StrToMagE(inval:string; var target:Currency):Boolean;
     procedure SetQuality();
+    procedure SetRatio();
     function GtoStr:string;
     function BPtoStr:string;
     function RPtoStr:string;
     function vbpmrp:Boolean;
     function mbpmrp:Currency;
+    function badrat:Boolean;
   public
     G,BP,RP:Currency; // the core data. note that DR2 G is not the same as DR1 G
     Gerr,BPerr,RPerr:Currency;
@@ -46,6 +50,7 @@ GaiaDR2Mags = class
     // other properties
     property ValidBPmRP:Boolean read vbpmrp;
     property BPminRP:Currency read mbpmrp;
+    property BadRatio:Boolean read badrat;
     // basic constructors
     constructor Create(); overload;
     constructor Create(Gstr:string; BPstr:string; RPstr:string); overload;
@@ -239,6 +244,22 @@ begin
   else if gok1 then qual := GQ_G
   else qual := GQ_X;
 end;
+//--------------------------------------------------------------
+procedure GaiaDR2Mags.SetRatio();
+var gmrp,bpmrp:Real;
+const exp_coff:array[0..2] of Real = (1.616,0.1341,0.03902);
+begin
+  if (G > 90) or (BP > 90) or (RP > 90) then begin
+    ratio_exp := 0;  ratio_act := 0;
+  end else begin
+      bpmrp := CurrToReal(BP) - CurrToReal(RP);
+      gmrp := CurrToReal(G) - CurrToReal(RP);
+      if (gmrp = 0) then ratio_act := 0
+      else ratio_act := bpmrp / gmrp;
+      if (bpmrp > 4.5) or (bpmrp < 0.6) then ratio_exp := 0
+      else ratio_exp := PolEval(bpmrp,exp_coff,3);
+  end;
+end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function GaiaDR2Mags.GtoStr:string;
 begin
@@ -263,6 +284,13 @@ begin  Result := (BP < 90) and (RP < 90);  end;
 //------------------------------------------
 function GaiaDR2Mags.mbpmrp:Currency;
 begin  Result := (BP - RP);  end;
+//------------------------------------------
+function GaiaDR2Mags.badrat:Boolean;
+begin
+  Result := False;
+  if (ratio_exp = 0) then Exit;
+  Result := (Abs(ratio_exp-ratio_act) > 0.07);
+end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // basic constructors
 constructor GaiaDR2Mags.Create(); overload;
@@ -279,12 +307,15 @@ begin
   if (not StrToMag(RPstr,RP)) then Fail;
   Gerr := 0;   BPerr := 0;   RPerr := 0;
   SetQuality();
+  SetRatio();
 end;
 //--------------------------------------------------
 constructor GaiaDR2Mags.Create(source:TStringList; startdex:Integer); overload;
 begin
   if (not SetFromList(source,startdex)) then Fail
-  else SetQuality();
+  else begin
+    SetQuality(); SetRatio();
+  end;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // setting data
@@ -296,6 +327,7 @@ begin
   if (not StrToMag(source,temp_g)) then Exit;
   G := temp_g;  Result := True;
   SetQuality();
+  SetRatio();
 end;
 //-------------------------
 function GaiaDR2Mags.SetBP(source:string):Boolean;
@@ -305,6 +337,7 @@ begin
   if (not StrToMag(source,temp_bp)) then Exit;
   BP := temp_bp;  Result := True;
   SetQuality();
+  SetRatio();
 end;
 //-------------------------
 function GaiaDR2Mags.SetRP(source:string):Boolean;
@@ -314,6 +347,7 @@ begin
   if (not StrToMag(source,temp_rp)) then Exit;
   RP := temp_rp;  Result := True;
   SetQuality();
+  SetRatio();
 end;
 //-------------------------
 function GaiaDR2Mags.SetFromList(source:TStringList; startdex:Integer):Boolean;
@@ -338,6 +372,7 @@ begin
   RP := temp_rp;
   RPerr := temp_rpe;
   SetQuality();
+  SetRatio();
   Result := True;
 end;
 //-----------------------------------------------------------------
@@ -391,6 +426,7 @@ begin
   end;
   // done
   SetQuality();
+  SetRatio();
   Result := True;
 end;
 //-----------------------------
@@ -398,18 +434,21 @@ procedure GaiaDR2Mags.ClearG();
 begin
   G := 99.999;  Gerr := 0;
   SetQuality();
+  SetRatio();
 end;
 //-----------------------------
 procedure GaiaDR2Mags.ClearBP();
 begin
   BP := 99.999;  BPerr := 0;
   SetQuality();
+  SetRatio();
 end;
 //-----------------------------
 procedure GaiaDR2Mags.ClearRP();
 begin
   RP := 99.999;  RPerr := 0;
   SetQuality();
+  SetRatio();
 end;
 //-----------------------------
 procedure GaiaDR2Mags.SetG_C(Gin,GinE:Currency);
@@ -417,6 +456,7 @@ begin
   G := Gin;
   Gerr := GinE;
   SetQuality();
+  SetRatio();
 end;
 //-----------------------------
 procedure GaiaDR2Mags.SetBP_C(BPin,BPinE:Currency);
@@ -424,6 +464,7 @@ begin
   BP := BPin;
   BPerr := BPinE;
   SetQuality();
+  SetRatio();
 end;
 //-----------------------------
 procedure GaiaDR2Mags.SetRP_C(RPin,RPinE:Currency);
@@ -431,6 +472,7 @@ begin
   RP := RPin;
   RPerr := RPinE;
   SetQuality();
+  SetRatio();
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // outputting data

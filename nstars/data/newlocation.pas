@@ -10,7 +10,6 @@ uses
 
 type
 
-
 Location = class
   protected
     xepoch:EpochType;

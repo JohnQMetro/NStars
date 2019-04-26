@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls, MaskEdit, Graphics,
-  Dialogs, Menus,
+  Dialogs, Menus,Clipbrd,
   newlocation, df_strings, Utilities2;
 
 type
@@ -19,6 +19,7 @@ type
     BL3: TLabel;
     BL4: TLabel;
     DecPosEnterMI: TMenuItem;
+    CopyPosMI: TMenuItem;
     OldPllxEdit: TEdit;
     OldPllxLabel: TLabel;
     MainLocatPopupMenu: TPopupMenu;
@@ -43,6 +44,7 @@ type
     LocationBox: TGroupBox;
     procedure AngleEditExit(Sender: TObject);
     procedure AngleEditKeyPress(Sender: TObject; var Key: char);
+    procedure CopyPosMIClick(Sender: TObject);
     procedure DecEditExit(Sender: TObject);
     procedure DecEditKeyPress(Sender: TObject; var Key: char);
     procedure DecPosEnterMIClick(Sender: TObject);
@@ -171,6 +173,20 @@ var pressdex:Integer;
 begin
   pressdex := AngleEdit.SelStart;
   if (pressdex = 0) and (not (Key in [#8, '0'..'3'])) then Key := #0;
+end;
+
+procedure TMainLocatEditFrame.CopyPosMIClick(Sender: TObject);
+var retrycount:Integer;
+    pos_string:string;
+begin
+  pos_string := RAEdit.Text + ' ' + DecEdit.Text;
+  retrycount := 0;
+  // we try in a loop
+  // while (retrycount < 4) do begin
+    Clipboard.AsText := pos_string;
+    // Inc(Retrycount);
+    // Sleep(80)
+  // end;
 end;
 
 procedure TMainLocatEditFrame.PllxEditExit(Sender: TObject);

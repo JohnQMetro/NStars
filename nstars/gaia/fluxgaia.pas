@@ -53,6 +53,8 @@ function WD_GaiaToVRI(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:
 function WD_GaiaToJHK(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function WD_GaiaToJHK_badB(Gmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function WD_GaiaToJHK_badR(Gmag,BPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
+(* Bt, Vt, and G *)
+function TychoG_toRI(Gmag:Currency; Bt,Vt:Real; out RcEst,IcEst:Currency):Boolean;
 
 implementation
 //*******************************************************************************
@@ -401,16 +403,16 @@ begin
   if dr2mags.qual = GQ_OK then begin
     if (BPmRP > 2) then begin
       if MakeColorCheck(dr2mags.BP,dr2mags.RP,1.771,5.197,bmr) then begin
-        if not MakeColorCheck(dr2mags.G,dr2mags.RP,0.89,1.59,gmrp) then begin
+        if MakeColorCheck(dr2mags.G,dr2mags.RP,0.89,1.59,gmrp) then begin
           interm := -0.22933 + 1.0173*bmr - 1.067*gmrp;
-
+          Vest := CurrToReal(dr2mags.G) + interm;
           okay := True;
         end;
       end;
     end;
     if not okay and (BPmRP >= -0.5 )then begin
       interm := PolEval(CurrToReal(BPmRP),coffV1,3);
-      Vest := CurrToReal(dr2mags.G) + interm;
+      Vest := CurrToReal(dr2mags.G) - interm;
       okay := True;
     end;
   end
@@ -450,9 +452,6 @@ begin
     end;
   end;
   // finishing off
-  if okay and (dr2mags.qual <> GQ_BR) then begin
-    Vest := CurrToReal(dr2mags.G) + interm;
-  end;
   Result := okay;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -852,7 +851,31 @@ begin
   Ksest := Gmag - RealToCurr(interm);
   Ksest := RoundCurrency(Ksest,False);
 end;
-
+//--------------------------------------------------------------
+(* Bt, Vt, and G *)
+function TychoG_toRI(Gmag:Currency; Bt,Vt:Real; out RcEst,IcEst:Currency):Boolean;
+var interm,btmvt,vtmg:Real;
+    useb:Boolean;
+const coff_i:array[0..2] of Real = ( -0.2956, 0.39878, -0.53011 );
+      coff_rv:array[0..2] of Real = ( -0.092618, -0.58685, 0.51053 );
+      coff_iv:array[0..2] of Real = ( -0.31976, -1.1462, 0.29366 );
+begin
+  Result := False;
+  if not MakeColorCheck(Vt,Gmag,0.038,1.662,vtmg) then Exit;
+  useb := MakeColorCheck(Bt,Vt,0.369,1.60,btmvt);
+  if (not useb) and (vtmg < 0.146) then Exit;
+  // Rc
+  if (useb) then interm :=  -0.040464 - 0.34369*btmvt + 0.43183*vtmg
+  else interm := PolEval(vtmg,coff_rv,3);
+  RcEst := Gmag + RealToCurr(interm);
+  RcEst := RoundCurrency(RcEst,False);
+  // Ic
+  if (useb) then interm := -0.44871*btmvt + PolEval(vtmg,coff_i,3)
+  else interm := PolEval(vtmg,coff_iv,3);
+  IcEst := Gmag + RealToCurr(interm);
+  IcEst := RoundCurrency(IcEst,False);
+  Result := True;
+end;
 
 //******************************************************************************
 

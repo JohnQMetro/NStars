@@ -2128,7 +2128,9 @@ begin
     if (not tres) then Continue;
     // comparing
     vdiff := Abs(vmagest - cstar.VisualMagnitude);
-    if (vdiff > MaxDiff) then Exit;
+    if (vdiff > MaxDiff) then begin
+      Exit;
+    end;
   end;
   Result := False;
 end;

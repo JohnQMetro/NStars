@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, MaskEdit, StdCtrls, Dialogs,
-  gaiadr2base,NewStar;
+  gaiadr2base,NewStar, Graphics;
 
 type
 
@@ -206,6 +206,17 @@ begin
   LoadBP();
   LoadRP();
   LoadBPRPLabel();
+  if curmag <> nil then begin
+    if curmag.BadRatio then begin
+        GEdit.Font.Color := clRed;
+       BPEdit.Font.Color := clRed;
+       RPEdit.Font.Color := clRed;
+    end else begin
+        GEdit.Font.Color := clDefault;
+       BPEdit.Font.Color := clDefault;
+       RPEdit.Font.Color := clDefault;
+    end;
+  end;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function TGaiaMagsFrame.TestSave(showerr:Boolean):Boolean;

@@ -81,6 +81,7 @@ StarProxy = class
     function PanStarrsJHK(indata:string):Boolean;
     function GG1_VRI(useRP:Boolean):Boolean;
     function DA_GaiaTEff():Boolean;
+    function Tycho2G_Helper(indata:string):Boolean;
 end;
 
 var
@@ -1560,6 +1561,49 @@ begin
     sys.UpdateEstimates;
     Result := True;
   end;
+end;
+//-------------------------------------------------------------
+function StarProxy.Tycho2G_Helper(indata:string):Boolean;
+var btin,vtin:Real;
+    RcEst,IcEst:Currency;
+    okay:Boolean;
+    splitlist:TStringList;
+const amsg = 'Estimated using Tycho and G.';
+begin
+  Result := False;
+
+  Assert(cstar<>nil);
+  if (cstar.dr2mags = nil) then Exit;
+  if (cstar.dr2mags.G > 90) then Exit;
+  // getting the values
+  splitlist := SplitWithSpaces(indata,1);
+  if splitlist = nil then Exit;
+  if splitlist.Count > 2 then begin
+    FreeAndNil(splitlist);   Exit;
+  end;
+  // converting to numbers
+  if (splitlist.Count = 2) then begin
+     if not StrToRealBoth(splitlist[0],splitlist[1],btin,vtin) then begin
+        ShowMessage('Unable to parse or convert the input!');
+        FreeAndNil(splitlist);   Exit;
+     end;
+  end
+  else begin
+     if not StrToReal(splitlist[0],vtin) then begin
+       ShowMessage('Unable to parse or convert the input!');
+       FreeAndNil(splitlist);   Exit;
+     end;
+     btin := 99.999;
+  end;
+  FreeAndNil(splitlist);
+  // calculating results
+  okay := TychoG_toRI(cstar.dr2mags.G,btin,vtin,RcEst,IcEst);
+  if not okay then begin
+    ShowMessage('Cannot estimate, Colours out of bounds.');
+    Exit;
+  end;
+  // showing the results
+  Result := ShowEst(99.9999,99.9999,RcEst,IcEst,amsg);
 end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 begin

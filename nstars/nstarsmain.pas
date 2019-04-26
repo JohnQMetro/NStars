@@ -43,6 +43,7 @@ type
     GaiaMagGetMI: TMenuItem;
     MenuItem12: TMenuItem;
     EstJHKPSMI: TMenuItem;
+    MI_GTycRI: TMenuItem;
     MI_NLTTMatcher: TMenuItem;
     MI_DATeff: TMenuItem;
     MI_GG1_A: TMenuItem;
@@ -274,6 +275,7 @@ type
     procedure MI_FindDR2MatchClick(Sender: TObject);
     procedure MI_GG1_AClick(Sender: TObject);
     procedure MI_GG1_BClick(Sender: TObject);
+    procedure MI_GTycRIClick(Sender: TObject);
     procedure MI_NLTTMatcherClick(Sender: TObject);
     procedure MI_PosPMMatchClick(Sender: TObject);
     procedure MI_StartGaiaMatchingClick(Sender: TObject);
@@ -2429,6 +2431,22 @@ var rok:Boolean;
 begin
   if current.ccomponent <> nil then begin
     rok := current.GG1_VRI(True);
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.MI_GTycRIClick(Sender: TObject);
+var data:string;   rok:Boolean;
+const entmsg = 'Enter Tycho-2 Mags [Bt] Vt, with the values separated by spaces, below:';
+begin
+  if current.cstar <> nil then begin
+    data := Trim(InputBox('Tycho-2 and G to RI',entmsg,''));
+    if Length(data)<>0 then begin
+      rok := current.Tycho2G_Helper(data);
+    end;
     if rok then begin
       // reloading after data has been set
       StarData1;

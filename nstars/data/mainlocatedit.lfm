@@ -306,5 +306,9 @@ object MainLocatEditFrame: TMainLocatEditFrame
       Caption = 'Enter position in Degrees...'
       OnClick = DecPosEnterMIClick
     end
+    object CopyPosMI: TMenuItem
+      Caption = 'Copy Position'
+      OnClick = CopyPosMIClick
+    end
   end
 end

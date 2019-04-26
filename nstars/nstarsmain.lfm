@@ -1268,6 +1268,10 @@ object NStarsMainForm: TNStarsMainForm
           Caption = 'Estimate DA TEff...'
           OnClick = MI_DATeffClick
         end
+        object MI_GTycRI: TMenuItem
+          Caption = 'Estimate RI using G and Tycho...'
+          OnClick = MI_GTycRIClick
+        end
       end
       object FluxEstSubMenu: TMenuItem
         Caption = 'Estimate Magnitudes Misc...'
