@@ -1046,14 +1046,16 @@ end;
 procedure TNStarsMainForm.StarParallaxChanged(Sender: TObject);
 begin
   StarDataCoreFrame.ExternalChange;
+  current.sys.UpdateAveragePllx();
 end;
 //-------------------------------------------------
 procedure TNStarsMainForm.MainParallaxChange(Sender: TObject);
-var pupd:Boolean;
+var pupd1,pupd2:Boolean;
 begin
   StarDataCoreFrame.ExternalChange;
-  pupd := current.sys.BinaryLocationUpdate;
-  if pupd then StarLocatFrame1.ReloadData;
+  pupd1 := current.sys.BinaryLocationUpdate;
+  pupd2 := current.sys.UpdateAveragePllx();
+  if pupd1 then StarLocatFrame1.ReloadData;
 end;
 //--------------------------------------------------
 procedure TNStarsMainForm.FluxTEffChange(Sender:TObject);
@@ -1436,6 +1438,10 @@ begin
   end else begin
     SystemEditorBox.Caption := SystemEditorBox.Caption + (current.sys.GetSpTList());
     SystemEditorBox.Caption := SystemEditorBox.Caption + ' ] ';
+    buf := current.sys.GetAvgData();
+    if (buf <> '') then begin
+      SystemEditorBox.Caption := SystemEditorBox.Caption + '(' + buf + ')';
+    end;
   end;
 end;
 //--------------------------------------------------

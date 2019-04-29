@@ -15,6 +15,7 @@ type
   TExportForm = class(TForm)
     AdjustPositionsCB: TCheckBox;
     AddPUQCB: TCheckBox;
+    UseAvgCB: TCheckBox;
     LumLimEdit: TMaskEdit;
     ExportSaveDialog: TSaveDialog;
     VisLumACCB: TCheckBox;
@@ -139,6 +140,7 @@ begin
   end;
   parameters.is2300ad := use2300NamCB.Checked;
   parameters.addpquest:= AddPUQCB.Checked;
+  parameters.useavg := UseAvgCB.Checked;
   Result := True
 end;
 //--------------------------------------------------------

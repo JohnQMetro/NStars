@@ -7,7 +7,7 @@ object ExportForm: TExportForm
   ClientHeight = 242
   ClientWidth = 572
   OnActivate = FormActivate
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.8.2.0'
   object ExportFormatRG: TRadioGroup
     Left = 360
     Height = 105
@@ -151,6 +151,14 @@ object ExportForm: TExportForm
     EditMask = '900'
     Text = ' 10'
     SpaceChar = '_'
+  end
+  object UseAvgCB: TCheckBox
+    Left = 176
+    Height = 19
+    Top = 90
+    Width = 173
+    Caption = 'Use ''System'' parallax/motion'
+    TabOrder = 9
   end
   object ExportSaveDialog: TSaveDialog
     left = 504

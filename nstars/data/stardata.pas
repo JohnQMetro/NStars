@@ -7,7 +7,7 @@ interface
 uses SysUtils, Classes, df_strings, StrUtils,
  StarDataBase, newlocation, star_names (* namedata *), unitdata, simbad, sptfluxest,
  NewStar, tgas, constellation, StarEstimator, StarExt2, gaiadr2base, fluxtransform,
- utilities2, fluxgaia;
+ utilities2, fluxgaia, locavg;
 
 type
 //----------------------------------------------------------
@@ -21,6 +21,7 @@ StarSystem = class (StarBase)
   protected
     id:Integer;
     new_components:array of NewStarBase;
+    avgpp:LocatAverager;
     (* --- FICTIONAL STUFF --- *)
     clusters       :TStringList;
     (* -- PRIVATE METHODS -- *)
@@ -37,6 +38,7 @@ StarSystem = class (StarBase)
     function SimbNamChk(simbad_in:SimbadData; whatc:string):Boolean;
     function StarSimbad(var thestar:StarInfo; simbad_in:SimbadData):Boolean;
     function PostRemovalCleanup:Boolean;
+    function GetRMass(index:Integer):Real;
   public
     aricns_data,simbad_data:Boolean;
     // the main system label
@@ -71,6 +73,7 @@ StarSystem = class (StarBase)
     function GetPreferredName:string;
     function Get2300adName:string;
     function GetSpTList():string;
+    function GetAvgData():string;
     function MakeBayerName:string;
     function MakeFlamsteedName:string;
     function MakeVariableName:string;
@@ -112,6 +115,7 @@ StarSystem = class (StarBase)
     function ApplyDualTGAS(inlist:TGASList; first:Boolean):Boolean;
     function SetTGASMatches(target:TGASCollection):Integer;
     function BinaryLocationUpdate:Boolean;
+    function UpdateAveragePllx():Boolean;
     (* Other *)
     function CatRenames(incats:TStringList):Integer;
     function AddSimbadData(stardex:Integer; simbad_in:SimbadData; fluxtempo:Boolean):Boolean;
@@ -160,6 +164,7 @@ SysOutParams = class
     allcaplum:Integer;
     is2300ad,splitsys:Boolean;
     addpquest:Boolean;
+    useavg:Boolean;
     constructor Create;
     function SetTargYear(src:string):Boolean;
     function SetIDOffset(src:string):Boolean;
@@ -349,6 +354,24 @@ begin
   // done
   Result := True;
 end;
+//------------------------------------------------------------
+function StarSystem.GetRMass(index:Integer):Real;
+var cstar:StarInfo;
+    cbd:BrownDwarfInfo;
+    mstr:string;
+    vout:Real;
+begin
+  if (new_components[index].isBrownDwarf) then begin
+    cbd := new_components[index] as BrownDwarfInfo;
+    mstr := cbd.MassInSuns;
+  end else begin
+    cstar := new_components[index] as StarInfo;
+    mstr := cstar.GetMassString;
+  end;
+  if not TryStrToFloat(mstr,vout) then Result := 0
+  else Result := vout;
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 constructor StarSystem.Create(numid:Integer);
 var buf2:string;
@@ -378,6 +401,7 @@ begin
   has_planets := False;
   // some additional stuff
   clusters := nil;
+  avgpp := nil;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* basic star info *)
@@ -554,6 +578,12 @@ begin
       Result += ' | ' + new_components[xdex].SpectralClass;
     end;
   end;
+end;
+//-----------------------------------------------------------
+function StarSystem.GetAvgData():string;
+begin
+  Result := '';
+  if (avgpp <> nil) then Result := avgpp.GetAvgString();
 end;
 //----------------------------------------------------------
 function StarSystem.MakeBayerName:string;
@@ -882,6 +912,7 @@ begin
       end;
     end;
   end;
+  UpdateAveragePllx();
   // done
 
 end;
@@ -1421,6 +1452,33 @@ begin
   // finally
   Result := ulocc > 0;
 end;
+//-------------------------------------------------------
+// called to create/update the average 'system' parallax and peroper motion
+function StarSystem.UpdateAveragePllx():Boolean;
+var qdex:Integer;
+    cmass:Real;
+begin
+  if HasOneParallax() then begin
+    if avgpp <> nil then FreeAndNil(avgpp);
+    Result := False;
+  end else begin
+    if avgpp = nil then avgpp := LocatAverager.Create()
+    else avgpp.ClearData();
+    cmass := GetRMass(0);
+    avgpp.AddData(the_location,cmass);
+    for qdex := 1 to MaxCInd do begin
+      cmass := GetRMass(qdex);
+      avgpp.AddData(new_components[qdex].GetLocation,cmass);
+    end;
+    if avgpp.Count < 2 then begin
+      FreeAndNil(avgpp);
+      Result := False;
+      Exit;
+    end;
+    avgpp.ComputeAverages();
+    Result := True;
+  end;
+end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* Other various mathods *)
 //-----------------------------------------
@@ -1734,6 +1792,7 @@ begin
     end;
   end;
   // done
+  UpdateAveragePllx();
   Result := True;
 end;
 //--------------------------------------------
@@ -2246,6 +2305,7 @@ begin
   splitsys := True;
   addpquest := True;
   allcaplum := 10;
+  useavg := False;
 end;
 //----------------------------------------------
 function SysOutParams.SetTargYear(src:string):Boolean;
@@ -2297,7 +2357,7 @@ var locatio:Location;
     sdata1,sdata2:EstimationParser;
     dist_val,distspec,buf1:string;
     constl_str,namez,coordstr:string;
-    secondstar,splitres:Boolean;
+    secondstar,dellocat,splitres:Boolean;
     mass_str,xestname:string;
     runlen:Integer;
 begin
@@ -2305,12 +2365,17 @@ begin
   Assert(sindex<=system.MaxCInd);
   // startup
   secondstar := False;
+  dellocat := False;
   Result := '/';
   runlen := plen -1;
   // preparing location
   if system.id > 1 then begin
     if not system.new_components[sindex].HasLocation then locatio := system.the_location
     else locatio := system.new_components[sindex].GetLocation;
+    if params.useavg and (system.avgpp <> nil) then begin
+      dellocat := True;
+      locatio := system.avgpp.GetAveragedLocation(locatio);
+    end;
     dist_val := locatio.GetDistanceStr(4,targyear,False);
   end else begin
     dist_val := '0';
@@ -2412,6 +2477,7 @@ begin
     end;
     // end of star output
   end;
+  if dellocat then locatio.Free;
   // done
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2534,7 +2600,8 @@ begin
   sdata1 := star_obj.estimator;
   sdata1.BackupMS();
   // second star splitting
-  theparallax := system.GetComponentParallax(stardex);
+  if (params.useavg and (system.avgpp <> nil)) then theparallax := system.avgpp.AveragePllx
+  else theparallax := system.GetComponentParallax(stardex);
   splitres := StarSplitGeneral(star_obj,theparallax,sdata2);
   // the names
   if (not star_obj.GetProperName(xname,system.constellation)) then begin
@@ -2600,7 +2667,9 @@ function SystemOutputter.MakeAstrosynLine(compdata:string; stardex:Integer):stri
 var xid,notusedl:string;
     xname:string;
     cloc:Location;
+    rloc:Boolean;
 begin
+  rloc := False;
   if system.new_components[stardex].ClassifySpectralType = WHITE_DWARF then Result := 'White Dwarf,'
   else Result := 'Star,';     // annoyingly, there is no special brown dwarf csv option
   Str(system.id + params.idoffset,xid);
@@ -2616,13 +2685,24 @@ begin
     if (not system.new_components[stardex].HasLocation) then Result += AsOffsetLocat(stardex)
     else begin
       cloc := system.new_components[stardex].GetLocation;
+      if (params.useavg and (system.avgpp <> nil)) then begin
+        rloc := True;
+        cloc := system.avgpp.GetAveragedLocation(cloc);
+      end;
+
       Result += cloc.MakeAstrosynXYZ_AUOffsetString(system.the_location,notusedl);
     end;
   end
   else if system.id = 1 then Result += '0,0,0'
   else begin
-    if params.targetyear < 0 then Result += system.the_location.MakeAstrosynXYZString(4)
-    else Result += system.the_location.GetAstrosynthesisXYZatYear_String(params.targetyear,4);
+    cloc := system.the_location;
+    if (params.useavg and (system.avgpp <> nil)) then begin
+      rloc := True;
+      cloc := system.avgpp.GetAveragedLocation(cloc);
+    end;
+
+    if params.targetyear < 0 then Result += cloc.MakeAstrosynXYZString(4)
+    else Result += cloc.GetAstrosynthesisXYZatYear_String(params.targetyear,4);
   end;
   // compdata (mass, diameter, luminosity)
   Result += ',' + compdata + ',';
