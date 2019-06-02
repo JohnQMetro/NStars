@@ -55,6 +55,8 @@ function WD_GaiaToJHK_badB(Gmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Bo
 function WD_GaiaToJHK_badR(Gmag,BPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 (* Bt, Vt, and G *)
 function TychoG_toRI(Gmag:Currency; Bt,Vt:Real; out RcEst,IcEst:Currency):Boolean;
+function TychoG_toBV(Gmag,BPmag:Currency; Vt:Real; out Vest:Real; out Best:Currency):Boolean;
+function TychoG2_toBV(dr2mags:GaiaDR2Mags; Vt:Real; out Vest:Real; out Best:Currency):Boolean;
 
 implementation
 //*******************************************************************************
@@ -669,10 +671,10 @@ end;
 (* G - G1 *)
 function Gaia12_To_VRI(G1in,Gin:Currency; wd:Boolean; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
 var interm,gmg1:Real;
-const coffv1:array[0..2] of Real =  ( 1.3896, -10.968, 50.277 );
+const coffv1:array[0..2] of Real =  ( 0.40929, -1.733, 26.962 );
       coffv2:array[0..2] of Real =  ( 0.14014, -1.175, 46.894 );
-      coffr1:array[0..2] of Real =  ( -0.17201, -1.5349, 13.429 );
-      coffr2:array[0..3] of Real =  ( -0.10507, -1.0079, -43.004, 382.31 );
+      coffr1:array[0..2] of Real =  ( -0.14252, -1.8318, 14.201 );
+      coffr2:array[0..2] of Real =  ( -0.12342, -2.6226, 13.664 );
       coffi2:array[0..3] of Real =  ( -0.54679, 5.8682, -231.26, 1253.3 );
       coffi3:array[0..2] of Real =  ( -0.032324, 11.14, -21.293 );
 begin
@@ -689,14 +691,14 @@ begin
   if wd then interm := -0.01754 + 4.4352*gmg1
   else begin
     if gmg1 >= 0.1 then interm := PolEval(gmg1,coffr1,3)
-    else interm := PolEval(gmg1,coffr2,4);
+    else interm := PolEval(gmg1,coffr2,3);
   end;
   RcEst := CurrToReal(Gin) + interm;
   RcEst := RoundCurrency(RcEst,False);
   // Ic
   if wd then interm := PolEval(gmg1,coffi3,3)
   else begin
-    if gmg1 >= 0.1 then interm := -0.72648 - 3.3531*gmg1
+    if gmg1 >= 0.1 then interm := -0.73903 - 3.2886*gmg1
     else interm := PolEval(gmg1,coffi2,4);
   end;
   IcEst := CurrToReal(Gin) + interm;
@@ -875,6 +877,42 @@ begin
   IcEst := Gmag + RealToCurr(interm);
   IcEst := RoundCurrency(IcEst,False);
   Result := True;
+end;
+//------------------------------------------------------------------------
+function TychoG_toBV(Gmag,BPmag:Currency; Vt:Real; out Vest:Real; out Best:Currency):Boolean;
+var vtmg,bpmg,interm:Real;
+    use_bp:Boolean;
+const bmg_a:array[0..2] of Real = ( -0.012696, 3.9787, -1.9468 );
+      bmg_b:array[0..2] of Real = ( -0.15935, -0.97609, 2.3817 );
+      vmg_b:array[0..2] of Real = ( -0.044567, 0.30056, 0.19177 );
+begin
+  Result := False;
+  if not MakeColorCheck(Vt,Gmag,0.15,1.378,vtmg) then Exit;
+  use_bp :=  MakeColorCheck(BPmag,Gmag,0.221,1.662,bpmg);
+  // V
+  if (use_bp) then interm := 0.32543*vtmg + PolEval(bpmg,vmg_b,3)
+  else interm := -0.03645 + 0.83631*vtmg;
+  Vest := CurrToReal(Gmag) + interm;
+  // B
+  if (use_bp) then interm := 0.92139*vtmg + PolEval(bpmg,bmg_b,3)
+  else if (vtmg < 0.825) then interm := PolEval(vtmg,bmg_a,3)
+  else interm := 0.98177 + 1.2329*vtmg;
+  Best := Gmag + RealToCurr(interm);
+  Best := RoundCurrency(Best,False);
+  Result := True;
+end;
+//-------------------------------------------------------------------------
+function TychoG2_toBV(dr2mags:GaiaDR2Mags; Vt:Real; out Vest:Real; out Best:Currency):Boolean;
+var ubp:Boolean;
+const xcur:Currency = 99.999;
+begin
+  Result := False;
+  if (dr2mags = nil) or (Vt > 20) then Exit;
+  if (dr2mags.G > 90) or (dr2mags.Gerr > 0.01) then Exit;
+  ubp := (dr2mags.BP < 90) and (dr2mags.BPerr < 0.006);
+  if ubp then ubp := not dr2mags.BadRatio;
+  if ubp then Result := TychoG_toBV(dr2mags.G,dr2mags.BP,Vt,Vest,Best)
+  else Result := TychoG_toBV(dr2mags.G,xcur,Vt,Vest,Best)
 end;
 
 //******************************************************************************

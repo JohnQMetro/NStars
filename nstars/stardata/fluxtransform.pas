@@ -52,7 +52,7 @@ function URATJ_To_Ic(URATin,Jin:Currency; out Icest:Currency):Boolean;
 (* New Pan-STARRS DR1 conversions *)
 function PS1_StrToVals(const indata:string; var values:RealArray):Boolean;
 function PS1_iyToJHK(const inValues:RealArray;const G:Currency; out Je:Currency; out He:Currency; out Ke:Currency):Boolean;
-
+function PS1_grJToVRI(gpin,rpin:Real; Jin:Currency; out Vest:Real; out RcEst:Currency; out IcEst:Currency):Boolean;
 
 //******************************************************************************
 implementation
@@ -679,58 +679,31 @@ end;
 same as SDSS or Sloan Standard r') to BV, also using J. For better accuracy, you
 can also use GAIA G and Ks as well. *)
 function CMC15_ToBV(CMCr:Real; Gin,J,Ks:Currency; out Best:Currency; out Vest:Real):Boolean;
-var rmj,rmks,gmks,gmj:Real; // colors
-    interm:Real; // tempval
-    useGV,useGB:Boolean;
-    colorhash:RealArray;
-const coffV:array[0..2] of Real = ( -0.23459, 0.48687, -0.069716 );
-      coffVG:array[0..6] of Real = ( -1.1852, 2.0771, -0.73998, 0.054223, 0.31114, -0.36091, -0.093404 );
-      coffB:array[0..2] of Real = ( -0.5763, 1.6096, -0.23162 );
-      coffBG:array[0..6] of Real = ( -2.5055, 2.713, -0.78864, 0.046977, 0.3849, 0.20047, -0.20487 );
+var rmj,gmj,interm:Real;
+    useG:Boolean;
+const coff_V1:array[0..2] of Real = ( -0.91138, 2.3001, -0.28107 );
+      coff_B1:array[0..2] of Real = ( -1.1719, 3.4308, -0.45088 );
 begin
   Result := False;
   // required mangitudes
   if (CMCr > 90) or (J > 90) then Exit;
-  // initial check to see if we have G and Ks
-  useGV := (Gin < 90);
-  useGB := useGV and (Ks < 90);
-  // calculating initial color
-  rmj := CMCr - CurrToReal(J);
-  // oob rejects
-  if (rmj < 0.915) or (rmj > 6.374) then Exit;
-  // testing if we use G-J for V as well
-  if useGV then begin
-    gmj := CurrToReal(Gin) - CurrToReal(J);
-    useGV := (gmj >= 1.092) and (gmj<=8.279);
-    useGV := useGV and (rmj >=1.088) and (rmj<=4.412);
-  end;
-  // testing if we use G-Ks for B instead
-  if useGB then begin
-    rmks := CMCr - CurrToReal(Ks);
-    gmks := CurrToReal(Gin) - CurrToReal(Ks);
-    useGB := (gmks >= 1.451) and (gmks<=9.109);
-    useGV := useGV and (rmks >=1.479) and (rmks<=5.741);
-  end;
-  // finally, computing...
-  // B
-  if useGB then begin
-    LoadMulti(gmks,rmks,True,colorhash);
-    interm := dot2(colorhash,coffBG,7);
-  end else begin
-    interm := PolEval(rmj,coffB,3);
-  end;
-  Best := CMCr + interm;
-  Best := RoundCurrency(Best,False);
-  // V
-  if useGV then begin
-    LoadMulti(gmj,rmj,True,colorhash);
-    interm := dot2(colorhash,coffVG,7);
-  end else begin
-    interm := PolEval(rmj,coffV,3);
-  end;
-  Vest := CMCr + interm;
-  // done
+  if MakeColorCheck(CMCr,J,1.2,5.27,rmj) then Exit;
+  useG := MakeColorCheck(Gin,J,1.17,3.44,gmj);
   Result := True;
+
+  if (rmj > 2) and useG then interm := -0.36745 + 0.50082*rmj + 1.0301*gmj
+  else if (rmj > 2) then interm := 0.50626 + 1.0304*rmj
+  else if useG then interm :=  -0.40843 + 0.50196*rmj +1.0612*gmj
+  else interm := PolEval(rmj,coff_V1,3);
+  Vest := CurrToReal(J) + interm;
+  Best := 99.999;
+
+  if (rmj < 1.21) or (rmj > 4.69) then Exit;
+  if (rmj > 2.1) then interm := 1.7504 + 1.1198*rmj
+  else if useG then interm := -0.30179 + 0.71309*rmj + 1.4895*gmj
+  else interm := PolEval(rmj,coff_B1,3);
+  Best := J+ RealToCurr(interm);
+  Best := RoundCurrency(Best,False);
 end;
 //------------------------------------------------------------------------------
 (* 'Ic' in this case is the IC obtained by running APASS g' r' i' thru transforms.
@@ -875,6 +848,24 @@ begin
   Ke := RoundCurrency(Ke,False);
 
   Result := True;
+end;
+//----------------------------------------------------------------------
+function PS1_grJToVRI(gpin,rpin:Real; Jin:Currency; out Vest:Real; out RcEst:Currency; out IcEst:Currency):Boolean;
+begin
+(*
+  99.5% | Multi TFFFFTFFF | Target Color: V - J, Source Color 1 : gp - J, Source Color 2 : gp - rp
+Coefficients: ( -0.59908, 1.0034, -0.025997 )
+Source Colour 1; min: 4.901 max: 7.823
+Source Colour 2; min: -1.278 max: 1.769
+
+99.5% | Multi TFFFFTFFF | Target Color: V - J, Source Color 1 : gp - J, Source Color 2 : gp - rp
+Coefficients: ( -0.74972, 1.0302, -0.0047203 )
+Source Colour 1; min: 3.332 max: 5.100
+Source Colour 2; min: -4.121 max: 1.470
+*)
+  Result := False;
+
+
 end;
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
