@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls, ExtCtrls, MaskEdit,
   StrUtils, Dialogs,
-  NewStar, star_names, newlocation, unitdata, df_strings;
+  NewStar, star_names, newlocation, unitdata, df_strings, stardata;
 
 type
 
@@ -16,7 +16,6 @@ CSD_FrameType = (CSD_STAR, CSD_BD, CSD_WD);
   { TCoreStarDataFrame }
 
   TCoreStarDataFrame = class(TFrame)
-    ArityLabel: TLabel;
     WDArityLabel: TLabel;
     ArityPicker: TComboBox;
     WDArityPicker: TComboBox;
@@ -69,7 +68,9 @@ CSD_FrameType = (CSD_STAR, CSD_BD, CSD_WD);
     edited_item:NewStarBase;
     bdwarf_item:BrownDwarfInfo;
     star_item:StarInfo;
+    starsys:StarSystem;
     toplocation:Location;
+    avgpllx:Real;
     sunMode:Boolean;
     panelMode:CSD_FrameType;
     // methods
@@ -98,7 +99,7 @@ CSD_FrameType = (CSD_STAR, CSD_BD, CSD_WD);
     constructor Create(AOwner: TComponent) ; override;
     procedure SetupComboBoxes;
     procedure SaveData;
-    function ChangeStar(item:NewStarBase; parentloc:Location; icount:Integer):Boolean;
+    function ChangeStar(item:NewStarBase; parentsys:StarSystem; icount:Integer):Boolean;
     procedure ChangeToSun;
     function ReloadData:Boolean;
     procedure SaveSpectralClass;
@@ -128,7 +129,7 @@ var pllx:Real;
 begin
   pllx := GetParallax;
   star_item.wda:= WDAtmosEnum(AtmosPicker.ItemIndex);
-  star_item.InitializeEstimation(pllx);
+  star_item.InitializeEstimation(pllx,avgpllx);
   LoadEstimates;
 end;
 
@@ -144,25 +145,25 @@ var lumstr:string;     radstr:string;
     teffused:string;
 begin
   // visual magnitude
-  if (star_item.estimator <> nil) then begin
+  if (star_item.estimator_i <> nil) then begin
     // luminosity
-     lumstr := star_item.estimator.LuminosityString;
+     lumstr := star_item.estimator_i.LuminosityString;
      lumstr := 'V Luminosity: ' + lumstr;
      LuminosityDisplay.Caption := lumstr;
      // radius estimate
-     radstr := star_item.estimator.RadiusEstimateString;
+     radstr := star_item.estimator_i.RadiusEstimateString;
      radstr := 'Radius Est. : ' + radstr;
      RadiusLabel.Caption := radstr;
      //mass estimate
-     massest := star_item.estimator.MassEstimateString;
+     massest := star_item.estimator_i.MassEstimateString;
      massest := 'Mass Est. : ' + massest;
      MassEstLabel.Caption := massest;
      // bolometric luminosity
-     blumest := star_item.estimator.BoloLuminosityEstString;
+     blumest := star_item.estimator_i.BoloLuminosityEstString;
      blumest := 'Bolo.Luminosity Est: ' + blumest;
      BLumLabel.Caption := blumest;
      // TEff
-     teffused := star_item.estimator.TEffUsed;
+     teffused := star_item.estimator_i.TEffUsed;
      teffused := 'TEff Est: ' + teffused;
      TEffLabel.Caption := teffused;
   end
@@ -204,8 +205,8 @@ begin
   end;
   VisualMagEdit.Modified := False;
   pllx := GetParallax;
-  if (star_item.estimator = nil) then star_item.InitializeEstimation(pllx)
-  else star_item.NonSpectraChange(pllx);
+  if (star_item.estimator_i = nil) then star_item.InitializeEstimation(pllx,avgpllx)
+  else star_item.NonSpectraChange(pllx,avgpllx);
   LoadEstimates;
 end;
 
@@ -231,8 +232,8 @@ begin
   end;
   WDVisMagEdit.Modified := False;
   pllx := GetParallax;
-  if (star_item.estimator = nil) then star_item.InitializeEstimation(pllx)
-  else star_item.NonSpectraChange(pllx);
+  if (star_item.estimator_i = nil) then star_item.InitializeEstimation(pllx,avgpllx)
+  else star_item.NonSpectraChange(pllx,avgpllx);
   LoadEstimates;
 end;
 
@@ -407,7 +408,7 @@ begin
            ChangePanelType(qtype);
            ReloadData();
         end;
-        star_item.InitializeEstimation(GetParallax);
+        star_item.InitializeEstimation(GetParallax,avgpllx);
         LoadEstimates;
     end;
   end;
@@ -482,7 +483,7 @@ begin
   if (string1 <> '+99.999') then begin
     sok := star_item.SetVisualMagnitudeStr(string1);
     pllx := GetParallax;
-    star_item.NonSpectraChange(pllx);
+    star_item.NonSpectraChange(pllx,avgpllx);
   end;
   // arity
   star_item.Arity := ArityType(ArityPicker.ItemIndex);
@@ -509,7 +510,7 @@ begin
   if (string1 <> '+99.999') then begin
     sok := star_item.SetVisualMagnitudeStr(string1);
     pllx := GetParallax;
-    star_item.NonSpectraChange(pllx);
+    star_item.NonSpectraChange(pllx,avgpllx);
   end;
   // atmosphere
   star_item.wda := WDAtmosEnum(AtmosPicker.ItemIndex);
@@ -610,6 +611,7 @@ begin
   BrownDwarfPanel.Visible := False;
   WhiteDwarfPanel.Visible := False;
   StarPanel.Visible := True;
+  avgpllx := 0;
 end;
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -638,7 +640,7 @@ begin
   end;
 end;
 //------------------------------------------------------
-function TCoreStarDataFrame.ChangeStar(item:NewStarBase; parentloc:Location; icount:Integer):Boolean;
+function TCoreStarDataFrame.ChangeStar(item:NewStarBase; parentsys:StarSystem; icount:Integer):Boolean;
 var bd2:Boolean;
     ntype:CSD_FrameType;
 begin
@@ -653,8 +655,10 @@ begin
   // loading a star/white dwarf/brown dwarf
   else begin
     // common loads
-    if parentloc = nil then Exit;
-    toplocation := parentloc;
+    if parentsys = nil then Exit;
+    avgpllx := parentsys.GetAvgPllx();
+    starsys := parentsys;
+    toplocation := parentsys.GetLocation;
     edited_item := item;
     DisableStarData(False);
     ComponentPicker.Enabled := True;
@@ -718,7 +722,8 @@ var pllx:Real;
 begin
   if star_item<>nil then begin
     pllx := GetParallax;
-    star_item.NonSpectraChange(pllx);
+    avgpllx := starsys.GetAvgPllx();
+    star_item.NonSpectraChange(pllx,avgpllx);
     LoadEstimates;
   end;
 end;

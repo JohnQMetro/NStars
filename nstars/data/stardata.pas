@@ -94,6 +94,7 @@ StarSystem = class (StarBase)
     procedure SetId(inval:Integer);
     function HasOneLocation:Boolean;
     function HasOneParallax:Boolean;
+    function GetAvgPllx():Real;
     function IsBrownDwarf(starindex:Integer):Boolean;
     (* Searching *)
     function Search(infind:string; out where:Integer):Boolean;
@@ -366,7 +367,7 @@ begin
     mstr := cbd.MassInSuns;
   end else begin
     cstar := new_components[index] as StarInfo;
-    mstr := cstar.GetMassString;
+    mstr := cstar.GetMassString(True);
   end;
   if not TryStrToFloat(mstr,vout) then Result := 0
   else Result := vout;
@@ -861,7 +862,7 @@ end;
 //-----------------------------------------------------------
 procedure StarSystem.ReadFromTextFile(var infile:TextFile);
 var linebuf:string;   starcount:Integer;
-    I:Integer;        cpllx:Real;
+    I:Integer;        cpllx,syspllx:Real;
     cstar:StarInfo;
 begin
   (* the first 4 lines *)
@@ -908,11 +909,21 @@ begin
       if (not new_components[I].isBrownDwarf) then begin
         cstar := StarInfo(new_components[I]);
         cpllx := GetComponentParallax(I);
-        cstar.InitializeEstimation(cpllx);
+        cstar.InitializeEstimation(cpllx,0);
       end;
     end;
   end;
   UpdateAveragePllx();
+  if (avgpp <> nil) then begin
+    syspllx := avgpp.AveragePllx;
+    for I := 0 to (starcount-1) do begin
+      if (not new_components[I].isBrownDwarf) then begin
+        cstar := StarInfo(new_components[I]);
+        cpllx := GetComponentParallax(I);
+        cstar.InitializeEstimation(cpllx,syspllx);
+      end;
+    end;
+  end;
   // done
 
 end;
@@ -956,6 +967,13 @@ begin
   end;
   Result := True;
 end;
+//-------------------------------------------------
+function StarSystem.GetAvgPllx():Real;
+begin
+  if (avgpp = nil) then Result := 0
+  else Result := avgpp.AveragePllx;
+end;
+
 //-------------------------------------------------
 function StarSystem.IsBrownDwarf(starindex:Integer):Boolean;
 begin
@@ -1509,7 +1527,7 @@ function StarSystem.AddSimbadData(stardex:Integer; simbad_in:SimbadData; fluxtem
 var lok:Boolean;
     buffer:string;   radialv:Real;
     arity:Integer;   cstar:StarInfo;
-    pllx:Real;
+    pllx,syspllx:Real;
     xobj:NewStarBase;
 begin
   // basic bad cases
@@ -1558,8 +1576,10 @@ begin
   if (not lok) then FreeAndNil(xobj.fluxtemp);
   // updating estimates
   if cstar<>nil then begin
+    if (avgpp = nil) then syspllx := 0
+    else syspllx := avgpp.AveragePllx;
     pllx := GetComponentParallax(stardex);
-    cstar.InitializeEstimation(pllx);
+    cstar.InitializeEstimation(pllx,syspllx);
   end;
   // that should be it
   simbad_data := True;
@@ -1568,7 +1588,7 @@ end;
 //---------------------------------------------------------
 function StarSystem.SetLoggFromSimbad(stardex:Integer; simbad_in:SimbadData):Boolean;
 var arity:Integer;
-    pllx:Real;
+    pllx,syspllx:Real;
     xobj:NewStarBase;
     cstar:StarInfo;
 begin
@@ -1587,7 +1607,9 @@ begin
   if xobj.isWhiteDwarf then begin
     cstar := StarInfo(xobj);
     pllx := GetComponentParallax(stardex);
-    cstar.NonSpectraChange(pllx);
+    if (avgpp = nil) then syspllx := 0
+    else syspllx := avgpp.AveragePllx;
+    cstar.NonSpectraChange(pllx,syspllx);
   end;
   // that should be it
   simbad_data := True;
@@ -1652,9 +1674,11 @@ end;
 //---------------------------------------------------------
 procedure StarSystem.UpdateEstimates;
 var curstar:StarInfo;
-    cpllx:Real;
+    cpllx,syspllx:Real;
     sxidx:Integer;
 begin
+  if (avgpp <> nil) then syspllx := avgpp.AveragePllx
+  else syspllx := 0;
   // looping thru the components
   for sxidx := 0 to MaxCInd do begin
     // skipping brown dwarfs
@@ -1662,8 +1686,8 @@ begin
     curstar := StarInfo(new_components[sxidx]);
     // parallax for
     cpllx := GetComponentParallax(sxidx);
-    if curstar.estimator = nil then curstar.InitializeEstimation(cpllx)
-    else curstar.NonSpectraChange(cpllx);
+    if curstar.estimator_i = nil then curstar.InitializeEstimation(cpllx,syspllx)
+    else curstar.NonSpectraChange(cpllx,syspllx);
   end;
 end;
 //--------------------------------------------------------
@@ -1679,14 +1703,14 @@ begin
     // skipping brown dwarfs or estimator free stars
     if new_components[sxidx].isBrownDwarf then Continue;
     curstar := StarInfo(new_components[sxidx]);
-    if curstar.estimator = nil then Continue;
+    if curstar.estimator_i = nil then Continue;
     // getting a star label
     qnames := curstar.GetNames;
     if qnames <> nil then oname := qnames.GetDefaultCatalog
     else oname := GetComponentBaseLabel(False) + ' ' + curstar.Component;
     if Length(oname) = 0 then oname := GetComponentBaseLabel(False) + ' ' + curstar.Component;
     // writing
-    curstar.estimator.WriteTest(oname);
+    curstar.estimator_i.WriteTest(oname);
     Inc(Result);
   end;
 end;
@@ -2009,8 +2033,8 @@ begin
     // if that passes, we still check ...
     if (not new_components[cdex].isBrownDwarf) then begin
       strx := StarInfo(new_components[cdex]);
-      if strx.estimator<>nil then begin
-        if (not strx.estimator.SpectraOK) then Exit;
+      if strx.estimator_i<>nil then begin
+        if (not strx.estimator_i.SpectraOK) then Exit;
       end;
     end;
   end;
@@ -2048,7 +2072,7 @@ begin
     if (not new_components[cdex].isBrownDwarf) then begin
       xstar := StarInfo(new_components[cdex]);
       if (not xstar.ValidVisualMagnitude) then Exit;
-      lumvalue := xstar.estimator.VisualLuminosity;
+      lumvalue := xstar.estimator_i.VisualLuminosity;
       if (lumvalue <= 1.01) and (lumvalue >= 0.99) then Exit;
     end;
   end;
@@ -2357,9 +2381,10 @@ var locatio:Location;
     sdata1,sdata2:EstimationParser;
     dist_val,distspec,buf1:string;
     constl_str,namez,coordstr:string;
-    secondstar,dellocat,splitres:Boolean;
+    secondstar,dellocat,splitres,useavg:Boolean;
     mass_str,xestname:string;
     runlen:Integer;
+    qpllx:Real;
 begin
   Assert(sindex>=0);
   Assert(sindex<=system.MaxCInd);
@@ -2368,11 +2393,12 @@ begin
   dellocat := False;
   Result := '/';
   runlen := plen -1;
+  useavg := params.useavg and (system.avgpp <> nil);
   // preparing location
   if system.id > 1 then begin
     if not system.new_components[sindex].HasLocation then locatio := system.the_location
     else locatio := system.new_components[sindex].GetLocation;
-    if params.useavg and (system.avgpp <> nil) then begin
+    if useavg then begin
       dellocat := True;
       locatio := system.avgpp.GetAveragedLocation(locatio);
     end;
@@ -2421,12 +2447,15 @@ begin
   // normal stars
   else begin
     starx := StarInfo(system.new_components[sindex]);
-    sdata1 := starx.estimator;
+    if useavg then sdata1 := starx.estimator_s
+    else sdata1 := starx.estimator_i;
     sdata1.BackupMS();
     secondstar := (starx.MinPartCount >1);
     // second star splitting
     if secondstar then begin
-       splitres := StarSplitGeneral(starx,locatio.ParallaxMAS,sdata2);
+       if useavg then qpllx := system.avgpp.AveragePllx
+       else qpllx := locatio.ParallaxMAS;
+       splitres := StarSplitGeneral(starx,useavg,qpllx,sdata2);
     end
     else begin
         sdata2 := nil;
@@ -2448,7 +2477,7 @@ begin
     Result += '/';
     Inc(runlen);
     // mass
-    mass_str := starx.GetMassString;
+    mass_str := starx.GetMassString(params.useavg);
     runlen += Length(mass_str);
     Result += mass_str;
     // names
@@ -2504,7 +2533,7 @@ begin
     else if system.GetId = 1 then highl:= False
     else begin
       curstar := StarInfo(system.new_components[0]);
-      highl := (curstar.estimator.VisualLuminosity) >= (params.allcaplum);
+      highl := (curstar.estimator_i.VisualLuminosity) >= (params.allcaplum);
     end;
   end;
   // getting the name
@@ -2586,7 +2615,7 @@ var star_obj:StarInfo;
     xid,xname,starname1,starname2,buf2:string;
     sdata1,sdata2:EstimationParser;
     locat1,locat2:string;
-    hloc,splitres:Boolean;
+    hloc,splitres,useavg:Boolean;
     theparallax:Double;
 begin
   Assert(params<>nil);
@@ -2597,12 +2626,14 @@ begin
   // starting off
   star_obj := StarInfo(system.new_components[stardex]);
   Str(system.id + params.idoffset,xid);
-  sdata1 := star_obj.estimator;
+  useavg := params.useavg and (system.avgpp <> nil);
+  if useavg then sdata1 := star_obj.estimator_s
+  else sdata1 := star_obj.estimator_i;
   sdata1.BackupMS();
   // second star splitting
-  if (params.useavg and (system.avgpp <> nil)) then theparallax := system.avgpp.AveragePllx
+  if useavg then theparallax := system.avgpp.AveragePllx
   else theparallax := system.GetComponentParallax(stardex);
-  splitres := StarSplitGeneral(star_obj,theparallax,sdata2);
+  splitres := StarSplitGeneral(star_obj,useavg,theparallax,sdata2);
   // the names
   if (not star_obj.GetProperName(xname,system.constellation)) then begin
     xname := system.GetComponentBaseLabel(params.is2300ad);
@@ -2637,7 +2668,7 @@ begin
   else Result := 'Star,';
   Result += xid + ',' + starname1 + ',' + locat1 + ',';
   // star 1 mass,radus,luminosity
-  Result += star_obj.GetMassRadiusLuminosity + ',';
+  Result += star_obj.GetMassRadiusLuminosity(params.useavg) + ',';
   // star1 spectral classification and color
   Result += sdata1.StoredSpectra + ',,';
   // field 12 (Notes)
@@ -2765,7 +2796,7 @@ begin
       // single star
       else if system.new_components[aritydex].MinPartCount = 1 then begin
         cstar := StarInfo(system.new_components[aritydex]);
-        properties := cstar.GetMassRadiusLuminosity;
+        properties := cstar.GetMassRadiusLuminosity(params.useavg);
         Result += MakeAstrosynLine(properties,aritydex);
       end
       // multiple star
@@ -2788,7 +2819,7 @@ begin
     // single star
     else begin
       cstar := StarInfo(system.new_components[0]);
-      properties := cstar.GetMassRadiusLuminosity;
+      properties := cstar.GetMassRadiusLuminosity(params.useavg);
       Result += MakeAstrosynLine(properties,0);
     end
   end;

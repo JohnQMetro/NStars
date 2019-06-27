@@ -209,7 +209,7 @@ function StarSplit(var instar:EstimationParser; out newstar:EstimationParser):Bo
 function StarSplitX(var primary:EstimationParser; secmag,secpllx:Real;
     out newstar:EstimationParser):Boolean;
 
-function StarSplitGeneral(var instar:StarInfo; pllx_mas:Double; out newstar:EstimationParser):Boolean;
+function StarSplitGeneral(var instar:StarInfo; sysp:Boolean; pllx_mas:Double; out newstar:EstimationParser):Boolean;
 // producing test output for the Alonso method of generating BC
 procedure AlonsoTest;
 
@@ -1154,7 +1154,7 @@ begin
 end;
 //-------------------------------------------------------
 // wraps the various star split functions into a more general method
-function StarSplitGeneral(var instar:StarInfo; pllx_mas:Double; out newstar:EstimationParser):Boolean;
+function StarSplitGeneral(var instar:StarInfo; sysp:Boolean; pllx_mas:Double; out newstar:EstimationParser):Boolean;
 var sdata1:EstimationParser;
 begin
   Result := False;
@@ -1163,7 +1163,7 @@ begin
   if instar = nil then Exit;
   if instar.MinPartCount < 2 then Exit;
   // starting
-  sdata1 := instar.estimator;
+  sdata1 := instar.GetEst(sysp);
   // case 1 : generic white dwarf binary
   if instar.Arity = WHITE_DWARF_BINARY then begin
     Result := True;

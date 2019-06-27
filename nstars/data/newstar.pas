@@ -126,7 +126,8 @@ StarInfo = class(NewStarBase)
     premain:Boolean;
     wda:WDAtmosEnum; // useful for white dwarfs only
     // special
-    estimator:EstimationParser;
+    estimator_i:EstimationParser;
+    estimator_s:EstimationParser;
     // properties
     property ValidVisualMagnitude:Boolean read GetVMSet;
     property VisualMagnitude:Real read GetVM;
@@ -142,14 +143,15 @@ StarInfo = class(NewStarBase)
     function SetVisualMagnitudeStr(invm:string):Boolean;
     function SetSecondaryMagnitudeStr(invm:string):Boolean;
     // estimation setup and change
-    function InitializeEstimation(const parallax:Real):Boolean;
-    function NonSpectraChange(const parallax:Real):Boolean;
+    function InitializeEstimation(const pllx_i:Real; const pllx_sys:Real):Boolean;
+    function NonSpectraChange(const pllx_i:Real; const pllx_sys:Real):Boolean;
     // getting values, estimated or specified
     procedure GetMassAndMUnc(out mass,munc:Real);
-    function GetMassString:string;
-    function GetBolometricString:string;
-    function GetRadiusString:string;
-    function GetMassRadiusLuminosity:string;
+    function GetMassString(system:Boolean):string;
+    function GetBolometricString(system:Boolean):string;
+    function GetRadiusString(system:Boolean):string;
+    function GetMassRadiusLuminosity(system:Boolean):string;
+    function GetEst(system:Boolean):EstimationParser;
     // implemented text I/O methods
     function WriteToTextFile(var outfile:TextFile):Boolean; override;
     function ReadRestFromTextFile(var infile:TextFile; out errmsg:string):Boolean; override;
@@ -477,6 +479,16 @@ begin
     if secondary_mag < 10 then Result := '0' + Result;
   end;
 end;
+//------------------------------------------
+function StarInfo.GetEst(system:Boolean):EstimationParser;
+begin
+  if (system) then begin
+    if (estimator_s <> nil) then Result := estimator_s
+    else Result := estimator_i;
+  end
+  else Result := estimator_i;
+end;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
 // constructor
 constructor StarInfo.Create;
@@ -485,7 +497,8 @@ begin
   visual_magnitude := 9999.0;
   Arity := SINGLE;
   VariableType := NOT_VARIABLE;
-  estimator := nil;
+  estimator_i := nil;
+  estimator_s := nil;
   fluxtemp := nil;
   dr2mags := nil;
   secondary_mag := 99.9;
@@ -496,7 +509,8 @@ end;
 destructor StarInfo.Destroy;
 begin
   if ExtraInfo <> nil then ExtraInfo.Free;
-  estimator.Free;
+  estimator_i.Free;
+  estimator_s.Free;
   inherited;
 end;
 
@@ -536,28 +550,45 @@ end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // estimation setup and change
 //--------------------------------
-function StarInfo.InitializeEstimation(const parallax:Real):Boolean;
+function StarInfo.InitializeEstimation(const pllx_i:Real; const pllx_sys:Real):Boolean;
 begin
-  if estimator = nil then estimator := EstimationParser.Create();
+  if estimator_i = nil then estimator_i := EstimationParser.Create();
+  if (pllx_sys > 0) then begin
+    if estimator_s = nil then estimator_s := EstimationParser.Create();
+  end;
   // two options, with extra data
   if fluxtemp <> nil then begin
-    Result := estimator.SetAll(visual_magnitude,parallax,spectraltype,premain,wda,fluxtemp);
+    Result := estimator_i.SetAll(visual_magnitude,pllx_i,spectraltype,premain,wda,fluxtemp);
+    if (pllx_sys > 0) then begin
+       Result := estimator_s.SetAll(visual_magnitude,pllx_sys,spectraltype,premain,wda,fluxtemp);
+    end;
   end
   // and without extra data
   else begin
-    Result := estimator.SetSimple(visual_magnitude,parallax,spectraltype,premain,wda);
+    Result := estimator_i.SetSimple(visual_magnitude,pllx_i,spectraltype,premain,wda);
+    if (pllx_sys > 0) then begin
+       Result := estimator_s.SetSimple(visual_magnitude,pllx_sys,spectraltype,premain,wda);
+    end;
   end;
 end;
 //--------------------------------
-function StarInfo.NonSpectraChange(const parallax:Real):Boolean;
+function StarInfo.NonSpectraChange(const pllx_i:Real; const pllx_sys:Real):Boolean;
 begin
   Result := False;
-  if estimator = nil then Exit;
+  if estimator_i = nil then Exit;
   // complex versus simple change
   if fluxtemp <> nil then begin
-    Result := estimator.SetOther(visual_magnitude,parallax,fluxtemp);
+    Result := estimator_i.SetOther(visual_magnitude,pllx_i,fluxtemp);
+    if (pllx_sys > 0) then begin
+      Result := estimator_s.SetOther(visual_magnitude,pllx_sys,fluxtemp);
+    end;
   end
-  else Result := estimator.SetSimpleOther(visual_magnitude,parallax);
+  else begin
+    Result := estimator_i.SetSimpleOther(visual_magnitude,pllx_i);
+    if (pllx_sys > 0) then begin
+      Result := estimator_s.SetSimpleOther(visual_magnitude,pllx_sys);
+    end;
+  end;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 procedure StarInfo.GetMassAndMUnc(out mass,munc:Real);
@@ -578,10 +609,12 @@ begin
   munc := muncx;
 end;
 //-----------------------------------------------
-function StarInfo.GetMassString:string;
+function StarInfo.GetMassString(system:Boolean):string;
 var massval:Real;
+    estimator:EstimationParser;
 begin
   Result := '';
+  estimator := GetEst(system);
   if ExtraInfo<>nil then begin
     massval := ExtraInfo.MassN;
     if (massval = 0) and (estimator<>nil) then Result := estimator.MassEstimateExport
@@ -590,24 +623,28 @@ begin
   else if estimator<>nil then Result := estimator.MassEstimateExport;
 end;
 //-----------------------------------------------
-function StarInfo.GetBolometricString:string;
+function StarInfo.GetBolometricString(system:Boolean):string;
 var boloval:Real;
     bolok:Boolean;
+    estimator:EstimationParser;
 begin
   Result := '';
+  estimator := GetEst(system);
   if ExtraInfo<>nil then begin
     boloval := ExtraInfo.BoloLumN;
     bolok := (boloval>0);
     if (not bolok) then Result := estimator.BoloLuminosityEstExport
     else Result := FloatToStrF(boloval,ffGeneral,3,0);
   end
-  else if  (estimator<>nil) then Result := estimator.BoloLuminosityEstExport;
+  else if (estimator<>nil) then Result := estimator.BoloLuminosityEstExport;
 end;
 //-----------------------------------------------
-function StarInfo.GetRadiusString:string;
+function StarInfo.GetRadiusString(system:Boolean):string;
 var radival:Real;
+    estimator:EstimationParser;
 begin
   Result := '';
+  estimator := GetEst(system);
   if ExtraInfo<>nil then begin
     radival := ExtraInfo.DiameterN;
     if (radival = 0) and (estimator<>nil) then Result := estimator.RadiusEstimateExport
@@ -616,15 +653,15 @@ begin
   else if estimator<>nil then Result := estimator.RadiusEstimateExport;
 end;
 //-------------------------------------------------
-function StarInfo.GetMassRadiusLuminosity:string;
+function StarInfo.GetMassRadiusLuminosity(system:Boolean):string;
 var strm,strr,strl:string;
 begin
-  strm := GetMassString;
+  strm := GetMassString(system);
   if strm = '' then strm := '1';
-  strr := GetRadiusString;
+  strr := GetRadiusString(system);
   if strr = '' then strr := '1';
   Result := strm + ',' + strr + ',';
-  strl := GetBolometricString;
+  strl := GetBolometricString(system);
   if strl = '' then strl := '1';
   Result += strl;
 end;

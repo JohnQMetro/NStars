@@ -803,7 +803,7 @@ end;
 function StarProxy.GuessSpectra(out usespec:Boolean):Boolean;
 var styper:SpecTypeGuesser;
     resok,vmdiffok,hasrec:Boolean;
-    cpllx,expmag:Real;
+    cpllx,avpllx,expmag:Real;
     cppout,therec,dispmsg:string;
     rval:Word;
 begin
@@ -829,10 +829,10 @@ begin
   end;
   (* if there is a valid spectral type, we might try to calculate magnitude
   difference and a very crude photometric parallax. *)
-  if (cstar.estimator<>nil) and (cstar.VisualMagnitude<90) then begin
+  if (cstar.estimator_i<>nil) and (cstar.VisualMagnitude<90) then begin
     // calculating expected vs actual magnitude
-    vmdiffok := LookupExpectedAbsVMag(cstar.estimator.ColorLetter,cstar.estimator.ColorSubrange,expmag);
-    if vmdiffok then expmag := cstar.estimator.AbsoluteVisMagnitude - expmag
+    vmdiffok := LookupExpectedAbsVMag(cstar.estimator_i.ColorLetter,cstar.estimator_i.ColorSubrange,expmag);
+    if vmdiffok then expmag := cstar.estimator_i.AbsoluteVisMagnitude - expmag
     else expmag := 99;
     // crude photometric parallax
     resok := PhotoParallax(cstar.SpectralClass,cstar.VisualMagnitude,cppout);
@@ -850,8 +850,9 @@ begin
     Screen.Cursor := crDefault;
     rval := MessageDlg(dispmsg, mtConfirmation,[mbYes, mbNo],0);
     if (rval = mrYes) then begin
+      avpllx := sys.GetAvgPllx();
       cstar.SpectralClass := therec;
-      cstar.InitializeEstimation(cpllx);
+      cstar.InitializeEstimation(cpllx,avpllx);
       usespec := True;
     end else usespec := False;
   end else begin

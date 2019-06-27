@@ -1652,7 +1652,7 @@ begin
   end
   else begin
     StarCatIDFrame.Enabled := True;
-    StarDataCoreFrame.ChangeStar(current.ccomponent,current.sysl,current.sys.GetCompC);
+    StarDataCoreFrame.ChangeStar(current.ccomponent,current.sys,current.sys.GetCompC);
     StarCatIDFrame.ChangeObject(current.ccomponent);
     StarFluxTEffFrame.SetToComponent(current.ccomponent);
     GaiaMagsFrame1.SetToComponent(current.ccomponent);
