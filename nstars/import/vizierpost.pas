@@ -12,6 +12,7 @@ uses
 
 const
   POSTPART1 = '&-out.max=50&%2F%2FCDSportal=http%3A%2F%2Fcdsportal.u-strasbg.fr%2FStoreVizierData.html&-out.form=HTML+Table&-out.add=_r&-out.add=_RAJ%2C_DEJ&%2F%2Foutaddvalue=default&-sort=_r&-oc.form=sexa&-nav=';
+  POSTPART1b = '&-out.max=50&%2F%2FCDSportal=http%3A%2F%2Fcdsportal.u-strasbg.fr%2FStoreVizierData.html&-out.form=HTML+Table&-out.add=_r%2C_RAJ%2C_DEJ&%2F%2Foutaddvalue=default&-sort=_r&-oc.form=sexa&-nav=';
   POSTPART2 = '%26HTTPPRM%3A%26-out.max%3D50%26-out.form%3DHTML+Table%26-out.add%3D_r%26-out.add%3D_RAJ%2C_DEJ%26-sort%3D_r%26-oc.form%3Dsexa%26&-c=&-c.eq=J2000&-c.r=++2&-c.u=arcmin&-c.geom=r';
   POSTPARTX = '%26HTTPPRM%3A%26-out.max%3D50%26-out.form%3DHTML+Table%26-out.add%3D_r%26-out.add%3D_RAJ%2C_DEJ%26-sort%3D_r%26-oc.form%3Dsexa%26&-c=';
   POSTPARTB = '%26-out.max%3D50%26-out.form%3DHTML+Table%26-out.add%3D_r%26-out.add%3D_RAJ%2C_DEJ%26-sort%3D_r%26-order%3DI%26-oc.form%3Dsexa%26-meta.foot%3D1%26-meta%3D1%26-meta.ucd%3D2%26-c.eq%3DJ2000%26-c.r%3D++2%26-c.u%3Darcmin%26-c.geom%3Dr%26-usenav%3D1%26-bmark%3DPOST%26&-c=&-c.eq=J2000&-c.r=++2&-c.u=arcmin&-c.geom=r';
@@ -26,6 +27,7 @@ function Pos2String(const rapos,decpos:Real):string;
 function MakeUCAC4_Post(const j2ra,j2dex:Real; J,H,Ks:Currency):string;
 function MakeGaiaDR1_Post(const gra,gdex:Real; const gbright,gdim:Real):string;
 function MakeDENIS_Post(const j2ra,j2dex:Real; const asec:Word; Je,Ke:Real):string;
+function MakeSDSS_Post(const sdss_objid:string):string;
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 implementation
@@ -193,7 +195,34 @@ begin
   Result += '&A2DEdeg=&A2Ep=&Dist=&ObsJD=&Iflg=&Jflg=&Kflg=&mult=';
   Result += '&-ignore=Opt%3D*&Opt=Opt&-out=DENIS&DENIS=' + POSTPART3;
 end;
-
+//----------------------------------------------------------------------
+// field 6 in the result is the SDSS DR9 identifier
+function MakeSDSS_Post(const sdss_objid:string):string;
+begin
+  Result := '-to=4&-from=-3&-this=-3&%2F%2Fsource=V%2F139&%2F%2Ftables=';
+  Result += 'V%2F139%2Fsdss9' + POSTPART1b + 'cat%3AV%2F139%26tab%3A%7BV%2F139';
+  Result += '%2Fsdss9%7D%26key%3Asource%3DV%2F139' + POSTPART2;
+  Result += '&-source=V%2F139%2Fsdss9&-order=I';
+  Result += '&-out.orig=standard&mode=%3D1&-out=q_mode%2Ccl%2CSDSS9%2Cm_SDSS9';
+  Result += '%2CobjID&q_mode=&cl=&SDSS9=&m_SDSS9=&-ignore=Im%3D*&Im=Im&SDSS-ID=';
+  Result += '&objID=' + sdss_objid + '&Sp-ID=&SpObjID=&parentID=&flags=';
+  Result += '&Status=&RA_ICRS=&e_RA_ICRS=&DE_ICRS=&e_DE_ICRS=&ObsDate=&Q=';
+  Result += '&umag=&e_umag=&gmag=&e_gmag=&rmag=&e_rmag=&imag=&e_imag=&zmag=';
+  Result += '&e_zmag=&zsp=&e_zsp=&f_zsp=&Vdisp=&e_Vdisp=&spInst=&spType=&spCl=';
+  Result += '&subClass=&spS%2FN=&uFlags=&us=&uc=&uDate=&u%27mag=&e_u%27mag=';
+  Result += '&upmag=&e_upmag=&uPmag=&e_uPmag=&uPrad=&e_uPrad=&uoRA=&uoDE=';
+  Result += '&udVrad=&udVell=&uPA=&gFlags=&gs=&gc=&gDate=&g%27mag=&e_g%27mag=';
+  Result += '&gpmag=&e_gpmag=&gPmag=&e_gPmag=&gPrad=&e_gPrad=&goRA=&goDE=';
+  Result += '&gdVrad=&gdVell=&gPA=&rFlags=&rs=&rc=&rDate=&r%27mag=&e_r%27mag=';
+  Result += '&rpmag=&e_rpmag=&rPmag=&e_rPmag=&rPrad=&e_rPrad=&roRA=&roDE=';
+  Result += '&rdVrad=&rdVell=&rPA=&iFlags=&is=&ic=&iDate=&i%27mag=&e_i%27mag=';
+  Result += '&ipmag=&e_ipmag=&iPmag=&e_iPmag=&iPrad=&e_iPrad=&ioRA=&ioDE=';
+  Result += '&idVrad=&idVell=&iPA=&zFlags=&zs=&zc=&zDate=&z%27mag=&e_z%27mag=';
+  Result += '&zpmag=&e_zpmag=&zPmag=&e_zPmag=&zPrad=&e_zPrad=&zoRA=&zoDE=';
+  Result += '&zdVrad=&zdVell=&zPA=&pmRA=&e_pmRA=&pmDE=&e_pmDE=&sigRA=&sigDE=';
+  Result += '&M=&N=&g%28O%29=&r%28E%29=&g%28J%29=&r%28F%29=&i%28N%29=';
+  Result += POSTPART3;
+end;
 
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

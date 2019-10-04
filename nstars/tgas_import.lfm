@@ -1,0 +1,206 @@
+object TGASImportForm: TTGASImportForm
+  Left = 456
+  Height = 249
+  Top = 210
+  Width = 486
+  Caption = 'TGAS Import'
+  ClientHeight = 249
+  ClientWidth = 486
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  LCLVersion = '1.6.0.4'
+  object ImportAlterGB: TGroupBox
+    Left = 13
+    Height = 150
+    Top = 8
+    Width = 459
+    Caption = 'Import Alterations'
+    ClientHeight = 130
+    ClientWidth = 455
+    TabOrder = 0
+    object ParallaxChangeRG: TRadioGroup
+      Left = 8
+      Height = 112
+      Top = 8
+      Width = 216
+      AutoFill = True
+      Caption = 'Parallax Correction'
+      ChildSizing.LeftRightSpacing = 6
+      ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+      ChildSizing.EnlargeVertical = crsHomogenousChildResize
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 1
+      ClientHeight = 92
+      ClientWidth = 212
+      ItemIndex = 0
+      Items.Strings = (
+        'None'
+        'Add Offset'
+        'Lindegren Hemisphere-based'
+        'Stassun and Torres Latitude Based'
+        'Jao Hemisphere-based'
+      )
+      TabOrder = 0
+    end
+    object MaxDistLabel: TLabel
+      Left = 232
+      Height = 15
+      Top = 12
+      Width = 108
+      Caption = 'Maximum Distance :'
+      ParentColor = False
+    end
+    object LYLL: TLabel
+      Left = 421
+      Height = 15
+      Top = 12
+      Width = 12
+      Caption = 'LY'
+      ParentColor = False
+    end
+    object MaxLYE: TMaskEdit
+      Left = 352
+      Height = 24
+      Top = 8
+      Width = 59
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Quality = fqDraft
+      MaxLength = 6
+      ParentFont = False
+      TabOrder = 1
+      EditMask = '9000.0'
+      Text = ' 300.0'
+      SpaceChar = '_'
+    end
+    object MaxPELabel: TLabel
+      Left = 238
+      Height = 15
+      Top = 52
+      Width = 102
+      Caption = 'Max. Parallax Error :'
+      ParentColor = False
+    end
+    object MaxErrorEdit: TMaskEdit
+      Left = 363
+      Height = 24
+      Top = 48
+      Width = 48
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Quality = fqDraft
+      MaxLength = 4
+      ParentFont = False
+      TabOrder = 2
+      EditMask = '00.0'
+      Text = '15.0'
+      SpaceChar = '_'
+    end
+    object maslabel: TLabel
+      Left = 421
+      Height = 15
+      Top = 52
+      Width = 22
+      Caption = 'mas'
+      ParentColor = False
+    end
+    object OffsetLabel: TLabel
+      Left = 302
+      Height = 15
+      Top = 92
+      Width = 38
+      Caption = 'Offset :'
+      ParentColor = False
+    end
+    object OffsetEdit: TMaskEdit
+      Left = 352
+      Height = 24
+      Top = 88
+      Width = 59
+      Alignment = taRightJustify
+      CharCase = ecNormal
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Quality = fqDraft
+      MaxLength = 6
+      ParentFont = False
+      TabOrder = 3
+      OnKeyPress = OffsetEditKeyPress
+      EditMask = '#0.000'
+      Text = '+0.240'
+      SpaceChar = '_'
+    end
+    object maslabel2: TLabel
+      Left = 421
+      Height = 15
+      Top = 92
+      Width = 22
+      Caption = 'mas'
+      ParentColor = False
+    end
+  end
+  object ImportFileBtn: TButton
+    Left = 24
+    Height = 25
+    Top = 208
+    Width = 115
+    Caption = 'Import TGAS File...'
+    OnClick = ImportFileBtnClick
+    TabOrder = 1
+  end
+  object ImportDirBtn: TButton
+    Left = 160
+    Height = 25
+    Top = 208
+    Width = 144
+    Caption = 'Import TGAS Directory...'
+    OnClick = ImportDirBtnClick
+    TabOrder = 2
+  end
+  object ImportCountLabel: TLabel
+    Left = 24
+    Height = 21
+    Top = 168
+    Width = 84
+    Caption = 'ImportCoun'
+    Font.Height = -16
+    ParentColor = False
+    ParentFont = False
+  end
+  object ImportFileProgress: TProgressBar
+    Left = 320
+    Height = 24
+    Top = 208
+    Width = 152
+    TabOrder = 3
+  end
+  object ClearButton: TButton
+    Left = 397
+    Height = 25
+    Top = 164
+    Width = 75
+    Caption = 'Clear'
+    OnClick = ClearButtonClick
+    TabOrder = 4
+  end
+  object TGASImportDirectoryDialog: TSelectDirectoryDialog
+    left = 416
+    top = 160
+  end
+  object TGASImportFileDialog: TOpenDialog
+    left = 360
+    top = 160
+  end
+end

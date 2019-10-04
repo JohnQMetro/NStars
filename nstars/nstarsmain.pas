@@ -43,6 +43,7 @@ type
     GaiaMagGetMI: TMenuItem;
     MenuItem12: TMenuItem;
     EstJHKPSMI: TMenuItem;
+    MI_AddVizForAll: TMenuItem;
     MI_GTycRI: TMenuItem;
     MI_NLTTMatcher: TMenuItem;
     MI_DATeff: TMenuItem;
@@ -264,6 +265,7 @@ type
     procedure MainListPopupMenuPopup(Sender: TObject);
     procedure MergeIntoMIClick(Sender: TObject);
     procedure MISwapParallaxClick(Sender: TObject);
+    procedure MI_AddVizForAllClick(Sender: TObject);
     procedure MI_BulkMatchTGASClick(Sender: TObject);
     procedure MI_DATeffClick(Sender: TObject);
     procedure MI_DR2_BVRIClick(Sender: TObject);
@@ -384,6 +386,7 @@ type
     parallax_source:string;
     x_popup_index:Integer;
     fetchid_single:IDFetchThread;
+    fetchid_multiple:IDFetchThread;
     procedure StarParallaxChanged(Sender: TObject);
     procedure MainParallaxChange(Sender: TObject);
     procedure FluxTEffChange(Sender:TObject);
@@ -1113,6 +1116,7 @@ begin
   Screen.Cursor := crDefault;
   ShowMessage(outmsg);
   fetchid_single.Free;
+  fetchid_multiple.Free;
 end;
 //----------------------------
 procedure TNStarsMainForm.HandleIDDone(var Msg:TLMessage);
@@ -1131,6 +1135,7 @@ begin
     CatalogIDEditSystem.Reload();
   end;
   fetchid_single.Free;
+  Fetchid_multiple.Free;
 end;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
 procedure TNStarsMainForm.StarModCheck(Sender: TObject);
@@ -2125,6 +2130,7 @@ begin
   firststartup := True;
   loadlist := True;
   fetchid_single := nil;
+  fetchid_multiple := nil;
 end;
 
 procedure TNStarsMainForm.LoadGaiaDR2CSVClick(Sender: TObject);
@@ -2240,6 +2246,13 @@ begin
   if xres then begin
     MainLocatEditFrame1.Reload;
   end;
+end;
+
+procedure TNStarsMainForm.MI_AddVizForAllClick(Sender: TObject);
+begin
+  // going ahead
+  Screen.Cursor := crHourGlass;
+  fetchid_multiple := IDFetchThread.Create(False,self.Handle);
 end;
 
 procedure TNStarsMainForm.MI_BulkMatchTGASClick(Sender: TObject);

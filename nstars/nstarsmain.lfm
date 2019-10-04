@@ -14,7 +14,7 @@ object NStarsMainForm: TNStarsMainForm
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '1.8.2.0'
+  LCLVersion = '2.0.4.0'
   object SystemEditorBox: TGroupBox
     Left = 200
     Height = 540
@@ -42,13 +42,7 @@ object NStarsMainForm: TNStarsMainForm
           Height = 21
           Top = 16
           Width = 185
-          EditLabel.AnchorSideLeft.Control = MainSystemName
-          EditLabel.AnchorSideRight.Control = MainSystemName
-          EditLabel.AnchorSideRight.Side = asrBottom
-          EditLabel.AnchorSideBottom.Control = MainSystemName
-          EditLabel.Left = 3
           EditLabel.Height = 13
-          EditLabel.Top = 0
           EditLabel.Width = 185
           EditLabel.Caption = 'Main System Name'
           EditLabel.ParentColor = False
@@ -86,13 +80,7 @@ object NStarsMainForm: TNStarsMainForm
           Height = 21
           Top = 16
           Width = 169
-          EditLabel.AnchorSideLeft.Control = ProperSystemName
-          EditLabel.AnchorSideRight.Control = ProperSystemName
-          EditLabel.AnchorSideRight.Side = asrBottom
-          EditLabel.AnchorSideBottom.Control = ProperSystemName
-          EditLabel.Left = 208
           EditLabel.Height = 13
-          EditLabel.Top = 0
           EditLabel.Width = 169
           EditLabel.Caption = 'Proper Name'
           EditLabel.ParentColor = False
@@ -104,13 +92,7 @@ object NStarsMainForm: TNStarsMainForm
           Height = 21
           Top = 53
           Width = 169
-          EditLabel.AnchorSideLeft.Control = ExtraNamesEdit
-          EditLabel.AnchorSideRight.Control = ExtraNamesEdit
-          EditLabel.AnchorSideRight.Side = asrBottom
-          EditLabel.AnchorSideBottom.Control = ExtraNamesEdit
-          EditLabel.Left = 208
           EditLabel.Height = 13
-          EditLabel.Top = 37
           EditLabel.Width = 169
           EditLabel.Caption = 'Additional Names'
           EditLabel.ParentColor = False
@@ -351,13 +333,7 @@ object NStarsMainForm: TNStarsMainForm
           Height = 21
           Top = 97
           Width = 41
-          EditLabel.AnchorSideLeft.Control = VariableStarNameEdit
-          EditLabel.AnchorSideRight.Control = VariableStarNameEdit
-          EditLabel.AnchorSideRight.Side = asrBottom
-          EditLabel.AnchorSideBottom.Control = VariableStarNameEdit
-          EditLabel.Left = 315
           EditLabel.Height = 13
-          EditLabel.Top = 81
           EditLabel.Width = 41
           EditLabel.Caption = 'Variable'
           EditLabel.ParentColor = False
@@ -522,12 +498,10 @@ object NStarsMainForm: TNStarsMainForm
             inherited SpectralClassEdit: TLabeledEdit
               Height = 21
               EditLabel.Height = 13
-              EditLabel.Top = 0
             end
             inherited VStarDesigEdit: TLabeledEdit
               Height = 21
               EditLabel.Height = 13
-              EditLabel.Top = 0
             end
             inherited LuminosityDisplay: TLabel
               Height = 13
@@ -882,13 +856,7 @@ object NStarsMainForm: TNStarsMainForm
           Height = 21
           Top = 24
           Width = 238
-          EditLabel.AnchorSideLeft.Control = FictionalNamesEdit
-          EditLabel.AnchorSideRight.Control = FictionalNamesEdit
-          EditLabel.AnchorSideRight.Side = asrBottom
-          EditLabel.AnchorSideBottom.Control = FictionalNamesEdit
-          EditLabel.Left = 167
           EditLabel.Height = 13
-          EditLabel.Top = 8
           EditLabel.Width = 238
           EditLabel.Caption = 'Fictional Names:'
           EditLabel.ParentColor = False
@@ -924,13 +892,7 @@ object NStarsMainForm: TNStarsMainForm
           Height = 21
           Top = 24
           Width = 133
-          EditLabel.AnchorSideLeft.Control = Name2300adEdit
-          EditLabel.AnchorSideRight.Control = Name2300adEdit
-          EditLabel.AnchorSideRight.Side = asrBottom
-          EditLabel.AnchorSideBottom.Control = Name2300adEdit
-          EditLabel.Left = 416
           EditLabel.Height = 13
-          EditLabel.Top = 8
           EditLabel.Width = 133
           EditLabel.Caption = '2300ad Name'
           EditLabel.ParentColor = False
@@ -1319,6 +1281,10 @@ object NStarsMainForm: TNStarsMainForm
       object MI_NLTTMatcher: TMenuItem
         Caption = 'NLTT Match...'
         OnClick = MI_NLTTMatcherClick
+      end
+      object MI_AddVizForAll: TMenuItem
+        Caption = 'Add IDs from VizieR...'
+        OnClick = MI_AddVizForAllClick
       end
       object N5: TMenuItem
         Caption = '-'

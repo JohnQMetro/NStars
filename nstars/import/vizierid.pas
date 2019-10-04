@@ -9,7 +9,7 @@ interface
 uses
   Classes, SysUtils, NewStar, gaiadr2base, utilities, star_names, character,
   newlocation, stardata, LMessages, LCLIntf, ImportVizier, starext2,
-  VizierPOST;
+  VizierPOST, collecdata;
 
 type
 
@@ -19,7 +19,7 @@ FetchIDWrapper = class
     function EstimateDR1_G(const dr2mags:GaiaDR2Mags):Boolean;
     function Load2MASS(ccomp:NewStarBase; names:StarNames):Boolean;
   public
-    ucac4_do,gaia1_do,denis_do:Boolean; // do we try to fetch this id?
+    ucac4_do,gaia1_do,denis_do,sdss_do:Boolean; // do we try to fetch this id?
     tmass_id:string;  // 2MASS id (used for UCAC4 and DENIS)
     raJ2,decJ2:Real;
     J,H,Ks:Currency;  // UCAC4 tables include cross-matched 2MASS mags
@@ -28,6 +28,7 @@ FetchIDWrapper = class
     raDR2,decDR2:Real;   // Gaia DR2 position
     names_ptr:StarNames;
     flux_ptr:StarFluxPlus;
+    sdss_objid:string;
 
     constructor Create;
     function InitFromObject(ccomp:NewStarBase; names:StarNames; inlocation:Location):Boolean;
@@ -39,6 +40,10 @@ protected
   stardex:Integer;  // index of star in system
   currentSystem:StarSystem;   // currently checked system
   currentInfo:FetchIDWrapper; // id fetching info for current star
+  idadded:Integer;
+  starlist_ptr:StarList; // for bulk id fetching
+  system_index:Integer;
+  single_star:Boolean;
 
   msgTarget:THandle; // window handle for message target
   // waitlock:PRTLEvent;  // used to pause and resume thread
@@ -52,11 +57,17 @@ protected
   function ParseUCAC4(const down_page:string):string;
   function ParseDENIS(const down_page:string):string;
   function ParseGaia1(const down_page:string):string;
+  function ParseSDSS(const down_page:string):string;
   function DoCurrentStar():string;
+
+  function DoCurrentSystem():Integer;
+  function DoAllSystems():Integer;
+
 
   procedure Execute; override;  // top level execution
 public
-  constructor Create(createSuspended:Boolean; sys_in:StarSystem; stardex_in:Integer; mtarget:THandle);
+  constructor Create(createSuspended:Boolean; sys_in:StarSystem; stardex_in:Integer; mtarget:THandle); overload;
+  constructor Create(createSuspended:Boolean; mtarget:THandle); overload;
   // procedure WaitIsOver(quit:Boolean);  // the form should call this to resume
 end;
 
@@ -129,6 +140,7 @@ begin
   ucac4_do := False;
   gaia1_do := False;
   denis_do := False;
+  sdss_do := False;
   J := cmax;  H := cmax;  Ks := cmax;
   Je := 99.999;  Ke := 99.999;
   Gmin := 99.999;  Gmax := 99.999;
@@ -144,8 +156,10 @@ begin
   ucac4_do := not names.HasCat('UCAC4');
   gaia1_do := not names.HasCat('Gaia DR1');
   denis_do := not names.HasCat('DENIS');
+  sdss_do := not names.HasCat('SDSS');
+
   if (denis_do) then denis_do := (inlocation.GetDecimalDeclination < 2.2);
-  if (not ucac4_do) and (not gaia1_do) and (not denis_do) then Exit;
+  if (not ucac4_do) and (not gaia1_do) and (not denis_do) and (not sdss_do) then Exit;
   // checking for what we need for UCAC4 and DENIS
   if ucac4_do or denis_do then begin
     if Load2MASS(ccomp,names) then begin
@@ -166,8 +180,12 @@ begin
       inlocation.MakeGetJ2015p5Pos(raDR2,decDR2);
     end;
   end;
+  // checking sdss
+  if sdss_do then begin
+    sdss_do := names.GetCatValue('SDSSobjID',sdss_objid);
+  end;
   // done
-  if (not ucac4_do) and (not gaia1_do) and (not denis_do) then Exit;
+  if (not ucac4_do) and (not gaia1_do) and (not denis_do) and (not sdss_do) then Exit;
   names_ptr := names;
   if gaia1_do then flux_ptr := ccomp.fluxtemp
   else flux_ptr := nil;
@@ -300,9 +318,31 @@ begin
   end;
 end;
 //---------------------------------------------
+function IDFetchThread.ParseSDSS(const down_page:string):string;
+var zparse:VizieRDataBase;
+    idf,idf2:string;
+begin
+  Result := '';
+  zparse := VizieRDataBase.Create;
+  try
+    if not zparse.Start('The SDSS Photometric Catalog, Release 9 (Adelman-McCarthy+, 2012)',down_page) then Exit;
+    if not zparse.SkipCells(3) then Exit;
+    // skipping over q mode and class
+    if not zparse.SkipCells(2) then Exit;
+    // the identifier
+    if not zparse.NextCellStr(idf) then Exit;
+    // if 2 different SDSS objects have the same name, we treat that as wrong
+    if not zparse.NextCellStr(idf2) then Exit;
+    if (idf2 = '*') then Exit;
+    Result := idf;
+  finally
+    zparse.Free;
+  end;
+end;
+//---------------------------------------------
 function IDFetchThread.DoCurrentStar():string;
 var postdata,downloaded:string;
-    dok:Boolean;
+    dok,sdss_done:Boolean;
     ostring,finstr:string;
     fiw:FetchIDWrapper;
     rcount:Integer;
@@ -311,6 +351,7 @@ const vizurl2 = 'http://vizier.u-strasbg.fr/viz-bin/VizieR-4';
 begin
   Result := '';
   rcount := 0;
+  sdss_done := False;
   if currentInfo = nil then Exit;
   fiw := currentInfo;
   // UCAC4
@@ -351,19 +392,72 @@ begin
       end;
     end;
   end;
+  // SDSS
+  if fiw.sdss_do then begin
+    postdata := MakeSDSS_Post(fiw.sdss_objid);
+    dok := GetByPOSTS(vizurl2,postdata,ctLatin1,downloaded);
+    if dok then begin
+      ostring := ParseSDSS(downloaded);
+      if (ostring <> '') then begin
+        Inc(rcount);
+        if finstr <> '' then finstr += ',';
+        finstr += 'SDSS ' + ostring;
+        sdss_done := True;
+      end;
+    end;
+  end;
   // if we have anything, we add it to the names
   if rcount > 0 then fiw.names_ptr.SetMultipleCat(finstr);
+  if sdss_done then fiw.names_ptr.DelCat('SDSSobjID');
+  idadded += rcount;
   Result := finstr;
 end;
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function IDFetchThread.DoCurrentSystem():Integer;
+var oamount,namount,sindex,scount:Integer;
+    tempres:string;
+begin
+  oamount := idadded;
+  scount := currentSystem.GetCompC();
+  for sindex := 1 to scount do begin
+      stardex := sindex;
+      if not MakeWrapper(currentSystem,stardex) then Continue;
+      tempres := DoCurrentStar();
+      FreeAndNil(currentInfo);
+  end;
+  namount := idadded - oamount;
+  Result := namount;
+end;
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function IDFetchThread.DoAllSystems():Integer;
+var system_count,sysdex,ids_add:Integer;
+begin
+  system_count := starlist_ptr.TotalCount;
+  for sysdex := 1 to (system_count-1) do begin
+      system_index := sysdex;
+      currentSystem := starlist_ptr.SystemAtIndex(system_index);
+      ids_add := DoCurrentSystem();
+  end;
+  Result := idadded;
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 procedure IDFetchThread.Execute;
 var res:string;
+    resadded:Integer;
 begin
+  idadded := 0;
   PostMessage(msgTarget,MSG_IDSTART,0,0);
-  if not MakeWrapper(currentSystem,stardex) then begin
-    PostCannotStart('Cannot lookup ids: missing prerequisites, or we already have them.')
+  if single_star then begin
+    if not MakeWrapper(currentSystem,stardex) then begin
+      PostCannotStart('Cannot lookup ids: missing prerequisites, or we already have them.')
+    end else begin
+      res := DoCurrentStar();
+      PostDone(res);
+    end;
   end else begin
-    res := DoCurrentStar();
+    resadded := DoAllSystems();
+    res := 'Identifiers Added: ' + IntToStr(resadded);
     PostDone(res);
   end;
 end;
@@ -373,7 +467,21 @@ begin
   msgTarget := mtarget;
   currentSystem := sys_in;
   stardex := stardex_in;
-  inherited Create(createSuspended)
+  starlist_ptr := nil;
+  system_index := -1;
+  single_star := True;
+  inherited Create(createSuspended);
+end;
+//-----------------------------------------------------------
+constructor IDFetchThread.Create(createSuspended:Boolean; mtarget:THandle);
+begin
+  msgTarget := mtarget;
+  currentSystem := nil;
+  stardex := 0;
+  starlist_ptr := primaryl;
+  system_index := -1;
+  single_star := False;
+  inherited Create(createSuspended);
 end;
   // procedure WaitIsOver(quit:Boolean);  // the form should call this to resume
 

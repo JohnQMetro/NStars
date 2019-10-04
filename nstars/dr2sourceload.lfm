@@ -1,0 +1,149 @@
+object GaiaDR2LSourceForm: TGaiaDR2LSourceForm
+  Left = 439
+  Height = 160
+  Top = 294
+  Width = 519
+  Caption = 'Load Gaia DR2 Data from ADQL CSV'
+  ClientHeight = 160
+  ClientWidth = 519
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  LCLVersion = '1.8.2.0'
+  object LoadProgressBar: TProgressBar
+    Left = 8
+    Height = 22
+    Top = 96
+    Width = 500
+    Max = 1000
+    Smooth = True
+    TabOrder = 4
+  end
+  object implabel: TLabel
+    Left = 12
+    Height = 15
+    Top = 4
+    Width = 486
+    Caption = 'Import Gaia DR2 Stars from CSV Source (see gaia_adql.txt for the type of ADQL query to use).'
+    ParentColor = False
+  end
+  object MaxIDDistLabel: TLabel
+    Left = 8
+    Height = 15
+    Top = 64
+    Width = 173
+    Caption = 'Maximum ID Matching Distance:'
+    ParentColor = False
+  end
+  object PllxOffsetLbl: TLabel
+    Left = 296
+    Height = 15
+    Top = 64
+    Width = 115
+    Caption = 'Parallax Offset to add:'
+    ParentColor = False
+  end
+  object MinIDDistEdit: TMaskEdit
+    Left = 190
+    Height = 25
+    Top = 60
+    Width = 44
+    Alignment = taRightJustify
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 4
+    ParentFont = False
+    TabOrder = 1
+    EditMask = '0.00'
+    Text = '0.50'
+    SpaceChar = '_'
+  end
+  object PllxOffsetEdit: TMaskEdit
+    Left = 418
+    Height = 25
+    Top = 60
+    Width = 64
+    Alignment = taRightJustify
+    CharCase = ecNormal
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    MaxLength = 6
+    ParentFont = False
+    TabOrder = 2
+    OnKeyPress = PllxOffsetEditKeyPress
+    EditMask = '#0.000'
+    Text = '+0.029'
+    SpaceChar = '_'
+  end
+  object aslbl: TLabel
+    Left = 242
+    Height = 15
+    Top = 64
+    Width = 33
+    Caption = 'arcsec'
+    ParentColor = False
+  end
+  object maslbl: TLabel
+    Left = 488
+    Height = 15
+    Top = 64
+    Width = 22
+    Caption = 'mas'
+    ParentColor = False
+  end
+  object PickSourceBtn: TButton
+    Left = 12
+    Height = 25
+    Top = 28
+    Width = 111
+    Caption = 'Pick Source File...'
+    OnClick = PickSourceBtnClick
+    TabOrder = 0
+  end
+  object StartImportBtn: TButton
+    Left = 8
+    Height = 25
+    Top = 128
+    Width = 75
+    Caption = 'Start Import'
+    OnClick = StartImportBtnClick
+    TabOrder = 3
+  end
+  object StarsLoadedLabel: TLabel
+    Left = 95
+    Height = 15
+    Top = 132
+    Width = 86
+    Caption = 'No Stars Loaded'
+    ParentColor = False
+  end
+  object FilepathLabel: TLabel
+    Left = 136
+    Height = 15
+    Top = 32
+    Width = 88
+    Caption = 'No File Specified'
+    ParentColor = False
+  end
+  object PBarOverlayLabel: TLabel
+    Left = 200
+    Height = 15
+    Top = 101
+    Width = 92
+    Alignment = taCenter
+    AutoSize = False
+    Caption = '0% done'
+    Layout = tlCenter
+    ParentColor = False
+  end
+  object OpenCSVSource: TOpenDialog
+    left = 464
+    top = 112
+  end
+end
