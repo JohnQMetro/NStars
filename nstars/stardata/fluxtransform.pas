@@ -53,6 +53,8 @@ function URATJ_To_Ic(URATin,Jin:Currency; out Icest:Currency):Boolean;
 function PS1_StrToVals(const indata:string; var values:RealArray):Boolean;
 function PS1_iyToJHK(const inValues:RealArray;const G:Currency; out Je:Currency; out He:Currency; out Ke:Currency):Boolean;
 function PS1_grJToVRI(gpin,rpin:Real; Jin:Currency; out Vest:Real; out RcEst:Currency; out IcEst:Currency):Boolean;
+(* New Skymapper to VRI *)
+function SMSS_griz2VRI(g,r,i,z,J:Real; out Vest:Real; out RcEst:Currency; out IcEst:Currency):Boolean;
 
 //******************************************************************************
 implementation
@@ -865,6 +867,71 @@ Source Colour 2; min: -4.121 max: 1.470
 *)
   Result := False;
 
+
+end;
+//--------------------------------------------------------------------------------------------
+(* New Skymapper to VRI, using Solar Neighborhood stuff *)
+function SMSS_griz2VRI(g,r,i,z,J:Real; out Vest:Real; out RcEst:Currency; out IcEst:Currency):Boolean;
+var gmr,gmi,rmi,rmz,rmj:Real;
+    interm:Real;
+    gmiok,gmrok,rmiok,rmzok,rmjok:Boolean;
+const coff_I1:array[0..2] of Real = ( 0.3979, 0.84217, -0.017701 );
+      coff_I2:array[0..2] of Real =  ( -0.7379, -0.31175, 0.4877);
+      coff_R1:array[0..2] of Real = ( 0.27064, 0.072587, 0.091268 );
+      coff_R2:array[0..2] of Real = ( -0.30936, -0.43393, 0.32262);
+      coff_R3:array[0..2] of Real =  ( 0.21238, 0.11586, 0.032123 );
+      coff_V1:array[0..2] of Real = ( 0.41034, -0.1124, 0.063316);
+      coff_V2:array[0..2] of Real = ( 0.60254, -0.55911, 0.56679 );
+      coff_V3:array[0..2] of Real =  ( 0.59191, -0.12142, 0.072283 );
+begin
+  Result := False;
+  rmiok := MakeColorCheck(r,i,0.779,3.224,rmi);
+  rmzok := MakeColorCheck(r,z,1.043,4.542,rmz);
+  rmjok := MakeColorCheck(r,J,2.316,6.912,rmj);
+  gmrok := MakeColorCheck(g,r, 0.800,1.303,gmr);
+
+  // V
+  interm := 99;
+  Vest := 99.999;
+  if (gmrok and rmiok) then interm := PolEval(rmi,coff_V1,3) + 0.19527*gmr
+  else if gmrok then interm := PolEval(gmr,coff_V2,3)
+  else if rmiok then interm := PolEval(rmi,coff_V3,3);
+  if (interm < 90) then begin
+    Result := True;
+    VEst := interm + r;
+  end;
+
+  // Rc
+  interm := 99;
+  RcEst := 99.999;
+  if rmiok then begin
+    interm := PolEval(rmi,coff_R1,3);
+  end
+  else if rmzok then begin
+    if rmjok then interm := PolEval(rmz,coff_R2,3) - 0.22934*rmz*rmj + 0.59303*rmj
+    else interm := PolEval(rmz,coff_R3,3)
+  end;
+  if (interm < 90) then begin
+    Result := True;
+    RcEst := RealToCurr(r - interm);
+    RcEst := RoundCurrency(RcEst,False);
+  end;
+
+  // Ic
+  interm := 99;
+  IcEst := 99.999;
+  if rmiok then begin
+    interm := 0.41072 + 1.0945*rmi;
+  end
+  else if rmzok then begin
+    if rmjok then interm := PolEval(rmz,coff_I2,3) - 0.40477*rmz*rmj + 1.2267*rmj
+    else interm := PolEval(rmz,coff_I1,3);
+  end;
+  if (interm < 90) then begin
+    Result := True;
+    IcEst := RealToCurr(r - interm);
+    IcEst := RoundCurrency(IcEst,False);
+  end;
 
 end;
 
