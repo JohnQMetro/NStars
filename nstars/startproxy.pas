@@ -82,6 +82,7 @@ StarProxy = class
     function GG1_VRI(useRP:Boolean):Boolean;
     function DA_GaiaTEff():Boolean;
     function Tycho2G_Helper(indata:string):Boolean;
+    function SMSSHelper(indata:string):Boolean;
 end;
 
 var
@@ -1605,6 +1606,25 @@ begin
   end;
   // showing the results
   Result := ShowEst(99.9999,99.9999,RcEst,IcEst,amsg);
+end;
+//---------------------------------------------------------------------
+function StarProxy.SMSSHelper(indata:string):Boolean;
+var Vest:Real;
+    Jin,RcEst,IcEst:Currency;
+    okay:Boolean;
+const amsg = 'Estimated from Skymapper griz/2MASS J';
+begin
+  Result := False;
+  Assert(cstar<>nil);
+  // getting J
+  if cstar.fluxtemp = nil then Jin := 99.999
+  else Jin := cstar.fluxtemp.J_mag;
+  if (not SMSStoFluxes(indata,Jin,Vest,RcEst,IcEst)) then begin
+      ShowMessage('Unable to parse or convert the input!');
+  end
+  else begin
+     Result := ShowEst(Vest,99.9999,RcEst,IcEst,amsg);
+  end;
 end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 begin

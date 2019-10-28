@@ -43,6 +43,7 @@ type
     GaiaMagGetMI: TMenuItem;
     MenuItem12: TMenuItem;
     EstJHKPSMI: TMenuItem;
+    EstSMSSMI: TMenuItem;
     MI_AddVizForAll: TMenuItem;
     MI_GTycRI: TMenuItem;
     MI_NLTTMatcher: TMenuItem;
@@ -228,6 +229,7 @@ type
     procedure EstBVCMCMIClick(Sender: TObject);
     procedure EstBVUCACMIClick(Sender: TObject);
     procedure EstJHKPSMIClick(Sender: TObject);
+    procedure EstSMSSMIClick(Sender: TObject);
     // procedure EstIUCACMIClick(Sender: TObject);
     procedure ExpGaiaDR2CSVClick(Sender: TObject);
     procedure Export1Click(Sender: TObject);
@@ -686,6 +688,23 @@ begin
     data := Trim(InputBox('Estimate JHKs from Pan-STARRS',entmsg,''));
     if Length(data)<>0 then begin
        rok := current.PanStarrsJHK(data);
+    end;
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.EstSMSSMIClick(Sender: TObject);
+var data:string;   rok:Boolean;
+const entmsg = 'Enter Skymapper g r i [z] magnitudes to estimate' + sLineBreak +
+               'V, Rc, and Ic magnitudes (sometimes uses 2MASS J).';
+begin
+  if current.cstar <> nil then begin
+    data := Trim(InputBox('Estimate VRI from Skymapper',entmsg,''));
+    if Length(data)<>0 then begin
+       rok := current.SMSSHelper(data);
     end;
     if rok then begin
       // reloading after data has been set

@@ -55,6 +55,7 @@ function PS1_iyToJHK(const inValues:RealArray;const G:Currency; out Je:Currency;
 function PS1_grJToVRI(gpin,rpin:Real; Jin:Currency; out Vest:Real; out RcEst:Currency; out IcEst:Currency):Boolean;
 (* New Skymapper to VRI *)
 function SMSS_griz2VRI(g,r,i,z,J:Real; out Vest:Real; out RcEst:Currency; out IcEst:Currency):Boolean;
+function SMSStoFluxes(indata:string; J:Currency; out Vest:Real; out RcEst:Currency; out IcEst:Currency):Boolean;
 
 //******************************************************************************
 implementation
@@ -872,23 +873,28 @@ end;
 //--------------------------------------------------------------------------------------------
 (* New Skymapper to VRI, using Solar Neighborhood stuff *)
 function SMSS_griz2VRI(g,r,i,z,J:Real; out Vest:Real; out RcEst:Currency; out IcEst:Currency):Boolean;
-var gmr,gmi,rmi,rmz,rmj:Real;
+var gmr,rmi,rmz,rmj,imz,imj:Real;
     interm:Real;
-    gmiok,gmrok,rmiok,rmzok,rmjok:Boolean;
+    gmrok,rmiok,rmzok,rmjok,imzok,imjok,imjok2:Boolean;
 const coff_I1:array[0..2] of Real = ( 0.3979, 0.84217, -0.017701 );
-      coff_I2:array[0..2] of Real =  ( -0.7379, -0.31175, 0.4877);
+      coff_I2:array[0..2] of Real = ( -0.7379, -0.31175, 0.4877);
+      coff_I3:array[0..2] of Real = ( 0.18409, 0.23875, -0.026245 );
       coff_R1:array[0..2] of Real = ( 0.27064, 0.072587, 0.091268 );
       coff_R2:array[0..2] of Real = ( -0.30936, -0.43393, 0.32262);
-      coff_R3:array[0..2] of Real =  ( 0.21238, 0.11586, 0.032123 );
+      coff_R3:array[0..2] of Real = ( 0.21238, 0.11586, 0.032123 );
+      coff_R4:array[0..3] of Real = ( 0.36354, 0.51188, 1.2608, -0.66802 );
       coff_V1:array[0..2] of Real = ( 0.41034, -0.1124, 0.063316);
       coff_V2:array[0..2] of Real = ( 0.60254, -0.55911, 0.56679 );
-      coff_V3:array[0..2] of Real =  ( 0.59191, -0.12142, 0.072283 );
+      coff_V3:array[0..2] of Real = ( 0.59191, -0.12142, 0.072283 );
+      coff_V4:array[0..3] of Real = ( -0.17491, -3.3137, 8.277, -1.9537);
 begin
   Result := False;
   rmiok := MakeColorCheck(r,i,0.779,3.224,rmi);
   rmzok := MakeColorCheck(r,z,1.043,4.542,rmz);
   rmjok := MakeColorCheck(r,J,2.316,6.912,rmj);
   gmrok := MakeColorCheck(g,r, 0.800,1.303,gmr);
+  imzok := MakeColorCheck(i,z,0.504,1.639,imz);
+  imjok := MakeColorCheck(i,J,1.79,4.014,imj);
 
   // V
   interm := 99;
@@ -899,6 +905,12 @@ begin
   if (interm < 90) then begin
     Result := True;
     VEst := interm + r;
+  end;
+  // special for i and z
+  if (Vest >= 90) and imzok and imjok then begin
+    interm := PolEval(imz,coff_V4,4) - 1.8202*imz*imj + 1.9705*imj;
+    Result := True;
+    Vest := interm + i;
   end;
 
   // Rc
@@ -916,23 +928,70 @@ begin
     RcEst := RealToCurr(r - interm);
     RcEst := RoundCurrency(RcEst,False);
   end;
+  // special for i and z
+  if (RcEst >= 90) and imzok then begin
+    interm := PolEval(imz,coff_R4,4);
+    Result := True;
+    RcEst := RealToCurr(interm + i);
+    RcEst := RoundCurrency(RcEst,False);
+  end;
 
   // Ic
   interm := 99;
   IcEst := 99.999;
-  if rmiok then begin
-    interm := 0.41072 + 1.0945*rmi;
-  end
-  else if rmzok then begin
-    if rmjok then interm := PolEval(rmz,coff_I2,3) - 0.40477*rmz*rmj + 1.2267*rmj
-    else interm := PolEval(rmz,coff_I1,3);
-  end;
-  if (interm < 90) then begin
+  imjok2:= MakeColorCheck(i,J,1.5,4.014,imj);
+  if imjok2 then begin
+    interm := PolEval(imj,coff_I3,3);
     Result := True;
-    IcEst := RealToCurr(r - interm);
+    IcEst := RealToCurr(i - interm);
     IcEst := RoundCurrency(IcEst,False);
+  end
+  else begin
+    if rmiok then begin
+      interm := 0.41072 + 1.0945*rmi;
+    end
+    else if rmzok then begin
+      if rmjok then interm := PolEval(rmz,coff_I2,3) - 0.40477*rmz*rmj + 1.2267*rmj
+      else interm := PolEval(rmz,coff_I1,3);
+    end;
+    if (interm < 90) then begin
+      Result := True;
+      IcEst := RealToCurr(r - interm);
+      IcEst := RoundCurrency(IcEst,False);
+    end;
   end;
 
+end;
+//----------------------------------------------------------------
+// indata should be g r i [z] space separated
+function SMSStoFluxes(indata:string; J:Currency; out Vest:Real; out RcEst:Currency; out IcEst:Currency):Boolean;
+var splitlist:RealArray;
+    zin,jin:Real;
+    slc:Integer;
+begin
+  Result := False;
+  // getting the list of values
+  if (not SplitWithSpacesToReal(indata,3,splitlist)) then Exit;
+  slc := Length(splitlist);
+  if (slc > 8) or (slc = 5) or (slc = 7) then Exit; // invalid lengths
+  // VizieR default lists petrosian mags after psf, we handle cut and paste by ignoring petrosian
+  if slc > 4 then begin  // 6 or 8
+    splitlist[1] := splitlist[2];
+    splitlist[2] := splitlist[4];
+    if slc = 8 then splitlist[3] := splitlist[6];
+  end;
+  // checking saturation
+  if splitlist[0] < 13 then splitlist[0] := 99.999;
+  if splitlist[1] < 13 then splitlist[1] := 99.999;
+  if splitlist[2] < 11 then splitlist[2] := 99.999;
+  // checking and processing
+  if (slc = 4) then zin := splitlist[3]
+  else if slc > 4 then Exit
+  else zin := 99.999;
+  if zin < 10.5 then zin := 99.999;
+  jin := CurrToReal(J);
+  // calling the actual method
+  Result := SMSS_griz2VRI(splitlist[0],splitlist[1],splitlist[2],zin,jin,Vest,RcEst,IcEst);
 end;
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

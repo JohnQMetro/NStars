@@ -1246,6 +1246,10 @@ object NStarsMainForm: TNStarsMainForm
           Caption = 'Estimate JHK with PanSTARRS...'
           OnClick = EstJHKPSMIClick
         end
+        object EstSMSSMI: TMenuItem
+          Caption = 'Estimate VRI using Skymapper...'
+          OnClick = EstSMSSMIClick
+        end
         object EstBVUATMI: TMenuItem
           Caption = 'Estimate BV using URAT...'
           OnClick = EstBVUATMIClick
