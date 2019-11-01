@@ -20,6 +20,7 @@ type
     CopyIDMI: TMenuItem;
     LaunchSearchID: TMenuItem;
     LaunchSimbadID: TMenuItem;
+    MoveID2Sys: TMenuItem;
     RemCatBtn: TButton;
     CatIDListBox: TListBox;
     UseCatBtn: TButton;
@@ -29,6 +30,7 @@ type
     procedure CopyIDMIClick(Sender: TObject);
     procedure LaunchSearchIDClick(Sender: TObject);
     procedure LaunchSimbadIDClick(Sender: TObject);
+    procedure MoveID2SysClick(Sender: TObject);
     procedure RemCatBtnClick(Sender: TObject);
     procedure UseCatBtnClick(Sender: TObject);
   private
@@ -37,6 +39,7 @@ type
     NamePointer:StarNames;
     SystemLevel:Boolean;
     AddClickHandlerPointer:TNotifyEvent;
+    MoveToSysHandlerPointer:TNotifyEvent;
     popup_index:Integer;
     popup_string:string;
     function GetCC:string;
@@ -46,10 +49,12 @@ type
     constructor Create(AOwner: TComponent) ; override;
     procedure ChangeObject(NewObject:StarBase);
     procedure Reload();
-    procedure SetSystem(is_system:Boolean; NewAddBtnHandler:TNotifyEvent);
+    procedure SetAsSystem(NewAddBtnHandler:TNotifyEvent);
+    procedure SetAsStar(NewMoveToSysHandlerPointer:TNotifyEvent);
     function AddCatalogNamesExternal(inlist:string; isdb:Boolean):Boolean;
     property CurrentCatalog:string read GetCC;
     function GetModifiedCurrentCatalog:string;
+    function ExtractCurrentCatalog():string;
   end;
 
 implementation
@@ -119,35 +124,14 @@ begin
   OpenURL(simbadurl);
 end;
 
-procedure TCatalogIDEditFrame.RemCatBtnClick(Sender: TObject);
-var dindex,icount,i:Integer;
-    itemstr:string;
+procedure TCatalogIDEditFrame.MoveID2SysClick(Sender: TObject);
 begin
-  // getting and deleting the item
-  dindex := CatIDListBox.ItemIndex;
-  if (dindex < 0) then Exit;
-  itemstr := CatIDListBox.Items[dindex];
-  NamePointer.DeleteThis(itemstr);
-  // removing from the list box, annoyingly, DeleteSelected is not fpc compatible
-  if CatIDListBox.SelCount > 0 then begin
-     for i:=CatIDListBox.Items.Count - 1 downto 0 do begin
-      if CatIDListBox.Selected[i] then begin
-         CatIDListBox.Items.Delete(i);
-         Break;
-      end;
-     end;
-  end;
-  // we now reset the index
-  icount := NamePointer.CatalogCount;
-  if icount=0 then begin
-    RemCatBtn.Enabled := False;
-    UseCatBtn.Enabled := False;
-    CatIDListBox.ItemIndex := -1;
-  end
-  else begin
-    if dindex<>0 then CatIDListBox.ItemIndex := dindex-1
-    else CatIDListBox.ItemIndex := 0;
-  end;
+  if Assigned(MoveToSysHandlerPointer) then MoveToSysHandlerPointer(Self);
+end;
+
+procedure TCatalogIDEditFrame.RemCatBtnClick(Sender: TObject);
+begin
+  ExtractCurrentCatalog();
 end;
 
 procedure TCatalogIDEditFrame.UseCatBtnClick(Sender: TObject);
@@ -244,17 +228,22 @@ begin
   Result := True;
 end;
 //-------------------------------------------------
-procedure TCatalogIDEditFrame.SetSystem(is_system:Boolean; NewAddBtnHandler:TNotifyEvent);
+procedure TCatalogIDEditFrame.SetAsSystem(NewAddBtnHandler:TNotifyEvent);
 begin
-  SystemLevel := is_system;
-  if is_system then begin
-    AddClickHandlerPointer := NewAddBtnHandler;
-    UseCatBtn.Show
-  end
-  else begin
-    AddClickHandlerPointer:= nil;
-    UseCatBtn.Hide;
-  end;
+  SystemLevel := True;
+  AddClickHandlerPointer := NewAddBtnHandler;
+  UseCatBtn.Show;
+  MoveToSysHandlerPointer := nil;
+  MoveID2Sys.Visible := False;
+end;
+//-------------------------------------------------
+procedure TCatalogIDEditFrame.SetAsStar(NewMoveToSysHandlerPointer:TNotifyEvent);
+begin
+  SystemLevel := False;
+  AddClickHandlerPointer:= nil;
+  UseCatBtn.Hide;
+  MoveToSysHandlerPointer := NewMoveToSysHandlerPointer;
+  MoveID2Sys.Visible := True;
 end;
 //-------------------------------------------------
 function TCatalogIDEditFrame.GetModifiedCurrentCatalog:string;
@@ -277,6 +266,41 @@ begin
   if (cparsed.comp <> '') then Result += ' ' + cparsed.comp;
   cparsed.Free;
 end;
+//----------------------------------------------------------------
+function TCatalogIDEditFrame.ExtractCurrentCatalog():string;
+var dindex,icount,i:Integer;
+    itemstr:string;
+begin
+  // getting and deleting the item
+  dindex := CatIDListBox.ItemIndex;
+  if (dindex < 0) then Exit;
+  itemstr := CatIDListBox.Items[dindex];
+  Result := itemstr;
+  NamePointer.DeleteThis(itemstr);
+  // removing from the list box, annoyingly, DeleteSelected is not fpc compatible
+  if CatIDListBox.SelCount > 0 then begin
+     for i:=CatIDListBox.Items.Count - 1 downto 0 do begin
+      if CatIDListBox.Selected[i] then begin
+         CatIDListBox.Items.Delete(i);
+         Break;
+      end;
+     end;
+  end;
+  // we now reset the index
+  icount := NamePointer.CatalogCount;
+  if icount=0 then begin
+    RemCatBtn.Enabled := False;
+    UseCatBtn.Enabled := False;
+    CatIDListBox.ItemIndex := -1;
+  end
+  else begin
+    if dindex<>0 then CatIDListBox.ItemIndex := dindex-1
+    else CatIDListBox.ItemIndex := 0;
+  end;
+end;
+
+
+//#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 end.
 

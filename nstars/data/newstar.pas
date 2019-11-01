@@ -580,13 +580,19 @@ begin
   if fluxtemp <> nil then begin
     Result := estimator_i.SetOther(visual_magnitude,pllx_i,fluxtemp);
     if (pllx_sys > 0) then begin
-      Result := estimator_s.SetOther(visual_magnitude,pllx_sys,fluxtemp);
+      if estimator_s = nil then begin
+        estimator_s := EstimationParser.Create();
+        Result := estimator_s.SetAll(visual_magnitude,pllx_sys,spectraltype,premain,wda,fluxtemp);
+      end else Result := estimator_s.SetOther(visual_magnitude,pllx_sys,fluxtemp);
     end;
   end
   else begin
     Result := estimator_i.SetSimpleOther(visual_magnitude,pllx_i);
     if (pllx_sys > 0) then begin
-      Result := estimator_s.SetSimpleOther(visual_magnitude,pllx_sys);
+      if estimator_s = nil then begin
+         estimator_s := EstimationParser.Create();
+         Result := estimator_s.SetSimple(visual_magnitude,pllx_sys,spectraltype,premain,wda);
+      end else Result := estimator_s.SetSimpleOther(visual_magnitude,pllx_sys);
     end;
   end;
 end;

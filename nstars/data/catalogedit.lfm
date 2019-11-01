@@ -71,5 +71,9 @@ object CatalogIDEditFrame: TCatalogIDEditFrame
       Caption = 'Simbad Search...'
       OnClick = LaunchSimbadIDClick
     end
+    object MoveID2Sys: TMenuItem
+      Caption = 'Move ID to System'
+      OnClick = MoveID2SysClick
+    end
   end
 end

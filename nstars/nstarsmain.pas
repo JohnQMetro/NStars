@@ -375,6 +375,7 @@ type
     procedure HasSpectralType1Click(Sender: TObject);
     procedure RenameCatalogs1Click(Sender: TObject);
     procedure UseNameBtnClick(Sender: TObject);
+    procedure MoveIDToSystem(Sender: TObject);
     procedure FictionalNamesEditExit(Sender: TObject);
     procedure PoliticalStatusMemoExit(Sender: TObject);
     procedure ExtraNotesMemoExit(Sender: TObject);
@@ -1931,6 +1932,17 @@ begin
   LoadPrefNames;
   MainSystemName.Modified := False;
 end;
+//----------------------------------------------------------
+(* Used to move a Catalog ID on a Star to the System list of Catalogs IDs *)
+procedure TNStarsMainForm.MoveIDToSystem(Sender: TObject);
+var moveThis:string;
+begin
+  // we get the catalog string
+  moveThis := StarCatIDFrame.ExtractCurrentCatalog();
+  // setting the name
+  current.sysn.SetCat(moveThis);
+  CatalogIDEditSystem.Reload();
+end;
 
 //----------------------------------------------------------
 procedure TNStarsMainForm.ProblemCBClick(Sender: TObject);
@@ -2111,10 +2123,10 @@ begin
   // widget setup
   if firststartup then begin
      supstab := False;
-     CatalogIDEditSystem.SetSystem(True,UseNameBtnClick);
+     CatalogIDEditSystem.SetAsSystem(UseNameBtnClick);
      CatalogIDEditSystem.ChangeObject(nil);
      MainLocatEditFrame1.SetupStart(MainParallaxChange);
-     StarCatIDFrame.SetSystem(False,nil);
+     StarCatIDFrame.SetAsStar(MoveIDToSystem);
      StarCatIDFrame.ChangeObject(nil);
      StarDataCoreFrame.SetupComboBoxes;
      StarDataCoreFrame.ChangeStar(nil,nil,0);
