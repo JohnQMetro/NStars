@@ -12,8 +12,13 @@
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
       <Title Value="nstars"/>
+      <Scaled Value="True"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="True"/>
+      </XPManifest>
       <Resources Count="1">
         <Resource_0 FileName="nstars.ico" Type="ICON" ResourceName="NSTARS"/>
       </Resources>
@@ -403,7 +408,7 @@
         <OverflowChecks Value="True"/>
       </Checks>
       <Optimizations>
-        <OptimizationLevel Value="2"/>
+        <OptimizationLevel Value="0"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>

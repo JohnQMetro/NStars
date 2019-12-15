@@ -6,8 +6,8 @@ object GaiaMagsFrame: TGaiaMagsFrame
   ClientHeight = 206
   ClientWidth = 584
   TabOrder = 0
-  DesignLeft = 289
-  DesignTop = 385
+  DesignLeft = 509
+  DesignTop = 297
   object GaiaMagsBox: TGroupBox
     Left = 8
     Height = 97
@@ -19,9 +19,11 @@ object GaiaMagsFrame: TGaiaMagsFrame
     TabOrder = 0
     OnExit = GaiaMagsBoxExit
     object GLabel: TLabel
+      AnchorSideTop.Control = GEdit
+      AnchorSideTop.Side = asrCenter
       Left = 6
       Height = 15
-      Top = 12
+      Top = 13
       Width = 38
       Caption = 'G Mag:'
       ParentColor = False
@@ -47,9 +49,11 @@ object GaiaMagsFrame: TGaiaMagsFrame
       SpaceChar = '_'
     end
     object BPMLbl1: TLabel
+      AnchorSideTop.Control = GEdit
+      AnchorSideTop.Side = asrCenter
       Left = 126
       Height = 15
-      Top = 12
+      Top = 13
       Width = 8
       Caption = '±'
       ParentColor = False
@@ -94,17 +98,21 @@ object GaiaMagsFrame: TGaiaMagsFrame
       SpaceChar = '_'
     end
     object BPLabel: TLabel
+      AnchorSideTop.Control = BPEdit
+      AnchorSideTop.Side = asrCenter
       Left = 204
       Height = 15
-      Top = 12
+      Top = 13
       Width = 44
       Caption = 'BP Mag:'
       ParentColor = False
     end
     object BPMLbl2: TLabel
+      AnchorSideTop.Control = BPEdit
+      AnchorSideTop.Side = asrCenter
       Left = 330
       Height = 15
-      Top = 12
+      Top = 13
       Width = 8
       Caption = '±'
       ParentColor = False
@@ -149,17 +157,21 @@ object GaiaMagsFrame: TGaiaMagsFrame
       SpaceChar = '_'
     end
     object RPLabel: TLabel
+      AnchorSideTop.Control = RPEdit
+      AnchorSideTop.Side = asrCenter
       Left = 6
       Height = 15
-      Top = 44
+      Top = 45
       Width = 44
       Caption = 'RP Mag:'
       ParentColor = False
     end
     object BPMLbl3: TLabel
+      AnchorSideTop.Control = RPEdit
+      AnchorSideTop.Side = asrCenter
       Left = 126
       Height = 15
-      Top = 44
+      Top = 45
       Width = 8
       Caption = '±'
       ParentColor = False

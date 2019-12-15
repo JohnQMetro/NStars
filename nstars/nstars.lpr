@@ -16,6 +16,7 @@ uses
 {$R *.res}
 
 begin
+  Application.Scaled:=True;
   Application.Initialize;
   Application.Title := 'NStars';
   Application.CreateForm(TNStarsMainForm, NStarsMainForm);

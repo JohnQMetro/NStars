@@ -1,7 +1,7 @@
 object NStarsMainForm: TNStarsMainForm
-  Left = 368
+  Left = 240
   Height = 577
-  Top = 116
+  Top = 112
   Width = 851
   Caption = 'Nstars'
   ClientHeight = 557
@@ -29,8 +29,8 @@ object NStarsMainForm: TNStarsMainForm
       Height = 514
       Top = 2
       Width = 628
-      ActivePage = ComponentTab
-      TabIndex = 1
+      ActivePage = SystemNames
+      TabIndex = 0
       TabOrder = 0
       OnChange = SystemEditPageSetChange
       object SystemNames: TTabSheet
@@ -308,9 +308,11 @@ object NStarsMainForm: TNStarsMainForm
           SpaceChar = '_'
         end
         object StaticText3: TStaticText
+          AnchorSideTop.Control = FlamsteedNum
+          AnchorSideTop.Side = asrCenter
           Left = 3
           Height = 17
-          Top = 196
+          Top = 194
           Width = 112
           Caption = 'Flamsteed Designation'
           TabOrder = 11
@@ -381,9 +383,13 @@ object NStarsMainForm: TNStarsMainForm
               Width = 52
             end
             inherited PML: TLabel
+              AnchorSideTop.Control = nil
+              AnchorSideTop.Side = asrTop
               Height = 13
             end
             inherited ParallaxLabel: TLabel
+              AnchorSideTop.Control = nil
+              AnchorSideTop.Side = asrTop
               Height = 13
               Width = 45
             end
@@ -392,6 +398,8 @@ object NStarsMainForm: TNStarsMainForm
               Width = 57
             end
             inherited UncertainLocationCB: TCheckBox
+              AnchorSideTop.Control = nil
+              AnchorSideTop.Side = asrTop
               Width = 66
             end
             inherited ParallaxSourceEdit: TEdit
@@ -402,6 +410,8 @@ object NStarsMainForm: TNStarsMainForm
               Width = 56
             end
             inherited BitL1: TLabel
+              AnchorSideTop.Control = nil
+              AnchorSideTop.Side = asrTop
               Height = 13
             end
             inherited RadialVLabel: TLabel
@@ -409,10 +419,15 @@ object NStarsMainForm: TNStarsMainForm
               Width = 69
             end
             inherited BL2: TLabel
+              AnchorSideTop.Control = nil
+              AnchorSideTop.Side = asrTop
               Height = 13
+              Top = 11
               Width = 22
             end
             inherited BL3: TLabel
+              AnchorSideTop.Control = nil
+              AnchorSideTop.Side = asrTop
               Height = 13
               Width = 19
             end
@@ -421,7 +436,10 @@ object NStarsMainForm: TNStarsMainForm
               Width = 46
             end
             inherited OldPllxLabel: TLabel
+              AnchorSideTop.Control = nil
+              AnchorSideTop.Side = asrTop
               Height = 13
+              Top = 76
               Width = 39
             end
             inherited OldPllxEdit: TEdit
@@ -619,8 +637,8 @@ object NStarsMainForm: TNStarsMainForm
             Height = 240
             Top = 232
             Width = 584
-            ActivePage = ExtraDataTab
-            TabIndex = 1
+            ActivePage = FluxesTEffTab
+            TabIndex = 0
             TabOrder = 3
             object FluxesTEffTab: TTabSheet
               Caption = 'Fluxes and TEff'
@@ -637,41 +655,71 @@ object NStarsMainForm: TNStarsMainForm
                   ClientHeight = 114
                   ClientWidth = 570
                   inherited ULabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 12
                     Width = 34
                   end
                   inherited BLabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 12
                     Width = 33
                   end
                   inherited BPMLabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 12
                   end
                   inherited RLabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 12
                     Width = 39
                   end
                   inherited ILabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 52
                     Width = 36
                   end
                   inherited JLabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 52
                     Width = 32
                   end
                   inherited HLabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 52
                     Width = 34
                   end
                   inherited KLabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 52
                     Width = 38
                   end
                   inherited BPMLabel1: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 52
                   end
                   inherited GaiaLabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 12
                     Width = 40
                   end
                 end
@@ -692,6 +740,7 @@ object NStarsMainForm: TNStarsMainForm
                 inherited LoggLabel: TLabel
                   Height = 13
                   Width = 30
+                  Caption = 'Log g;'
                 end
               end
             end
@@ -791,29 +840,49 @@ object NStarsMainForm: TNStarsMainForm
               ClientWidth = 576
               inline GaiaMagsFrame1: TGaiaMagsFrame
                 Top = 2
+                DesignLeft = 289
+                DesignTop = 385
                 inherited GaiaMagsBox: TGroupBox
                   ClientHeight = 79
                   OnExit = nil
                   inherited GLabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 12
                     Width = 34
                   end
                   inherited BPMLbl1: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 12
                   end
                   inherited BPLabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 12
                     Width = 39
                   end
                   inherited BPMLbl2: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 12
                   end
                   inherited RPLabel: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 44
                     Width = 40
                   end
                   inherited BPMLbl3: TLabel
+                    AnchorSideTop.Control = nil
+                    AnchorSideTop.Side = asrTop
                     Height = 13
+                    Top = 44
                   end
                 end
               end

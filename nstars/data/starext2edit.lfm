@@ -20,9 +20,11 @@ object StarExtras2Frame: TStarExtras2Frame
     TabOrder = 0
     OnClick = FluxGroupClick
     object ULabel: TLabel
+      AnchorSideTop.Control = UEdit
+      AnchorSideTop.Side = asrCenter
       Left = 6
       Height = 15
-      Top = 12
+      Top = 13
       Width = 38
       Caption = 'U Mag:'
       ParentColor = False
@@ -48,9 +50,11 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object BLabel: TLabel
+      AnchorSideTop.Control = BEdit
+      AnchorSideTop.Side = asrCenter
       Left = 132
       Height = 15
-      Top = 12
+      Top = 13
       Width = 37
       Caption = 'B Mag:'
       ParentColor = False
@@ -76,9 +80,11 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object BPMLabel: TLabel
+      AnchorSideTop.Control = BEdit
+      AnchorSideTop.Side = asrCenter
       Left = 246
       Height = 15
-      Top = 12
+      Top = 13
       Width = 8
       Caption = '±'
       ParentColor = False
@@ -103,9 +109,11 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object RLabel: TLabel
+      AnchorSideTop.Control = REdit
+      AnchorSideTop.Side = asrCenter
       Left = 446
       Height = 15
-      Top = 12
+      Top = 13
       Width = 43
       Caption = 'Rc Mag:'
       ParentColor = False
@@ -131,9 +139,11 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object ILabel: TLabel
+      AnchorSideTop.Control = IEdit
+      AnchorSideTop.Side = asrCenter
       Left = 6
       Height = 15
-      Top = 52
+      Top = 53
       Width = 39
       Caption = 'Ic Mag:'
       ParentColor = False
@@ -159,9 +169,11 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object JLabel: TLabel
+      AnchorSideTop.Control = JEdit
+      AnchorSideTop.Side = asrCenter
       Left = 135
       Height = 15
-      Top = 52
+      Top = 53
       Width = 34
       Caption = 'J Mag:'
       ParentColor = False
@@ -187,9 +199,11 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object HLabel: TLabel
+      AnchorSideTop.Control = HEdit
+      AnchorSideTop.Side = asrCenter
       Left = 258
       Height = 15
-      Top = 52
+      Top = 53
       Width = 39
       Caption = 'H Mag:'
       ParentColor = False
@@ -215,9 +229,11 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object KLabel: TLabel
+      AnchorSideTop.Control = KEdit
+      AnchorSideTop.Side = asrCenter
       Left = 382
       Height = 15
-      Top = 52
+      Top = 53
       Width = 42
       Caption = 'Ks Mag:'
       ParentColor = False
@@ -273,9 +289,11 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object BPMLabel1: TLabel
+      AnchorSideTop.Control = KEdit
+      AnchorSideTop.Side = asrCenter
       Left = 502
       Height = 15
-      Top = 52
+      Top = 53
       Width = 8
       Caption = '±'
       ParentColor = False
@@ -298,9 +316,11 @@ object StarExtras2Frame: TStarExtras2Frame
       SpaceChar = '_'
     end
     object GaiaLabel: TLabel
+      AnchorSideTop.Control = GaiaEdit
+      AnchorSideTop.Side = asrCenter
       Left = 318
       Height = 15
-      Top = 12
+      Top = 13
       Width = 44
       Caption = 'G1 Mag:'
       ParentColor = False
@@ -381,9 +401,11 @@ object StarExtras2Frame: TStarExtras2Frame
     SpaceChar = '_'
   end
   object FeHPMLabel: TLabel
+    AnchorSideTop.Control = FeHMEdit
+    AnchorSideTop.Side = asrCenter
     Left = 426
     Height = 15
-    Top = 12
+    Top = 13
     Width = 8
     Caption = '±'
     ParentColor = False
@@ -451,7 +473,7 @@ object StarExtras2Frame: TStarExtras2Frame
     Height = 15
     Top = 8
     Width = 33
-    Caption = 'Log g;'
+    Caption = 'Log g:'
     ParentColor = False
   end
 end

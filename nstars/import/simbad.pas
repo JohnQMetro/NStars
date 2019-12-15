@@ -348,7 +348,7 @@ begin
   if not sourcedata.SetLimitString('</TABLE>') then Exit;
   // loop get the identifiers
   raw_catalog_list := TStringList.Create;
-  while sourcedata.MovePast('<A HREF="http://cds.u-strasbg.fr/cgi-bin/Dic-Simbad?') do begin
+  while sourcedata.MovePast('<A HREF="https://cds.u-strasbg.fr/cgi-bin/Dic-Simbad?') do begin
     if not sourcedata.ExtractFieldNE('>','</A>',buffer) then Break;
     if not sourcedata.GetMovePast(buffer2,'</TT>') then Break;
     buffer2 := Trim(buffer2);

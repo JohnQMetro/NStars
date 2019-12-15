@@ -138,6 +138,8 @@ object MainLocatEditFrame: TMainLocatEditFrame
       SpaceChar = '_'
     end
     object PML: TLabel
+      AnchorSideTop.Control = PllxEdit
+      AnchorSideTop.Side = asrCenter
       Left = 121
       Height = 15
       Top = 44
@@ -146,6 +148,8 @@ object MainLocatEditFrame: TMainLocatEditFrame
       ParentColor = False
     end
     object ParallaxLabel: TLabel
+      AnchorSideTop.Control = PllxEdit
+      AnchorSideTop.Side = asrCenter
       Left = 8
       Height = 15
       Top = 44
@@ -200,6 +204,8 @@ object MainLocatEditFrame: TMainLocatEditFrame
       ParentColor = False
     end
     object UncertainLocationCB: TCheckBox
+      AnchorSideTop.Control = PllxErrEdit
+      AnchorSideTop.Side = asrCenter
       Left = 230
       Height = 19
       Top = 42
@@ -225,6 +231,8 @@ object MainLocatEditFrame: TMainLocatEditFrame
       ParentColor = False
     end
     object BitL1: TLabel
+      AnchorSideTop.Control = AngleEdit
+      AnchorSideTop.Side = asrCenter
       Left = 254
       Height = 15
       Top = 76
@@ -258,14 +266,18 @@ object MainLocatEditFrame: TMainLocatEditFrame
       Text = '-9999.99'
     end
     object BL2: TLabel
+      AnchorSideTop.Control = RadialVEdit
+      AnchorSideTop.Side = asrCenter
       Left = 445
       Height = 15
-      Top = 11
+      Top = 12
       Width = 27
       Caption = 'km/s'
       ParentColor = False
     end
     object BL3: TLabel
+      AnchorSideTop.Control = PllxErrEdit
+      AnchorSideTop.Side = asrCenter
       Left = 194
       Height = 15
       Top = 44
@@ -282,9 +294,11 @@ object MainLocatEditFrame: TMainLocatEditFrame
       ParentColor = False
     end
     object OldPllxLabel: TLabel
+      AnchorSideTop.Control = OldPllxEdit
+      AnchorSideTop.Side = asrCenter
       Left = 284
       Height = 15
-      Top = 76
+      Top = 75
       Width = 43
       Caption = 'Old Pllx:'
       ParentColor = False
