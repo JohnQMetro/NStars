@@ -21,6 +21,8 @@ object GaiaMagsFrame: TGaiaMagsFrame
     object GLabel: TLabel
       AnchorSideTop.Control = GEdit
       AnchorSideTop.Side = asrCenter
+      AnchorSideBottom.Control = GEdit
+      AnchorSideBottom.Side = asrCenter
       Left = 6
       Height = 15
       Top = 13
@@ -55,6 +57,7 @@ object GaiaMagsFrame: TGaiaMagsFrame
       Height = 15
       Top = 13
       Width = 8
+      Anchors = [akTop]
       Caption = '±'
       ParentColor = False
     end

@@ -22,8 +22,8 @@ type
 tables from 'Synthetic Colors and Evolutionary Sequences of Hydrogen-and-
 Helium-Atmosphere White Dwarfs' at http://www.astro.umontreal.ca/~bergeron/CoolingModels/
 Holberg & Bergeron (2006, AJ, 132, 1221), Kowalski & Saumon (2006, ApJ, 651,
-L137), Tremblay et al. (2011, ApJ, 730, 128), and Bergeron et al. (2011, ApJ,
-737, 28).
+L137), Tremblay et al. (2011, ApJ, 730, 128), Bergeron et al. (2011, ApJ,
+737, 28), and Blouin et al. (2018, ApJ, 863, 184).
 - This data is used to estimate BCv and Thermal Bloat from TEff and log g. *)
 WDBoloEntry = class
   protected
@@ -34,9 +34,11 @@ WDBoloEntry = class
     TEff:Integer;
     logTEff:Real;
     logg:Currency;
-    mass,avm,abm:Real;
+    mass,avm,abm,agm:Real;
     bcor:Real;
     bcdif,bcslope:Real;
+    gcor:Real;
+    gcdif,gcslope:Real;
 
     bloat,bloatslope:Real;
 
@@ -133,6 +135,8 @@ begin
   bcdif := 0;      bcslope := 0;
   radius := 0;     zradius := 0;
   bloat := 1;      bloatslope := 0;
+  gcor := 0;
+  gcdif := 0;      gcslope := 0;
 end;
 //--------------------------------------
 function WDBoloEntry.SetFromCSV(instr:string):Boolean;
@@ -146,8 +150,8 @@ begin
   splitlist.StrictDelimiter := True;
   splitlist.Delimiter := ',';
   splitlist.DelimitedText := instr;
-  // we have 5 items
-  if splitlist.Count = 6 then begin
+  // we have 7 items
+  if splitlist.Count = 7 then begin
     // TEff
     Val(splitlist[0],TEff,sc);
     reok := (sc=0);
@@ -165,6 +169,8 @@ begin
     if reok then reok := StrToReal(splitlist[4],bcor);
     // absolute bolometric magnitude
     if reok then reok := StrToReal(splitlist[5],abm);
+    // absolute G magnitude (Gaia DR2)
+    if reok then reok := StrToReal(splitlist[6],agm);
     if reok then CalculateRadius();
   end;
   // cleanup
@@ -193,9 +199,9 @@ var DA_loggdex,DA_teffdex,DB_loggdex,DB_teffdex:Integer;
     curritem:WDBoloEntry;
     infile:TextFile;
     currline:string;
-const DA_TEffCount = 53;
-      DA_LogCount =  6;
-      DB_TEffCount = 48;
+const DA_TEffCount = 51;
+      DA_LogCount =  5;
+      DB_TEffCount = 62;
       DB_LogCount =  5;
 begin
   Result := False;
