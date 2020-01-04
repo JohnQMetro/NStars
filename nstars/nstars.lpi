@@ -43,7 +43,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="67">
+    <Units Count="68">
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -388,6 +388,10 @@
         <Filename Value="data\locavg.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit66>
+      <Unit67>
+        <Filename Value="stardata\fluxtransform2.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit67>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

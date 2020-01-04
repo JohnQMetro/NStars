@@ -1,11 +1,11 @@
 object NStarsMainForm: TNStarsMainForm
-  Left = 240
+  Left = 232
   Height = 577
-  Top = 112
+  Top = 38
   Width = 851
   Caption = 'Nstars'
-  ClientHeight = 557
-  ClientWidth = 851
+  ClientHeight = 0
+  ClientWidth = 0
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11

@@ -11,7 +11,8 @@ uses
   Classes, SysUtils, Dialogs, Controls, Forms, StrUtils,
   tgas, stardata, newlocation, star_names (* namedata*), NewStar, constellation, gaiadr2holder,
   simbad, guessstype, sptfluxest, fluxtransform, starext2, importvizier,
-  df_strings, Utilities, gaiadr2types, utilities2, fluxgaia, WhiteDwarf;
+  df_strings, Utilities, gaiadr2types, utilities2, fluxgaia, WhiteDwarf,
+  fluxtransform2;
 
 type
 
@@ -71,7 +72,7 @@ StarProxy = class
     function Vizier2MASSGet():Boolean;
     function URAT_ToBV(indata:string):Boolean;
     function UCAC4_ToVRI_Helper(indata:string):Boolean;
-    function CMC_ToBV(indata:string):Boolean;
+    function CMC_ToVRI(indata:string):Boolean;
     function URAT_To_Ic(indata:string):Boolean;
     function BPRP_To_VRI():Boolean;
     function GaiaDR2_To_JHK():Boolean;
@@ -1189,48 +1190,38 @@ end;
 function StarProxy.UCAC4_ToVRI_Helper(indata:string):Boolean;
 var params:RealArray;
     RcEst,IcEst:Currency;
-    g1val,g2val:Currency;
     Vest:Real;
     qmsg:string;
 const amsg = 'estimated from UCAC4+J';
 begin
   Result := False;
+  if (cstar.fluxtemp = nil) then begin
+    ShowMessage('J mag missing');
+    Exit;
+  end;
   if SplitWithSpacesToReal(indata,1,params) then begin
-    // setting gval
-    g1val := 99.999;  g2val := 99.999;
-    if Length(params) >= 2 then g1val := params[1]
-    else begin
-      if cstar.dr2mags = nil then g1val := cstar.fluxtemp.gaia_mag
-      else g2val := cstar.dr2mags.G;
-    end;
     // preparing the info message
-    if g2val < 90 then qmsg := amsg + '+G'
-    else if g1val < 90 then qmsg := amsg + '+G1'
-    else qmsg := amsg;
+    qmsg := amsg;
     // calling the transform function
-    if not UCAC4_to_VRI(params[0],cstar.fluxtemp.J_mag,g1val,g2val,Vest,RcEst,IcEst) then begin
+    if not UCAC_to_VRI(params[0],cstar.fluxtemp.J_mag,Vest,RcEst,IcEst) then begin
       ShowMessage('Cannot estimate, Color out of range!');
     end else Result := ShowEst(Vest,99.999,RcEst,IcEst,qmsg)
   end
   else ShowMessage('Unable to parse the input');
 end;
 //--------------------------------------------
-function StarProxy.CMC_ToBV(indata:string):Boolean;
+function StarProxy.CMC_ToVRI(indata:string):Boolean;
 var params:RealArray;
-    gval,Best:Currency;
     Vest:Real;
-const amsg = 'estimated from CMC r’/G1';
+    RcEst,IcEst:Currency;
+const amsg = 'estimated from CMC r’ and 2MASS J.';
 begin
   Result := False;
   if SplitWithSpacesToReal(indata,1,params) then begin
-    // setting gval
-    if Length(params) >= 2 then gval := params[1]
-    else gval := cstar.fluxtemp.gaia_mag;
     // calling the transform function
-    if not CMC15_ToBV(params[0],gval,cstar.fluxtemp.J_mag,
-       cstar.fluxtemp.K_mag,Best,Vest) then begin
+    if not CMC15_to_VRI(params[0],cstar.fluxtemp.J_mag,Vest,RcEst,IcEst) then begin
          ShowMessage('Cannot estimate, Color out of range!');
-       end else Result := ShowEst(Vest,Best,99,99,amsg);
+       end else Result := ShowEst(Vest,99,RcEst,IcEst,amsg);
   end
   else ShowMessage('Unable to parse the input');
 end;

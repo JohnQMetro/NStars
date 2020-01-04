@@ -647,14 +647,14 @@ end;
 
 procedure TNStarsMainForm.EstBVCMCMIClick(Sender: TObject);
 var data:string;   rok:Boolean;
-const entmsg = 'Enter the r’ magnitude from the Carlsberg Meridian Catalogue' + sLineBreak +
-               '15 (and optionally G for better results) to estimate B and' + sLineBreak +
-               'V magnitudes (also uses 2MASS JHK).';
+const entmsg = 'Enter the r’ magnitude from the Carlsberg Meridian' + sLineBreak +
+               'Catalogue 15 (and optionally G for better results) to' + slineBreak +
+               'estimate V, Rc, and Ic magnitudes (also uses 2MASS J).';
 begin
   if current.cstar <> nil then begin
-    data := Trim(InputBox('Estimate BV from CMC15',entmsg,''));
+    data := Trim(InputBox('Estimate VRI from CMC15',entmsg,''));
     if Length(data)<>0 then begin
-       rok := current.CMC_ToBV(data);
+       rok := current.CMC_toVRI(data);
     end;
     if rok then begin
       // reloading after data has been set
@@ -665,11 +665,11 @@ end;
 
 procedure TNStarsMainForm.EstBVUCACMIClick(Sender: TObject);
 var data:string;   rok:Boolean;
-const entmsg = 'Enter UCAC4 magnitude (and optionally G for better results)' + sLineBreak +
-               'to estimate B and V magnitudes (also uses 2MASS JHK).';
+const entmsg = 'Enter UCAC4 magnitude to estimate V, Rc,' + sLineBreak +
+                'and Ic magnitudes (also uses 2MASS JHK).';
 begin
   if current.cstar <> nil then begin
-    data := Trim(InputBox('Estimate BV from UCAC',entmsg,''));
+    data := Trim(InputBox('Estimate VRI from UCAC',entmsg,''));
     if Length(data)<>0 then begin
        rok := current.UCAC4_ToVRI_Helper(data);
     end;
