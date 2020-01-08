@@ -70,10 +70,8 @@ StarProxy = class
     function Tycho2_Helper(indata:string):Boolean;
     function VizierAPASSGet(simbadalso:Boolean):Boolean;
     function Vizier2MASSGet():Boolean;
-    function URAT_ToBV(indata:string):Boolean;
     function UCAC4_ToVRI_Helper(indata:string):Boolean;
     function CMC_ToVRI(indata:string):Boolean;
-    function URAT_To_Ic(indata:string):Boolean;
     function BPRP_To_VRI():Boolean;
     function GaiaDR2_To_JHK():Boolean;
     function PanStarrs_To_BVRI(indata:string):Boolean;
@@ -83,6 +81,7 @@ StarProxy = class
     function GG1_VRI(useRP:Boolean):Boolean;
     function DA_GaiaTEff():Boolean;
     function Tycho2G_Helper(indata:string):Boolean;
+    function VtG_Helper(indata:string):Boolean;
     function SMSSHelper(indata:string):Boolean;
 end;
 
@@ -1167,26 +1166,6 @@ begin
   if not fok then ShowMessage('Object does not have 2MASS ID!');
 end;
 //----------------------------------------------------------
-function StarProxy.URAT_ToBV(indata:string):Boolean;
-var params:RealArray;
-    gval,Best:Currency;
-    Vest:Real;
-const amsg = 'estimated from URAT/G1';
-begin
-  Result := False;
-  if SplitWithSpacesToReal(indata,1,params) then begin
-    // setting gval
-    if Length(params) >= 2 then gval := params[1]
-    else gval := cstar.fluxtemp.gaia_mag;
-    // calling the transform function
-    if not URATG_ToBV(params[0],gval,cstar.fluxtemp.J_mag,cstar.fluxtemp.H_mag,
-       cstar.fluxtemp.K_mag,Best,Vest) then begin
-         ShowMessage('Cannot estimate, Color out of range!');
-       end else Result := ShowEst(Vest,Best,99,99,amsg);
-  end
-  else ShowMessage('Unable to parse the input');
-end;
-//----------------------------------------------------------
 function StarProxy.UCAC4_ToVRI_Helper(indata:string):Boolean;
 var params:RealArray;
     RcEst,IcEst:Currency;
@@ -1222,21 +1201,6 @@ begin
     if not CMC15_to_VRI(params[0],cstar.fluxtemp.J_mag,Vest,RcEst,IcEst) then begin
          ShowMessage('Cannot estimate, Color out of range!');
        end else Result := ShowEst(Vest,99,RcEst,IcEst,amsg);
-  end
-  else ShowMessage('Unable to parse the input');
-end;
-//-------------------------------------------
-function StarProxy.URAT_To_Ic(indata:string):Boolean;
-var params:RealArray;
-    Icest:Currency;
-const amsg = 'estimated from URAT+J.';
-begin
-  Result := False;
-  if SplitWithSpacesToReal(indata,1,params) then begin
-    // calling the transform function
-    if not URATJ_To_Ic(params[0],cstar.fluxtemp.J_mag,Icest) then begin
-         ShowMessage('Cannot estimate, Color out of range!');
-    end else Result := ShowEst(99,99,99,Icest,amsg);
   end
   else ShowMessage('Unable to parse the input');
 end;
@@ -1597,6 +1561,54 @@ begin
   end;
   // showing the results
   Result := ShowEst(99.9999,99.9999,RcEst,IcEst,amsg);
+end;
+//---------------------------------------------------------------------
+(* For 'mid-bright' binarys, Vt and G is available, but sometimes Bt is
+bad, compute B and V using Vt, G, and sometimes G1 *)
+function StarProxy.VtG_Helper(indata:string):Boolean;
+var Vest,vtin,g1inx:Real;
+    Best,G1in:Currency;
+    okay:Boolean;
+    splitlist:TStringList;
+const amsg = 'Estimated from Tycho Vt and GAIA G';
+begin
+  Result := False;
+  Assert(cstar<>nil);
+  if (cstar.dr2mags = nil) then Exit;
+  if (cstar.dr2mags.G > 90) then Exit;
+  // getting the values
+  splitlist := SplitWithSpaces(indata,1);
+  if splitlist = nil then Exit;
+  if splitlist.Count > 2 then begin
+    FreeAndNil(splitlist);   Exit;
+  end;
+  // converting to numbers
+  if (splitlist.Count = 2) then begin
+     if not StrToRealBoth(splitlist[0],splitlist[1],vtin,g1inx) then begin
+        ShowMessage('Unable to parse or convert the input!');
+        FreeAndNil(splitlist);   Exit;
+     end;
+  end
+  else begin
+     if not StrToReal(splitlist[0],vtin) then begin
+       ShowMessage('Unable to parse or convert the input!');
+       FreeAndNil(splitlist);   Exit;
+     end;
+     g1inx := 99.999;
+  end;
+  FreeAndNil(splitlist);
+  // G1
+  if (g1inx <= 90) then G1in := g1inx
+  else if cstar.fluxtemp = nil then G1in := 99.999
+  else G1in := cstar.fluxtemp.gaia_mag;
+  // calculating results
+  okay := VtG_to_BV(cstar.dr2mags.G,G1in,vtin,Vest,Best);
+  if not okay then begin
+    ShowMessage('Cannot estimate, Colours out of bounds.');
+    Exit;
+  end;
+  // showing the results
+  Result := ShowEst(Best,Vest,99.999,99.999,amsg);
 end;
 //---------------------------------------------------------------------
 function StarProxy.SMSSHelper(indata:string):Boolean;

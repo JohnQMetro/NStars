@@ -57,6 +57,7 @@ function WD_GaiaToJHK_badR(Gmag,BPmag:Currency; out Jest,Hest,Ksest:Currency):Bo
 function TychoG_toRI(Gmag:Currency; Bt,Vt:Real; out RcEst,IcEst:Currency):Boolean;
 function TychoG_toBV(Gmag,BPmag:Currency; Vt:Real; out Vest:Real; out Best:Currency):Boolean;
 function TychoG2_toBV(dr2mags:GaiaDR2Mags; Vt:Real; out Vest:Real; out Best:Currency):Boolean;
+function VtG_to_BV(Gmag,G1:Currency; Vt:Real; out Vest:Real; out Best:Currency):Boolean;
 
 implementation
 //*******************************************************************************
@@ -913,6 +914,43 @@ begin
   if ubp then ubp := not dr2mags.BadRatio;
   if ubp then Result := TychoG_toBV(dr2mags.G,dr2mags.BP,Vt,Vest,Best)
   else Result := TychoG_toBV(dr2mags.G,xcur,Vt,Vest,Best)
+end;
+//---------------------------------------------------------------
+function VtG_to_BV(Gmag,G1:Currency; Vt:Real; out Vest:Real; out Best:Currency):Boolean;
+var vtmg,gmg1,vmg,bmg:Real;
+    ggok,br:Boolean;
+const bp1:array[0..2] of Real = ( 0.067935, 3.5441, -1.4466 );
+      bp2:array[0..2] of Real = ( 0.19102, 1.9921, -0.67172 );
+begin
+  Result := False;
+  // initial checks
+  if not MakeColorCheck(Vt,Gmag,-0.053,1.662,vtmg) then Exit;
+  ggok := MakeColorCheck(Gmag,G1,-0.036,0.182,gmg1);
+  br := vtmg <= 1.0;
+  // Vt
+  if br and ggok and (gmg1 <= 0.174) then begin
+    vmg := 0.0027502 + 0.59371*vtmg + 1.4615*vtmg*gmg1 + 0.17212*gmg1;
+  end
+  else if br then vmg := -0.036248 + 0.83527*vtmg
+  else if (not br) and ggok and (gmg1 >= 0.101) then begin
+    vmg := -0.39333 + 0.52027*vtmg + 4.9954*gmg1;
+  end
+  else vmg := -0.17598 + 0.96325*vtmg;
+  Vest := vmg + CurrToReal(Gmag);
+  Result := True;
+  // Bt
+  Best := 99.999;
+  if vtmg < 0.048 then Exit;
+  if br and ggok and (gmg1 <= 0.174) then begin
+    bmg := PolEval(vtmg,bp2,3) + 5.262*gmg1;
+  end
+  else if br then bmg :=PolEval(vtmg,bp1,3)
+  else if (not br) and ggok and (gmg1 >= 0.101) then begin
+    bmg := 0.67196 + 0.82876*vtmg +5.3366*gmg1;
+  end
+  else bmg := 0.96573 + 1.246*vtmg;
+  Best := RealToCurr(bmg) + Gmag;
+  Best := RoundCurrency(Best,False);
 end;
 
 //******************************************************************************

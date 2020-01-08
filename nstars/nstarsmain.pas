@@ -26,9 +26,7 @@ type
     GaiaMagsFrame1: TGaiaMagsFrame;
     MenuItem1: TMenuItem;
     FluxEstSubMenu: TMenuItem;
-    EstBVUATMI: TMenuItem;
     EstBVUCACMI: TMenuItem;
-    EstIURATMI: TMenuItem;
     EstBVCMCMI: TMenuItem;
     MenuItem10: TMenuItem;
     LoadGaiaDR2CSV: TMenuItem;
@@ -44,6 +42,7 @@ type
     MenuItem12: TMenuItem;
     EstJHKPSMI: TMenuItem;
     EstSMSSMI: TMenuItem;
+    MI_GVtBV: TMenuItem;
     MI_AddVizForAll: TMenuItem;
     MI_GTycRI: TMenuItem;
     MI_NLTTMatcher: TMenuItem;
@@ -261,8 +260,6 @@ type
     procedure LoadSimpleTGASClick(Sender: TObject);
     procedure LoadTGASCSVClick(Sender: TObject);
     procedure LuminosityProbMIClick(Sender: TObject);
-    procedure EstBVUATMIClick(Sender: TObject);
-    procedure EstIURATMIClick(Sender: TObject);
     procedure AddUMGaiaDR2MIClick(Sender: TObject);
     procedure MainListPopupMenuPopup(Sender: TObject);
     procedure MergeIntoMIClick(Sender: TObject);
@@ -280,6 +277,7 @@ type
     procedure MI_GG1_AClick(Sender: TObject);
     procedure MI_GG1_BClick(Sender: TObject);
     procedure MI_GTycRIClick(Sender: TObject);
+    procedure MI_GVtBVClick(Sender: TObject);
     procedure MI_NLTTMatcherClick(Sender: TObject);
     procedure MI_PosPMMatchClick(Sender: TObject);
     procedure MI_StartGaiaMatchingClick(Sender: TObject);
@@ -647,9 +645,8 @@ end;
 
 procedure TNStarsMainForm.EstBVCMCMIClick(Sender: TObject);
 var data:string;   rok:Boolean;
-const entmsg = 'Enter the r’ magnitude from the Carlsberg Meridian' + sLineBreak +
-               'Catalogue 15 (and optionally G for better results) to' + slineBreak +
-               'estimate V, Rc, and Ic magnitudes (also uses 2MASS J).';
+const entmsg = 'Enter the r’ magnitude from the Carlsberg Meridian Catalogue 15' + sLineBreak +
+               'to estimate V, Rc, and Ic magnitudes (also uses 2MASS J).';
 begin
   if current.cstar <> nil then begin
     data := Trim(InputBox('Estimate VRI from CMC15',entmsg,''));
@@ -2188,39 +2185,6 @@ begin
   if current.sys <> nil then ChangeSystem;
 end;
 
-procedure TNStarsMainForm.EstBVUATMIClick(Sender: TObject);
-var data:string;   rok:Boolean;
-const entmsg = 'Enter URAT magnitude (and optionally G for better results)' + sLineBreak +
-               'to estimate B and V magnitudes (also uses 2MASS JHK).';
-begin
-  if current.cstar <> nil then begin
-    data := Trim(InputBox('Estimate BV from URAT',entmsg,''));
-    if Length(data)<>0 then begin
-       rok := current.URAT_ToBV(data);
-    end;
-    if rok then begin
-      // reloading after data has been set
-      StarData1;
-    end;
-  end;
-end;
-
-procedure TNStarsMainForm.EstIURATMIClick(Sender: TObject);
-var data:string;   rok:Boolean;
-const entmsg = 'Enter URAT magnitude to estimate Ic magnitude (also uses 2MASS J).';
-begin
-  if current.cstar <> nil then begin
-    data := Trim(InputBox('Estimate Ic from URAT',entmsg,''));
-    if Length(data)<>0 then begin
-       rok := current.URAT_To_Ic(data);
-    end;
-    if rok then begin
-      // reloading after data has been set
-      StarData1;
-    end;
-  end;
-end;
-
 procedure TNStarsMainForm.AddUMGaiaDR2MIClick(Sender: TObject);
 begin
   if GaiaDR2AddForm = nil then GaiaDR2AddForm := TGaiaDR2AddForm.Create(Self);
@@ -2496,6 +2460,22 @@ begin
     data := Trim(InputBox('Tycho-2 and G to RI',entmsg,''));
     if Length(data)<>0 then begin
       rok := current.Tycho2G_Helper(data);
+    end;
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.MI_GVtBVClick(Sender: TObject);
+var data:string;   rok:Boolean;
+const entmsg = 'Enter Tycho-2 Vt, and optionally GAIA DR1 G, below:';
+begin
+  if current.cstar <> nil then begin
+    data := Trim(InputBox('Vt and G to BV',entmsg,''));
+    if Length(data)<>0 then begin
+      rok := current.VtG_Helper(data);
     end;
     if rok then begin
       // reloading after data has been set

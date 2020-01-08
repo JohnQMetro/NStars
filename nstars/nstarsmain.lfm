@@ -4,8 +4,8 @@ object NStarsMainForm: TNStarsMainForm
   Top = 38
   Width = 851
   Caption = 'Nstars'
-  ClientHeight = 0
-  ClientWidth = 0
+  ClientHeight = 557
+  ClientWidth = 851
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
@@ -1303,6 +1303,10 @@ object NStarsMainForm: TNStarsMainForm
           Caption = 'Estimate RI using G and Tycho...'
           OnClick = MI_GTycRIClick
         end
+        object MI_GVtBV: TMenuItem
+          Caption = 'Estimate BV using G and Vt...'
+          OnClick = MI_GVtBVClick
+        end
       end
       object FluxEstSubMenu: TMenuItem
         Caption = 'Estimate Magnitudes Misc...'
@@ -1311,25 +1315,17 @@ object NStarsMainForm: TNStarsMainForm
           Caption = 'Estimate VRI using UCAC...'
           OnClick = EstBVUCACMIClick
         end
-        object EstJHKPSMI: TMenuItem
-          Caption = 'Estimate JHK with PanSTARRS...'
-          OnClick = EstJHKPSMIClick
+        object EstBVCMCMI: TMenuItem
+          Caption = 'Estimate VRI using CMC r’...'
+          OnClick = EstBVCMCMIClick
         end
         object EstSMSSMI: TMenuItem
           Caption = 'Estimate VRI using Skymapper...'
           OnClick = EstSMSSMIClick
         end
-        object EstBVUATMI: TMenuItem
-          Caption = 'Estimate BV using URAT...'
-          OnClick = EstBVUATMIClick
-        end
-        object EstBVCMCMI: TMenuItem
-          Caption = 'Estimate BV using CMC r’...'
-          OnClick = EstBVCMCMIClick
-        end
-        object EstIURATMI: TMenuItem
-          Caption = 'Estimate Ic using URAT...'
-          OnClick = EstIURATMIClick
+        object EstJHKPSMI: TMenuItem
+          Caption = 'Estimate JHK with PanSTARRS...'
+          OnClick = EstJHKPSMIClick
         end
       end
       object MenuItem4: TMenuItem
