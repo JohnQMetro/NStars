@@ -1608,7 +1608,7 @@ begin
     Exit;
   end;
   // showing the results
-  Result := ShowEst(Best,Vest,99.999,99.999,amsg);
+  Result := ShowEst(Vest,Best,99.999,99.999,amsg);
 end;
 //---------------------------------------------------------------------
 function StarProxy.SMSSHelper(indata:string):Boolean;
