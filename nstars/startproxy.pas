@@ -1445,7 +1445,7 @@ function StarProxy.GG1_VRI(useRP:Boolean):Boolean;
 var okay,iswd:Boolean;
     G,G1,RP:Currency;
     Vest:Real;
-    RcEst,IcEst:Currency;
+    RcEst,IcEst,BcEst:Currency;
     qmsg:string;
 const amsg = 'Estimated used G+G1';
 begin
@@ -1466,7 +1466,11 @@ begin
   // calling the methods
   G1 := ccomponent.fluxtemp.gaia_mag;
   iswd := AnsiStartsStr('D',ccomponent.SpectralClass);
-  if not useRP then okay := Gaia12_To_VRI(G1,G,iswd,Vest,RcEst,IcEst)
+  if (not useRP) then begin
+    IcEst := 99.999;
+    if iswd then okay := Gaia12_BVRIwd(G1,G,Vest,BcEst,RcEst,IcEst)
+    else okay := Gaia12_BVR(G1,G,Vest,BcEst,RcEst);
+  end
   else okay := Gaia12RP_To_VRI(G1,G,RP,Vest,RcEst,IcEst);
   if not okay then begin
     ShowMessage('Cannot estimate, Colours out of bounds.');
@@ -1475,7 +1479,7 @@ begin
   // showing the results
   if useRP then qmsg := amsg + '+RP.'
   else qmsg := amsg + '.';
-  Result := ShowEst(Vest,99.9999,Rcest,Icest,qmsg);
+  Result := ShowEst(Vest,BcEst,Rcest,Icest,qmsg);
 end;
 //-----------------------------------------------------------
 function StarProxy.DA_GaiaTEff():Boolean;

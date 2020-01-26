@@ -46,7 +46,8 @@ function Gaia2To2MASS_BadG(BP,RP:Currency; out Jest,Hest,Ksest:Currency):Boolean
 function Gaia2To2MASS_BadB(Gin,RP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function Gaia2To2MASS_NoRP(Gin,BP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 (* G - G1 *)
-function Gaia12_To_VRI(G1in,Gin:Currency; wd:Boolean; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
+function Gaia12_BVR(G1in,Gin:Currency; out Vest:Real; out Best,RcEst:Currency):Boolean;
+function Gaia12_BVRIwd(G1in,Gin:Currency; out Vest:Real; out Best,RcEst,IcEst:Currency):Boolean;
 function Gaia12RP_To_VRI(G1in,Gin,RPin:Currency; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
 (* White Dwarf specific transforms *)
 function WD_GaiaToVRI(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
@@ -61,41 +62,7 @@ function VtG_to_BV(Gmag,G1:Currency; Vt:Real; out Vest:Real; out Best:Currency):
 
 implementation
 //*******************************************************************************
-(* Misc Utilities *)
-(*
-// accuracy est: 0 precise, 1 off, 2 awful, 3 unavailable
-function CheckErr(const mval:Currency; const verr:Currency):byte;
-begin
-  if (mval > 90) then Result := 3
-  else if (verr < 0.015) then Result := 0
-  else if (verr < 0.030) then Result := 1
-  else Result := 2;
-end;
-//-------------------------------------------------------------------
-function GaiaTransHelper(const gmags:GaiaDR2Mags; const Jmag:Currency):Integer;
-var bedre:Real;
-begin
-  Result := 0;
-  // red and J
-  if (Jmag < 90) then begin
-    if (gmags.BP >= 90) then begin
-      if (gmags.RP >= 90) then Result := 3
-      else Result := 1
-    end
-    else begin
-      bedre := gmags.BPerr / gmags.RPerr;
-      if bedre > 5 then Result := 1
-    end;
-    if (Result <> 0) then Exit;
-  end;
-  // blue
-  if (gmags.RP >= 90) then Result := 2
-  else begin
-    bedre := gmags.BPerr / gmags.RPerr;
-    if (bedre < 0.5) and (gmags.RPerr > 0.01) then Result := 2
-  end;
-end;  *)
-//-------------------------------------------------------
+
 (* Estimates V-G using absolute G alone, using Mamajek's tables. accuracy??
  K7 to M9.5 kinda. *)
 function EstVmG(const Gmag:Currency; const pllx:Real; out Vmgest:Real):Boolean;
@@ -669,44 +636,68 @@ begin
   Result := True;
 end;
 //============================================================================
-(* G - G1 *)
-function Gaia12_To_VRI(G1in,Gin:Currency; wd:Boolean; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
+(* G - G1. restricted to < 0.16 to avoid problems with red stars. Also, Ic
+is too messed up to consider. *)
+function Gaia12_BVR(G1in,Gin:Currency; out Vest:Real; out Best,RcEst:Currency):Boolean;
 var interm,gmg1:Real;
-const coffv1:array[0..2] of Real =  ( 0.40929, -1.733, 26.962 );
-      coffv2:array[0..2] of Real =  ( 0.14014, -1.175, 46.894 );
-      coffr1:array[0..2] of Real =  ( -0.14252, -1.8318, 14.201 );
-      coffr2:array[0..2] of Real =  ( -0.12342, -2.6226, 13.664 );
-      coffi2:array[0..3] of Real =  ( -0.54679, 5.8682, -231.26, 1253.3 );
-      coffi3:array[0..2] of Real =  ( -0.032324, 11.14, -21.293 );
+const coff_b:array[0..3] of Real = ( 0.5776, 0.96881, 165.87, -640.89 );
+      coff_v:array[0..3] of Real = ( 0.18428, -4.2536, 104.92, -323.28 ); // 0.071
+      coff_r:array[0..2] of Real = ( -0.049841, -4.7274, 26.994 );       // 0.0663
 begin
   Result := False;
-  if not MakeColorCheck(Gin,G1in,-0.041,0.25,gmg1) then Exit;
+  if not MakeColorCheck(Gin,G1in,0.0,0.16,gmg1) then Exit;
+  // B
+  interm := PolEval(gmg1,coff_b,4);
+  Best := Gin + RealToCurr(interm);
+  Best := RoundCurrency(Best,False);
   // V
-  if wd then interm := -0.042052 + 2.2887*gmg1
-  else begin
-    if gmg1 >= 0.1 then interm := PolEval(gmg1,coffv1,3)
-    else interm := PolEval(gmg1,coffv2,3);
-  end;
+  interm := PolEval(gmg1,coff_v,4);
   Vest := CurrToReal(Gin) + interm;
-  // Rc
-  if wd then interm := -0.01754 + 4.4352*gmg1
-  else begin
-    if gmg1 >= 0.1 then interm := PolEval(gmg1,coffr1,3)
-    else interm := PolEval(gmg1,coffr2,3);
-  end;
-  RcEst := CurrToReal(Gin) + interm;
-  RcEst := RoundCurrency(RcEst,False);
-  // Ic
-  if wd then interm := PolEval(gmg1,coffi3,3)
-  else begin
-    if gmg1 >= 0.1 then interm := -0.73903 - 3.2886*gmg1
-    else interm := PolEval(gmg1,coffi2,4);
-  end;
-  IcEst := CurrToReal(Gin) + interm;
-  IcEst := RoundCurrency(IcEst,False);
-  // done
   Result := True;
+  // Rc (very vague)
+  RcEst := 99.999;
+  if (gmg1 < 0.021) then Exit;
+  interm := PolEval(gmg1,coff_r,3);
+  RcEst := Gin + RealToCurr(interm);
+  RcEst := RoundCurrency(RcEst,False)
 end;
+
+(* G-G1 for white dwarfs. rather rough. *)
+function Gaia12_BVRIwd(G1in,Gin:Currency; out Vest:Real; out Best,RcEst,IcEst:Currency):Boolean;
+var interm,gmg1:Real;
+const coff_i:array[0..2] of Real =  ( 0.0050378, -8.3802, 17.737 );
+begin
+  Result := False;
+  if not MakeColorCheck(Gin,G1in,-0.015,0.16,gmg1) then Exit;
+  // B (extra rough)
+  Best := 99.999;
+  if (gmg1 <= 0.132) then begin
+     interm := 0.054605 + 8.2953*gmg1;
+     Best := Gin + RealToCurr(interm);
+     Best := RoundCurrency(Best,False);
+  end;
+  // V
+  interm := -0.04434 + 2.3195*gmg1;
+  Vest := CurrToReal(Gin) + interm;
+  Result := True;
+  // Rc
+  RcEst := 99.999;
+  if (gmg1 >= 0.138) then begin
+     interm := -0.027208 - 2.0696*gmg1;
+     RcEst := Gin + RealToCurr(interm);
+     RcEst := RoundCurrency(RcEst,False);
+  end;
+  // Ic (okay for white dwarfs )
+  IcEst := 99.999;
+  if (gmg1 >= 0.009) and (gmg1 >= 0.138) then begin
+     interm := PolEval(gmg1,coff_i,3);
+     IcEst := Gin + RealToCurr(interm);
+     IcEst := RoundCurrency(RcEst,False);
+  end
+
+end;
+
+
 (* Using RP as well. Because G-G1 might not be accurate enough, and perhaps RP
 is only somewhat messed up, enough to improve things? *)
 function Gaia12RP_To_VRI(G1in,Gin,RPin:Currency; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
