@@ -46,7 +46,7 @@ function Gaia2To2MASS_BadG(BP,RP:Currency; out Jest,Hest,Ksest:Currency):Boolean
 function Gaia2To2MASS_BadB(Gin,RP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function Gaia2To2MASS_NoRP(Gin,BP:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 (* G - G1 *)
-function Gaia12_BVR(G1in,Gin:Currency; out Vest:Real; out Best,RcEst:Currency):Boolean;
+function Gaia12_BVRI(G1in,Gin:Currency; out Vest:Real; out Best,RcEst,IcEst:Currency):Boolean;
 function Gaia12_BVRIwd(G1in,Gin:Currency; out Vest:Real; out Best,RcEst,IcEst:Currency):Boolean;
 function Gaia12RP_To_VRI(G1in,Gin,RPin:Currency; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
 (* White Dwarf specific transforms *)
@@ -55,7 +55,7 @@ function WD_GaiaToJHK(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):B
 function WD_GaiaToJHK_badB(Gmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function WD_GaiaToJHK_badR(Gmag,BPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 (* Bt, Vt, and G *)
-function TychoG_toRI(Gmag:Currency; Bt,Vt:Real; out RcEst,IcEst:Currency):Boolean;
+function TychoG_toRI(Gmag,G1in:Currency; Vt:Real; out RcEst,IcEst:Currency):Boolean;
 function TychoG_toBV(Gmag,BPmag:Currency; Vt:Real; out Vest:Real; out Best:Currency):Boolean;
 function TychoG2_toBV(dr2mags:GaiaDR2Mags; Vt:Real; out Vest:Real; out Best:Currency):Boolean;
 function VtG_to_BV(Gmag,G1:Currency; Vt:Real; out Vest:Real; out Best:Currency):Boolean;
@@ -636,13 +636,13 @@ begin
   Result := True;
 end;
 //============================================================================
-(* G - G1. restricted to < 0.16 to avoid problems with red stars. Also, Ic
-is too messed up to consider. *)
-function Gaia12_BVR(G1in,Gin:Currency; out Vest:Real; out Best,RcEst:Currency):Boolean;
+(* G - G1. restricted to < 0.16 to avoid problems with red stars. *)
+function Gaia12_BVRI(G1in,Gin:Currency; out Vest:Real; out Best,RcEst,IcEst:Currency):Boolean;
 var interm,gmg1:Real;
 const coff_b:array[0..3] of Real = ( 0.5776, 0.96881, 165.87, -640.89 );
       coff_v:array[0..3] of Real = ( 0.18428, -4.2536, 104.92, -323.28 ); // 0.071
       coff_r:array[0..2] of Real = ( -0.049841, -4.7274, 26.994 );       // 0.0663
+      coff_i:array[0..2] of Real = ( 0.22222, 9.2108, -18.044 );        // 0.0838
 begin
   Result := False;
   if not MakeColorCheck(Gin,G1in,0.0,0.16,gmg1) then Exit;
@@ -659,7 +659,11 @@ begin
   if (gmg1 < 0.021) then Exit;
   interm := PolEval(gmg1,coff_r,3);
   RcEst := Gin + RealToCurr(interm);
-  RcEst := RoundCurrency(RcEst,False)
+  RcEst := RoundCurrency(RcEst,False);
+  // Ic
+  interm := PolEval(gmg1,coff_i,3);
+  IcEst := Gin - RealToCurr(interm);
+  IcEst := RoundCurrency(IcEst,False);
 end;
 
 (* G-G1 for white dwarfs. rather rough. *)
@@ -847,26 +851,24 @@ begin
 end;
 //--------------------------------------------------------------
 (* Bt, Vt, and G *)
-function TychoG_toRI(Gmag:Currency; Bt,Vt:Real; out RcEst,IcEst:Currency):Boolean;
-var interm,btmvt,vtmg:Real;
-    useb:Boolean;
-const coff_i:array[0..2] of Real = ( -0.2956, 0.39878, -0.53011 );
-      coff_rv:array[0..2] of Real = ( -0.092618, -0.58685, 0.51053 );
-      coff_iv:array[0..2] of Real = ( -0.31976, -1.1462, 0.29366 );
+function TychoG_toRI(Gmag,G1in:Currency; Vt:Real; out RcEst,IcEst:Currency):Boolean;
+var interm,vtmg,gmg1:Real;
+    useg:Boolean;
+const coff_r:array[0..2] of Real = ( -0.066729, -0.68292, 0.58478 );
+      coff_i:array[0..2] of Real = ( 0.31848, 1.1628, -0.30772 );
 begin
   Result := False;
-  if not MakeColorCheck(Vt,Gmag,0.038,1.662,vtmg) then Exit;
-  useb := MakeColorCheck(Bt,Vt,0.369,1.60,btmvt);
-  if (not useb) and (vtmg < 0.146) then Exit;
-  // Rc
-  if (useb) then interm :=  -0.040464 - 0.34369*btmvt + 0.43183*vtmg
-  else interm := PolEval(vtmg,coff_rv,3);
+  if not MakeColorCheck(Vt,Gmag,0.185,1.48,vtmg) then Exit;
+  useg := MakeColorCheck(Gmag,G1in,0.006,0.18,gmg1);
+  // Rc (standard error ~0.053)
+  interm := PolEval(vtmg,coff_r,3);
   RcEst := Gmag + RealToCurr(interm);
   RcEst := RoundCurrency(RcEst,False);
   // Ic
-  if (useb) then interm := -0.44871*btmvt + PolEval(vtmg,coff_i,3)
-  else interm := PolEval(vtmg,coff_iv,3);
-  IcEst := Gmag + RealToCurr(interm);
+  if useg and (vtmg <= 1.442) then begin
+    interm := 0.34078 + 0.24074*vtmg + 4.296*gmg1;
+  end else interm := PolEval(vtmg,coff_i,3);
+  IcEst := Gmag - RealToCurr(interm);
   IcEst := RoundCurrency(IcEst,False);
   Result := True;
 end;

@@ -2454,10 +2454,10 @@ end;
 
 procedure TNStarsMainForm.MI_GTycRIClick(Sender: TObject);
 var data:string;   rok:Boolean;
-const entmsg = 'Enter Tycho-2 Mags [Bt] Vt, with the values separated by spaces, below:';
+const entmsg = 'Enter Tycho-2 Vt, and optionally Gaia DR1 G, below:';
 begin
   if current.cstar <> nil then begin
-    data := Trim(InputBox('Tycho-2 and G to RI',entmsg,''));
+    data := Trim(InputBox('Vt and G to RI',entmsg,''));
     if Length(data)<>0 then begin
       rok := current.Tycho2G_Helper(data);
     end;

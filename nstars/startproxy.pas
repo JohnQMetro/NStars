@@ -1469,7 +1469,7 @@ begin
   if (not useRP) then begin
     IcEst := 99.999;
     if iswd then okay := Gaia12_BVRIwd(G1,G,Vest,BcEst,RcEst,IcEst)
-    else okay := Gaia12_BVR(G1,G,Vest,BcEst,RcEst);
+    else okay := Gaia12_BVRI(G1,G,Vest,BcEst,RcEst,IcEst);
   end
   else okay := Gaia12RP_To_VRI(G1,G,RP,Vest,RcEst,IcEst);
   if not okay then begin
@@ -1525,11 +1525,11 @@ begin
 end;
 //-------------------------------------------------------------
 function StarProxy.Tycho2G_Helper(indata:string):Boolean;
-var btin,vtin:Real;
+var vtin,g1in:Real;
     RcEst,IcEst:Currency;
     okay:Boolean;
     splitlist:TStringList;
-const amsg = 'Estimated using Tycho and G.';
+const amsg = 'Estimated using Vt and G/G1.';
 begin
   Result := False;
 
@@ -1544,7 +1544,7 @@ begin
   end;
   // converting to numbers
   if (splitlist.Count = 2) then begin
-     if not StrToRealBoth(splitlist[0],splitlist[1],btin,vtin) then begin
+     if not StrToRealBoth(splitlist[0],splitlist[1],vtin,g1in) then begin
         ShowMessage('Unable to parse or convert the input!');
         FreeAndNil(splitlist);   Exit;
      end;
@@ -1554,11 +1554,12 @@ begin
        ShowMessage('Unable to parse or convert the input!');
        FreeAndNil(splitlist);   Exit;
      end;
-     btin := 99.999;
+     if cstar.fluxtemp = nil then g1in := 99.999
+     else g1in := cstar.fluxtemp.gaia_mag;
   end;
   FreeAndNil(splitlist);
   // calculating results
-  okay := TychoG_toRI(cstar.dr2mags.G,btin,vtin,RcEst,IcEst);
+  okay := TychoG_toRI(cstar.dr2mags.G,g1in,vtin,RcEst,IcEst);
   if not okay then begin
     ShowMessage('Cannot estimate, Colours out of bounds.');
     Exit;
