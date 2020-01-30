@@ -10,7 +10,8 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, Math, fgl,
-  df_strings, StringParser, fluxtransform, unitdata, Utilities, Utilities2;
+  df_strings, StringParser, fluxtransform, unitdata, Utilities, Utilities2,
+  fluxtransform2;
 
 type
 
@@ -921,8 +922,8 @@ begin
   if BcatB then USNO_B2_Adjust(bmag,jmag,hmag,kmag,bmag);
   // B Catalog conversions for R2 (assuming R2 instead of B1)
   if BcatR and (rmag > 9) then USNO_R2_Adjust(rmag,jmag,hmag,kmag,rmag);
-  // B Catalog conversion for Infrared (unneeded if I is bright enough)
-  if BcatI and (imag > 8.5) then USNO_I_Adjust(imag,jmag,hmag,kmag,imag);
+  // B Catalog conversion for Infrared
+  if BcatI then USNO_IJ_Ic(imag,jmag,imag);
   // UCAC fit Model Magnitude is not Rc
   if RUCAC and (rmag >= 10) then UCAC4_To_RcS(rmag,jmag,99.999,g2mag,rmag);
 
