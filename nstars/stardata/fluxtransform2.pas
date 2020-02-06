@@ -5,7 +5,7 @@ unit fluxtransform2;
 interface
 
 uses
-  Classes, SysUtils, DAMath, fluxtransform, Utilities;
+  Classes, SysUtils, Math, DAMath, fluxtransform, Utilities, df_strings;
 //******************************************************************
 (* revised fits for UCAC4, URAT1, and CMC 15 *)
 
@@ -16,6 +16,12 @@ function CMC15_to_VRI(CMC,J:Currency; out Vest:Real; out RcEst,IcEst:Currency):B
 // revised USNO B catalog I (and 2MASS J) to Ic
 function ClassifyUSNO_I(UBI,J:Currency; out ij:Real):Word;
 function USNO_IJ_Ic(UBI,J:Currency; out IcEst:Currency):Boolean;
+//--------------------------------------------------------------
+// revised APASS transforms (main improvement: ip is not necessary anymore
+function APASS_to_RI(gp,rp,ip:Real; J:Currency; out RcEst,IcEst:Currency):Boolean;
+function APASS_to_V(gp,rp,ip:Real; out Vest:Real):Boolean;
+function APASS_to_B(gp,rp:Real; out Best:Real):Boolean;
+function ParseAPASS(indata:string; var results:RealArray):Boolean;
 
 //******************************************************************
 implementation
@@ -105,6 +111,130 @@ begin
   Result := True;
   IcEst := RealToCurr(interm) + J;
   IcEst := RoundCurrency(IcEst,False)
+end;
+//----------------------------------------------------------------
+// APASS g r i to Rc and Ic (ignore SDSS, no white dwarves)
+function APASS_to_RI(gp,rp,ip:Real; J:Currency; out RcEst,IcEst:Currency):Boolean;
+var gmr,gmj,gmi,rmi,imj,interm,interm2:Real;
+    grok,gjok,giok,riok,ijok:Boolean;
+const p1:array[0..2] of Real = ( 0.71901, -0.010664, 0.078028 );
+      p2:array[0..2] of Real = ( 1.5129, -0.16686, 0.11315 );
+      p3:array[0..2] of Real = ( 1.4632, -0.081343, 0.035903 );
+      p4:array[0..2] of Real = ( 0.15266, 0.17237, 0.086884 );
+      q1:array[0..2] of Real = ( -0.69547, 0.86253, -0.02117 );
+      q2:array[0..2] of Real = ( -0.57788, 0.98715, -0.10663 );
+begin
+  Result := False;
+  grok := MakeColorCheck(gp,rp,1.082,1.764,gmr);
+  gjok := MakeColorCheck(gp,J,3.227,7.668,gmj);
+  giok := MakeColorCheck(gp,ip,1.741,4.418,gmi);
+  riok := MakeColorCheck(rp,ip,0.459,2.893,rmi);
+  ijok := MakeColorCheck(ip,J,1.487,3.25,imj);
+  // Rc. note that APASS i is often missing, and g-r alone gives poor results
+  interm := 9999; interm2 := 9999;
+  if (grok and gjok) then interm := -0.1267 + 0.66091*gmr + 0.23919*gmj
+  else if grok and (gmr < 1.631) and giok then  begin
+    interm := PolEval(gmi,p1,3) + 0.46969*gmr;
+  end
+  else if riok then interm2 := PolEval(rmi,p4,3)
+  else if giok then interm := PolEval(gmi,p2,3)
+  else if gjok then interm := PolEval(gmj,p3,3);
+  RcEst := 99.999;
+  if (interm < 9000) or (interm2 < 9000) then begin
+    if (interm < 9000) then RcEst := RealToCurr(gp - interm)
+    else RcEst := RealToCurr(rp - interm);
+    RcEst := RoundCurrency(RcEst,False);
+    Result := True;
+  end;
+  // Ic
+  interm := 9999; interm2 := 9999;
+  if (grok and gjok) then interm := 0.31563*gmr + PolEval(gmj,q1,3)
+  else if (riok and ijok) then begin
+      interm2 := 0.74373*rmi + PolEval(imj,q2,3);
+  end else if gjok then interm := 0.14969 + 0.67197*gmj
+  else if riok then interm2 := 0.45123 + 1.1443*rmi
+  else if giok then interm := 0.29603 +  1.1297*gmi;
+  IcEst := 99.999;
+  if (interm < 9000) or (interm2 < 9000) then begin
+    if (interm < 9000) then IcEst := RealToCurr(gp - interm)
+    else IcEst := RealToCurr(rp - interm);
+    IcEst := RoundCurrency(IcEst,False);
+    Result := True;
+  end;
+end;
+//----------------------------------------------------
+// APASS to V
+function APASS_to_V(gp,rp,ip:Real; out Vest:Real):Boolean;
+var gmr,rmi,gmi,interm:Real;
+    grok,riok,giok:Boolean;
+begin
+    grok := MakeColorCheck(gp,rp,1.082,1.764,gmr);
+    riok := MakeColorCheck(rp,ip,0.459,2.893,rmi);
+    giok := MakeColorCheck(gp,ip,1.741,4.418,gmi);
+    Result := False;
+    if grok then interm := -0.052467 + 0.58862*gmr
+    else if riok then interm := 0.53331 + 0.055006*rmi
+    else if giok then interm := 0.68096 + 0.021482*gmi
+    else Exit;
+    Result := True;
+    if grok then Vest := gp - interm
+    else if riok then Vest := interm + rp
+    else Vest := gp -interm;
+end;
+//-------------------------------------------------------
+(* APASS to B. Note that APASS B has a red leak, and for red stars I
+have no other sources of B. So I'll have to trust Lupton 2005.
+However, I will use my own equations to derive g ang g-r *)
+function APASS_to_B(gp,rp:Real; out Best:Real):Boolean;
+var gpmrp,gmr,gmrp:Real;
+begin
+    Result := True;
+    if not MakeColorCheck(gp,rp,0.904,1.6,gpmrp) then Exit;
+    // calculate g-r from gp-rp
+    gmr := 0.98115 + 0.37271*gpmrp;
+    // calculate g-rp from gp-rp
+    gmrp := 0.82489 + 0.48423*gmrp;
+    // finally
+    Best := (gmrp + rp) + 0.313*gmr + 0.2271;
+    Result := True;
+end;
+//---------------------------------------------------------------
+// can take 3,5,6,9 or 10 numbers in a string
+function ParseAPASS(indata:string; var results:RealArray):Boolean;
+var maglist:RealArray;
+    mlen:Integer;
+    noe:Boolean;
+begin
+    Result := False;
+    if not SplitWithSpacesToReal(indata,3,maglist) then Exit;
+    mlen := Length(maglist);
+    if (mlen = 4) or (mlen = 7) or (mlen = 8) or (mlen > 10) then Exit;
+    // length assumptions:
+    // 3: g r i, 5: V B g r i, 6: g r i with errors, 9,10: V B g r i with errors
+    SetLength(results,7);
+    if (mlen = 3) or (mlen = 6) then begin
+      // clearing V and B
+      results[0] := 99.999;  results[1] := 0;
+      results[2] := 99.999;  results[3] := 0;
+      // g r i
+      results[4] := maglist[0];
+      results[5] := ifthen(mlen = 3,maglist[1],maglist[2]);
+      results[6] := ifthen(mlen = 3,maglist[2],maglist[4]);
+    end
+    else begin
+      noe := (mlen = 5);
+      // V and B
+      results[0] := maglist[0];
+      results[1] := ifthen(noe,0,maglist[1]);
+      results[2] := ifthen(noe,maglist[1],maglist[2]);
+      results[3] := ifthen(noe,0,maglist[3]);
+      // gri
+      results[4] := ifthen(noe,maglist[2],maglist[4]);
+      results[5] := ifthen(noe,maglist[3],maglist[6]);
+      results[6] := ifthen(noe,maglist[4],maglist[8]);
+    end;
+    // done
+    Result := True;
 end;
 
 //******************************************************************

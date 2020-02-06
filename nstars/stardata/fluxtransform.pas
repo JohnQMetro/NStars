@@ -598,7 +598,8 @@ begin
 end;
 //-------------------------------------------------------
 (* Trying to estimate a better value of Ic from USNO B Infrared and JHKs. More
-accurate than the blue equation (but still imprecise). Rvar 0.015962 *)
+accurate than the blue equation (but still imprecise). Rvar 0.015962
+NOTE: obsolete, see fluxtransform2 for replacement. *)
 function USNO_I_Adjust(Iin,J,H,Ks:Currency; out Icest:Currency):Boolean;
 var bimj,hmks:Real;
     resval:Real;
