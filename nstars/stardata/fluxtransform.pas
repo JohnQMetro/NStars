@@ -25,8 +25,8 @@ function SDSS_ugriz2BVRI(u,g,r,i,z:Real; out Bj,Vj,Rc,Ic:Real):Boolean;
 procedure SDSS_gri2BVRI_c(g,r,i:Real; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency);
 function SDSS_ugriz2BVRI_c(u,g,r,i,z:Real; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency):Boolean;
 procedure SDSSpAB_to_SDSS(up,gp,rp,ip,zp:Real; out u,g,r,i,z:Real);
-function APASS_to_Fluxes(indata:string; J:Currency; out VBinc:Boolean; out Vj,Vje,Vest:Real;
-                                        out Bj,Bje,Best,Rc,Ic:Currency):Boolean;
+(* function APASS_to_Fluxes(indata:string; J:Currency; out VBinc:Boolean; out Vj,Vje,Vest:Real;
+                                        out Bj,Bje,Best,Rc,Ic:Currency):Boolean;*)
 function SDSS_to_Fluxes(indata:string; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency):Boolean;
 procedure Pgri_to_BVRI(gp,rp,ip:Real; J:Currency; out Bj:Currency; out Vj:Real; out Rc,Ic:Currency);
 function PanSTARRSgri_to_BVRI(gp,rp,ip:Real; out Bj,Vj,Rc,Ic:Real):Boolean;

@@ -19,10 +19,12 @@ function USNO_IJ_Ic(UBI,J:Currency; out IcEst:Currency):Boolean;
 //--------------------------------------------------------------
 // revised APASS transforms (main improvement: ip is not necessary anymore
 function APASS_to_RI(gp,rp,ip:Real; J:Currency; out RcEst,IcEst:Currency):Boolean;
+function APASS_to_RIwd(gp,rp:Real; J:Currency; out RcEst,IcEst:Currency):Boolean;
 function APASS_to_V(gp,rp,ip:Real; out Vest:Real):Boolean;
 function APASS_to_B(gp,rp:Real; out Best:Real):Boolean;
 function ParseAPASS(indata:string; var results:RealArray):Boolean;
-
+function APASS_to_BVRI(const indata:RealArray; Jin:Currency; out Vest,Verr:Real; out Best,Berr,RcEst,IcEst:Currency):Boolean;
+function sAPASS_to_BVRI(const indata:string; Jin:Currency; out Vest,Verr:Real; out Best,Berr,RcEst,IcEst:Currency):Boolean;
 //******************************************************************
 implementation
 //==================================================================
@@ -162,6 +164,38 @@ begin
     Result := True;
   end;
 end;
+//------------------------------------------------------
+function APASS_to_RIwd(gp,rp:Real; J:Currency; out RcEst,IcEst:Currency):Boolean;
+var gmr,gmj,interm:Real;
+    grok,gjok:Boolean;
+begin
+  Result := False;
+  grok := MakeColorCheck(gp,rp,-0.382,0.727,gmr);
+  gjok := MakeColorCheck(gp,J,-0.734,2.224,gmj);
+  // Rc
+  interm := 99.999; RcEst := 99.999;
+  if grok and gjok and (gmj <= 1.999) then begin
+    interm := 0.039267 + 0.33996*gmr + 0.33556*gmj;
+  end
+  else if grok then interm := 0.12623 + 1.1443*gmr
+  else if gjok then interm := 0.015614 + 0.45885*gmj;
+  if (interm < 99) then begin
+    RcEst := RealToCurr(gp - interm);
+    RcEst := RoundCurrency(RcEst,False);
+    Result := True;
+  end;
+  // Ic
+  interm := 99.999; IcEst := 99.999;
+  if grok and gjok and (gmj <= 1.999) then begin
+    interm := 0.10841 + 0.55215*gmr + 0.46886*gmj;
+  end
+  else if gjok then interm := 0.060125 + 0.68467*gmj;
+  if (interm < 99) then begin
+    IcEst := RealToCurr(gp - interm);
+    IcEst := RoundCurrency(IcEst,False);
+    Result := True;
+  end;
+end;
 //----------------------------------------------------
 // APASS to V
 function APASS_to_V(gp,rp,ip:Real; out Vest:Real):Boolean;
@@ -235,6 +269,44 @@ begin
     end;
     // done
     Result := True;
+end;
+//----------------------------------------------------------------
+function APASS_to_BVRI(const indata:RealArray; Jin:Currency; out Vest,Verr:Real; out Best,Berr,RcEst,IcEst:Currency):Boolean;
+var hb,hv,bok,ixok:Boolean;
+    besx:Real;
+begin
+    Result := False;
+    if Length(indata) <> 7 then Exit;
+    hv := indata[0] < 90;
+    hb := indata[2] < 90;
+    // V
+    Vest := indata[0];
+    Verr := indata[1];
+    if not hv then begin
+        Result := APASS_to_V(indata[4],indata[5],indata[6],Vest);
+    end else Result := True;
+    // B
+    Best := RealToCurr(indata[2]);
+    Berr := RealToCurr(indata[3]);
+    if (not hb) then begin
+       bok := APASS_to_B(indata[4],indata[5],besx);
+       if bok then begin
+         Best := RealToCurr(besx);
+         Best := RoundCurrency(Best,False);
+       end;
+       Result := bok or Result;
+    end else Result := True;
+    // Rc and Ic
+    ixok := APASS_to_RI(indata[4],indata[5],indata[6],Jin,RcEst,IcEst);
+    Result := Result or ixok;
+end;
+//-----------------------------------------------------------------
+function sAPASS_to_BVRI(const indata:string; Jin:Currency; out Vest,Verr:Real; out Best,Berr,RcEst,IcEst:Currency):Boolean;
+var maglist:RealArray;
+begin
+  Result := ParseAPASS(indata,maglist);
+  if (not Result) then Exit;
+  Result := APASS_to_BVRI(maglist,Jin,Vest,Verr,Best,Berr,RcEst,IcEst);
 end;
 
 //******************************************************************

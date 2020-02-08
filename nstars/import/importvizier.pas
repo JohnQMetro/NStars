@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils,Synacode,
   fluxtransform, StringParser, df_strings, Utilities, gaiadr2base, strutils,
-  VizierPOST;
+  VizierPOST,fluxtransform2;
 
 type
 
@@ -364,13 +364,8 @@ begin
           convertstr += bmag + ' ' + bemag + ' ';
         end;
         convertstr += gmag + ' 0 ' + rmag + ' 0 ' + imag + ' 0';
-        convok := APASS_to_Fluxes(convertstr,J,vbinc,apass_v[mdex],apass_ve[mdex],
-              vest,apass_b[mdex],apass_be[mdex],best,apass_rc[mdex],apass_ic[mdex]);
-        // post conversion finishing
-        if not vbinc then begin
-          apass_v[mdex] := vest;
-          apass_b[mdex] := best;
-        end;
+        convok := sAPASS_to_BVRI(convertstr,J,apass_v[mdex],apass_ve[mdex],
+               apass_b[mdex],apass_be[mdex],apass_rc[mdex],apass_ic[mdex]);
       end else begin
         StrToReal(vmag,apass_v[mdex]);
         StrToReal(vemag,apass_ve[mdex]);

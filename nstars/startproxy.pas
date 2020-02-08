@@ -864,9 +864,8 @@ begin
 end;
 //--------------------------------------------------------
 function StarProxy.APASS_Helper(indata:string):Boolean;
-var usingVB:Boolean;
-    out_B,out_Be,out_Best:Currency;
-    out_V,out_Ve,out_Vest:Real;
+var out_B,out_Be:Currency;
+    out_V,out_Ve:Real;
     out_Rc,out_Ic:Currency;
     Jx:Currency;
     msgdata:string;
@@ -877,29 +876,16 @@ begin
   Assert(cstar<>nil);
   if cstar.fluxtemp = nil then Jx := 99.999
   else Jx := cstar.fluxtemp.J_mag;
-  if not APASS_to_Fluxes(indata,Jx,usingVB,out_V,out_Ve,out_Vest,out_B,out_Be,
-                                    out_Best,out_Rc,out_Ic) then begin
+  if not sAPASS_to_BVRI(indata,Jx,out_V,out_Ve,out_B,out_Be,out_Rc,out_Ic) then begin
     ShowMessage('Unable to parse or convert the input!');
     Exit;
   end;
   msgdata := 'The values are :' + sLineBreak;
   // B and V
-  if usingVB then begin
-    msgdata += 'V : ' + FloatToStrF(out_V,ffFixed,2,3) + '±';
-    msgdata += FloatToStrF(out_Ve,ffFixed,2,3) + sLineBreak;
-    msgdata += 'V est (not used) : ' + FloatToStrF(out_Vest,ffFixed,2,3);
-    msgdata += sLineBreak;
-    msgdata += 'B : ' + CurrToStrF(out_B,ffFixed,3) + '±';
-    msgdata += CurrToStrF(out_Be,ffFixed,3) + sLineBreak;
-    msgdata += 'B est (not used) : ' + CurrToStrF(out_Best,ffFixed,3);
-    msgdata += sLineBreak;
-  end
-  else begin
-    msgdata += 'V estimate : ' + FloatToStrF(out_Vest,ffFixed,2,3);
-    msgdata += sLineBreak;
-    msgdata += 'B estimate : ' + CurrToStrF(out_Best,ffFixed,3);
-    msgdata += sLineBreak;
-  end;
+  msgdata += 'V : ' + FloatToStrF(out_V,ffFixed,2,3) + '±';
+  msgdata += FloatToStrF(out_Ve,ffFixed,2,3) + sLineBreak;
+  msgdata += 'B : ' + CurrToStrF(out_B,ffFixed,3) + '±';
+  msgdata += CurrToStrF(out_Be,ffFixed,3) + sLineBreak;
   // Rc and Ic
   msgdata += 'Rc estimate : ' + CurrToStrF(out_Rc,ffFixed,3);
   msgdata += sLineBreak;
@@ -914,17 +900,10 @@ begin
   if (rval = mrYes) then begin
     if cstar.fluxtemp = nil then cstar.fluxtemp := StarFluxPlus.Create;
     // setting B
-    if usingVB then begin
-      cstar.fluxtemp.blue_mag := out_B;
-      cstar.fluxtemp.blue_err := out_Be;
-    end
-    else begin
-      cstar.fluxtemp.blue_mag := out_Best;
-      cstar.fluxtemp.blue_err := 0.0;
-    end;
+    cstar.fluxtemp.blue_mag := out_B;
+    cstar.fluxtemp.blue_err := out_Be;
     // setting V
-    if usingVB then cstar.SetVisualMagnitude(out_V)
-    else cstar.SetVisualMagnitude(out_Vest);
+    cstar.SetVisualMagnitude(out_V);
     sys.UpdateEstimates;
     // Rc and Ic
     cstar.fluxtemp.red_mag := out_Rc;
