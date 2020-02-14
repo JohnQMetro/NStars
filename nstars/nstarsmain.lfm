@@ -1295,10 +1295,6 @@ object NStarsMainForm: TNStarsMainForm
           Caption = 'Estimate VRI using G,RP, and G1...'
           OnClick = MI_GG1_BClick
         end
-        object MI_DATeff: TMenuItem
-          Caption = 'Estimate DA TEff...'
-          OnClick = MI_DATeffClick
-        end
         object MI_GTycRI: TMenuItem
           Caption = 'Estimate RI using G and Tycho...'
           OnClick = MI_GTycRIClick
@@ -1326,6 +1322,21 @@ object NStarsMainForm: TNStarsMainForm
         object EstJHKPSMI: TMenuItem
           Caption = 'Estimate JHK with PanSTARRS...'
           OnClick = EstJHKPSMIClick
+        end
+      end
+      object EstWDTeff: TMenuItem
+        Caption = 'Estimate WD TEff...'
+        object WDT_GaiaA: TMenuItem
+          Caption = 'Use BP-RP'
+          OnClick = WDT_GaiaAClick
+        end
+        object WD_GaiaC: TMenuItem
+          Caption = 'Use G-RP'
+          OnClick = WD_GaiaCClick
+        end
+        object WDT_GaiaB: TMenuItem
+          Caption = 'Use G-G1'
+          OnClick = WDT_GaiaBClick
         end
       end
       object MenuItem4: TMenuItem

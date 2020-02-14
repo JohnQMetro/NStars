@@ -106,8 +106,9 @@ function ZhamiLookup(inmass:Real; out foundrad:Real):Boolean;
 // TEff estimates for White Dwarfs
 function EstDATEff_DR2(const BPmRP:Currency; out TEff_est:Integer):Boolean;
 function EstDATEff_DR2r(G:Currency; RP:Currency; out TEff_est:Integer):Boolean;
-function GDATEff(G,BP,RP:Currency; out TEff_est:Integer):Boolean;
-function GDATEffr(G,RP:Currency; out TEff_est:Integer):Boolean;
+function GDA_TEff(G,BP,RP:Currency; out TEff_est:Integer):Boolean;
+function GDA_TEffr(G,RP:Currency; out TEff_est:Integer):Boolean;
+function GDA_TEffx(G,G1:Currency; out TEff_est:Integer):Boolean;
 // extra tests
 procedure MakeWDMassRadiusCSV();
 //********************************************************************
@@ -1041,7 +1042,7 @@ end;
 //------------------------------------------------------------------
 (* Fitted in 2 parts using ptrans (my utility) at 99%, data from
 Gentile Fusillo+ 2018 (https://arxiv.org/abs/1807.03315) *)
-function GDATEff(G,BP,RP:Currency; out TEff_est:Integer):Boolean;
+function GDA_TEff(G,BP,RP:Currency; out TEff_est:Integer):Boolean;
 var bpmrp,bpmg,interm:Real;
     tempint:Int64;
     bmgok:Boolean;
@@ -1053,12 +1054,12 @@ begin
   if not MakeColorCheck(BP,RP,-0.415,1.624,bpmrp) then Exit;
   bmgok := MakeColorCheck(BP,G,-0.181,0.256,bpmg);
   // Hotter WDs
-  if (bpmrp <= 0.2) and bmgok and (bpmrp >= 0.405) then begin
+  if (bpmrp <= 0.2) and bmgok and (bpmrp >= -0.405) then begin
     interm := PolEval(bpmrp,hot_b,3) - 75731*bpmrp*bpmg + 18423*bpmg; // std err ~ 287K
   end
   else if (bpmrp <= 0.2) then interm := PolEval(bpmrp,hot_a,3)  // std err ~ 435K
   // Cooler WDs
-  else interm := PolEval(bpmrp,cool,4); // std err ~51 K
+  else interm := PolEval(bpmrp,cool,5); // std err ~51 K
 
   // rounding...
   Result := True;
@@ -1072,7 +1073,7 @@ begin
 end;
 //-----------------------------------------
 // using no BP, I will assume for cooler White Dwarfs only
-function GDATEffr(G,RP:Currency; out TEff_est:Integer):Boolean;
+function GDA_TEffr(G,RP:Currency; out TEff_est:Integer):Boolean;
 var gmrp,interm:Real;
     tempint:Int64;
 const coff:array[0..3] of Real = ( 12260, -23093, 27207, -13933 );
@@ -1084,6 +1085,28 @@ begin
   Result := True;
   tempint := round(interm/50);
   TEff_est := tempint*50;
+end;
+//------------------------------------------------------------
+(* Uses G and G from Gaia DR1 to estimate DA TEff *)
+function GDA_TEffx(G,G1:Currency; out TEff_est:Integer):Boolean;
+var gmg,interm:Real;
+    tempint:Int64;
+const  hot:array[0..3] of Real = ( 12816, -2.0795E5, 2.8447E6, -1.8435E7 );
+      cold:array[0..3] of Real = ( 10484, -84218, 4.2504E5, -9.0008E5 );
+begin
+  Result := False;
+  if not MakeColorCheck(G,G1,-0.031,0.192,gmg) then Exit;
+  if gmg < 0.05 then interm := PolEval(gmg,hot,4) // std err ~ 545 K
+  else interm := PolEval(gmg,cold,4); // std err ~ 282K
+  // rounding
+  Result := True;
+  if gmg < 0.05 then begin
+      tempint := round(interm/100);
+      TEff_est := tempint*100;
+  end else begin
+      tempint := round(interm/250);
+      TEff_est := tempint*250;
+  end;
 end;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

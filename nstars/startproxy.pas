@@ -79,7 +79,7 @@ StarProxy = class
     function GuessVFromG():Boolean;
     function PanStarrsJHK(indata:string):Boolean;
     function GG1_VRI(useRP:Boolean):Boolean;
-    function DA_GaiaTEff():Boolean;
+    function DA_GaiaTEff(which:Word):Boolean;
     function Tycho2G_Helper(indata:string):Boolean;
     function VtG_Helper(indata:string):Boolean;
     function SMSSHelper(indata:string):Boolean;
@@ -1461,43 +1461,63 @@ begin
   Result := ShowEst(Vest,BcEst,Rcest,Icest,qmsg);
 end;
 //-----------------------------------------------------------
-function StarProxy.DA_GaiaTEff():Boolean;
-var bpmrp:Currency;  teff:Integer;
+function StarProxy.DA_GaiaTEff(which:Word):Boolean;
+var gm,g1m,bpm,rpm:Currency;
     okay:Boolean;
-    rval:Word;       msg:string;
-    bperr,divo:Real;
+    teff_out:Integer;
+    msg:string;
+    rval:Word;
 begin
   Result := False;
-  // checking if we have the magnitudes
+  if (which < 1) or (which > 3) then Exit;
+  // checking if we have G
   okay := (ccomponent <> nil) and (ccomponent.dr2mags <> nil);
-  okay := okay and ccomponent.dr2mags.ValidBPmRP;
+  if okay then begin
+    gm := ccomponent.dr2mags.G;
+    okay := okay and (gm < 90) and (ccomponent.dr2mags.Gerr < 0.015);
+  end;
+  if (not okay) then begin
+    ShowMessage('Cannot estimate, missing G');
+    Exit;
+  end;
+  // checking the other mags
+  if (which = 1) then begin
+    okay := ccomponent.dr2mags.ValidBPmRP;
+    rpm := ccomponent.dr2mags.RP;
+  end else if (which = 2) then begin
+    rpm := ccomponent.dr2mags.RP;
+    okay := (rpm < 90) and (ccomponent.dr2mags.RPerr < 0.025);
+  end else if (which = 3) then begin
+    okay := (ccomponent.fluxtemp <> nil);
+    if okay then begin
+      g1m := ccomponent.fluxtemp.gaia_mag;
+      okay := g1m < 90;
+    end;
+  end;
   if not okay then begin
     ShowMessage('Cannot estimate, missing magnitudes.');
     Exit;
   end;
   // computing TEff estimate
-  bperr := CurrToReal(ccomponent.dr2mags.BPerr);
-  divo := bperr / CurrToReal(ccomponent.dr2mags.RPerr);
-  okay := False;
-  if (bperr > 0.01) and (divo > 2.5) then begin
-    okay := EstDATEff_DR2r(ccomponent.dr2mags.G,ccomponent.dr2mags.RP,teff);
+  bpm := ccomponent.dr2mags.BP;
+  case which of
+    1 : okay := GDA_TEff(gm,bpm,rpm,teff_out);
+    2 : okay := GDA_TEffr(gm,rpm,teff_out);
+    3 : okay := GDA_TEffx(gm,g1m,teff_out);
   end;
-  if not okay then begin
-    bpmrp := ccomponent.dr2mags.BPminRP;
-    okay := EstDATEff_DR2(bpmrp,teff);
-  end;
+
   if not okay then begin
     ShowMessage('Cannot estimate, Colours out of bounds.');
     Exit;
   end;
   // showing the TEff and asking if we use it...
-  msg := 'TEff guess is: ' + IntToStr(teff) + 'K' + sLineBreak;
+  msg := 'TEff guess is: ' + IntToStr(teff_out) + 'K' + sLineBreak;
   msg += 'Do you want to use this value?';
   rval := mrNo;
   rval := MessageDlg(msg, mtConfirmation,[mbYes, mbNo],0);
   if (rval = mrYes) then begin
     if ccomponent.fluxtemp = nil then ccomponent.fluxtemp := StarFluxPlus.Create;
-    ccomponent.fluxtemp.EffectiveTemp := teff;
+    ccomponent.fluxtemp.EffectiveTemp := teff_out;
     sys.UpdateEstimates;
     Result := True;
   end;

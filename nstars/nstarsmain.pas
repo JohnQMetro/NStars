@@ -42,11 +42,14 @@ type
     MenuItem12: TMenuItem;
     EstJHKPSMI: TMenuItem;
     EstSMSSMI: TMenuItem;
+    EstWDTeff: TMenuItem;
+    WD_GaiaC: TMenuItem;
+    WDT_GaiaA: TMenuItem;
+    WDT_GaiaB: TMenuItem;
     MI_GVtBV: TMenuItem;
     MI_AddVizForAll: TMenuItem;
     MI_GTycRI: TMenuItem;
     MI_NLTTMatcher: TMenuItem;
-    MI_DATeff: TMenuItem;
     MI_GG1_A: TMenuItem;
     MI_GG1_B: TMenuItem;
     MI_DR2_BVRI: TMenuItem;
@@ -345,6 +348,9 @@ type
     procedure SystemNotesMemoExit(Sender: TObject);
     procedure VisualMagEntryClick(Sender: TObject);
     procedure Viz2MassGetMIClick(Sender: TObject);
+    procedure WDT_GaiaAClick(Sender: TObject);
+    procedure WDT_GaiaBClick(Sender: TObject);
+    procedure WD_GaiaCClick(Sender: TObject);
     procedure WriteEstimatorMIClick(Sender: TObject);
     procedure WrUnmCSVMIClick(Sender: TObject);
     procedure AddStar1Click(Sender: TObject);
@@ -1533,6 +1539,42 @@ begin
   end;
 end;
 
+procedure TNStarsMainForm.WDT_GaiaAClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.DA_GaiaTEff(1);
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.WDT_GaiaBClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.DA_GaiaTEff(3);
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.WD_GaiaCClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.DA_GaiaTEff(2);
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
 procedure TNStarsMainForm.WriteEstimatorMIClick(Sender: TObject);
 begin
   if primaryl = nil then Exit;
@@ -2312,16 +2354,11 @@ begin
 end;
 
 procedure TNStarsMainForm.MI_DATeffClick(Sender: TObject);
-var rok:Boolean;
 begin
-  if current.ccomponent <> nil then begin
-    rok := current.DA_GaiaTEff();
-    if rok then begin
-      // reloading after data has been set
-      StarData1;
-    end;
-  end;
+
 end;
+
+
 
 procedure TNStarsMainForm.MI_DR2_BVRIClick(Sender: TObject);
 var rok:Boolean;
