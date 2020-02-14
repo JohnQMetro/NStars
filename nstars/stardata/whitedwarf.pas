@@ -6,7 +6,7 @@ unit WhiteDwarf;
 interface
 
 uses
-  Classes, SysUtils, DAMath, EstBasics, df_strings,utilities;
+  Classes, SysUtils, DAMath, EstBasics, df_strings,utilities, fluxtransform;
 //********************************************************************
 const
 (* used for white dwarf mass estimation *)
@@ -106,6 +106,8 @@ function ZhamiLookup(inmass:Real; out foundrad:Real):Boolean;
 // TEff estimates for White Dwarfs
 function EstDATEff_DR2(const BPmRP:Currency; out TEff_est:Integer):Boolean;
 function EstDATEff_DR2r(G:Currency; RP:Currency; out TEff_est:Integer):Boolean;
+function GDATEff(G,BP,RP:Currency; out TEff_est:Integer):Boolean;
+function GDATEffr(G,RP:Currency; out TEff_est:Integer):Boolean;
 // extra tests
 procedure MakeWDMassRadiusCSV();
 //********************************************************************
@@ -1030,13 +1032,60 @@ begin
   gmrp := G - RP;
   // bounds
   if (gmrp < 0.1) or (gmrp > 0.85) then Exit;
-  // the ranges of the 2 equation overlap. I'll set the division at 0.87
   interm := PolEval(gmrp,gmrp_coff,4);
   // rounding
   Result := True;
   tempint := round(interm/50);
   TEff_est := tempint*50;
 end;
+//------------------------------------------------------------------
+(* Fitted in 2 parts using ptrans (my utility) at 99%, data from
+Gentile Fusillo+ 2018 (https://arxiv.org/abs/1807.03315) *)
+function GDATEff(G,BP,RP:Currency; out TEff_est:Integer):Boolean;
+var bpmrp,bpmg,interm:Real;
+    tempint:Int64;
+    bmgok:Boolean;
+const hot_a:array[0..3] of Real = ( 11644, -15866, 30349, -41679 );
+      hot_b:array[0..3] of Real = ( 12009, -23195, 57803, -58067 );
+      cool:array[0..4] of Real = ( 11883, -15152, 14294, -6982.9, 1235.5 );
+begin
+  Result := False;
+  if not MakeColorCheck(BP,RP,-0.415,1.624,bpmrp) then Exit;
+  bmgok := MakeColorCheck(BP,G,-0.181,0.256,bpmg);
+  // Hotter WDs
+  if (bpmrp <= 0.2) and bmgok and (bpmrp >= 0.405) then begin
+    interm := PolEval(bpmrp,hot_b,3) - 75731*bpmrp*bpmg + 18423*bpmg; // std err ~ 287K
+  end
+  else if (bpmrp <= 0.2) then interm := PolEval(bpmrp,hot_a,3)  // std err ~ 435K
+  // Cooler WDs
+  else interm := PolEval(bpmrp,cool,4); // std err ~51 K
+
+  // rounding...
+  Result := True;
+  if bpmrp <= 0.2 then begin
+    tempint := round(interm/100);
+    TEff_est := tempint*100;
+  end else begin
+    tempint := round(interm/50);
+    TEff_est := tempint*50;
+  end;
+end;
+//-----------------------------------------
+// using no BP, I will assume for cooler White Dwarfs only
+function GDATEffr(G,RP:Currency; out TEff_est:Integer):Boolean;
+var gmrp,interm:Real;
+    tempint:Int64;
+const coff:array[0..3] of Real = ( 12260, -23093, 27207, -13933 );
+begin
+  Result := False;
+  if not MakeColorCheck(G,Rp,0.3,0.848,gmrp) then Exit;
+  interm := PolEval(gmrp,coff,4); // std err ~ 61K
+  // rounding
+  Result := True;
+  tempint := round(interm/50);
+  TEff_est := tempint*50;
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // testing White Dwarf radius to mass stuff
 procedure MakeWDMassRadiusCSV();
