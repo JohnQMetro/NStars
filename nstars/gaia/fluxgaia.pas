@@ -51,6 +51,9 @@ function Gaia12_BVRIwd(G1in,Gin:Currency; out Vest:Real; out Best,RcEst,IcEst:Cu
 function Gaia12RP_To_VRI(G1in,Gin,RPin:Currency; out Vest:Real; out RcEst,IcEst:Currency):Boolean;
 (* White Dwarf specific transforms *)
 function WD_GaiaToVRI(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+function WD_GaiaToVRI_bB(Gmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+function WD_GaiaToVRI_bR(Gmag,BPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+function WD_GaiaToVRI_Gen(dr2mags:GaiaDR2Mags; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 function WD_GaiaToJHK(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function WD_GaiaToJHK_badB(Gmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
 function WD_GaiaToJHK_badR(Gmag,BPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;
@@ -736,32 +739,104 @@ end;
 function WD_GaiaToVRI(Gmag,BPmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
 var interm,bpmg,bpmrp:Real;
     ok1,ok2:Boolean;
-const coff_vp:array[0..2] of Real = (-0.072114,0.82726,0.26221);
-      coff_ip:array[0..2] of Real = (-0.051756,-0.8131,0.17353);
+const coff_vp1:array[0..2] of Real = ( -0.072035, 0.82915, 0.26298);
+      coff_vp2:array[0..2] of Real = ( -0.019933, 0.11665, 0.10219 );
+      coff_rp:array[0..2] of Real = ( -0.010177, -0.31358, 0.080597 );
+      coff_ip1:array[0..2] of Real = ( 0.033511, 0.72949, -0.095172 );
+      coff_ip2:array[0..2] of Real = ( 0.011394, 1.0915, -0.010347);
 begin
   Result := False;
   ok1 := MakeColorCheck(BPmag,Gmag,-0.254,0.732,bpmg);
   ok2 := MakeColorCheck(BPmag,RPmag,-0.555,1.552,bpmrp);
-  if not (ok1 and ok2) then Exit;
+  if not ok2 then Exit;
   // V
-  interm := PolEval(bpmrp,coff_vp,3) - 1.9711*bpmg;
+  if ok1 then begin
+    interm := PolEval(bpmrp,coff_vp1,3) - 1.9785*bpmg; // std err ~ 0.0375
+  end else interm := PolEval(bpmrp,coff_vp2,3); // std er ~ 0.0451
   Vest := CurrToReal(Gmag) + interm;
   Result := True;
-  // Rc and Ic are based on less data and are less accurate
+  // Rc and Ic are based on less data
   RcEst := 99.999;
   IcEst := 99.999;
   if (bpmrp >= -0.376) then begin
-    if (bpmg >= -0.179) then begin
-       interm := -0.04924 - 1.8723*bpmg + 0.47084*bpmg*bpmrp +0.38608*bpmrp;
-       RcEst := CurrToReal(Gmag) + interm;
-       RcEst := RoundCurrency(RcEst,False);
-    end;
-    // Ic is especially inaccurate (std err 0.087, max err 0.6!)
-    interm := PolEval(bpmrp,coff_ip,3);
-    IcEst := CurrToReal(Gmag) + interm;
+    interm := PolEval(bpmg,coff_rp,3);  // std err ~ 0.014, but only 68 stars
+    RcEst := CurrToReal(Gmag) + interm;
+    RcEst := RoundCurrency(RcEst,False);
+    if ok1 and (bpmg >= -0.179) then begin
+      interm := PolEval(bpmrp,coff_ip2,3) - 1.0157*bpmg; // std err ~ 0.017 (78 stars)
+    end else interm := PolEval(bpmrp,coff_ip1,3); // std err ~ 0.021 (78 stars)
+    IcEst := CurrToReal(Gmag) - interm;
     IcEst := RoundCurrency(IcEst,False);
   end;
 end;
+//--------------------------------------
+function WD_GaiaToVRI_bB(Gmag,RPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+var gmrp,interm:Real;
+const coff_v:array[0..2] of Real = ( -0.027774, 0.16022, 0.40827 );
+      coff_r:array[0..2] of Real = ( -0.0014536, -0.50506, 0.16002 );
+begin
+  Result := False;
+  if not MakeColorCheck(Gmag,RPmag,-0.301,0.82,gmrp) then Exit;
+  interm := PolEval(gmrp,coff_v,3); // std err ~ 0.043
+  Result := True;
+  Vest := interm + CurrToReal(Gmag);
+  // Rc and Ic are based on less data
+  RcEst := 99.999;
+  IcEst := 99.999;
+  if (gmrp >= -0.235) then begin
+    interm := PolEval(gmrp,coff_r,3); // std err ~ 0.015, but only 68 stars
+    Rcest := RealToCurr(interm) + Gmag;
+    RcEst := RoundCurrency(RcEst,False);
+    interm := 0.0089493 + 1.1322*gmrp; // std err ~ 0.017, but only 78 stars
+    Icest := Gmag - RealToCurr(interm);
+    IcEst := RoundCurrency(IcEst,False);
+  end;
+end;
+//---------------------------------------
+function WD_GaiaToVRI_bR(Gmag,BPmag:Currency; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+var gmbp,interm:Real;
+const coff_v:array[0..2] of Real = ( -0.0081346, 0.33511, 0.35441 );
+      coff_r:array[0..2] of Real = ( -0.026347, -0.74993, 0.52873 );
+      coff_i:array[0..2] of Real = (  0.070114,  1.8454, -0.95777 );
+begin
+  Result := False;
+  if not MakeColorCheck(BPmag,Gmag,-0.254,0.732,gmbp) then Exit;
+  interm := PolEval(gmbp,coff_v,3); // std err ~ 0.048
+  Result := True;
+  Vest := interm + CurrToReal(Gmag);
+  // Rc and Ic are based on less data
+  RcEst := 99.999;
+  IcEst := 99.999;
+  if (gmbp >= -0.179) then begin
+    interm := PolEval(gmbp,coff_r,3); // std err ~ 0.016, but only 68 stars
+    Rcest := RealToCurr(interm) + Gmag;
+    RcEst := RoundCurrency(RcEst,False);
+    interm := PolEval(gmbp,coff_i,3); // std err ~ 0.036, but only 78 stars
+    Icest := Gmag - RealToCurr(interm);
+    IcEst := RoundCurrency(IcEst,False);
+  end;
+end;
+//--------------------------------------
+function WD_GaiaToVRI_Gen(dr2mags:GaiaDR2Mags; out Vest:Real; out Rcest,Icest:Currency):Boolean;
+var G:Currency;
+begin
+  Result := False;
+  if dr2mags = nil then Exit;
+  G := dr2mags.G;
+  // all 3 mags
+  if (dr2mags.qual = GQ_OK) then begin
+      Result := WD_GaiaToVRI(G,dr2mags.BP,dr2mags.RP,Vest,Rcest,Icest);
+  end
+  // BP - G based
+  else if (dr2mags.qual = GQ_BP) then begin
+    Result := WD_GaiaToVRI_bR(G,dr2mags.BP,Vest,Rcest,Icest);
+  end
+  // G-RP
+  else if (dr2mags.qual = GQ_RP) then begin
+    Result := WD_GaiaToVRI_bB(G,dr2mags.RP,Vest,Rcest,Icest);
+  end
+end;
+
 //--------------------------------------
 // J H K needs a custom transform more, but accuracies are relativly poor...
 function WD_GaiaToJHK(Gmag,BPmag,RPmag:Currency; out Jest,Hest,Ksest:Currency):Boolean;

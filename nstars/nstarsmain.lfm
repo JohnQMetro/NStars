@@ -1338,6 +1338,10 @@ object NStarsMainForm: TNStarsMainForm
           Caption = 'Use G-G1'
           OnClick = WDT_GaiaBClick
         end
+        object WDT_GaiaD: TMenuItem
+          Caption = 'Use BP-G'
+          OnClick = WDT_GaiaDClick
+        end
       end
       object MenuItem4: TMenuItem
         Caption = '-'

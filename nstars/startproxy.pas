@@ -1185,9 +1185,8 @@ begin
 end;
 //-------------------------------------------
 function StarProxy.BPRP_To_VRI():Boolean;
-var okay,dored,isWD:Boolean;
-    cpick:Integer;
-    Gin,BPmRP, BPin,RPin,Jin:Currency;
+var okay,isWD:Boolean;
+    Gin,BPin,RPin,Jin:Currency;
     Best,Rcest,Icest:Currency;
     Vest:Real;
 const amsg = 'estimated from Gaia DR2 magnitudes.';
@@ -1211,7 +1210,7 @@ begin
   // special white dwarf specific method
   isWD := AnsiStartsStr('D',ccomponent.SpectralClass);
   if isWD then begin
-    okay := WD_GaiaToVRI(Gin,Bpin,RPin,Vest,Rcest,Icest);
+    okay := WD_GaiaToVRI_Gen(ccomponent.dr2mags,Vest,Rcest,Icest);
   end
   else begin
     // we have different methods depending on values...
@@ -1469,12 +1468,12 @@ var gm,g1m,bpm,rpm:Currency;
     rval:Word;
 begin
   Result := False;
-  if (which < 1) or (which > 3) then Exit;
+  if (which < 1) or (which > 4) then Exit;
   // checking if we have G
   okay := (ccomponent <> nil) and (ccomponent.dr2mags <> nil);
   if okay then begin
     gm := ccomponent.dr2mags.G;
-    okay := okay and (gm < 90) and (ccomponent.dr2mags.Gerr < 0.015);
+    okay := okay and (gm < 90) and (ccomponent.dr2mags.Gerr < 0.025);
   end;
   if (not okay) then begin
     ShowMessage('Cannot estimate, missing G');
@@ -1484,26 +1483,31 @@ begin
   if (which = 1) then begin
     okay := ccomponent.dr2mags.ValidBPmRP;
     rpm := ccomponent.dr2mags.RP;
+    bpm := ccomponent.dr2mags.BP;
   end else if (which = 2) then begin
     rpm := ccomponent.dr2mags.RP;
-    okay := (rpm < 90) and (ccomponent.dr2mags.RPerr < 0.025);
+    okay := (rpm < 90) and (ccomponent.dr2mags.RPerr < 0.05);
   end else if (which = 3) then begin
     okay := (ccomponent.fluxtemp <> nil);
     if okay then begin
       g1m := ccomponent.fluxtemp.gaia_mag;
       okay := g1m < 90;
     end;
+  end else if (which = 4) then begin
+    bpm := ccomponent.dr2mags.BP;
+    okay := (bpm < 90) and (ccomponent.dr2mags.BPerr < 0.05);
   end;
   if not okay then begin
     ShowMessage('Cannot estimate, missing magnitudes.');
     Exit;
   end;
   // computing TEff estimate
-  bpm := ccomponent.dr2mags.BP;
+
   case which of
     1 : okay := GDA_TEff(gm,bpm,rpm,teff_out);
     2 : okay := GDA_TEffr(gm,rpm,teff_out);
     3 : okay := GDA_TEffx(gm,g1m,teff_out);
+    4 : okay := GDA_TEffb(gm,bpm,teff_out);
   end;
 
   if not okay then begin

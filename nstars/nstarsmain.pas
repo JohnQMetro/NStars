@@ -43,6 +43,7 @@ type
     EstJHKPSMI: TMenuItem;
     EstSMSSMI: TMenuItem;
     EstWDTeff: TMenuItem;
+    WDT_GaiaD: TMenuItem;
     WD_GaiaC: TMenuItem;
     WDT_GaiaA: TMenuItem;
     WDT_GaiaB: TMenuItem;
@@ -350,6 +351,7 @@ type
     procedure Viz2MassGetMIClick(Sender: TObject);
     procedure WDT_GaiaAClick(Sender: TObject);
     procedure WDT_GaiaBClick(Sender: TObject);
+    procedure WDT_GaiaDClick(Sender: TObject);
     procedure WD_GaiaCClick(Sender: TObject);
     procedure WriteEstimatorMIClick(Sender: TObject);
     procedure WrUnmCSVMIClick(Sender: TObject);
@@ -1556,6 +1558,18 @@ var rok:Boolean;
 begin
   if current.ccomponent <> nil then begin
     rok := current.DA_GaiaTEff(3);
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end;
+  end;
+end;
+
+procedure TNStarsMainForm.WDT_GaiaDClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if current.ccomponent <> nil then begin
+    rok := current.DA_GaiaTEff(4);
     if rok then begin
       // reloading after data has been set
       StarData1;

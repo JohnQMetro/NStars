@@ -108,6 +108,7 @@ function EstDATEff_DR2(const BPmRP:Currency; out TEff_est:Integer):Boolean;
 function EstDATEff_DR2r(G:Currency; RP:Currency; out TEff_est:Integer):Boolean;
 function GDA_TEff(G,BP,RP:Currency; out TEff_est:Integer):Boolean;
 function GDA_TEffr(G,RP:Currency; out TEff_est:Integer):Boolean;
+function GDA_TEffb(G,BP:Currency; out TEff_est:Integer):Boolean;
 function GDA_TEffx(G,G1:Currency; out TEff_est:Integer):Boolean;
 // extra tests
 procedure MakeWDMassRadiusCSV();
@@ -1086,6 +1087,23 @@ begin
   tempint := round(interm/50);
   TEff_est := tempint*50;
 end;
+//-----------------------------------------------------------
+(* using no RP. charts shw a split line at hotter temps, which I will
+avoid for now. *)
+function GDA_TEffb(G,BP:Currency; out TEff_est:Integer):Boolean;
+var bpmg,interm:Real;
+    tempint:Int64;
+const coff:array[0..3] of Real = ( 9395.1, -17817, 25483, -15726 );
+begin
+  Result := False;
+  if not MakeColorCheck(BP,G,0.25,0.776,bpmg) then Exit;
+  interm := PolEval(bpmg,coff,4); // std err ~ 86K
+  // rounding
+  Result := True;
+  tempint := round(interm/50);
+  TEff_est := tempint*50;
+end;
+
 //------------------------------------------------------------
 (* Uses G and G from Gaia DR1 to estimate DA TEff *)
 function GDA_TEffx(G,G1:Currency; out TEff_est:Integer):Boolean;
