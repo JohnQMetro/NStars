@@ -776,7 +776,7 @@ const coff_v:array[0..2] of Real = ( -0.027774, 0.16022, 0.40827 );
       coff_r:array[0..2] of Real = ( -0.0014536, -0.50506, 0.16002 );
 begin
   Result := False;
-  if not MakeColorCheck(Gmag,RPmag,-0.301,0.82,gmrp) then Exit;
+  if not MakeColorCheck(Gmag,RPmag,-0.301,0.83,gmrp) then Exit;
   interm := PolEval(gmrp,coff_v,3); // std err ~ 0.043
   Result := True;
   Vest := interm + CurrToReal(Gmag);
@@ -929,19 +929,19 @@ end;
 function TychoG_toRI(Gmag,G1in:Currency; Vt:Real; out RcEst,IcEst:Currency):Boolean;
 var interm,vtmg,gmg1:Real;
     useg:Boolean;
-const coff_r:array[0..2] of Real = ( -0.066729, -0.68292, 0.58478 );
-      coff_i:array[0..2] of Real = ( 0.31848, 1.1628, -0.30772 );
+const coff_r:array[0..2] of Real = ( -0.14589, -0.36123, 0.36372 );
+      coff_i:array[0..2] of Real = ( 0.24121, 1.3251, -0.38169 );
 begin
   Result := False;
-  if not MakeColorCheck(Vt,Gmag,0.185,1.48,vtmg) then Exit;
+  if not MakeColorCheck(Vt,Gmag,0.213,2.014,vtmg) then Exit;
   useg := MakeColorCheck(Gmag,G1in,0.006,0.18,gmg1);
-  // Rc (standard error ~0.053)
+  // Rc (standard error ~0.063)
   interm := PolEval(vtmg,coff_r,3);
   RcEst := Gmag + RealToCurr(interm);
   RcEst := RoundCurrency(RcEst,False);
   // Ic
   if useg and (vtmg <= 1.442) then begin
-    interm := 0.34078 + 0.24074*vtmg + 4.296*gmg1;
+    interm := 0.30797 + 0.23138*vtmg + 4.6568*gmg1;
   end else interm := PolEval(vtmg,coff_i,3);
   IcEst := Gmag - RealToCurr(interm);
   IcEst := RoundCurrency(IcEst,False);

@@ -81,33 +81,32 @@ end;
 into 4 groups, which then have different equations. *)
 function USNO_IJ_Ic(UBI,J:Currency; out IcEst:Currency):Boolean;
 var bimj,interm:Real; classn:Word;
-const poly1:array[0..2] of Real = ( 0.078344, 0.36977, -0.010863 );
-      poly4:array[0..2] of Real = ( -0.096615, 1.5505, -0.1991 );
+const poly4:array[0..3] of Real = ( 5.2828, -4.5012, 1.9699, -0.24684 );
 begin
   Result := False;
   IcEst := UBI;
   // classifying
   classn := ClassifyUSNO_I(UBI,J,bimj);
   if classn = 0 then Exit;
-  // Class 1: sensible looking line (~1100 stars, std err ~0.0573 at 98%)
+  // Class 1: sensible looking line (~1470 stars, std err ~0.063 at 99%)
   if (classn = 1) then begin
-    if (bimj < 0.667) or (bimj > 4.731) then Exit;
-    interm := PolEval(bimj,poly1,3);
+    if (bimj < 1.022) or (bimj > 4.731) then Exit;
+    interm := 0.21276 + 0.29254*bimj;
   end
-  // Class 2: the ugly blob (~5000 stars, std err ~0.153 at 98%)
+  // Class 2: the ugly blob (~6300 stars, std err ~0.146 at 98%)
   else if (classn = 2) then begin
     if (bimj < -0.243) or (bimj > 3.249) then Exit;
-    interm := 1.1673 + 0.214*bimj;
+    interm := 1.1902 + 0.1983*bimj;
   end
-  // Class 3: mostly white dwarfs, I think (~60 stars, std err ~0.161 at 95%)
+  // Class 3: mostly white dwarfs, I think (~219 stars, std err ~0.153 at 98%)
   else if (classn = 3) then begin
-    if (bimj < -0.912) or (bimj >0.957) then Exit;
-    interm := 0.18482 + 0.47801*bimj;
+    if (bimj < -0.912) or (bimj >0.990) then Exit;
+    interm := 0.11985 + 0.39225*bimj;
   end
-  // Class 4: the blob's thin red tail (~60 stars, std err ~0.172 at 95%)
+  // Class 4: the blob's thin red tail (~60 stars, std err ~0.182 at 95%)
   else begin
     if (bimj < 1.535) or (bimj > 4.363) then Exit;
-    interm := PolEval(bimj,poly4,3);
+    interm := PolEval(bimj,poly4,4);
   end;
   // if we get here, we deliver a result
   Result := True;
@@ -144,7 +143,7 @@ begin
   RcEst := 99.999;
   if (interm < 9000) or (interm2 < 9000) then begin
     if (interm < 9000) then RcEst := RealToCurr(gp - interm)
-    else RcEst := RealToCurr(rp - interm);
+    else RcEst := RealToCurr(rp - interm2);
     RcEst := RoundCurrency(RcEst,False);
     Result := True;
   end;
@@ -159,7 +158,7 @@ begin
   IcEst := 99.999;
   if (interm < 9000) or (interm2 < 9000) then begin
     if (interm < 9000) then IcEst := RealToCurr(gp - interm)
-    else IcEst := RealToCurr(rp - interm);
+    else IcEst := RealToCurr(rp - interm2);
     IcEst := RoundCurrency(IcEst,False);
     Result := True;
   end;
