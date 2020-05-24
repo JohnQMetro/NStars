@@ -37,6 +37,8 @@ halfup is True is you want 0.005 to always be rounded up, bankers round otherwis
 function RoundCurrency(const thevalue:Currency; halfup:Boolean):Currency;
 function CeilMagCurrency(const thevalue:Currency):Currency;
 function Ceil3rdCurrency(const thevalue:Currency):Currency;
+// combo RealToCurr and RoundCurrency
+function RoundConv(const invalue:Real):Currency;
 
 (* Converts a Currency max and min to a median and range, rounded to 2 decimals *)
 function CurrMinMaxToMedRange(minc,maxc:Currency; out med,range:Currency):Boolean;
@@ -192,6 +194,13 @@ begin
   addup := 10 - leftover;
   IntVal += addup;
 end;
+//----------------------------------------------
+// combo RealToCurr and RoundCurrency
+function RoundConv(const invalue:Real):Currency;
+begin
+  Result := RoundCurrency(RealToCurr(invalue),False);
+end;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* Converts a Currency max and min to a median and range, rounded to 2 decimals *)
 function CurrMinMaxToMedRange(minc,maxc:Currency; out med,range:Currency):Boolean;

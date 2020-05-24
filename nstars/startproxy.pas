@@ -83,6 +83,7 @@ StarProxy = class
     function Tycho2G_Helper(indata:string):Boolean;
     function VtG_Helper(indata:string):Boolean;
     function SMSSHelper(indata:string):Boolean;
+    function BinaryGSplit():Boolean;
 end;
 
 var
@@ -1636,6 +1637,11 @@ begin
   else begin
      Result := ShowEst(Vest,99.9999,RcEst,IcEst,amsg);
   end;
+end;
+//-----------------------------------------------------------------
+function StarProxy.BinaryGSplit():Boolean;
+begin
+  Result := sys.ApplyGMagSplit(starindex);
 end;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 begin

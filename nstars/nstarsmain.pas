@@ -43,6 +43,7 @@ type
     EstJHKPSMI: TMenuItem;
     EstSMSSMI: TMenuItem;
     EstWDTeff: TMenuItem;
+    MagSplitG_MI: TMenuItem;
     WDT_GaiaD: TMenuItem;
     WD_GaiaC: TMenuItem;
     WDT_GaiaA: TMenuItem;
@@ -265,6 +266,7 @@ type
     procedure LoadTGASCSVClick(Sender: TObject);
     procedure LuminosityProbMIClick(Sender: TObject);
     procedure AddUMGaiaDR2MIClick(Sender: TObject);
+    procedure MagSplitG_MIClick(Sender: TObject);
     procedure MainListPopupMenuPopup(Sender: TObject);
     procedure MergeIntoMIClick(Sender: TObject);
     procedure MISwapParallaxClick(Sender: TObject);
@@ -2245,6 +2247,20 @@ procedure TNStarsMainForm.AddUMGaiaDR2MIClick(Sender: TObject);
 begin
   if GaiaDR2AddForm = nil then GaiaDR2AddForm := TGaiaDR2AddForm.Create(Self);
   GaiaDR2AddForm.Show;
+end;
+
+procedure TNStarsMainForm.MagSplitG_MIClick(Sender: TObject);
+var rok:Boolean;
+begin
+  if (current <> nil) and (current.cstar <> nil) then begin
+    rok := current.BinaryGSplit();
+    if rok then begin
+      // reloading after data has been set
+      StarData1;
+    end else begin
+      ShowMessage('Could not split magnitudes!');
+    end;
+  end;
 end;
 
 procedure TNStarsMainForm.MainListPopupMenuPopup(Sender: TObject);

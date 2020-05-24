@@ -7,7 +7,7 @@ interface
 uses SysUtils, Classes, df_strings, StrUtils,
  StarDataBase, newlocation, star_names (* namedata *), unitdata, simbad, sptfluxest,
  NewStar, tgas, constellation, StarEstimator, StarExt2, gaiadr2base, fluxtransform,
- utilities2, fluxgaia, locavg;
+ utilities2, fluxgaia, locavg, magsplit;
 
 type
 //----------------------------------------------------------
@@ -125,6 +125,7 @@ StarSystem = class (StarBase)
     procedure UpdateEstimates;
     function WriteEstimateData():Integer;
     function HipTycNames():TStringList;
+    function ApplyGMagSplit(stardex:Integer):Boolean;
     (* Gaia DR2 related *)
     function GetStuffForMatching(stardex:Integer; out starloc:Location; out stnames:StarNames; out sysnames:StarNames):Boolean;
     function ApplyGaiaObject(stardex:Integer; inobj:GaiaDR2Star; conditional:Boolean):Boolean;
@@ -1741,6 +1742,24 @@ begin
   // we never return empty TStringList Objects
   if Result.Count = 0 then FreeAndNil(Result);
 end;
+//----------------------------------------------
+function StarSystem.ApplyGMagSplit(stardex:Integer):Boolean;
+var arity:Integer;
+    split:MagSplitter;
+begin
+  Result := False;
+  // basic bad cases
+  if (stardex < 1) or (not MultiParts) then Exit;
+  arity := GetCompC();
+  if (stardex > (arity -1)) then Exit;
+  split := MakeSpliter(new_components[stardex-1],new_components[stardex]);
+  if split = nil then Exit;
+  // here, we proceed with trying to split
+  if not split.SetDeltaG() then Exit;
+  if not split.CalculateSplit() then Exit;
+  Result := split.ApplySplit();
+end;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (* Gaia DR2 related *)
 //------------------------------------

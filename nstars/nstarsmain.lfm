@@ -14,7 +14,7 @@ object NStarsMainForm: TNStarsMainForm
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.0.8.0'
   object SystemEditorBox: TGroupBox
     Left = 200
     Height = 540
@@ -732,6 +732,7 @@ object NStarsMainForm: TNStarsMainForm
                 end
                 inherited FeHPMLabel: TLabel
                   Height = 13
+                  Top = 14
                 end
                 inherited SimbadFeHDisplay: TLabel
                   Height = 13
@@ -1272,6 +1273,10 @@ object NStarsMainForm: TNStarsMainForm
       object Tycho2MagMI: TMenuItem
         Caption = 'Enter Tycho-2 Magnitudes...'
         OnClick = Tycho2MagMIClick
+      end
+      object MagSplitG_MI: TMenuItem
+        Caption = 'Split Mags using DR2 G'
+        OnClick = MagSplitG_MIClick
       end
       object MI_EstUGaia: TMenuItem
         Caption = 'Estimate Mags using Gaia DR2'
