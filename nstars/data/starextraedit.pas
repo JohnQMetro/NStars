@@ -87,7 +87,6 @@ begin
     BolLumEdit.Text := ExtraData.BolometricLumMedian;
     BLUncEdit.Text := ExtraData.BolometricLumUncertainty;
   end
-  else FinalSave();
 
 end;
 
@@ -100,7 +99,6 @@ begin
     AgeEdit.Text := ExtraData.AgeMedian;
     AgeUncEdit.Text := ExtraData.AgeUncertainty;
   end
-  else FinalSave();
 
 end;
 
@@ -113,7 +111,6 @@ begin
     AgeEdit.Text := ExtraData.AgeMedian;
     AgeUncEdit.Text := ExtraData.AgeUncertainty;
   end
-  else FinalSave();
 
 end;
 
@@ -134,7 +131,6 @@ begin
     DiameterEdit.Text := ExtraData.DiameterMedian;
     DiamUncEdit.Text := ExtraData.DiameterUncertainty;
   end
-  else FinalSave();
 
 end;
 
@@ -147,7 +143,6 @@ begin
     DiameterEdit.Text := ExtraData.DiameterMedian;
     DiamUncEdit.Text := ExtraData.DiameterUncertainty;
   end
-  else FinalSave();
 
 end;
 
@@ -165,7 +160,6 @@ begin
     MassEdit.Text := ExtraData.MassMedian;
     MUncEdit.Text := ExtraData.MassUncertainty;
   end
-  else FinalSave();
 
 end;
 
@@ -257,6 +251,7 @@ begin
     if ExistingData then begin
       FreeAndNil(Star_ptr.ExtraInfo);
       ExistingData := False;
+      ExtraData := nil; // new
     end;
   end
   // saved data is usable, but Extra Data is not attached to the star...
@@ -271,7 +266,7 @@ function TStarExtraDataFrame.SaveValues(showerr:Boolean):Boolean;
 begin
   Result := False;
   if Star_ptr = nil then Exit;
-  Assert(ExtraData <> nil);
+  if ExtraData = nil then Exit;
   // saving
   if not SaveMass(showerr) then Exit;
   if not SaveBolometricLuminosity(showerr) then Exit;
