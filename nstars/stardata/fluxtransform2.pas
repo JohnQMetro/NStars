@@ -93,10 +93,11 @@ begin
     if (bimj < 1.022) or (bimj > 4.731) then Exit;
     interm := 0.21276 + 0.29254*bimj;
   end
-  // Class 2: the ugly blob (~6300 stars, std err ~0.146 at 98%)
+  // Class 2: the ugly blob (~6390 stars, std err ~0.126 at 99%)
   else if (classn = 2) then begin
-    if (bimj < -0.243) or (bimj > 3.249) then Exit;
-    interm := 1.1902 + 0.1983*bimj;
+    if (bimj < -0.887) or (bimj > 3.7) then Exit;
+    if (UBI < 10) or (UBI > 15.83) then Exit;
+    interm := 0.17814 + 0.025368*bimj + 0.10358*UBI;
   end
   // Class 3: mostly white dwarfs, I think (~219 stars, std err ~0.153 at 98%)
   else if (classn = 3) then begin
