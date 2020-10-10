@@ -920,8 +920,8 @@ begin
   if (imag < 90) and denisi then imag := DENIStoCousinsI(imag);
   // B Catalog conversions for B2 (assuming B2 instead of B1)
   if BcatB then USNO_B2_Adjust(bmag,jmag,hmag,kmag,bmag);
-  // B Catalog conversions for R2 (assuming R2 instead of B1)
-  if BcatR and (rmag > 9) then USNO_R2_Adjust(rmag,jmag,hmag,kmag,rmag);
+  // B Catalog conversions for R1/R2 (inferred)
+  if BcatR then USNO_RJ_Rc(rmag,jmag,rmag);
   // B Catalog conversion for Infrared
   if BcatI then USNO_IJ_Ic(imag,jmag,imag);
   // UCAC fit Model Magnitude is not Rc

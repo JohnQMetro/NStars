@@ -16,6 +16,10 @@ function CMC15_to_VRI(CMC,J:Currency; out Vest:Real; out RcEst,IcEst:Currency):B
 // revised USNO B catalog I (and 2MASS J) to Ic
 function ClassifyUSNO_I(UBI,J:Currency; out ij:Real):Word;
 function USNO_IJ_Ic(UBI,J:Currency; out IcEst:Currency):Boolean;
+// revised USNO B catalog R (and 2MASS J) to Rc
+function ClassifyUSNO_R(UBR,J:Currency; out rj:Real):Word;
+function USNO_RJ_Rc(UBR,J:Currency; out RcEst:Currency):Boolean;
+
 //--------------------------------------------------------------
 // revised APASS transforms (main improvement: ip is not necessary anymore
 function APASS_to_RI(gp,rp,ip:Real; J:Currency; out RcEst,IcEst:Currency):Boolean;
@@ -114,7 +118,63 @@ begin
   IcEst := RealToCurr(interm) + J;
   IcEst := RoundCurrency(IcEst,False)
 end;
-//----------------------------------------------------------------
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// revised USNO B catalog R (and 2MASS J) to Rc
+//-----------------------------------------------
+(* The USNO B catalog provides 2 R values that differ systematically, but
+Simbad does not say which is used when it provides R from USNO-B. To try
+and get better quality transforms, we'll categorize stars by color and
+magnitude. *)
+function ClassifyUSNO_R(UBR,J:Currency; out rj:Real):Word;
+begin
+  Result := 0;
+  if (UBR > 90) or (J > 90) then Exit;
+  rj := UBR - J;
+  // white Dwarf
+  if rj < (0.5*UBR - 5.5) then Result := 1
+  // some bright stars
+  else if (rj < 2) then begin
+    if (UBR < 8.5) then Result := 2
+    else Result := 3;
+  end
+  // redder stars
+  else begin
+      if UBR < 10 then Result := 4
+      else if UBR < 11.6 then Result := 5
+      else begin
+          if rj >= ((-2/3.9)*UBR + 12.372795) then Result := 7
+          else Result := 6;
+      end;
+  end;
+end;
+//------------------------------------------------
+// These equations do not produce very good results. They asssume Simbad
+// picks the R1 magnitude over the R2
+// not going to bother with bounds
+function USNO_RJ_Rc(UBR,J:Currency; out RcEst:Currency):Boolean;
+var rclass:Word;
+    rj,interm:Real;
+begin
+  Result := False;
+  rclass := ClassifyUSNO_R(UBR,J,rj);
+  case rclass of
+      0: Exit;
+      1: interm := 0.16285 + 0.57942*rj; // White Dwarfs, err~0.256 for 242
+      2: interm := 0.16176 + 1.038*rj; // Bright Stars, err~0.42 for 238
+      3: interm := 1.5732 - 1.0413*rj + 0.23395*UBR; // Wierd Miscalibration? err~0.331 for 2563
+      4: Exit; // too small to bother with
+      5: interm := 0.60783 + 0.76131*rj; // A big spike before the main blob err~0.275 for 584
+      6: interm := -0.014832 + 0.23982*rj + 0.16209*UBR; // the main event, err~0.216 for 5428
+      7: interm := -0.72699 - 0.41632*rj + 0.38808*UBR; // red tail, err~0.545 for 67
+      otherwise Exit
+  end;
+  // if we get here, we deliver a result
+  Result := True;
+  RcEst := RealToCurr(interm) + J;
+  RcEst := RoundCurrency(RcEst,False)
+end;
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // APASS g r i to Rc and Ic (ignore SDSS, no white dwarves)
 function APASS_to_RI(gp,rp,ip:Real; J:Currency; out RcEst,IcEst:Currency):Boolean;
 var gmr,gmj,gmi,rmi,imj,interm,interm2:Real;
