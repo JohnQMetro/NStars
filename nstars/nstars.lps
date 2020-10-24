@@ -8,10 +8,9 @@
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <CursorPos Y="26"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
@@ -89,11 +88,10 @@
       <Unit8>
         <Filename Value="import\simbad.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="912"/>
         <CursorPos X="11" Y="924"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
@@ -385,10 +383,12 @@
         <Filename Value="stardata\whitedwarf.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="WhiteDwarf"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1069"/>
-        <CursorPos X="25" Y="1100"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="193"/>
+        <CursorPos X="23" Y="209"/>
         <UsageCount Value="204"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit36>
       <Unit37>
@@ -568,7 +568,7 @@
       <Unit54>
         <Filename Value="startproxy.pas"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="1625"/>
+        <TopLine Value="1623"/>
         <CursorPos X="21" Y="86"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -690,12 +690,10 @@
       <Unit67>
         <Filename Value="stardata\fluxtransform2.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="154"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="157"/>
         <CursorPos X="20" Y="156"/>
         <UsageCount Value="65"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit67>
       <Unit68>
@@ -855,55 +853,11 @@
         <DefaultSyntaxHighlighter Value="XML"/>
       </Unit85>
     </Units>
-    <JumpHistory Count="12" HistoryIndex="11">
+    <JumpHistory Count="1">
       <Position1>
         <Filename Value="startproxy.pas"/>
         <Caret Line="85" Column="17" TopLine="72"/>
       </Position1>
-      <Position2>
-        <Filename Value="stardata\fluxtransform2.pas"/>
-        <Caret Line="18" Column="16" TopLine="10"/>
-      </Position2>
-      <Position3>
-        <Filename Value="stardata\fluxtransform2.pas"/>
-        <Caret Line="130" Column="43" TopLine="114"/>
-      </Position3>
-      <Position4>
-        <Filename Value="stardata\fluxtransform2.pas"/>
-        <Caret Line="20" Column="46"/>
-      </Position4>
-      <Position5>
-        <Filename Value="stardata\fluxtransform2.pas"/>
-        <Caret Line="185" Column="38" TopLine="165"/>
-      </Position5>
-      <Position6>
-        <Filename Value="stardata\fluxtransform2.pas"/>
-        <Caret Line="177" Column="47" TopLine="164"/>
-      </Position6>
-      <Position7>
-        <Filename Value="stardata\fluxtransform2.pas"/>
-        <Caret Line="21" Column="16" TopLine="8"/>
-      </Position7>
-      <Position8>
-        <Filename Value="import\simbad.pas"/>
-        <Caret Line="920" Column="46" TopLine="906"/>
-      </Position8>
-      <Position9>
-        <Filename Value="import\simbad.pas"/>
-        <Caret Line="924" Column="11" TopLine="912"/>
-      </Position9>
-      <Position10>
-        <Filename Value="stardata\fluxtransform2.pas"/>
-        <Caret Line="153" Column="35" TopLine="151"/>
-      </Position10>
-      <Position11>
-        <Filename Value="stardata\fluxtransform2.pas"/>
-        <Caret Line="169" Column="44" TopLine="157"/>
-      </Position11>
-      <Position12>
-        <Filename Value="stardata\fluxtransform2.pas"/>
-        <Caret Line="170" Column="16" TopLine="158"/>
-      </Position12>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

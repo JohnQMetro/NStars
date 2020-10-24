@@ -21,9 +21,10 @@ type
 (* 2 classes used to hold data taken or calculated from the DA and DB
 tables from 'Synthetic Colors and Evolutionary Sequences of Hydrogen-and-
 Helium-Atmosphere White Dwarfs' at http://www.astro.umontreal.ca/~bergeron/CoolingModels/
-Holberg & Bergeron (2006, AJ, 132, 1221), Kowalski & Saumon (2006, ApJ, 651,
-L137), Tremblay et al. (2011, ApJ, 730, 128), Bergeron et al. (2011, ApJ,
-737, 28), and Blouin et al. (2018, ApJ, 863, 184).
+Holberg & Bergeron (2006, AJ, 132, 1221), Wesemael, & Beauchamp (1995, PASP,
+107, 1047), Blouin et al. (2018, ApJ, 863, 184), Bédard et al. (2020, ApJ, 901, 93),
+Tremblay, Bergeron, & Gianninas (2011, ApJ, 730, 128),Bergeron et al. (2011, ApJ, 737, 28).
+Kowalski & Saumon (2006, ApJ, 651, L137).
 - This data is used to estimate BCv and Thermal Bloat from TEff and log g. *)
 WDBoloEntry = class
   protected
@@ -203,9 +204,9 @@ var DA_loggdex,DA_teffdex,DB_loggdex,DB_teffdex:Integer;
     curritem:WDBoloEntry;
     infile:TextFile;
     currline:string;
-const DA_TEffCount = 51;
+const DA_TEffCount = 57;
       DA_LogCount =  5;
-      DB_TEffCount = 62;
+      DB_TEffCount = 72;
       DB_LogCount =  5;
 begin
   Result := False;
