@@ -986,7 +986,7 @@ object NStarsMainForm: TNStarsMainForm
     TabOrder = 1
   end
   object MainMenu1: TMainMenu
-    left = 12
+    left = 16
     top = 516
     object File1: TMenuItem
       Caption = 'File'
@@ -1476,6 +1476,10 @@ object NStarsMainForm: TNStarsMainForm
       object ZeroRadialVelocity1: TMenuItem
         Caption = 'Zero Radial Velocity'
         OnClick = ZeroRadialVelocity1Click
+      end
+      object LargeRVMI: TMenuItem
+        Caption = 'Radial Velocity > 150'
+        OnClick = LargeRVMIClick
       end
       object LocationUncertian1: TMenuItem
         Caption = 'Parallax Uncertian'

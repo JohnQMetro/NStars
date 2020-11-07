@@ -132,7 +132,7 @@ begin
        pmdecsum += pm_dec[ldex_2]*masses[ldex_2];
        pmmsum += masses[ldex_2];
        // radial velocity (0 is not counted)
-       if (radialv[ldex_2] > 0) then begin
+       if (radialv[ldex_2] <> 0) then begin
           radialsum += masses[ldex_2]*radialv[ldex_2];
           radmsum += masses[ldex_2];
        end;

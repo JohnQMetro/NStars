@@ -79,6 +79,7 @@ StarList = class
     procedure OpenFromFile(fnin:TFileName);
     // filters
     procedure RadVIsZeroFilter;
+    procedure RadVIsTooBig;
     procedure DistanceTest(indist:Real; targyear:Integer);
     procedure CoolAsCats(maxcats:Integer);
     procedure ParallaxUncertain;
@@ -802,6 +803,23 @@ begin
   // setting the pointers
   SetAfterFilter;
 end;
+//-------------------------------------------------------
+procedure StarList.RadVIsTooBig;
+var I:Integer;
+begin
+  ClearFiltered;
+  // copying over
+  for I := 0 to maincount - 1 do begin
+    if System_List[I].RVB then begin
+      Inc(fcount);
+      SetLength(Filtered_List,fcount);
+      Filtered_List[fcount-1] := System_List[I];
+    end;
+  end;
+  // setting the pointers
+  SetAfterFilter;
+end;
+
 //-------------------------------------------------------
 procedure StarList.DistanceTest(indist:Real; targyear:Integer);
 var I:Integer;

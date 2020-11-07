@@ -44,6 +44,7 @@ type
     EstSMSSMI: TMenuItem;
     EstWDTeff: TMenuItem;
     MagSplitG_MI: TMenuItem;
+    LargeRVMI: TMenuItem;
     WDT_GaiaD: TMenuItem;
     WD_GaiaC: TMenuItem;
     WDT_GaiaA: TMenuItem;
@@ -257,6 +258,7 @@ type
     procedure IndepLocationCBChange(Sender: TObject);
     procedure InsertStarMIClick(Sender: TObject);
     procedure IntDupMIClick(Sender: TObject);
+    procedure LargeRVMIClick(Sender: TObject);
     procedure ListofStarSystemsDrawItem(Control: TWinControl; Index: Integer; Rect: TRect; State: TOwnerDrawState);
     (* menu item actions *)
     procedure ListOfStarSystemsClick(Sender: TObject);
@@ -515,6 +517,14 @@ begin
   IntDupMI.Checked := True;
   primaryl.InternalCatalogDuplicates();
   if current.sys <> nil then  ChangeSystem;
+end;
+
+procedure TNStarsMainForm.LargeRVMIClick(Sender: TObject);
+begin
+  UncheckFilters;
+  LargeRVMI.Checked := True;
+  primaryl.RadVIsTooBig;
+  if current.sys <> nil then ChangeSystem;
 end;
 
 procedure TNStarsMainForm.AddBDMIClick(Sender: TObject);

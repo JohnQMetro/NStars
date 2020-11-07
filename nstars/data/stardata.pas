@@ -136,6 +136,7 @@ StarSystem = class (StarBase)
     function StarSummaryIDPos(stardex:Integer):string;
     (* filters *)
     function RVZ:Boolean;
+    function RVB:Boolean;
     function LessThanLY(otherpoint:Location; maxdist:Real; targyear:Integer):Boolean;
     function NotEnoughCats(maxcname:Integer):Boolean;
     function ParallaxUncertain:Boolean;
@@ -1999,6 +2000,14 @@ function StarSystem.RVZ:Boolean;
 begin
   if id = 1 then Result := True
   else Result := (the_location.RadialVelocity = 0);
+end;
+//-----------------------------------------------------------
+(* true if the radial velocity magnitude is more than 150, to
+ttry and locate values that are way too large. *)
+function StarSystem.RVB:Boolean;
+begin
+  if id = 1 then Result := True
+  else Result := Abs(the_location.RadialVelocity) > 150;
 end;
 //-----------------------------------------------------------
 (* returns true if the distance between this system's primary

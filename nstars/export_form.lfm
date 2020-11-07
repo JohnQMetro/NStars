@@ -7,7 +7,7 @@ object ExportForm: TExportForm
   ClientHeight = 242
   ClientWidth = 572
   OnActivate = FormActivate
-  LCLVersion = '1.8.2.0'
+  LCLVersion = '2.0.8.0'
   object ExportFormatRG: TRadioGroup
     Left = 360
     Height = 105
@@ -53,11 +53,11 @@ object ExportForm: TExportForm
     Font.Name = 'Courier New'
     Font.Pitch = fpFixed
     Font.Quality = fqDraft
-    MaxLength = 4
+    MaxLength = 5
     ParentFont = False
     TabOrder = 1
-    EditMask = '0000'
-    Text = '2320'
+    EditMask = '90000'
+    Text = '     '
     SpaceChar = '_'
   end
   object Use2300NamCB: TCheckBox

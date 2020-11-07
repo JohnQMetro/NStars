@@ -19,22 +19,25 @@
         <ComponentName Value="NStarsMainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="2246"/>
-        <CursorPos X="16" Y="2256"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="249"/>
+        <CursorPos X="47" Y="261"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="collecdata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="151"/>
-        <CursorPos Y="447"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="788"/>
+        <CursorPos X="23" Y="813"/>
         <UsageCount Value="201"/>
         <Bookmarks Count="1">
-          <Item0 Y="153" ID="2"/>
+          <Item0 Y="154" ID="2"/>
         </Bookmarks>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -115,10 +118,11 @@
       <Unit11>
         <Filename Value="data\stardata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1743"/>
-        <CursorPos X="32" Y="1760"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="1994"/>
+        <CursorPos X="56" Y="2010"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
@@ -345,10 +349,13 @@
         <ComponentName Value="ExportForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="134"/>
         <CursorPos X="40" Y="143"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
       <Unit33>
@@ -383,7 +390,6 @@
         <Filename Value="stardata\whitedwarf.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="WhiteDwarf"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="193"/>
         <CursorPos X="23" Y="209"/>
@@ -681,10 +687,11 @@
       <Unit66>
         <Filename Value="data\locavg.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="111"/>
-        <CursorPos X="81" Y="116"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="123"/>
+        <CursorPos X="30" Y="135"/>
         <UsageCount Value="157"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit66>
       <Unit67>
@@ -853,11 +860,59 @@
         <DefaultSyntaxHighlighter Value="XML"/>
       </Unit85>
     </Units>
-    <JumpHistory Count="1">
+    <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
         <Filename Value="startproxy.pas"/>
         <Caret Line="85" Column="17" TopLine="72"/>
       </Position1>
+      <Position2>
+        <Filename Value="import\export_form.pas"/>
+        <Caret Line="143" Column="40" TopLine="134"/>
+      </Position2>
+      <Position3>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="24" Column="11" TopLine="11"/>
+      </Position3>
+      <Position4>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="2256" Column="16" TopLine="2246"/>
+      </Position4>
+      <Position5>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="2263" Column="16" TopLine="2253"/>
+      </Position5>
+      <Position6>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="524" Column="10" TopLine="522"/>
+      </Position6>
+      <Position7>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="1243" Column="3" TopLine="1240"/>
+      </Position7>
+      <Position8>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="526" Column="8" TopLine="522"/>
+      </Position8>
+      <Position9>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="81" Column="20" TopLine="75"/>
+      </Position9>
+      <Position10>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="813" Column="26" TopLine="802"/>
+      </Position10>
+      <Position11>
+        <Filename Value="data\locavg.pas"/>
+        <Caret Line="135" Column="30" TopLine="123"/>
+      </Position11>
+      <Position12>
+        <Filename Value="collecdata.pas"/>
+        <Caret Line="813" Column="23" TopLine="788"/>
+      </Position12>
+      <Position13>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="138" Column="15" TopLine="127"/>
+      </Position13>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
