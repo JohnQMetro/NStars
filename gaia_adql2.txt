@@ -1,0 +1,11 @@
+SELECT
+gaia.source_id,ra,ra_error,"dec",dec_error,parallax,parallax_error,pmra,pmra_error,pmdec,pmdec_error,l AS gal_long,b AS gal_lat, astrometric_n_good_obs_al,astrometric_chi2_al,astrometric_excess_noise,duplicated_source, phot_g_mean_flux_over_error, phot_g_mean_mag, phot_bp_mean_flux_over_error, phot_bp_mean_mag,phot_rp_mean_flux_over_error, phot_rp_mean_mag, phot_bp_rp_excess_factor, dr2_radial_velocity AS RV, dr2_radial_velocity_error AS RVe,
+gaiadr2.dr2_source_id AS Gaia_DR2, gaiadr2.angular_distance AS dr2_dist, gaiadr2.magnitude_difference AS Gmag_diff, tycho.original_ext_source_id AS Tycho2, tycho.angular_distance AS tycho_dist, hip.original_ext_source_id AS Hipparcos, hip.angular_distance AS hip_dist, panstarr.original_ext_source_id AS panstarrs1, panstarr.angular_distance AS panstarrs1_dist, sdss.original_ext_source_id AS sdss_dr13, sdss.angular_distance AS sdss_dist, urat.original_ext_source_id as urat_1, urat.angular_distance as urat_1_dist 
+FROM gaiaedr3.gaia_source AS gaia
+LEFT OUTER JOIN gaiaedr3.dr2_neighbourhood AS gaiadr2 ON (gaia.source_id = gaiadr2.dr3_source_id)
+LEFT OUTER JOIN gaiaedr3.tycho2tdsc_merge_best_neighbour AS tycho ON (gaia.source_id = tycho.source_id) 
+FULL OUTER JOIN gaiaedr3.hipparcos2_best_neighbour AS hip ON (gaia.source_id = hip.source_id)
+FULL OUTER JOIN gaiaedr3.panstarrs1_best_neighbour AS panstarr ON (gaia.source_id = panstarr.source_id)
+FULL OUTER JOIN gaiaedr3.sdssdr13_best_neighbour AS sdss ON (gaia.source_id = sdss.source_id)	
+FULL OUTER JOIN gaiaedr3.urat1_best_neighbour AS urat ON (gaia.source_id = urat.source_id)
+WHERE parallax > 20
