@@ -15,8 +15,19 @@ URAT South Parallax Results: Discovery of New Nearby Stars
 function ParseURATS_Line(linein:string):ImportedData;
 function MakeURATS_Const():ImportParameters;
 
-var urats_params:ImportParameters;
+(* Importing from :
+https://arxiv.org/abs/2010.15850
+http://bit.ly/UltracoolSheet, stripped down somewhat
+The Hawaii Infrared Parallax Program.
+IV. A Comprehensive Parallax Survey of L0–T8 Dwarfs with UKIRT
+William M. J. Best, 1,2 Michael C. Liu, 3 Eugene A. Magnier, 3 and Trent J. Dupuy
+*)
+function GetHIPP4Names(splitraw:TStringList):TStringList;
+function ParseHIPP4_Line(linein:string):ImportedData;
+function MakeHIPP4_Const():ImportParameters;
 
+var urats_params:ImportParameters;
+var hipp4_params:ImportParameters;
 //======================================================================
 implementation
 //---------------------------------------------------------------------
@@ -117,9 +128,111 @@ begin
     Result.fullout := 'urats.csv';
     Result.leftout := 'urats_leftover.csv';
 end;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(* 'The Hawaii Infrared Parallax Program. IV'
+William M. J. Best, 1,2 Michael C. Liu, 3 Eugene A. Magnier, 3 and Trent J. Dupuy
+https://arxiv.org/abs/2010.15850
+parsing a CSV export of the string down Google Sheets spreadsheet they link to.
+*)
 
+function GetHIPP4Names(splitraw:TStringList):TStringList;
+var simbadlist:TStringList;
+    part,cname:string;
+begin
+  Result := TStringList.Create;
+  if (splitraw[34] <> 'null') then Result.Add('Gaia DR2 ' + splitraw[34]); // Gaia DR2
+  if (splitraw[11] <> 'null') then Result.Add(splitraw[11]); // 2MASS
+  if (splitraw[4] <> 'null') then Result.Add(splitraw[4]); // PSO
+  if (splitraw[22] <> 'null') then Result.Add(splitraw[22]); // WISEA
+  if (splitraw[21] <> 'null') then Result.Add(splitraw[21]); // ULAS/UGCS/VIKING etc
+  // 'Simbad' Names
+  part := splitraw[44];
+  if (part <> 'null') then begin
+     simbadlist := SplitWithDelim(part,'|',1);
+     for cname in simbadlist do begin
+       if cname.StartsWith('*') then Continue;
+       if (cname.StartsWith('Cl*')) then Continue;
+       if (cname.StartsWith('EQ ')) then Continue;
+       if (Result.IndexOf(cname) >= 0) then Continue;
+     end;
+  end;
+  // name 0
+  if (Result.IndexOf(splitraw[0]) < 0) then Result.Add(splitraw[0]);
+end;
+
+function ParseHIPP4_Line(linein:string):ImportedData;
+var splitraw:TStringList;
+    has_dr2:Boolean;
+    pdat:ImportedData;
+    plx_src:string;
+begin
+  Result := nil;
+  splitraw := SplitWithDelim(linein,';',48);
+  if (splitraw = nil) then Exit;
+
+  try
+    pdat := ImportedData.Create;
+    // position
+    has_dr2 := (splitraw[34] <> 'null');
+    if has_dr2 then begin
+       // DR2 positions (precise), J2015.5
+       if not pdat.SetDecimalRA(splitraw[32]) then Exit;
+       if not pdat.SetDecimalDec(splitraw[33]) then Exit;
+    end else begin
+       // not very precise (only 4 digits) J2000
+       if not pdat.SetDecimalRA(splitraw[1]) then Exit;
+       if not pdat.SetDecimalDec(splitraw[2]) then Exit;
+    end;
+    // names
+    pdat.nameids := GetHIPP4Names(splitraw);
+    // proper motion 26, 27
+    if not pdat.SetProperMotionPartsM(splitraw[26],splitraw[27]) then Exit;
+    // parallax 23,24, src is 25 (DR2 or other)
+    if not StrToRealBoth(splitraw[23],splitraw[24],pdat.pllx,pdat.pllx_err) then Exit;
+    plx_src := splitraw[25];
+    if (plx_src = 'DR2') then begin
+       pdat.pllx += 0.029;
+       pdat.pllx_sourceid := 'Gaia DR2';
+    end
+    else pdat.pllx_sourceid := plx_src;
+    // spectral type
+    pdat.stype := '??';
+    if (splitraw[40] <> 'null') then pdat.stype += '/' + splitraw[40] ;
+    if (splitraw[42] <> 'null') then pdat.stype += '/' + splitraw[42] ;
+
+    Result := pdat;
+  finally
+    if (Result = nil) then begin
+       pdat.nameids.Free;
+       pdat.Free;
+    end;
+    splitraw.free;
+  end;
+end;
+
+function MakeHIPP4_Const():ImportParameters;
+begin
+    Result := ImportParameters.Create;
+    // extra write info
+    Result.idheader := 'ID?Name';
+    Result.parser := ParseHIPP4_Line;
+    Result.lineskip := 1;
+
+    Result.useB_Flux := False;
+    Result.useVRI_Flux := False;
+    Result.use_altid := True;
+    Result.useSpT_emp := True;
+
+    // source info
+    Result.pllx_sourceid := 'HIPP4';
+    Result.fullname := 'The Hawaii Infrared Parallax Program. IV. (Best+ 2020)';
+    Result.paperurl := 'https://arxiv.org/abs/2010.15850 ';
+    Result.fullout := 'hipp4.csv';
+    Result.leftout := 'hipp4_leftover.csv';
+end;
 //=====================================================================
 begin
   urats_params := MakeURATS_Const();
+  hipp4_params := MakeHIPP4_Const();
 end.
 

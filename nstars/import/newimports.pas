@@ -29,6 +29,7 @@ ImportParameters = class
     useB_Flux:Boolean;
     useVRI_Flux:Boolean;
     useSpT:Boolean;
+    useSpT_emp:Boolean;
     useTeff:Boolean;
     useBLum:Boolean;
     useRadv:Boolean;
@@ -43,6 +44,7 @@ ImportParameters = class
     epochdata:Real;
     // source info
     pllx_sourceid:string;
+    use_altid:Boolean;
     fullname:string;
     paperurl:string;
     fullout:TFilename;
@@ -75,6 +77,7 @@ ImportedData = class
     radialv:Real;
     // parallax (in milli-arcseconds)
     pllx,pllx_err:Real;
+    pllx_sourceid:string;
     // mass and radius (only sometimes used);
     mass,radius,raderr:string;
     // fluxes (only sometimes used)
@@ -200,7 +203,7 @@ begin
   useB_Flux := False;     useVRI_Flux := False;
   useSpT := False;        useTeff := False;
   useBLum := False;       useU_Flux := False;
-  useRadv := False;
+  useRadv := False;       useSpT_emp := False;
 
   // extra info
   idmaker := nil;
@@ -209,6 +212,7 @@ begin
   useSimbadLocation := False;
   useSimbadProperMotion := False;
   epochdata := 2000;
+  use_altid := False;
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++
 function ImportParameters.UseFluxesTemp:Boolean;

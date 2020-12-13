@@ -155,7 +155,7 @@ Location = class
 
     // importing data from special sources
     function SetFromTGAS(instar:TGASData):Boolean;
-    function SetFromImported(instar:ImportedData; epch:EpochType; srcin:string; setlocat:Boolean):Boolean;
+    function SetFromImported(instar:ImportedData; epch:EpochType; srcin:string; setlocat:Boolean; use_altsrc:Boolean):Boolean;
     function SetFromGaiaDR2(inastro:GaiaDR2Astrometry; ckeepold:Boolean):Boolean;
     function GaiaAddToOld(inastro:GaiaDR2Astrometry):Boolean;
     function HasGaiaDR2():Boolean;
@@ -1564,9 +1564,11 @@ begin
   Result := True;
 end;
 //---------------------------------------------
-function Location.SetFromImported(instar:ImportedData; epch:EpochType; srcin:string; setlocat:Boolean):Boolean;
+function Location.SetFromImported(instar:ImportedData; epch:EpochType; srcin:string; setlocat:Boolean; use_altsrc:Boolean):Boolean;
 var pllx_diff,pllxe_diff:Real;
     usepllx,setok:Boolean;
+    pllx_src:string;
+    is_dr2, dr2_in:Boolean;
 begin
   // bad cases
   Result := False;
@@ -1576,23 +1578,33 @@ begin
   pllxe_diff := Abs(parallax_err-instar.pllx_err);
   // parallaxes are pretty much the same (any diff likely due to rounding)
   if (pllx_diff < 0.002) and (pllxe_diff < 0.002) then Exit;
+
+  // parallax source
+  if not use_altsrc then pllx_src := srcin
+  else if (instar.pllx_sourceid <> '') then pllx_src := instar.pllx_sourceid
+  else pllx_src := srcin;
+  is_dr2 := (source = 'Gaia DR2');
+  dr2_in := (pllx_src = 'Gaia DR2');
+  if dr2_in then epch := EpochType.zJ2015h;
+
   // use parallax
-  usepllx := (instar.pllx_err < parallax_err) and (source<>'TGAS');
+  if dr2_in then usepllx := ((instar.pllx_err*4) < parallax_err)
+  else usepllx := (instar.pllx_err < parallax_err);
 
   // setting the parallax ...
   if (parallax_err <> 0) and (not usepllx) then begin
-    AddPToOld(srcin,instar.pllx,instar.pllx_err);
+    AddPToOld(pllx_src,instar.pllx,instar.pllx_err);
     Exit;
   end;
   // parallax
-  if (Length(source) = 0) or (source=srcin) then begin
+  if (Length(source) = 0) or (source=pllx_src) then begin
     SetParallax(instar.pllx,instar.pllx_err);
-    uncertain := (parallax_err >= 4);
+    uncertain := (parallax_err >= 4) or (dr2_in and (parallax_err >= 0.7));
   end
   else begin
     UpdateParallax(instar.pllx,instar.pllx_err);
   end;
-  source := srcin;
+  source := pllx_src;
 
   // setting proper motion
   if instar.pm_ang <> 0 then begin

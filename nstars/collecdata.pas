@@ -1418,6 +1418,7 @@ end;
 function AddDataToStar(inpllx:ImportedData; thestar:NewStarBase; xparams:ImportParameters):Boolean;
 var starptr:StarInfo;
     isbd:Boolean;
+    cspt:string;
 begin
   // preliminary checks
   Result := False;
@@ -1439,6 +1440,10 @@ begin
   // spectral type
   if xparams.useSpT then begin
     if inpllx.stype<>'' then thestar.SpectralClass := inpllx.stype;
+  end else if xparams.useSpT_emp then begin
+      cspt := thestar.SpectralClass;
+      if (inpllx.stype<>'') and ((cspt = '') or (cspt = '??')) then
+                                       thestar.SpectralClass := inpllx.stype;
   end;
   // flux/temp   etc
   if xparams.UseFluxesTemp then begin
@@ -1495,7 +1500,7 @@ begin
   end;
   // setting location
   locat := currsys.GetLocation;
-  Result := locat.SetFromImported(inpllx,depoch,xparams.pllx_sourceid,False);
+  Result := locat.SetFromImported(inpllx,depoch,xparams.pllx_sourceid,False,xparams.use_altid);
   if Result then begin
     compptr := currsys.GetNewStar(1);
     AddDataToStar(inpllx,compptr,xparams);
@@ -1524,7 +1529,7 @@ begin
   if xparams.useSimbadProperMotion then begin
     inpllx.SetProperMotionPartsM(insimb.pmra,insimb.pmdec);
   end;
-  locat.SetFromImported(inpllx,depoch,xparams.pllx_sourceid,True);
+  locat.SetFromImported(inpllx,depoch,xparams.pllx_sourceid,True,xparams.use_altid);
   if xparams.useSimbadLocation then begin
     locat.SetPositionHMS(eJ2000,insimb.ra_coord,insimb.dec_coord);
   end;

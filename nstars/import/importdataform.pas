@@ -258,6 +258,13 @@ begin
     nosimb_match := False;
     NoSimbadMatching.Checked := False;
   end
+  // Hawaii Infrared Parallax Program IV (Best+2 2020)
+  else if typeindex = 18 then begin
+    dialog_filter := CSVFILTER;
+    const_params.xparams := hipp4_params;
+    nosimb_match := False;
+    NoSimbadMatching.Checked := False;
+  end
   else Assert(False);
   StartButton.Enabled := False;
   CutoffDistEdit.Enabled := True;

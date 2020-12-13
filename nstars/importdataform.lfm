@@ -8,7 +8,7 @@ object ImportForm: TImportForm
   ClientWidth = 466
   OnActivate = FormActivate
   OnCreate = FormCreate
-  LCLVersion = '1.8.0.6'
+  LCLVersion = '2.0.8.0'
   object StartButton: TButton
     Left = 168
     Height = 25
@@ -77,6 +77,7 @@ object ImportForm: TImportForm
       'RAVE DR5 (VizieR extract)'
       'Naval Obs. Flagstaff Station (Dahn+ 2017)'
       'URAT South (Finch+ 2018)'
+      'Hawaii Infrared Parallax Prog IV (Best+ 2020)'
     )
     OnSelect = ImportSourcePickerSelect
     Style = csDropDownList
