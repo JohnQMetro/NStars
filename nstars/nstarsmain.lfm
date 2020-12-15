@@ -1367,10 +1367,6 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Look for Duplicate IDs...'
         OnClick = CatDupesScanMIClick
       end
-      object MI_NLTTMatcher: TMenuItem
-        Caption = 'NLTT Match...'
-        OnClick = MI_NLTTMatcherClick
-      end
       object MI_AddVizForAll: TMenuItem
         Caption = 'Add IDs from VizieR...'
         OnClick = MI_AddVizForAllClick

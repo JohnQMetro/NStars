@@ -5,7 +5,8 @@ unit newImports3;
 interface
 
 uses
-  Classes, SysUtils, StrUtils, newImports, df_strings, fluxtransform;
+  Classes, SysUtils, StrUtils, newImports, df_strings, fluxtransform,
+  collecdata, newlocation, stardata, NewStar;
 
 (* Importing from :
 https://arxiv.org/abs/1802.08272
@@ -185,8 +186,8 @@ begin
     end;
     // names
     pdat.nameids := GetHIPP4Names(splitraw);
-    // proper motion 26, 27
-    if not pdat.SetProperMotionPartsM(splitraw[26],splitraw[27]) then Exit;
+    // proper motion 26, 28
+    if not pdat.SetProperMotionPartsM(splitraw[26],splitraw[28]) then Exit;
     // parallax 23,24, src is 25 (DR2 or other)
     if not StrToRealBoth(splitraw[23],splitraw[24],pdat.pllx,pdat.pllx_err) then Exit;
     plx_src := splitraw[25];
@@ -230,6 +231,7 @@ begin
     Result.fullout := 'hipp4.csv';
     Result.leftout := 'hipp4_leftover.csv';
 end;
+
 //=====================================================================
 begin
   urats_params := MakeURATS_Const();

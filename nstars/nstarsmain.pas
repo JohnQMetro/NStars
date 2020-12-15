@@ -15,7 +15,8 @@ uses
   MainLocatEdit, df_strings, sptfluxest, PPMMatchForm, Utilities2, tgas_import,
   export_form, ExtraImports,
   dr2loadstore, dr2sourceload,gaiadr2holder,gaiamagsui, gaiadr2match,
-  gaiadr2add, star_names, VizierID, nltt_match;
+  gaiadr2add, star_names, VizierID, nltt_match,
+  newImports3;
 
 type
 
@@ -52,7 +53,6 @@ type
     MI_GVtBV: TMenuItem;
     MI_AddVizForAll: TMenuItem;
     MI_GTycRI: TMenuItem;
-    MI_NLTTMatcher: TMenuItem;
     MI_GG1_A: TMenuItem;
     MI_GG1_B: TMenuItem;
     MI_DR2_BVRI: TMenuItem;
@@ -282,6 +282,7 @@ type
     procedure MI_EnterPMClick(Sender: TObject);
     procedure MI_FindConstClick(Sender: TObject);
     procedure MI_FindDR2MatchClick(Sender: TObject);
+    procedure MI_FixHIPP4Click(Sender: TObject);
     procedure MI_GG1_AClick(Sender: TObject);
     procedure MI_GG1_BClick(Sender: TObject);
     procedure MI_GTycRIClick(Sender: TObject);
