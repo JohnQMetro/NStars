@@ -10,7 +10,7 @@ star list. *)
 uses
   Classes, SysUtils, LCLIntf, LMessages, Math, DAMath,
   gaiadr2base, gaiadr2holder, stardata, collecdata, newlocation, namedata,
-  NewStar, ImportVizier, simbad, StarExt2, gaiaset;
+  NewStar, ImportVizier, simbad, StarExt2, gaiaset, starmake;
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 type
 
@@ -288,11 +288,14 @@ procedure AddGaiaStar(newobj:GaiaDR2Star; simdat:SimbadData; tmassd:VizieR2MASSD
 var newid:Integer;
     newsys:StarSystem;
     cstar:StarInfo;
+    isbd:Boolean;
 begin
   Assert(newobj<>nil);
   Assert(primaryl<>nil);
+  isbd := False;
+  if simdat <> nil then isbd := BrownDwarfSpT(simdat.SpectralType);
   newid := primaryl.NextID;
-  newsys := StarSystem.Create(newid);
+  newsys := StarSystem.Create(newid, isbd);
   if simdat <> nil then newsys.AddSimbadData(1,simdat,False);
   newsys.ApplyGaiaObject(1,newobj,False);
   if tmassd <> nil then begin

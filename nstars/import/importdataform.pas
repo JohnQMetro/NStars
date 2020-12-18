@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ComCtrls, MaskEdit, StrUtils,newImports,collecdata, df_strings, newImports2,
-  newImports3;
+  newImports3, starmake;
 
 type
 

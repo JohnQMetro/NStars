@@ -57,7 +57,7 @@ StarSystem = class (StarBase)
     description:string;
     name2300ad:string;
     (* --- PUBLIC METHODS --- *)
-    constructor Create(numid:Integer);
+    constructor Create(numid:Integer; isbd:Boolean);
     (* basic star info *)
     function GetMinCount:Integer;
     function GetMaxCount:Integer;
@@ -376,7 +376,7 @@ begin
 end;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-constructor StarSystem.Create(numid:Integer);
+constructor StarSystem.Create(numid:Integer; isbd:Boolean);
 var buf2:string;
 begin
   // basic id stuff
@@ -399,7 +399,8 @@ begin
   end;
   // finally, since a star system must have a star, we add one
   SetLength(new_components,1);
-  new_components[0] := StarInfo.Create();
+  if isbd then new_components[0] := BrownDwarfInfo.Create()
+  else new_components[0] := StarInfo.Create();
   has_problems:= false;
   has_planets := False;
   // some additional stuff
@@ -1094,7 +1095,7 @@ begin
   if stardex = 1 then Exit;
   if stardex > GetCompC then Exit;
   //making the new system
-  nsys := StarSystem.Create(newid);
+  nsys := StarSystem.Create(newid, False);
   extracted := new_components[stardex-1];
   // setting the system location...
   if extracted.HasLocation then begin

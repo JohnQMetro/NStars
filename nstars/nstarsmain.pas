@@ -16,7 +16,7 @@ uses
   export_form, ExtraImports,
   dr2loadstore, dr2sourceload,gaiadr2holder,gaiamagsui, gaiadr2match,
   gaiadr2add, star_names, VizierID, nltt_match,
-  newImports3;
+  newImports3, starmake;
 
 type
 
@@ -282,7 +282,6 @@ type
     procedure MI_EnterPMClick(Sender: TObject);
     procedure MI_FindConstClick(Sender: TObject);
     procedure MI_FindDR2MatchClick(Sender: TObject);
-    procedure MI_FixHIPP4Click(Sender: TObject);
     procedure MI_GG1_AClick(Sender: TObject);
     procedure MI_GG1_BClick(Sender: TObject);
     procedure MI_GTycRIClick(Sender: TObject);
@@ -1415,7 +1414,7 @@ end;
 procedure TNStarsMainForm.NewSystem1Click(Sender: TObject);
 begin
   GeneralModCheck(Sender);
-  primaryl.AddNewSystem;
+  primaryl.AddNewSystem(False);
   ChangeSystem;
 end;
 

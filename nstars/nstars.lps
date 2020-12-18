@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="86">
+    <Units Count="87">
       <Unit0>
         <Filename Value="nstars.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -19,9 +19,9 @@
         <ComponentName Value="NStarsMainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="2506"/>
-        <CursorPos X="92" Y="2508"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="67"/>
+        <CursorPos X="82" Y="1415"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -30,12 +30,11 @@
       <Unit2>
         <Filename Value="collecdata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="350"/>
-        <CursorPos X="30" Y="368"/>
+        <EditorIndex Value="4"/>
+        <CursorPos X="29" Y="9"/>
         <UsageCount Value="201"/>
         <Bookmarks Count="1">
-          <Item0 Y="154" ID="2"/>
+          <Item0 Y="128" ID="2"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -73,10 +72,11 @@
       <Unit6>
         <Filename Value="df_strings.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="163"/>
-        <CursorPos X="3" Y="1135"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="136"/>
+        <CursorPos X="10" Y="150"/>
         <UsageCount Value="201"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
@@ -118,9 +118,9 @@
       <Unit11>
         <Filename Value="data\stardata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
-        <TopLine Value="989"/>
-        <CursorPos X="3" Y="996"/>
+        <EditorIndex Value="7"/>
+        <TopLine Value="1565"/>
+        <CursorPos X="34" Y="1529"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -137,22 +137,20 @@
         <Filename Value="data\newstar.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="NewStar"/>
-        <EditorIndex Value="7"/>
-        <TopLine Value="16"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="19"/>
         <CursorPos X="21" Y="42"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
         <Filename Value="data\stardatabase.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarDataBase"/>
-        <EditorIndex Value="8"/>
-        <TopLine Value="94"/>
-        <CursorPos Y="107"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="112"/>
+        <CursorPos X="27" Y="345"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
@@ -207,9 +205,9 @@
         <Filename Value="import\newimports.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="newImports"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="554"/>
-        <CursorPos Y="573"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="91"/>
+        <CursorPos X="3" Y="285"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -286,9 +284,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ImportDataForm"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="390"/>
-        <CursorPos X="19" Y="399"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="386"/>
+        <CursorPos X="19" Y="401"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -296,7 +294,6 @@
       <Unit27>
         <Filename Value="data\newlocation.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
         <TopLine Value="970"/>
         <CursorPos X="3" Y="977"/>
         <UsageCount Value="202"/>
@@ -457,11 +454,10 @@
         <Filename Value="import\newimports3.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="newImports3"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="214"/>
-        <CursorPos X="5" Y="233"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="216"/>
+        <CursorPos X="63" Y="234"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
       <Unit43>
@@ -586,10 +582,11 @@
       <Unit55>
         <Filename Value="gaia\dr2addnew.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="286"/>
-        <CursorPos X="3" Y="292"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="283"/>
+        <CursorPos X="42" Y="298"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit55>
       <Unit56>
@@ -625,10 +622,11 @@
       <Unit59>
         <Filename Value="data\star_names.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="279"/>
-        <CursorPos X="3" Y="280"/>
+        <EditorIndex Value="9"/>
+        <TopLine Value="384"/>
+        <CursorPos X="3" Y="364"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
@@ -693,7 +691,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="123"/>
         <CursorPos X="30" Y="135"/>
-        <UsageCount Value="174"/>
+        <UsageCount Value="184"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit66>
       <Unit67>
@@ -702,7 +700,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="157"/>
         <CursorPos X="20" Y="156"/>
-        <UsageCount Value="82"/>
+        <UsageCount Value="92"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit67>
       <Unit68>
@@ -711,32 +709,43 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="49"/>
         <CursorPos X="41" Y="60"/>
-        <UsageCount Value="46"/>
+        <UsageCount Value="56"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit68>
       <Unit69>
+        <Filename Value="starmake.pas"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="373"/>
+        <CursorPos Y="385"/>
+        <UsageCount Value="26"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit69>
+      <Unit70>
         <Filename Value="data\namedata.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="26" Y="15"/>
         <UsageCount Value="165"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit69>
-      <Unit70>
+      </Unit70>
+      <Unit71>
         <Filename Value="import\recons.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="30" Y="8"/>
         <UsageCount Value="161"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit70>
-      <Unit71>
+      </Unit71>
+      <Unit72>
         <Filename Value="import\Arcins.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="913"/>
         <CursorPos X="3" Y="921"/>
         <UsageCount Value="161"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit71>
-      <Unit72>
+      </Unit72>
+      <Unit73>
         <Filename Value="import\arcins_star.pas"/>
         <ComponentName Value="ArcinsDataDisplay"/>
         <HasResources Value="True"/>
@@ -746,8 +755,8 @@
         <CursorPos X="5" Y="269"/>
         <UsageCount Value="161"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit72>
-      <Unit73>
+      </Unit73>
+      <Unit74>
         <Filename Value="import\aricns_load.pas"/>
         <ComponentName Value="AricnsLoadForm"/>
         <HasResources Value="True"/>
@@ -757,16 +766,16 @@
         <CursorPos X="3" Y="46"/>
         <UsageCount Value="160"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit73>
-      <Unit74>
+      </Unit74>
+      <Unit75>
         <Filename Value="import\tgas.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="885"/>
         <CursorPos Y="906"/>
         <UsageCount Value="144"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit74>
-      <Unit75>
+      </Unit75>
+      <Unit76>
         <Filename Value="import\tgas_import.pas"/>
         <ComponentName Value="TGASImportForm"/>
         <HasResources Value="True"/>
@@ -776,24 +785,24 @@
         <CursorPos X="3" Y="66"/>
         <UsageCount Value="143"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit75>
-      <Unit76>
+      </Unit76>
+      <Unit77>
         <Filename Value="data\gaiadr2base.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="250"/>
         <CursorPos X="18" Y="304"/>
         <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit76>
-      <Unit77>
+      </Unit77>
+      <Unit78>
         <Filename Value="data\newimports2.pas"/>
         <UnitName Value="newImports2"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="1290"/>
         <UsageCount Value="138"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit77>
-      <Unit78>
+      </Unit78>
+      <Unit79>
         <Filename Value="data\newestutils.pas"/>
         <UnitName Value="NewEstUtils"/>
         <EditorIndex Value="-1"/>
@@ -801,23 +810,23 @@
         <CursorPos X="4" Y="224"/>
         <UsageCount Value="112"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit78>
-      <Unit79>
+      </Unit79>
+      <Unit80>
         <Filename Value="data\estutilsextra.pas"/>
         <UnitName Value="EstUtilsExtra"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="31" Y="12"/>
         <UsageCount Value="112"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit79>
-      <Unit80>
+      </Unit80>
+      <Unit81>
         <Filename Value="stardata\estutils.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="26" Y="3"/>
         <UsageCount Value="111"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit80>
-      <Unit81>
+      </Unit81>
+      <Unit82>
         <Filename Value="data\estutilscore.pas"/>
         <UnitName Value="EstUtilsCore"/>
         <EditorIndex Value="-1"/>
@@ -828,8 +837,8 @@
           <Item0 Y="45"/>
         </Bookmarks>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit81>
-      <Unit82>
+      </Unit82>
+      <Unit83>
         <Filename Value="import\arcins_load.pas"/>
         <HasResources Value="True"/>
         <EditorIndex Value="-1"/>
@@ -837,151 +846,151 @@
         <CursorPos X="5" Y="127"/>
         <UsageCount Value="36"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit82>
-      <Unit83>
+      </Unit83>
+      <Unit84>
         <Filename Value="data\locationdata.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="918"/>
         <CursorPos X="37" Y="929"/>
         <UsageCount Value="3"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit83>
-      <Unit84>
+      </Unit84>
+      <Unit85>
         <Filename Value="..\..\..\Lazarus\fpc\3.0.4\source\rtl\win64\system.pp"/>
         <UnitName Value="System"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="16"/>
         <UsageCount Value="2"/>
-      </Unit84>
-      <Unit85>
+      </Unit85>
+      <Unit86>
         <Filename Value="nstars.lpi"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="381"/>
         <CursorPos X="57" Y="176"/>
         <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="XML"/>
-      </Unit85>
+      </Unit86>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2512" Column="13" TopLine="2509"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="14" Column="29"/>
       </Position1>
       <Position2>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2332" Column="3" TopLine="2330"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="27" Column="23" TopLine="6"/>
       </Position2>
       <Position3>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2572" TopLine="2566"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="132" Column="23" TopLine="287"/>
       </Position3>
       <Position4>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2521" Column="16" TopLine="2508"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="16" Column="44" TopLine="13"/>
       </Position4>
       <Position5>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="19" Column="14"/>
+        <Filename Value="data\stardata.pas"/>
+        <Caret Line="122" Column="27" TopLine="102"/>
       </Position5>
       <Position6>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2525" Column="65" TopLine="2522"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="23" Column="19" TopLine="16"/>
       </Position6>
       <Position7>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2524" Column="19" TopLine="2509"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="94" Column="10" TopLine="79"/>
       </Position7>
       <Position8>
-        <Filename Value="import\newimports3.pas"/>
-        <Caret Line="251" TopLine="238"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="288" Column="34" TopLine="251"/>
       </Position8>
       <Position9>
-        <Filename Value="import\newimports3.pas"/>
-        <Caret Line="9" Column="45"/>
+        <Filename Value="gaia\dr2addnew.pas"/>
+        <Caret Line="13" Column="61" TopLine="18"/>
       </Position9>
       <Position10>
-        <Filename Value="import\newimports3.pas"/>
-        <Caret Line="253" Column="20" TopLine="237"/>
+        <Filename Value="gaia\dr2addnew.pas"/>
+        <Caret Line="298" Column="42" TopLine="283"/>
       </Position10>
       <Position11>
-        <Filename Value="data\newlocation.pas"/>
-        <Caret Line="107" Column="26" TopLine="96"/>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="960" Column="17" TopLine="948"/>
       </Position11>
       <Position12>
-        <Filename Value="import\newimports3.pas"/>
-        <Caret Line="254" TopLine="238"/>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="1163" Column="12" TopLine="1151"/>
       </Position12>
       <Position13>
-        <Filename Value="import\newimports.pas"/>
-        <Caret Line="131" Column="20" TopLine="112"/>
+        <Filename Value="nstarsmain.pas"/>
+        <Caret Line="19" Column="24"/>
       </Position13>
       <Position14>
-        <Filename Value="import\newimports.pas"/>
-        <Caret Line="573" TopLine="554"/>
+        <Filename Value="import\importdataform.pas"/>
+        <Caret Line="413" Column="32" TopLine="404"/>
       </Position14>
       <Position15>
-        <Filename Value="import\newimports3.pas"/>
-        <Caret Line="251" Column="24" TopLine="245"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="35" Column="22" TopLine="19"/>
       </Position15>
       <Position16>
-        <Filename Value="collecdata.pas"/>
-        <Caret Line="9" Column="60"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="11" Column="53"/>
       </Position16>
       <Position17>
-        <Filename Value="collecdata.pas"/>
-        <Caret Line="105" Column="29" TopLine="85"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="31" Column="27" TopLine="16"/>
       </Position17>
       <Position18>
-        <Filename Value="collecdata.pas"/>
-        <Caret Line="1189" Column="16" TopLine="1174"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="249" Column="17" TopLine="237"/>
       </Position18>
       <Position19>
-        <Filename Value="data\stardata.pas"/>
-        <Caret Line="7" Column="45"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="24" Column="13" TopLine="16"/>
       </Position19>
       <Position20>
-        <Filename Value="data\stardata.pas"/>
-        <Caret Line="100" Column="17" TopLine="79"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="31" Column="22" TopLine="25"/>
       </Position20>
       <Position21>
-        <Filename Value="import\newimports3.pas"/>
-        <Caret Line="260" TopLine="262"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="35" Column="27" TopLine="25"/>
       </Position21>
       <Position22>
-        <Filename Value="import\newimports3.pas"/>
-        <Caret Line="261" TopLine="243"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="38" Column="27" TopLine="25"/>
       </Position22>
       <Position23>
-        <Filename Value="import\newimports.pas"/>
-        <Caret Line="573" TopLine="554"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="12" Column="53"/>
       </Position23>
       <Position24>
-        <Filename Value="import\newimports3.pas"/>
-        <Caret Line="261" TopLine="243"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="31" Column="26" TopLine="19"/>
       </Position24>
       <Position25>
-        <Filename Value="import\newimports.pas"/>
-        <Caret Line="573" TopLine="554"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="10" Column="43"/>
       </Position25>
       <Position26>
-        <Filename Value="import\newimports3.pas"/>
-        <Caret Line="261" TopLine="243"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="35" Column="27" TopLine="14"/>
       </Position26>
       <Position27>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2509" Column="5" TopLine="2509"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="38" Column="27" TopLine="17"/>
       </Position27>
       <Position28>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2508" Column="5" TopLine="2508"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="384" TopLine="368"/>
       </Position28>
       <Position29>
-        <Filename Value="nstarsmain.pas"/>
-        <Caret Line="2507" Column="5" TopLine="2507"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="357" Column="52" TopLine="345"/>
       </Position29>
       <Position30>
-        <Filename Value="import\newimports3.pas"/>
-        <Caret Line="31" Column="35" TopLine="16"/>
+        <Filename Value="starmake.pas"/>
+        <Caret Line="367" TopLine="356"/>
       </Position30>
     </JumpHistory>
     <RunParams>
