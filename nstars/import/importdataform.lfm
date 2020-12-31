@@ -78,6 +78,7 @@ object ImportForm: TImportForm
       'Naval Obs. Flagstaff Station (Dahn+ 2017)'
       'URAT South (Finch+ 2018)'
       'Hawaii Infrared Parallax Prog IV (Best+ 2020)'
+      'Field Substellar Mass Function (Kirkpatrick+ 2020)'
     )
     OnSelect = ImportSourcePickerSelect
     Style = csDropDownList

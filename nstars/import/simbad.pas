@@ -138,14 +138,14 @@ function MakeSimbadCoordLookupURL(const rastring,decstring:string; arcminp:Integ
 function MakeSimbadIdLookupURL(ident:string):string;
 function GetSimbadDataURL(inurl:string; out fetchfail:Boolean):SimbadData;
 
-const ok_catalogs:array[0..72] of string = ('BD','CD','CPD','Wolf','Ross','FK5',
+const ok_catalogs:array[0..77] of string = ('BD','CD','CPD','Wolf','Ross','FK5',
       'HD','HR','SAO','LHS','LFT','LTT','Vys','2MASS','DENIS','Luhman','Lal',
       'ADS','LDS','AC','Lac','LP','Gmb','L','SO','SCR','LPM','Kr','WISE',
       'PPM','Zkh','Sm','WDS','G','Sa','NLTT','VVO','Ruiz','Wor','Heintz',
       'Struve','Bu','Tou','SIPS','WISEP','SDSS','VB','WD','LEHPM','WT','SIP',
       'BPM','LSPM','San','2MUCD','APMPM','BRI','AG','UCAC4','GSC','GD',
       'KIC','Ton','ULAS','PM','WISEA','RAVE','RX','GSC2.3','1RXS','URAT1',
-      'UPM','SSSPM');
+      'UPM','SSSPM','CWISEP','UGPS','CFBDS','VHS','VVV');
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 implementation

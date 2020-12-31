@@ -29,6 +29,7 @@ function MakeHIPP4_Const():ImportParameters;
 
 var urats_params:ImportParameters;
 var hipp4_params:ImportParameters;
+var kirk20_params:ImportParameters;
 //======================================================================
 implementation
 //---------------------------------------------------------------------
@@ -232,10 +233,141 @@ begin
     Result.leftout := 'hipp4_leftover.csv';
 end;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(* 'The Field Substellar Mass Function Based on the Full-sky 20-pc Census
+of 525 L, T, and Y Dwarfs'  Kirkpatrick+ 2020
+https://arxiv.org/abs/2011.11616
+parsing Table A1
+*)
+
+// make spt from inputs
+function MakeKirk20_SpT(adopted,flag:string):string;
+var top:Real;
+begin
+  Result := '';
+  if not TryStrToFloat(Trim(adopted),top) then Exit;
+  if (top <= -9) then Exit;
+  // number to character...
+  if top < 0 then begin
+     Result := 'M'; top += 10;
+  end
+  else if top < 10 then Result := 'L'
+  else if top < 20 then begin
+     Result := 'T';
+     top -= 10;
+  end
+  else begin
+      Result := 'Y';
+      top -= 20;
+  end;
+  // adding the number part (and trimming trailing zero if there)
+  Result += FloatToStrF(top,ffFixed,3,1);
+  if AnsiEndsStr('.0',Result) then Result := Copy(Result,0,Length(Result)-2);
+  // flag checking
+  flag := Trim(flag);
+  if flag = 'S' then Result := 'sd' + Result
+  else if flag = 'M' then Result += 'J';
+end;
+
+// translate astrometric source
+function Kirk20_AstSrcTrans(inchar:string):string;
+begin
+  Result := 'Kirk20';
+  if Length(inchar) <> 1 then Exit;
+  case inchar[1] of
+      'A': Result := 'Dahn02';
+      'b': Result := 'Burg08a';      'B': Result := 'Bart17';
+      'c': Result := 'CatWISE2020';  'C': Result := 'Tinn2014';
+      'd': Result := 'Dahn17';       'D': Result := 'DupLiu12';
+      'E': Result := 'Dup19';
+      'F': Result := 'Fah12';
+      'G': Result := 'Gaia DR2';     'g': Result := 'Gaia DR2';
+      'J': Result := 'Kirk11';
+      'H': Result := 'New Hipparcos';
+      'K': Result := 'Kirk19a';      'k': Result := 'Kirk19b';
+      'l': Result := 'Legg12';       'L': Result := 'Liu16';
+      'm': Result := 'Manj13';       'M': Result := 'Maro10';
+      'r': Result := 'Smart-k';      'R': Result := 'Smart18';
+      'S': Result := 'Casw08';       's': Result := 'Smart13';
+      't': Result := 'Tinn03';
+      'V': Result := 'Vrba04';
+      'W': Result := 'Best20';
+      'z': Result := 'Dup20';        'Z': Result := 'LazS18';
+  end;
+end;
+
+//------------------------------------------
+function ParseKirk20_Line(linein:string):ImportedData;
+var splitraw:TStringList;
+    pdat:ImportedData;
+    buf1,buf2:string;
+    pmra,pmd:Real;
+begin
+  Result := nil;
+  splitraw := SplitWithDelim(linein,',',53);
+  if (splitraw = nil) then Exit;
+  try
+    pdat := ImportedData.Create;
+    // spectral type
+    pdat.stype := MakeKirk20_SpT(splitraw[4],splitraw[51]);
+    // parallax and error
+    if not StrToRealBoth(splitraw[6],splitraw[7],pdat.pllx,pdat.pllx_err) then Exit;
+    if pdat.pllx <= 0 then Exit;
+    // proper motion
+    buf1 := Trim(splitraw[8]);
+    if buf1 = '-22222' then Exit;
+    buf2 := Trim(splitraw[10]) + Trim(splitraw[12]);
+    if buf2 = '-11111' then Exit;
+    if not pdat.SetProperMotionPartsM(buf1,buf2) then Exit;
+    // astrometry source
+    pdat.pllx_sourceid := Kirk20_AstSrcTrans(Trim(splitraw[13]));
+    if (pdat.pllx_sourceid = 'Gaia DR2') then pdat.pllx += 0.029;
+    // magnitudes
+    Str2Curr(splitraw[16],pdat.Jmag);
+    Str2Curr(splitraw[18],pdat.Hmag);
+    StrToCurrBoth(splitraw[22],splitraw[23],pdat.Ksmag,pdat.KsmagE);
+    // position
+    if not pdat.SetDecimalRA(splitraw[25]) then Exit;
+    if not pdat.SetDecimalDec(splitraw[26]) then Exit;
+    // identifier (only 1)
+    pdat.nameids := TStringlist.Create;
+    pdat.nameids.Add(Trim(splitraw[52]));
+    Result := pdat;
+  finally
+    if (Result = nil) then begin
+       pdat.nameids.Free;
+       pdat.Free;
+    end;
+    splitraw.free;
+  end;
+end;
+
+function MakeKirk20_Const():ImportParameters;
+begin
+    Result := ImportParameters.Create;
+    // extra write info
+    Result.idheader := 'ID?Name';
+    Result.parser := ParseKirk20_Line;
+    Result.lineskip := 7;
+
+    Result.useB_Flux := False;
+    Result.useVRI_Flux := False;
+    Result.useJHK_Flux := True;
+    Result.use_altid := True;
+    Result.useSpT_emp := True;
+
+    // source info
+    Result.pllx_sourceid := 'Kirk20';
+    Result.fullname := 'The Field Substellar Mass Function Based on the Full-sky 20-pc Census of 525 L, T, and Y Dwarfs (Kirkpatrick+ 2020)';
+    Result.paperurl := 'https://arxiv.org/abs/2011.11616';
+    Result.fullout := 'kirk20.csv';
+    Result.leftout := 'kirk20_leftover.csv';
+end;
+
 
 //=====================================================================
 begin
   urats_params := MakeURATS_Const();
   hipp4_params := MakeHIPP4_Const();
+  kirk20_params := MakeKirk20_Const();
 end.
 

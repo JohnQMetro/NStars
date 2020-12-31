@@ -28,6 +28,7 @@ ImportParameters = class
     useU_Flux:Boolean;
     useB_Flux:Boolean;
     useVRI_Flux:Boolean;
+    useJHK_Flux:Boolean;
     useSpT:Boolean;
     useSpT_emp:Boolean;
     useTeff:Boolean;
@@ -85,6 +86,9 @@ ImportedData = class
     Bmag,BMagE:Currency;
     Vmag,VmagE:Real;
     Rmag,Imag:Currency;
+    Jmag,Hmag:Currency;
+    Ksmag,KsmagE:Currency;
+    // Other values
     stype:string;
     teff:Integer;
     blum,blume:string;
@@ -204,6 +208,7 @@ begin
   useSpT := False;        useTeff := False;
   useBLum := False;       useU_Flux := False;
   useRadv := False;       useSpT_emp := False;
+  useJHK_Flux := False;
 
   // extra info
   idmaker := nil;
@@ -303,6 +308,8 @@ begin
   Vmag := 99.999;       VmagE :=0;
   Rmag := invcurr;      Umag := invcurr;
   Imag := invcurr;
+  Jmag := invcurr;      Hmag := invcurr;
+  Ksmag := invcurr;     KsmagE := 0;
   teff := 0;
   pm_mag := 0;
   pm_ang := 0;

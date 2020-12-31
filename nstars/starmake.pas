@@ -199,6 +199,15 @@ begin
       if inpllx.Rmag < 99 then thestar.fluxtemp.red_mag := inpllx.Rmag;
       if inpllx.Imag < 99 then thestar.fluxtemp.i_mag := inpllx.Imag;
     end;
+    if xparams.useJHK_Flux then begin
+      if thestar.fluxtemp = nil then thestar.fluxtemp := StarFluxPlus.Create;
+      if inpllx.Jmag < 99 then thestar.fluxtemp.J_mag:= inpllx.Jmag;
+      if inpllx.Hmag < 99 then thestar.fluxtemp.H_mag:= inpllx.Hmag;
+      if inpllx.Ksmag < 99 then begin
+        thestar.fluxtemp.K_mag := inpllx.Ksmag;
+        thestar.fluxtemp.K_err := inpllx.KsmagE;
+      end;
+    end;
   end;
   // bolometric luminosity
   if (not isbd) and xparams.useBLum then begin

@@ -265,6 +265,13 @@ begin
     nosimb_match := False;
     NoSimbadMatching.Checked := False;
   end
+  // Field Substellar Mass Function (Kirkpatrick+ 2020)
+  else if typeindex = 19 then begin
+    dialog_filter := CSVFILTER;
+    const_params.xparams := kirk20_params;
+    nosimb_match := False;
+    NoSimbadMatching.Checked := False;
+  end
   else Assert(False);
   StartButton.Enabled := False;
   CutoffDistEdit.Enabled := True;
