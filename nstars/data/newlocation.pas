@@ -474,7 +474,7 @@ end;
 //------------------------------------------------------
 function Location.OldParallaxCleaner():Integer;
 var parsed_list:TStringList;
-    cleandex,checkdex:Integer;
+    cleandex,checkdex,checkdex2:Integer;
     backup_old,currsrc:string;
     newcount,newdex:Integer;
     // logstr:string;
@@ -507,6 +507,17 @@ begin
       end else checkdex += 2;
     end;
     cleandex += 2;
+  end;
+  // extra: clean against current source
+  if (source <> 'Minor') then begin
+    checkdex2 := 1;
+    while checkdex2 < parsed_list.Count do begin
+      if (parsed_list[checkdex2] = source) then begin
+        parsed_list.Delete(checkdex2-1);
+        parsed_list.Delete(checkdex2-1);
+        Inc(Result);
+      end else checkdex2 += 2;
+    end;
   end;
   // after cleaning, we rebuild oldparallax
   newcount := (parsed_list.Count div 2);
@@ -1723,7 +1734,6 @@ begin
   end;
   // old parallax string
   oldparallax := inlist[6];
-  // OldParallaxCleaner();
   if AnsiStartsStr(',',oldparallax) then begin
     oldparallax := Trim(AnsiRightStr(oldparallax,Length(oldparallax)-1));
   end;
@@ -1733,6 +1743,7 @@ begin
   end;
   // source
   source := inlist[9];
+  // OldParallaxCleaner();
   (* fixing wrong TGAS data...
   if (source = 'TGAS') then begin
     pm_posang += 180;
