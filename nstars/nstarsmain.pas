@@ -46,6 +46,7 @@ type
     EstWDTeff: TMenuItem;
     MagSplitG_MI: TMenuItem;
     LargeRVMI: TMenuItem;
+    NLTT_MI: TMenuItem;
     WDT_GaiaD: TMenuItem;
     WD_GaiaC: TMenuItem;
     WDT_GaiaA: TMenuItem;
@@ -270,6 +271,7 @@ type
     procedure AddUMGaiaDR2MIClick(Sender: TObject);
     procedure MagSplitG_MIClick(Sender: TObject);
     procedure MainListPopupMenuPopup(Sender: TObject);
+    procedure MenuItem13Click(Sender: TObject);
     procedure MergeIntoMIClick(Sender: TObject);
     procedure MISwapParallaxClick(Sender: TObject);
     procedure MI_AddVizForAllClick(Sender: TObject);
@@ -2276,6 +2278,11 @@ end;
 procedure TNStarsMainForm.MainListPopupMenuPopup(Sender: TObject);
 begin
   MLSetPopupIndex();
+end;
+
+procedure TNStarsMainForm.MenuItem13Click(Sender: TObject);
+begin
+
 end;
 
 procedure TNStarsMainForm.MergeIntoMIClick(Sender: TObject);

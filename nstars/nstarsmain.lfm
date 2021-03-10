@@ -1371,6 +1371,10 @@ object NStarsMainForm: TNStarsMainForm
         Caption = 'Add IDs from VizieR...'
         OnClick = MI_AddVizForAllClick
       end
+      object NLTT_MI: TMenuItem
+        Caption = 'NLTT Find...'
+        OnClick = MI_NLTTMatcherClick
+      end
       object N5: TMenuItem
         Caption = '-'
       end
