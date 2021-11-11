@@ -342,6 +342,9 @@ end;
 function SimbadData.ParseExtractCatalogs(var sourcedata:StringParsing):Boolean;
 var buffer,buffer2:string;
     clc:Integer;
+const
+    SITE_A = '<A HREF="https://cds.unistra.fr/cgi-bin/Dic-Simbad?';
+    SITE_B = '<A HREF="https://cds.u-strasbg.fr/cgi-bin/Dic-Simbad?';
 begin
   Result := False;
   // skipping to the identifiers
@@ -349,7 +352,7 @@ begin
   if not sourcedata.SetLimitString('</TABLE>') then Exit;
   // loop get the identifiers
   raw_catalog_list := TStringList.Create;
-  while sourcedata.MovePast('<A HREF="https://cds.u-strasbg.fr/cgi-bin/Dic-Simbad?') do begin
+  while sourcedata.MovePast(SITE_A) do begin
     if not sourcedata.ExtractFieldNE('>','</A>',buffer) then Break;
     if not sourcedata.GetMovePast(buffer2,'</TT>') then Break;
     buffer2 := Trim(buffer2);
@@ -357,9 +360,21 @@ begin
     raw_catalog_list.Add(buffer);
     raw_catalog_list.Add(buffer2);
   end;
+  clc := raw_catalog_list.Count;
+  if (clc = 0) then begin
+    while sourcedata.MovePast(SITE_B) do begin
+      if not sourcedata.ExtractFieldNE('>','</A>',buffer) then Break;
+      if not sourcedata.GetMovePast(buffer2,'</TT>') then Break;
+      buffer2 := Trim(buffer2);
+      if Length(buffer2) = 0 then Break;
+      raw_catalog_list.Add(buffer);
+      raw_catalog_list.Add(buffer2);
+    end;
+    clc := raw_catalog_list.Count;
+  end;
   // post check
   sourcedata.ClearLimitString;
-  clc := raw_catalog_list.Count;
+
   if  (clc = 0) or Odd(clc) then Exit;
   Result := True;
 end;
